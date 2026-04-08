@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Variables CSS globales ─────────────────────────────────────────────── */
+:root {
+  --eb-green:  #00ff88;
+  --eb-cyan:   #00e5ff;
+  --eb-dark:   #0a0f1e;
+  --eb-card:   #111827;
+  --eb-border: #1f2d3d;
+}
+
+/* ─── Reset & base ───────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--eb-dark);
+  color: #e2e8f0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  /* Amélioration du lissage police */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar personnalisée ────────────────────────────────────────────── */
+::-webkit-scrollbar         { width: 6px; height: 6px; }
+::-webkit-scrollbar-track   { background: var(--eb-dark); }
+::-webkit-scrollbar-thumb   { background: #1f2d3d; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2d3f53; }
+
+/* ─── Focus visible RGAA — remplace le focus par défaut ─────────────────── */
+:focus-visible {
+  outline: 2px solid var(--eb-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Classe utilitaire pour le texte tronqué ───────────────────────────── */
+@layer utilities {
+  .gradient-text-eb {
+    background: linear-gradient(90deg, var(--eb-green), var(--eb-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow effects */
+  .glow-green { box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); }
+  .glow-cyan  { box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+
+  /* Skip link RGAA */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  .sr-only.focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}
+
+/* ─── Ticker défilant ────────────────────────────────────────────────────── */
+.ticker-wrap {
+  overflow: hidden;
+}
+.ticker-inner {
+  display: flex;
+  animation: ticker 30s linear infinite;
+  white-space: nowrap;
+}
+
+/* ─── Responsivité minimale 340px ────────────────────────────────────────── */
+@media (max-width: 340px) {
+  body {
+    font-size: 14px;
+  }
+  .max-w-screen-xl {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* ─── Réduction de mouvement (accessibilité) ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .ticker-inner {
+    animation: none;
+  }
+}

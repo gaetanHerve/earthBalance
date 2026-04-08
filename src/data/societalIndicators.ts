@@ -1,0 +1,156 @@
+import type { SocietalIndicators, TickerItem, EcologicalCharts } from '@/types/index'
+
+const years: number[] = [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024]
+
+export const societalIndicators: SocietalIndicators = {
+  foodSecurity: {
+    label: 'Sécurité alimentaire',
+    icon: 'fa-wheat-awn',
+    color: '#facc15',
+    unit: '/100 (indice FAO)',
+    criticalThreshold: 50,
+    current: 63,
+    source: 'TODO: FAO STAT — Suite des indicateurs ODD 2.1',
+    timeSeries: {
+      years,
+      values: [55, 57, 59, 60, 61, 62, 62, 63],
+    },
+  },
+
+  waterAccess: {
+    label: 'Accès eau potable',
+    icon: 'fa-droplet',
+    color: '#38bdf8',
+    unit: '% population mondiale',
+    criticalThreshold: 60,
+    current: 71,
+    source: 'TODO: WHO/UNICEF JMP — https://washdata.org/',
+    timeSeries: {
+      years,
+      values: [52, 56, 60, 63, 66, 68, 70, 71],
+    },
+  },
+
+  geopoliticalConflicts: {
+    label: 'Conflits géopolitiques',
+    icon: 'fa-shield-halved',
+    color: '#ff5050',
+    subIndicators: [
+      { label: 'Conflits ressources', value: 74, color: '#ef4444' },
+      { label: 'Tensions eau',       value: 61, color: '#fb923c' },
+      { label: 'Migrations climatiques', value: 55, color: '#facc15' },
+    ],
+    source: 'TODO: ACLED API — Armed Conflict Location & Event Data',
+  },
+
+  globalHealth: {
+    label: 'Santé globale',
+    icon: 'fa-heart-pulse',
+    color: '#f472b6',
+    stats: [
+      { label: 'Espérance de vie',       value: '73.4 ans', trend: 'up',   color: '#00ff88' },
+      { label: 'Maladies respiratoires', value: '↑ 18%',    trend: 'down', color: '#fb923c' },
+      { label: 'Indice santé OMS',       value: '67/100',   trend: 'flat', color: '#00e5ff' },
+    ],
+    source: 'TODO: OMS Global Health Observatory API — https://www.who.int/data/gho/',
+  },
+
+  inequality: {
+    label: 'Inégalités (Gini)',
+    icon: 'fa-scale-balanced',
+    color: '#c084fc',
+    stats: [
+      { label: 'Gini mondial',       value: '0.67',       color: '#ff5050' },
+      { label: '1% les plus riches', value: '45% richesse', color: '#ff5050' },
+      { label: 'Accès éducation',    value: '61%',          color: '#facc15' },
+    ],
+    source: 'TODO: World Inequality Database API — https://wid.world/api/',
+  },
+}
+
+export const tickerItems: TickerItem[] = [
+  { emoji: '🌡️', label: 'Temp. globale',    value: '+1.4°C', colorClass: 'text-orange-400' },
+  { emoji: '💨', label: 'CO₂ atm.',          value: '421 ppm', colorClass: 'text-red-400'    },
+  { emoji: '🌊', label: 'Niveau mer',         value: '+22 cm',  colorClass: 'text-eb-cyan'     },
+  { emoji: '🌲', label: 'Forêt restante',     value: '58%',     colorClass: 'text-eb-green'    },
+  { emoji: '⚡', label: 'Renouvelable',        value: '34%',     colorClass: 'text-yellow-400'  },
+  { emoji: '💧', label: 'Accès eau',          value: '71%',     colorClass: 'text-blue-400'    },
+  { emoji: '🍽️', label: 'Sécurité alim.',     value: '63/100',  colorClass: 'text-eb-green'    },
+  { emoji: '👥', label: 'Pop. mondiale',      value: '8.1 Mds', colorClass: 'text-slate-300'   },
+]
+
+export const ecologicalCharts: EcologicalCharts = {
+  co2: {
+    label: 'Émissions CO₂ mondiales',
+    unit: 'GtCO₂/an',
+    color: '#ff5050',
+    source: 'TODO: Global Carbon Project — https://www.globalcarbonproject.org/',
+    timeSeries: {
+      years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
+      values: [22.7, 23.5, 25.0, 28.1, 31.6, 35.0, 34.8, 37.4],
+    },
+  },
+
+  temperature: {
+    label: 'Anomalie de température globale',
+    unit: '°C vs. pré-industriel',
+    color: '#fb923c',
+    source: 'TODO: NASA GISS Surface Temperature Analysis — https://data.giss.nasa.gov/gistemp/',
+    timeSeries: {
+      years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
+      values: [0.45, 0.52, 0.62, 0.72, 0.82, 0.95, 1.10, 1.40],
+    },
+  },
+
+  forest: {
+    label: 'Forêt mondiale restante',
+    unit: '% (base 1990)',
+    color: '#00ff88',
+    criticalThreshold: 40,
+    current: 58,
+    source: 'TODO: FAO Global Forest Resources Assessment',
+  },
+
+  energyMix: {
+    label: 'Mix énergétique mondial',
+    unit: '% du total',
+    source: 'TODO: IEA World Energy Outlook — https://www.iea.org/data-and-statistics',
+    categories: [
+      { label: 'Charbon',    value: 27, color: '#6b7280' },
+      { label: 'Pétrole',   value: 31, color: '#ef4444' },
+      { label: 'Gaz',       value: 23, color: '#f97316' },
+      { label: 'Nucléaire', value: 5,  color: '#a78bfa' },
+      { label: 'Solaire',   value: 5,  color: '#facc15' },
+      { label: 'Éolien',    value: 4,  color: '#00ff88' },
+      { label: 'Hydro',     value: 3,  color: '#00e5ff' },
+      { label: 'Autres',    value: 2,  color: '#475569' },
+    ],
+  },
+
+  resources: {
+    label: 'Extraction de ressources naturelles',
+    unit: 'Gt/an',
+    source: 'TODO: UNEP Resource Panel — Global Material Flows Database',
+    datasets: [
+      {
+        label: 'Minéraux',
+        color: '#c084fc',
+        bgColor: 'rgba(192,132,252,0.1)',
+        values: [8.2, 9.1, 10.5, 12.3, 14.8, 17.2, 19.1, 21.0],
+      },
+      {
+        label: 'Biomasse',
+        color: '#00ff88',
+        bgColor: 'rgba(0,255,136,0.08)',
+        values: [12.1, 12.8, 13.5, 14.2, 15.0, 15.8, 16.4, 17.1],
+      },
+      {
+        label: 'Combustibles fossiles',
+        color: '#fb923c',
+        bgColor: 'rgba(251,146,60,0.08)',
+        values: [7.5, 8.2, 9.0, 10.1, 11.5, 12.8, 13.2, 13.9],
+      },
+    ],
+    years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
+  },
+}
