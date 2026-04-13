@@ -43,11 +43,11 @@
     <div class="space-y-3 mb-5" aria-label="Résultats du vote">
       <div v-for="opt in decision.options" :key="opt.id">
         <div class="flex justify-between text-xs mb-1">
-          <span class="font-bold" :style="{ color: opt.color }">
+          <span class="font-bold" :style="{ color: effectiveColor(opt) }">
             <i :class="optionIcon(opt.id)" aria-hidden="true"></i>
             {{ opt.label }}
           </span>
-          <span class="font-bold" :style="{ color: opt.color }">{{ votePcts[opt.id] }}%</span>
+          <span class="font-bold" :style="{ color: effectiveColor(opt) }">{{ votePcts[opt.id] }}%</span>
         </div>
         <div class="bg-eb-border rounded-full h-3 overflow-hidden" role="progressbar" :aria-valuenow="votePcts[opt.id]" aria-valuemin="0" aria-valuemax="100">
           <div
@@ -77,7 +77,7 @@
     <!-- Compteurs de votes -->
     <div class="grid grid-cols-3 gap-3 mb-5 text-center" aria-label="Décompte des votes">
       <div v-for="opt in decision.options" :key="opt.id" :class="[opt.bgClass, 'border rounded-lg p-2', opt.borderClass]">
-        <div class="text-xl font-black" :style="{ color: opt.color }">
+        <div class="text-xl font-black" :style="{ color: effectiveColor(opt) }">
           {{ decision.votes[opt.id].toLocaleString('fr-FR') }}
         </div>
         <div class="text-xs text-slate-500">{{ opt.label }}</div>
@@ -110,6 +110,16 @@
 <script setup lang="ts">
 import type { Decision, VotePcts, VoteOptionId } from '@/types/index'
 import EbCard from '@/components/layout/EbCard.vue'
+import { useContrastMode } from '@/composables/useContrastMode'
+
+const { highContrast } = useContrastMode()
+
+// En mode fort contraste, #475569 (abst) n'est pas lisible sur fond sombre :
+// on le remplace par #cbd5e1 (slate-300 = ratio ~9.6:1 sur #111827)
+function effectiveColor(opt: { id: string; color: string }): string {
+  if (highContrast.value && opt.id === 'abst') return '#cbd5e1'
+  return opt.color
+}
 
 const props = defineProps<{
   decision:     Decision
@@ -129,7 +139,7 @@ function voteEmoji(id: string): string {
 }
 
 function labelForVote(id: VoteOptionId): string {
-  return props.decision.options.find((o) => o.id === id)?.label ?? id
+  return props.decision.options.find((o: { id: string }) => o.id === id)?.label ?? id
 }
 
 function voteBarGradient(id: string): string {
