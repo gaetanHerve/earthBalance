@@ -25,6 +25,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/CorrelationsView.vue'),
     meta: { title: 'Corrélations — EarthBalance' },
   },
+  {
+    path: '/demo',
+    name: 'demo',
+    component: () => import('@/views/DemoView.vue'),
+    meta: { title: 'Simulateur — EarthBalance' },
+  },
 ]
 
 const router = createRouter({
