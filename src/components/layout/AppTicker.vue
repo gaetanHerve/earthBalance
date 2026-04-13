@@ -1,10 +1,23 @@
 <template>
-  <div
-    class="ticker-wrap overflow-hidden bg-eb-deep border-t border-b border-eb-border py-1"
-    aria-label="Indicateurs planétaires en temps réel"
-    role="marquee"
-  >
-    <div class="ticker-inner flex animate-ticker whitespace-nowrap gap-12 px-4 text-xs text-slate-500">
+  <div class="ticker-wrap overflow-hidden bg-eb-deep border-t border-b border-eb-border py-1 flex items-center gap-2 pr-2">
+
+    <!-- Bouton pause/lecture (RGAA 13.8) -->
+    <button
+      class="shrink-0 w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-200 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none ml-2"
+      :aria-pressed="paused"
+      :aria-label="paused ? 'Reprendre le défilement des indicateurs' : 'Mettre en pause le défilement des indicateurs'"
+      @click="paused = !paused"
+    >
+      <i :class="['fa', paused ? 'fa-play' : 'fa-pause', 'text-xs']" aria-hidden="true"></i>
+    </button>
+
+    <div
+      class="ticker-inner flex whitespace-nowrap gap-12 px-4 text-xs text-slate-500 flex-1 overflow-hidden"
+      :class="{ 'ticker-paused': paused }"
+      aria-label="Indicateurs planétaires en temps réel"
+      role="marquee"
+      :aria-live="paused ? 'polite' : 'off'"
+    >
       <template v-for="pass in 2" :key="pass">
         <span
           v-for="(item, i) in items"
@@ -21,9 +34,21 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/dashboard.store'
 
 const store = useDashboardStore()
 const { tickerItems: items } = storeToRefs(store)
+
+const paused = ref(false)
 </script>
+
+<style scoped>
+.ticker-inner {
+  animation: ticker 30s linear infinite;
+}
+.ticker-inner.ticker-paused {
+  animation-play-state: paused;
+}
+</style>

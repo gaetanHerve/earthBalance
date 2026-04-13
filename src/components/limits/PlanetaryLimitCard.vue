@@ -38,7 +38,10 @@
     <div class="mb-3">
       <div class="flex justify-between text-xs mb-1">
         <span class="text-slate-500">Ratio seuil</span>
-        <span class="font-bold" :style="{ color: limit.color }">×{{ limit.ratio.toFixed(2) }}</span>
+        <span class="font-bold flex items-center gap-1" :style="{ color: limit.color }">
+          <i :class="['fa', statusIcon]" aria-hidden="true"></i>
+          ×{{ limit.ratio.toFixed(2) }}
+        </span>
       </div>
       <div
         class="bg-eb-border rounded-full h-2 overflow-hidden"
@@ -101,9 +104,15 @@ const STATUS_LABEL: Record<LimitStatus, string> = {
   zone_incertitude: 'Zone risque',
   safe:             'Sûr',
 }
+const STATUS_ICON: Record<LimitStatus, string> = {
+  depasse:          'fa-triangle-exclamation',
+  zone_incertitude: 'fa-exclamation',
+  safe:             'fa-check',
+}
 
 const statusClass  = computed(() => STATUS_CLASS[props.limit.status])
 const statusLabel  = computed(() => STATUS_LABEL[props.limit.status])
+const statusIcon   = computed(() => STATUS_ICON[props.limit.status as LimitStatus])
 
 function hexToRgba(hex: string, alpha: number): string {
   const r = parseInt(hex.slice(1, 3), 16)
