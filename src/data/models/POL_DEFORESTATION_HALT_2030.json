@@ -1,0 +1,190 @@
+{
+  "politique_id": "POL_DEFORESTATION_HALT_2030",
+  "decision_id": null,
+  "label": "Arrêt de la déforestation tropicale et restauration des forêts d'ici 2030",
+  "version": "1.0.0",
+  "generated_at": "2026-04-13",
+
+  "conditions": {
+    "scope": "global",
+    "sectors": ["land-use", "forestry", "agriculture"],
+    "implementation_year": 2025,
+    "full_effect_year": 2035,
+    "prerequisites": []
+  },
+
+  "emissions_impact": {
+    "type": "reduction",
+    "unit": "GtCO2eq_yr",
+    "median": 3.0,
+    "range": { "min": 1.5, "max": 5.0 },
+    "ramp_start_year": 2025,
+    "ramp_end_year": 2035,
+    "curve": "sigmoid",
+    "sources": [
+      {
+        "report": "AR6 SYR",
+        "section": "Section 4.5.4",
+        "figure_id": "Figure 4.4",
+        "dataset_id": null,
+        "excerpt": "La conservation des forêts représente la part la plus importante du potentiel d'atténuation économique dans le secteur AFOLU. La réduction de la déforestation et la restauration des écosystèmes forestiers constituent l'option à plus haut potentiel total d'atténuation parmi les mesures terrestres."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 7.4.2",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "La déforestation tropicale émet environ 4.0 GtCO2eq/an [2.5-6.0] (période 2010-2019). L'arrêt complet de la déforestation brute aurait un potentiel d'atténuation de 3.0 GtCO2eq/an [1.5-5.8] après déduction du reboisement naturel partiel qui se produirait de toute façon."
+      },
+      {
+        "report": "AR6 WGI",
+        "section": "Chapter 5.2.3",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "Les forêts tropicales constituent le plus grand puits de carbone terrestre (~2.7 GtC/an net en 2010-2019). La protection des forêts primaires est irremplaçable : leur destruction libère des stocks de carbone accumulés sur des siècles, non récupérables à l'échelle humaine."
+      }
+    ]
+  },
+
+  "temperature_impact": {
+    "delta_C_median": -0.22,
+    "range": { "min": -0.12, "max": -0.35 },
+    "horizon_year": 2100,
+    "dependencies": ["POL_DIET_SHIFT_PLANTBASED"],
+    "sources": [
+      {
+        "report": "AR6 WGI",
+        "section": "Chapter 5.5.2",
+        "figure_id": "Figure SPM.8",
+        "dataset_id": "WGI_SPM_Fig8",
+        "excerpt": "Sensibilité climatique transitoire (TCRE) : chaque réduction de 1000 GtCO2 cumulée réduit le réchauffement d'environ 0.45°C [0.27–0.63°C]. L'arrêt de la déforestation sur 75 ans (2025-2100) évite ~225 GtCO2 cumulées à taux constant."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 7.6.2",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "L'effet plein de la politique d'arrêt de déforestation sur le climat nécessite une substitution des causes sous-jacentes (expansion agricole) — dépendance forte à la politique alimentaire. Sans réforme du système alimentaire, risque de déplacement des émissions vers d'autres régions."
+      }
+    ]
+  },
+
+  "planetary_limits": [
+    {
+      "limit_id": "changement-climatique",
+      "delta_pct_median": -5.5,
+      "range": { "min": -3.0, "max": -8.5 },
+      "direction": "improve",
+      "horizon_year": 2100,
+      "note": "Réduction majeure des émissions AFOLU (Agriculture, Foresterie et Autres Utilisations des Terres) qui représentent ~22% des émissions mondiales de GES"
+    },
+    {
+      "limit_id": "biodiversite",
+      "delta_pct_median": -12.0,
+      "range": { "min": -7.0, "max": -18.0 },
+      "direction": "improve",
+      "horizon_year": 2100,
+      "note": "Effet transformateur : les forêts tropicales abritent >50% des espèces terrestres mondiales. Arrêt de la déforestation = arrêt de la principale cause de perte de biodiversité terrestre (IPBES 2019, AR6 WGII Ch.2)"
+    },
+    {
+      "limit_id": "usage-terres",
+      "delta_pct_median": -8.0,
+      "range": { "min": -4.0, "max": -13.0 },
+      "direction": "improve",
+      "horizon_year": 2040,
+      "note": "Arrêt de la conversion des forêts en terres agricoles (~10 Mha/an actuellement). Restauration d'écosystèmes dégradés augmente la surface forestière fonctionnelle"
+    },
+    {
+      "limit_id": "eau-douce",
+      "delta_pct_median": -5.0,
+      "range": { "min": -2.5, "max": -8.0 },
+      "direction": "improve",
+      "horizon_year": 2050,
+      "note": "Les forêts tropicales régulent le cycle hydrologique régional (précipitations, infiltration, rétention). La déforestation en Amazonie a déjà perturbé les régimes de pluie dans le bassin — restauration partielle attendue"
+    },
+    {
+      "limit_id": "cycle-azote",
+      "delta_pct_median": -3.5,
+      "range": { "min": -1.5, "max": -6.0 },
+      "direction": "improve",
+      "horizon_year": 2050,
+      "note": "La déforestation pour l'agriculture entraîne une surcharge azotée (engrais, lisiers). Réduction de l'expansion agricole ralentit l'eutrophisation des bassins versants"
+    }
+  ],
+
+  "societal_indicators": [
+    {
+      "indicator_id": "foodSecurity",
+      "direction": "improve",
+      "magnitude": "medium",
+      "note": "Protection des services écosystémiques forestiers (pollinisation, régulation eau, stabilité climatique régionale) essentiels pour l'agriculture tropicale. Risque de tension à court terme si la pression sur les terres agricoles n'est pas gérée via des politiques complémentaires (rendements, régimes alimentaires)"
+    },
+    {
+      "indicator_id": "globalHealth",
+      "direction": "improve",
+      "magnitude": "medium",
+      "note": "Réduction du risque pandémique zoonotique (destruction des habitats = contact accru faune/humains, vecteur d'émergence de nouveaux pathogènes). Amélioration de la qualité de l'air local par réduction des incendies agricoles"
+    },
+    {
+      "indicator_id": "inequality",
+      "direction": "worsen",
+      "magnitude": "medium",
+      "note": "Risque élevé d'injustice si la politique est imposée sans compensation aux communautés dépendantes des forêts (petits agriculteurs, populations autochtones, économies rurales tropicales). REDD+ et mécanismes de paiements pour services écosystémiques sont des prérequis de justice"
+    },
+    {
+      "indicator_id": "waterAccess",
+      "direction": "improve",
+      "magnitude": "medium",
+      "note": "Les forêts régulent les aquifères et la disponibilité en eau douce dans les régions tropicales — protection directe des sources d'eau pour des centaines de millions de personnes"
+    }
+  ],
+
+  "interactions": [
+    {
+      "politique_id": "POL_DIET_SHIFT_PLANTBASED",
+      "label": "Transition vers des régimes alimentaires à base végétale",
+      "type": "synergy",
+      "factor": 1.5,
+      "note": "La principale cause de déforestation tropicale est l'élevage extensif (soja/maïs pour alimentation animale + pâturage). Réduire la demande en protéines animales est une condition structurelle pour rendre l'arrêt de la déforestation tenable sur le long terme"
+    },
+    {
+      "politique_id": "POL_METHANE_REDUCTION_2030",
+      "label": "Réduction de 34% des émissions mondiales de méthane d'ici 2030",
+      "type": "synergy",
+      "factor": 1.15,
+      "note": "Les émissions CH4 de l'élevage (fermentation entérique) et les incendies agricoles en zones déforestées sont des sources majeures — convergence des objectifs"
+    },
+    {
+      "politique_id": "POL_COAL_EXIT_2030_DEV",
+      "label": "Sortie du charbon pour la production électrique dans les pays développés",
+      "type": "synergy",
+      "factor": 1.05,
+      "note": "Effet indirect : limitation du changement climatique réduit la fréquence des méga-feux qui détruisent les forêts primaires intactes — synergie climatique modérée"
+    },
+    {
+      "politique_id": "POL_CARBON_TAX_150",
+      "label": "Taxe carbone mondiale à 150$/tonne",
+      "type": "synergy",
+      "factor": 1.3,
+      "note": "Un prix carbone élevé rend économiquement rentables les paiements pour services de séquestration forestière (REDD+, marchés volontaires carbone) et réduit la compétitivité relative des cultures d'expansion"
+    }
+  ],
+
+  "projections": {
+    "co2_delta_GtCO2_yr": {
+      "years":       [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.0, -1.0, -2.5, -3.0, -3.0, -3.0, -3.0],
+      "optimistic":  [0.0, -1.5, -4.0, -5.0, -5.0, -5.0, -5.0],
+      "pessimistic": [0.0, -0.5, -1.5, -1.5, -1.5, -1.5, -1.5]
+    },
+    "temp_delta_C": {
+      "years":       [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.00, -0.01, -0.04, -0.07, -0.12, -0.18, -0.22],
+      "optimistic":  [0.00, -0.01, -0.06, -0.10, -0.18, -0.28, -0.35],
+      "pessimistic": [0.00, -0.00, -0.02, -0.04, -0.07, -0.10, -0.12]
+    }
+  },
+
+  "uncertainty_level": "high",
+  "methodological_note": "Potentiel d'atténuation estimé à partir de : (a) émissions brutes de déforestation tropicale 2010-2019 : ~4.0 GtCO2eq/an (AR6 WGIII Ch.7), (b) déduction du puits net résiduel et de la déforestation incompressible (subsistance) pour obtenir la réduction nette adressable : ~3.0 GtCO2eq/an. La courbe sigmoïde reflète la difficulté institutionnelle et politique : les premières années se heurtent à des intérêts économiques forts, puis l'effet s'accélère avec les mécanismes de surveillance satellitaire et les pénalités commerciales. Le delta température applique la relation TCRE (AR6 WGI Ch.5) sur les cumuls évités (3 GtCO2/an × 75 ans ≈ 225 GtCO2 → ~0.1°C) plus l'effet des puits naturels restaurés à long terme. Incertitude haute car : (1) co-occurrence avec changements climatiques affectant les forêts elles-mêmes, (2) risque de déplacement des émissions (leakage), (3) difficulté de gouvernance dans les pays tropicaux à institutions faibles."
+}

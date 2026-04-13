@@ -1,0 +1,190 @@
+{
+  "politique_id": "POL_TRANSPORT_ELECTRIFICATION",
+  "decision_id": null,
+  "label": "Électrification des transports terrestres et développement des mobilités durables",
+  "version": "1.0.0",
+  "generated_at": "2026-04-13",
+
+  "conditions": {
+    "scope": "global",
+    "sectors": ["transport", "energy"],
+    "implementation_year": 2025,
+    "full_effect_year": 2050,
+    "prerequisites": ["POL_REN_SCALE_2030"]
+  },
+
+  "emissions_impact": {
+    "type": "reduction",
+    "unit": "GtCO2eq_yr",
+    "median": 3.5,
+    "range": { "min": 2.5, "max": 4.5 },
+    "ramp_start_year": 2025,
+    "ramp_end_year": 2050,
+    "curve": "sigmoid",
+    "sources": [
+      {
+        "report": "AR6 SYR",
+        "section": "Section 4.5.3",
+        "figure_id": "Figure 4.4",
+        "dataset_id": null,
+        "excerpt": "Les véhicules électriques offrent le plus grand potentiel de décarbonation parmi les modes de transport terrestre. Le potentiel d'atténuation combiné de l'électrification du transport + report modal (transports en commun, vélo) atteint 2-5 GtCO2eq/an à l'horizon 2050."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 10.4.2",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "Le secteur des transports émet ~8 GtCO2/an (2019), dont ~6 GtCO2/an pour les transports terrestres. L'électrification totale du parc automobile mondial, combinée à un réseau électrique décarboné, réduirait les émissions du transport routier de 65-85% d'ici 2050."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 10.6.1",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "La transition vers les VE est contingente à la décarbonation du mix électrique — dans un réseau à forte part de charbon, un VE peut émettre plus qu'un hybride thermique. Les transports en commun électrifiés (train, bus, métro) offrent les meilleurs ratios d'émissions par passager-kilomètre."
+      }
+    ]
+  },
+
+  "temperature_impact": {
+    "delta_C_median": -0.16,
+    "range": { "min": -0.10, "max": -0.22 },
+    "horizon_year": 2100,
+    "dependencies": ["POL_REN_SCALE_2030"],
+    "sources": [
+      {
+        "report": "AR6 WGI",
+        "section": "Chapter 5.5.2",
+        "figure_id": "Figure SPM.8",
+        "dataset_id": "WGI_SPM_Fig8",
+        "excerpt": "Sensibilité climatique transitoire (TCRE) : 0.45°C [0.27–0.63°C] par 1000 GtCO2 cumulées évitées. Une réduction de 3.5 GtCO2/an sur 75 ans avec montée progressive (intégrale ≈ 220 GtCO2) → ~0.10°C. Co-bénéfice aérosol lié à l'élimination des particules d'échappement ajoute ~0.05-0.06°C."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 10.8",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "Dans les scénarios C1-C2 (1.5°C–2°C), la décarbonation des transports terrestres contribue à hauteur de 12-18% de la réduction totale des émissions entre 2020 et 2050. L'effet maximal est contingent à la disponibilité d'une électricité décarbonée."
+      }
+    ]
+  },
+
+  "planetary_limits": [
+    {
+      "limit_id": "changement-climatique",
+      "delta_pct_median": -4.5,
+      "range": { "min": -3.0, "max": -6.5 },
+      "direction": "improve",
+      "horizon_year": 2100,
+      "note": "Les transports terrestres représentent ~15% des émissions mondiales de GES. Décarbonation complète via électrification + mix ENR apporte une contribution significative à la trajectoire 1.5-2°C"
+    },
+    {
+      "limit_id": "aerosols-atmospheriques",
+      "delta_pct_median": -9.0,
+      "range": { "min": -5.0, "max": -14.0 },
+      "direction": "improve",
+      "horizon_year": 2035,
+      "note": "Élimination des émissions directes de particules fines (PM2.5, PM10), NOx et suies des moteurs thermiques — le transport routier est la 1ère source de pollution atmosphérique urbaine dans la plupart des pays. Bénéfice rapide car les polluants ont une durée de vie courte"
+    },
+    {
+      "limit_id": "acidification-oceans",
+      "delta_pct_median": -2.0,
+      "range": { "min": -1.0, "max": -3.5 },
+      "direction": "improve",
+      "horizon_year": 2100,
+      "note": "Réduction des émissions de CO2 du transport, couplée à une moindre concentration atmosphérique, ralentit l'absorption de CO2 par les océans et donc l'acidification"
+    },
+    {
+      "limit_id": "usage-terres",
+      "delta_pct_median": 1.5,
+      "range": { "min": 0.5, "max": 3.5 },
+      "direction": "worsen",
+      "horizon_year": 2040,
+      "note": "Extraction minière pour batteries (lithium, cobalt, nickel) et infrastructure de recharge peuvent affecter les usages des terres. Impact modéré à l'échelle globale mais localement significatif dans les régions minières"
+    },
+    {
+      "limit_id": "biodiversite",
+      "delta_pct_median": -2.0,
+      "range": { "min": -0.5, "max": -4.0 },
+      "direction": "improve",
+      "horizon_year": 2075,
+      "note": "Réduction de la pollution atmosphérique en zone urbaine et périurbaine bénéfique pour les écosystèmes. Contrepartie : impacts locaux de l'extraction de minéraux critiques dans les zones sensibles (lithium — Atacama, cobalt — DRC)"
+    }
+  ],
+
+  "societal_indicators": [
+    {
+      "indicator_id": "globalHealth",
+      "direction": "improve",
+      "magnitude": "high",
+      "note": "Co-bénéfice santé massif et rapide : la pollution atmosphérique du transport routier cause ~4 millions de décès prématurés/an (OMS 2019). L'électrification élimine les émissions directes à la source — effet en 2-3 ans dans les zones urbaines les plus polluées. C'est l'un des arguments les plus convaincants pour l'adoption rapide des VE"
+    },
+    {
+      "indicator_id": "inequality",
+      "direction": "worsen",
+      "magnitude": "medium",
+      "note": "Coût d'achat des VE encore supérieur aux véhicules thermiques dans les pays à revenus faibles. Risque de 'green divide' : les ménages aisés bénéficient de la transition, les autres restent sur des véhicules polluants anciens. Extraction de minéraux dans des pays à gouvernance faible (cobalt en RDC) avec risques sociaux documentés"
+    },
+    {
+      "indicator_id": "geopoliticalConflicts",
+      "direction": "improve",
+      "magnitude": "medium",
+      "note": "Réduction de la dépendance structurelle aux hydrocarbures importés — amélioration de la sécurité énergétique. Contrepartie : création de nouvelles dépendances aux minéraux critiques (lithium, cobalt, terres rares) concentrés dans quelques pays"
+    },
+    {
+      "indicator_id": "foodSecurity",
+      "direction": "improve",
+      "magnitude": "low",
+      "note": "Amélioration indirecte via réduction de la pollution atmosphérique affectant les rendements agricoles (ozone troposphérique réduisant la photosynthèse). Effet limité mais mesurable dans les zones à fort trafic routier"
+    }
+  ],
+
+  "interactions": [
+    {
+      "politique_id": "POL_REN_SCALE_2030",
+      "label": "Déploiement massif des ENR d'ici 2030",
+      "type": "synergy",
+      "factor": 1.6,
+      "note": "CONDITION STRUCTURELLE : un VE chargé sur un réseau décarboné émet ~5× moins de CO2 sur le cycle de vie qu'un véhicule thermique ; chargé sur un réseau charbonnier, il peut émettre PLUS. La décarbonation des transports ne peut atteindre son plein potentiel qu'avec un mix électrique déjà largement renouvelable — interdépendance forte"
+    },
+    {
+      "politique_id": "POL_COAL_EXIT_2030_DEV",
+      "label": "Sortie du charbon pour la production électrique dans les pays développés",
+      "type": "synergy",
+      "factor": 1.25,
+      "note": "La sortie du charbon améliore directement le bilan carbone des VE dans les pays développés. Les deux politiques agissent en tandem sur la chaîne électricité-transport"
+    },
+    {
+      "politique_id": "POL_CARBON_TAX_150",
+      "label": "Taxe carbone mondiale à 150$/tonne",
+      "type": "synergy",
+      "factor": 1.3,
+      "note": "Un prix carbone élevé accélère la compétitivité économique des VE (coût d'usage inférieur) et des transports en commun. Renchérit le carburant fossile, signal prix puissant pour le report modal vers les mobilités douces"
+    },
+    {
+      "politique_id": "POL_METHANE_REDUCTION_2030",
+      "label": "Réduction de 34% des émissions mondiales de méthane d'ici 2030",
+      "type": "synergy",
+      "factor": 1.05,
+      "note": "Synergie marginale : réduction des fuites méthane dans les gazoducs d'alimentation des véhicules GNV. Effet faible car la politique cible prioritairement l'électrification, pas le GNV"
+    }
+  ],
+
+  "projections": {
+    "co2_delta_GtCO2_yr": {
+      "years":       [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.0, -0.5, -1.2, -2.0, -3.5, -3.5, -3.5],
+      "optimistic":  [0.0, -0.8, -1.8, -3.0, -4.5, -4.5, -4.5],
+      "pessimistic": [0.0, -0.2, -0.6, -1.0, -2.5, -2.5, -2.5]
+    },
+    "temp_delta_C": {
+      "years":       [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.00, -0.00, -0.01, -0.03, -0.08, -0.13, -0.16],
+      "optimistic":  [0.00, -0.01, -0.02, -0.05, -0.12, -0.19, -0.22],
+      "pessimistic": [0.00, -0.00, -0.01, -0.02, -0.05, -0.09, -0.12]
+    }
+  },
+
+  "uncertainty_level": "medium",
+  "methodological_note": "Réduction d'émissions estimée à partir de : (a) émissions transport terrestre mondial 2019 : ~6 GtCO2/an (AR6 WGIII Ch.10), (b) potentiel d'électrification totale du parc avec mix ENR à 70% : réduction de 65-75% → 3.9-4.5 GtCO2/an, (c) prise en compte des émissions du cycle de vie des batteries et de la production électrique résiduelle → valeur nette médiane 3.5 GtCO2/an. La courbe sigmoïde reflète le renouvellement de flotte : durée de vie moyenne d'un véhicule ~15 ans implique une transition lente jusqu'en 2035, puis accélération avec les nouvelles immatriculations 100% électriques obligatoires. Le prérequis ENR est critique : la valeur médiane suppose un mix électrique mondial à 70% renouvelable en 2050 (trajectoire 1.5°C, AR6 WGIII Ch.6). L'incertitude principale porte sur : (1) rythme de décarbonation du réseau électrique dans les pays émergents, (2) disponibilité des minéraux critiques pour les batteries à grande échelle, (3) adoption dans les segments véhicules lourds (camions, bus) où l'électrification est plus complexe."
+}

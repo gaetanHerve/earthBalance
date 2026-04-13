@@ -1,0 +1,182 @@
+{
+  "politique_id": "POL_METHANE_REDUCTION_2030",
+  "decision_id": null,
+  "label": "Réduction de 34% des émissions mondiales de méthane d'ici 2030",
+  "version": "1.0.0",
+  "generated_at": "2026-04-13",
+
+  "conditions": {
+    "scope": "global",
+    "sectors": ["energy", "agriculture", "waste"],
+    "implementation_year": 2025,
+    "full_effect_year": 2030,
+    "prerequisites": []
+  },
+
+  "emissions_impact": {
+    "type": "reduction",
+    "unit": "GtCO2eq_yr",
+    "median": 3.5,
+    "range": { "min": 2.5, "max": 4.5 },
+    "ramp_start_year": 2025,
+    "ramp_end_year": 2030,
+    "curve": "linear",
+    "sources": [
+      {
+        "report": "AR6 SYR",
+        "section": "Section 4.1",
+        "figure_id": "Figure SPM.7",
+        "dataset_id": null,
+        "excerpt": "Des réductions fortes, rapides et soutenues des émissions de CH4 limiteraient immédiatement le réchauffement et amélioreraient la qualité de l'air. Une réduction de 34% en dessous des niveaux de 2019 d'ici 2030 est cohérente avec les trajectoires à 1,5°C."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 6.4.2",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "Les émissions mondiales de CH4 étaient d'environ 370 MtCH4/an en 2019. Une réduction de 34% représente ~126 MtCH4/an, soit ~3,7 GtCO2eq/an au GWP100 (29,8)."
+      },
+      {
+        "report": "AR6 WGIII",
+        "section": "Chapter 6.7.4",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "La réduction du méthane dans les secteurs de l'énergie fossile, de l'agriculture et des déchets offre un potentiel d'atténuation élevé à faible coût (<20$/tCO2eq). Fuites méthane : oil & gas (~35%), charbon (~25%), agriculture/élevage (~30%), déchets (~10%)."
+      }
+    ]
+  },
+
+  "temperature_impact": {
+    "delta_C_median": -0.18,
+    "range": { "min": -0.13, "max": -0.25 },
+    "horizon_year": 2100,
+    "dependencies": [],
+    "sources": [
+      {
+        "report": "AR6 WGI",
+        "section": "Chapter 6.6.3",
+        "figure_id": "Figure SPM.8",
+        "dataset_id": "WGI_SPM_Fig8",
+        "excerpt": "Des réductions immédiates et soutenues du CH4 pourraient limiter le réchauffement de ~0,2°C à court terme. Durée de vie atmosphérique du CH4 : ~12 ans — effet bénéfique principalement concentré entre 2030 et 2060."
+      },
+      {
+        "report": "AR6 WGI",
+        "section": "Chapter 5.5.2",
+        "figure_id": null,
+        "dataset_id": null,
+        "excerpt": "Le forçage radiatif du CH4 est environ 80× celui du CO2 sur 20 ans (GWP20). La réduction du CH4 produit un bénéfice climatique immédiat et net sur les températures de pointe."
+      }
+    ]
+  },
+
+  "planetary_limits": [
+    {
+      "limit_id": "changement-climatique",
+      "delta_pct_median": -6.0,
+      "range": { "min": -4.0, "max": -8.5 },
+      "direction": "improve",
+      "horizon_year": 2100,
+      "note": "Effet fort via GWP élevé du CH4 (GWP100 = 29.8, GWP20 = 80). Réduction rapide grâce à la courte durée de vie atmosphérique (~12 ans)"
+    },
+    {
+      "limit_id": "aerosols-atmospheriques",
+      "delta_pct_median": -4.5,
+      "range": { "min": -2.5, "max": -7.0 },
+      "direction": "improve",
+      "horizon_year": 2035,
+      "note": "Réduction des émissions associées de NOx, VOC et PM2.5 lors de la fermeture des fuites méthane charbon/pétrole/gaz — co-bénéfices qualité de l'air importants"
+    },
+    {
+      "limit_id": "biodiversite",
+      "delta_pct_median": -1.5,
+      "range": { "min": -0.5, "max": -2.5 },
+      "direction": "improve",
+      "horizon_year": 2100,
+      "note": "Effet indirect via limitation du changement climatique — réduction de la pression sur les écosystèmes sensibles aux températures extrêmes"
+    },
+    {
+      "limit_id": "cycle-azote",
+      "delta_pct_median": -2.0,
+      "range": { "min": -1.0, "max": -3.5 },
+      "direction": "improve",
+      "horizon_year": 2040,
+      "note": "Réduction partielle liée à la voie agriculture/élevage : moins de fermentation entérique et de lisiers implique une réduction corrélée des émissions N2O et NH3"
+    }
+  ],
+
+  "societal_indicators": [
+    {
+      "indicator_id": "globalHealth",
+      "direction": "improve",
+      "magnitude": "high",
+      "note": "Co-bénéfice majeur : réduction des précurseurs d'ozone troposphérique (NOx, VOC) associés aux fuites méthane — l'ozone troposphérique est responsable d'environ 1 million de décès prématurés par an (AR6 WGII Chapter 7)"
+    },
+    {
+      "indicator_id": "foodSecurity",
+      "direction": "improve",
+      "magnitude": "medium",
+      "note": "Réduction du méthane agricole (fermentation entérique, rizicultures) améliore l'efficacité de production animale. Limitation du changement climatique protège les rendements agricoles des événements extrêmes"
+    },
+    {
+      "indicator_id": "inequality",
+      "direction": "worsen",
+      "magnitude": "low",
+      "note": "Coût de transition pour les secteurs pétrolier, gazier et charbonnier. Impact potentiel sur les régions extractives. Moindre que pour la sortie du charbon car les mesures sont surtout opérationnelles (détection fuites, réfrigérants HFCs)"
+    },
+    {
+      "indicator_id": "geopoliticalConflicts",
+      "direction": "improve",
+      "magnitude": "low",
+      "note": "Réduction des fuites de l'infrastructure fossile améliore marginalement la sécurité énergétique. Pas d'effet structurant majeur sur les conflits géopolitiques à court terme"
+    }
+  ],
+
+  "interactions": [
+    {
+      "politique_id": "POL_COAL_EXIT_2030_DEV",
+      "label": "Sortie du charbon pour la production électrique dans les pays développés",
+      "type": "synergy",
+      "factor": 1.15,
+      "note": "La fermeture des mines de charbon réduit directement les fuites méthane associées à l'extraction (~25% du CH4 anthropique mondial) — les deux politiques se renforcent mutuellement"
+    },
+    {
+      "politique_id": "POL_DEFORESTATION_HALT_2030",
+      "label": "Arrêt de la déforestation tropicale et restauration des écosystèmes",
+      "type": "synergy",
+      "factor": 1.1,
+      "note": "Réduction de la déforestation liée à l'élevage extensif réduit aussi la fermentation entérique (composante majeure des émissions CH4 agricoles)"
+    },
+    {
+      "politique_id": "POL_DIET_SHIFT_PLANTBASED",
+      "label": "Transition vers des régimes alimentaires à base végétale",
+      "type": "synergy",
+      "factor": 1.25,
+      "note": "La réduction du cheptel bovin diminue directement la fermentation entérique (~30% des émissions CH4 anthropiques). Les deux politiques ciblent le même levier — complémentarité forte"
+    },
+    {
+      "politique_id": "POL_CARBON_TAX_150",
+      "label": "Taxe carbone mondiale à 150$/tonne",
+      "type": "synergy",
+      "factor": 1.2,
+      "note": "Une taxe carbone couvrant le CH4 (via GWP) accélère la fermeture des infrastructures les plus fugitives et internalise le coût des fuites non déclarées"
+    }
+  ],
+
+  "projections": {
+    "co2_delta_GtCO2_yr": {
+      "years":       [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.0, -3.0, -3.5, -3.5, -3.5, -3.5, -3.5],
+      "optimistic":  [0.0, -4.0, -4.5, -4.5, -4.5, -4.5, -4.5],
+      "pessimistic": [0.0, -2.0, -2.5, -2.5, -2.5, -2.5, -2.5]
+    },
+    "temp_delta_C": {
+      "years":       [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.00, -0.02, -0.06, -0.10, -0.15, -0.17, -0.18],
+      "optimistic":  [0.00, -0.03, -0.08, -0.13, -0.20, -0.23, -0.25],
+      "pessimistic": [0.00, -0.01, -0.04, -0.07, -0.10, -0.12, -0.13]
+    }
+  },
+
+  "uncertainty_level": "medium",
+  "methodological_note": "Réduction d'émissions estimée à partir de : (a) émissions mondiales CH4 2019 ~370 MtCH4/an (AR6 WGIII Table 6.2), (b) objectif de réduction 34% = 126 MtCH4/an, (c) conversion GWP100 = 29.8 → 3.75 GtCO2eq/an, valeur médiane arrondie à 3.5 GtCO2eq/an. La courbe de montée est linéaire compte tenu des mesures principalement réglementaires et opérationnelles (détection de fuites, standards équipements). L'impact température suit une relation TCRE modifiée tenant compte de la durée de vie courte du CH4 (~12 ans) : le bénéfice est concentré entre 2030 et 2060, puis se stabilise. Secteurs concernés : fuites O&G (~35%), charbon (~25%), agriculture/élevage (~30%), déchets (~10%). L'incertitude principale porte sur le taux de conformité réglementaire, notamment dans les pays non-Annexe I."
+}
