@@ -1,0 +1,15 @@
+Entity,Year,Greenhouse gas emissions
+Coal,2021,970
+Coal with carbon capture (CCS),2021,294
+Concentrating solar (tower),2021,36
+Concentrating solar (trough),2021,56
+Gas,2021,439
+Gas with carbon capture (CCS),2021,134
+Hydropower,2021,117
+Nuclear,2021,5.6
+Offshore wind,2021,17
+Onshore wind,2021,11
+"Solar PV, cadmium (on-ground)",2021,16
+"Solar PV, cadmium (roof)",2021,19
+"Solar PV, silicon (on-ground)",2021,52
+"Solar PV, silicon (roof)",2021,53

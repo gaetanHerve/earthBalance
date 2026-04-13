@@ -1,0 +1,15 @@
+Entity,Year,Metal and mineral requirements
+Coal,2021,0.41
+Coal with carbon capture (CCS),2021,0.62
+Concentrating solar (tower),2021,0.49
+Concentrating solar (trough),2021,0.82
+Gas,2021,0.19
+Gas with carbon capture (CCS),2021,0.25
+Hydropower,2021,0.48
+Nuclear,2021,0.34
+Offshore wind,2021,1.14
+Onshore wind,2021,0.59
+"Solar PV, cadmium (on-ground)",2021,1.94
+"Solar PV, cadmium (roof)",2021,3.34
+"Solar PV, silicon (on-ground)",2021,5.63
+"Solar PV, silicon (roof)",2021,9.12

@@ -1,0 +1,41 @@
+{
+  "chart": {
+    "title": "Per capita carbon dioxide emissions",
+    "subtitle": "This is measured as the global average.",
+    "citation": "Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change (2022)",
+    "originalChartUrl": "https://ourworldindata.org/explorers/ipcc-scenarios?Metric=Greenhouse+gas+emissions&Sub-metric=Carbon+dioxide+%28CO%E2%82%82%29&Rate=Per+capita&Region=Global&country=SSP1+-+Baseline~SSP2+-+Baseline~SSP3+-+Baseline~SSP4+-+Baseline~SSP5+-+Baseline",
+    "selection": [
+      "SSP1 - Baseline",
+      "SSP2 - Baseline",
+      "SSP3 - Baseline",
+      "SSP4 - Baseline",
+      "SSP5 - Baseline"
+    ]
+  },
+  "columns": {
+    "CO2 emissions per capita - Region: global": {
+      "titleShort": "CO2 emissions per capita - Region: global",
+      "titleLong": "CO2 emissions per capita - Region: global",
+      "shortUnit": "t",
+      "unit": "tonnes per person",
+      "timespan": "2005-2100",
+      "type": "Numeric",
+      "owidVariableId": 1031699,
+      "shortName": "co2_per_capita__region_global",
+      "lastUpdated": "2022-08-30",
+      "citationShort": "Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change (2022) – processed by Our World in Data",
+      "citationLong": "Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change (2022) – processed by Our World in Data. “CO2 emissions per capita - Region: global” [dataset]. Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change, “IPCC Scenarios 2.0” [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/1031699.metadata.json"
+    },
+    "1031699-annotations": {
+      "titleShort": "1031699-annotations",
+      "titleLong": "1031699-annotations",
+      "type": "SeriesAnnotation",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “1031699-annotations” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

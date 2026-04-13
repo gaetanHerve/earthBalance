@@ -1,0 +1,45 @@
+{
+  "chart": {
+    "title": "Crude oil reserves",
+    "subtitle": "Proved reserves are fuels that are known with reasonable certainty to be recoverable in the future from known reservoirs under existing economic and operating conditions.",
+    "citation": "US Energy Information Administration (EIA)",
+    "originalChartUrl": "https://ourworldindata.org/explorers/natural-resources?Resource=Oil&Metric=Reserves&Count=Total&country=USA~RUS~NOR~GBR~DEU~SWE~CHN",
+    "selection": [
+      "United States",
+      "Russia",
+      "Norway",
+      "United Kingdom",
+      "Germany",
+      "Sweden",
+      "China"
+    ]
+  },
+  "columns": {
+    "Entity": {
+      "titleShort": "Entity",
+      "titleLong": "Entity",
+      "type": "EntityName",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Entity” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "Year": {
+      "titleShort": "Year",
+      "titleLong": "Year",
+      "type": "Year",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Year” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "oil_reserves": {
+      "titleShort": "Oil reserves",
+      "titleLong": "Oil reserves",
+      "type": "Integer",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Oil reserves” [dataset]. US Energy Information Administration (EIA) [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

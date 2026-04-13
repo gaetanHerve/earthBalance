@@ -1,0 +1,45 @@
+{
+  "chart": {
+    "title": "Crude oil production",
+    "note": "This includes the production of crude oil, including lease condensate.",
+    "citation": "US Energy Information Administration (EIA)",
+    "originalChartUrl": "https://ourworldindata.org/explorers/natural-resources?Resource=Oil&Metric=Production&Count=Total&country=USA~RUS~NOR~GBR~DEU~SWE~CHN",
+    "selection": [
+      "United States",
+      "Russia",
+      "Norway",
+      "United Kingdom",
+      "Germany",
+      "Sweden",
+      "China"
+    ]
+  },
+  "columns": {
+    "Entity": {
+      "titleShort": "Entity",
+      "titleLong": "Entity",
+      "type": "EntityName",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Entity” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "Year": {
+      "titleShort": "Year",
+      "titleLong": "Year",
+      "type": "Year",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Year” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "oil_production": {
+      "titleShort": "Oil production",
+      "titleLong": "Oil production",
+      "type": "Integer",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Oil production” [dataset]. US Energy Information Administration (EIA) [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

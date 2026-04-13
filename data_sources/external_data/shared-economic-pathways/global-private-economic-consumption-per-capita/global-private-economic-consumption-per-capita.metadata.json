@@ -1,0 +1,41 @@
+{
+  "chart": {
+    "title": "Global private economic consumption per capita",
+    "subtitle": "Economic consumption measures the expenditure of private households. It is gross domestic product minus government expenditures, investments, and exports. It is measured in 2005 international-dollars. This means it is adjusted for inflation and cross-country price differences.",
+    "citation": "Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change (2022)",
+    "originalChartUrl": "https://ourworldindata.org/explorers/ipcc-scenarios?Metric=Consumption&Rate=Per+capita&Region=Global&country=SSP1+-+Baseline~SSP2+-+Baseline~SSP3+-+Baseline~SSP4+-+Baseline~SSP5+-+Baseline",
+    "selection": [
+      "SSP1 - Baseline",
+      "SSP2 - Baseline",
+      "SSP3 - Baseline",
+      "SSP4 - Baseline",
+      "SSP5 - Baseline"
+    ]
+  },
+  "columns": {
+    "Economic consumption per capita - Region: global": {
+      "titleShort": "Economic consumption per capita - Region: global",
+      "titleLong": "Economic consumption per capita - Region: global",
+      "shortUnit": "$",
+      "unit": "2005 US$",
+      "timespan": "2005-2100",
+      "type": "Currency",
+      "owidVariableId": 1031674,
+      "shortName": "econ_consumption_per_capita__region_global",
+      "lastUpdated": "2022-08-30",
+      "citationShort": "Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change (2022) – processed by Our World in Data",
+      "citationLong": "Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change (2022) – processed by Our World in Data. “Economic consumption per capita - Region: global” [dataset]. Riahi et al. (2017). The Shared Socioeconomic Pathways and their energy, land use, and greenhouse gas emissions implications: An overview, Global Environmental Change, “IPCC Scenarios 2.0” [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/1031674.metadata.json"
+    },
+    "1031674-annotations": {
+      "titleShort": "1031674-annotations",
+      "titleLong": "1031674-annotations",
+      "type": "SeriesAnnotation",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “1031674-annotations” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

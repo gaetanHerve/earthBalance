@@ -1,0 +1,37 @@
+{
+  "chart": {
+    "title": "Gini coefficient",
+    "subtitle": "The Gini coefficient measures inequality on a scale from 0 to 1. Higher values indicate higher inequality. Inequality is measured here in terms of income before taxes and benefits.",
+    "note": "Income is measured before payment of taxes and non-pension benefits, but after the payment of public and private pensions.",
+    "citation": "World Inequality Database (WID.world) (2026)",
+    "originalChartUrl": "https://ourworldindata.org/explorers/inequality?Data=World+Inequality+Database+%28Incomes+before+tax%29&Indicator=Gini+coefficient&country=CHL~BRA~ZAF~USA~FRA~CHN",
+    "selection": [
+      "Chile",
+      "Brazil",
+      "South Africa",
+      "United States",
+      "France",
+      "China"
+    ]
+  },
+  "columns": {
+    "country": {
+      "titleShort": "Country",
+      "titleLong": "Country",
+      "type": "EntityName",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Country” [dataset]. World Inequality Database (WID.world) (2026) [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "p0p100_gini_pretax": {
+      "titleShort": "Gini coefficient (before tax) (World Inequality Database)",
+      "titleLong": "Gini coefficient (before tax) (World Inequality Database)",
+      "type": "Numeric",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Gini coefficient (before tax) (World Inequality Database)” [dataset]. World Inequality Database (WID.world) (2026) [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

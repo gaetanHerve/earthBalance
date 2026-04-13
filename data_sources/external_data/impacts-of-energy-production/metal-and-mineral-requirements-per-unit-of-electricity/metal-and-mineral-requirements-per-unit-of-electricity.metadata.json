@@ -1,0 +1,47 @@
+{
+  "chart": {
+    "title": "Metal and mineral requirements per unit of electricity",
+    "subtitle": "Energy technologies require a range of mineral and metal inputs. Here they are distilled into a single figure of material requirements, which is measured in grams of Sb-equivalents per megawatt-hour of electricity produced.",
+    "note": "Requirements are based on the actual amount of material extracted from the ground, which includes all the losses throughout the extraction, refining and fabrication processes. These figures will be towards the high end of estimates which measure based on the final amount of materials required per unit of electricity.",
+    "citation": "UNECE (2021). Life Cycle Assessment of Electricity Generation Options. United Nations Economic Commission for Europe.",
+    "originalChartUrl": "https://ourworldindata.org/explorers/impacts-of-energy-sources?Impact+metric=Metal+and+mineral+use&Sub-metric=Total+material+use&country=Coal~Gas~Nuclear~Onshore+wind~Offshore+wind~Hydropower~Solar+PV%2C+silicon+%28on-ground%29~Solar+PV%2C+cadmium+%28on-ground%29",
+    "selection": [
+      "Coal",
+      "Gas",
+      "Nuclear",
+      "Onshore wind",
+      "Offshore wind",
+      "Hydropower",
+      "Solar PV, silicon (on-ground)",
+      "Solar PV, cadmium (on-ground)"
+    ]
+  },
+  "columns": {
+    "Entity": {
+      "titleShort": "Entity",
+      "titleLong": "Entity",
+      "type": "EntityName",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Entity” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "Year": {
+      "titleShort": "Year",
+      "titleLong": "Year",
+      "type": "Year",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Year” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "metal_mineral_use": {
+      "titleShort": "Metal and mineral requirements",
+      "titleLong": "Metal and mineral requirements",
+      "type": "Numeric",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Metal and mineral requirements” [dataset]. UNECE (2021). Life Cycle Assessment of Electricity Generation Options. United Nations Economic Commission for Europe. [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

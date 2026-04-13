@@ -1,0 +1,46 @@
+{
+  "chart": {
+    "title": "Freshwater eutrophication per unit of electricity",
+    "subtitle": "Freshwater eutrophication is caused by the emissions of phosphorus compounds to freshwater: either rivers or lakes. This is measured in grams of phosphorous emitted per unit of electricity production.",
+    "citation": "UNECE (2021). Life Cycle Assessment of Electricity Generation Options. United Nations Economic Commission for Europe.",
+    "originalChartUrl": "https://ourworldindata.org/explorers/impacts-of-energy-sources?Impact+metric=Freshwater+eutrophication&country=Coal~Gas~Nuclear~Onshore+wind~Offshore+wind~Hydropower~Solar+PV%2C+silicon+%28on-ground%29~Solar+PV%2C+cadmium+%28on-ground%29",
+    "selection": [
+      "Coal",
+      "Gas",
+      "Nuclear",
+      "Onshore wind",
+      "Offshore wind",
+      "Hydropower",
+      "Solar PV, silicon (on-ground)",
+      "Solar PV, cadmium (on-ground)"
+    ]
+  },
+  "columns": {
+    "Entity": {
+      "titleShort": "Entity",
+      "titleLong": "Entity",
+      "type": "EntityName",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Entity” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "Year": {
+      "titleShort": "Year",
+      "titleLong": "Year",
+      "type": "Year",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Year” [dataset].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    },
+    "freshwater_eutrophication": {
+      "titleShort": "Freshwater eutrophication",
+      "titleLong": "Freshwater eutrophication",
+      "type": "Numeric",
+      "citationShort": " – processed by Our World in Data",
+      "citationLong": " – processed by Our World in Data. “Freshwater eutrophication” [dataset]. UNECE (2021). Life Cycle Assessment of Electricity Generation Options. United Nations Economic Commission for Europe. [original data].",
+      "fullMetadata": "https://api.ourworldindata.org/v1/indicators/undefined.metadata.json"
+    }
+  },
+  "dateDownloaded": "2026-04-12",
+  "activeFilters": {}
+}

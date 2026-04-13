@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:ipcc-browser.ipcc-data.org)",
+      "WebFetch(domain:dx.doi.org)",
+      "WebFetch(domain:catalogue.ceda.ac.uk)",
+      "WebFetch(domain:data.ceda.ac.uk)",
+      "Bash(mkdir -p \"c:/Users/VGND4542/WORKSPACE/gh_projects/earthBalance/data_sources/datasets/WGI/spm_fig8\")",
+      "Bash(mkdir -p \"c:/Users/VGND4542/WORKSPACE/gh_projects/earthBalance/data_sources/datasets/WGI/ch6_fig12\")",
+      "Bash(mkdir -p \"c:/Users/VGND4542/WORKSPACE/gh_projects/earthBalance/data_sources/datasets/WGIII\")",
+      "WebFetch(domain:doi.org)",
+      "Bash(mkdir -p \"c:/Users/VGND4542/WORKSPACE/gh_projects/earthBalance/data_sources/datasets/WGI/spm_fig1\")",
+      "Bash(mkdir -p \"c:/Users/VGND4542/WORKSPACE/gh_projects/earthBalance/data_sources/datasets/WGI/spm_fig4\")",
+      "Bash(mkdir -p \"c:/Users/VGND4542/WORKSPACE/gh_projects/earthBalance/data_sources/datasets/WGI/spm_fig9\")",
+      "Bash(curl -sf __TRACKED_VAR__/SPM1_1-2000_recon.csv -o __TRACKED_VAR__/spm_fig1/SPM1_1-2000_recon.csv)",
+      "Bash(curl -sf __TRACKED_VAR__/SPM1_1850-2020_obs.csv -o __TRACKED_VAR__/spm_fig1/SPM1_1850-2020_obs.csv)",
+      "Bash(node -e \"require\\('pdf-parse'\\)\")",
+      "Bash(npm install:*)",
+      "Bash(node -e ':*)"
+    ]
+  }
+}

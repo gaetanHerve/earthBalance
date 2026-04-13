@@ -1,0 +1,13 @@
+Entity,Year,Total land use
+Coal,2021,14.87955245
+Coal with carbon capture (CCS),2021,21.05666248
+Concentrating solar (tower),2021,19.90502557
+Concentrating solar (trough),2021,18.30369699
+Gas,2021,1.03878475
+Gas with carbon capture (CCS),2021,1.267328923
+Hydropower,2021,33.38814344
+Nuclear,2021,0.329269362
+"Solar PV, cadmium (on-ground)",2021,12.64669492
+"Solar PV, cadmium (roof)",2021,1.166272627
+"Solar PV, silicon (on-ground)",2021,19.22501836
+"Solar PV, silicon (roof)",2021,3.090883422

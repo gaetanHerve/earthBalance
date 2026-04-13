@@ -1,0 +1,15 @@
+Entity,Year,Water use
+Coal,2021,120
+Coal with carbon capture (CCS),2021,214
+Concentrating solar (tower),2021,14
+Concentrating solar (trough),2021,20
+Gas,2021,45
+Gas with carbon capture (CCS),2021,79
+Hydropower,2021,13
+Nuclear,2021,132
+Offshore wind,2021,8
+Onshore wind,2021,7
+"Solar PV, cadmium (on-ground)",2021,8
+"Solar PV, cadmium (roof)",2021,10
+"Solar PV, silicon (on-ground)",2021,35
+"Solar PV, silicon (roof)",2021,38
