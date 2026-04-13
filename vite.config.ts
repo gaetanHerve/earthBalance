@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+  // Base path pour GitHub Pages : https://gaetanHerve.github.io/earthBalance/
+  base: '/earthBalance/',
   plugins: [vue()],
   resolve: {
     alias: {
