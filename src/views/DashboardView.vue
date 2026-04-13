@@ -1,8 +1,5 @@
 <template>
   <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-eb-cyan text-eb-dark px-3 py-1 rounded font-bold z-50">
-      Aller au contenu principal
-    </a>
 
     <!-- Personnalisation des widgets -->
     <WidgetCustomizer :visible="visibleWidgets" @toggle="toggleWidget" />

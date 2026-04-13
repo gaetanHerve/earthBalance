@@ -97,6 +97,24 @@ body {
   }
 }
 
+/* ─── Mode Fort Contraste RGAA (critère 3.2) ────────────────────────────── */
+/*
+ * Activé via la classe .high-contrast sur <html>.
+ * Remplace les couleurs de texte insuffisantes par des valeurs WCAG AA conformes
+ * sur les fonds sombres de l'application (#0a0f1e / #060d18).
+ *
+ * Ratios en mode fort contraste (fond #0a0f1e) :
+ *   slate-100 (#f1f5f9)  → ~15:1  ✓
+ *   slate-200 (#e2e8f0)  → ~13:1  ✓
+ *   slate-300 (#cbd5e1)  → ~10:1  ✓
+ */
+.high-contrast .text-slate-400 { color: #f1f5f9; } /* était ~3.2:1 → 15:1 */
+.high-contrast .text-slate-500 { color: #e2e8f0; } /* était ~4.1:1 → 13:1 */
+.high-contrast .text-slate-600 { color: #cbd5e1; } /* était < 3:1  → 10:1 */
+
+/* Liens de navigation inactifs */
+.high-contrast .border-eb-border.text-slate-400 { color: #f1f5f9; }
+
 /* ─── Réduction de mouvement (accessibilité) ─────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,

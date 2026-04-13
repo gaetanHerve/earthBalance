@@ -1,6 +1,5 @@
 <template>
   <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
-
     <!-- Intro + légende statuts -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>

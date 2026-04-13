@@ -12,7 +12,7 @@
     >
       <div class="flex justify-between items-center">
         <span class="text-slate-500">Dernier hash</span>
-        <span class="text-eb-green" aria-live="polite">{{ chain?.lastHash ?? '0x…' }}</span>
+        <span class="text-eb-green">{{ chain?.lastHash ?? '0x…' }}</span>
       </div>
       <div class="flex justify-between items-center">
         <span class="text-slate-500">Blocs validés</span>
@@ -26,7 +26,7 @@
       </div>
       <div class="flex justify-between items-center">
         <span class="text-slate-500">Dernier bloc</span>
-        <span class="text-slate-300" aria-live="polite">il y a {{ secondsAgo }}s</span>
+        <span class="text-slate-300">il y a {{ secondsAgo }}s</span>
       </div>
     </div>
 

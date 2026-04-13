@@ -38,6 +38,12 @@
         </ul>
       </nav>
 
+      <!-- Barre de recherche + mode fort contraste -->
+      <div class="flex items-center gap-2">
+        <AppSearch />
+        <AppContrastToggle />
+      </div>
+
       <!-- Session info + horizon temporel -->
       <div class="flex items-center gap-4 text-sm flex-wrap">
         <div class="flex items-center gap-2">
@@ -80,6 +86,8 @@
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePlanetsStore } from '@/store/planets.store'
+import AppSearch from '@/components/layout/AppSearch.vue'
+import AppContrastToggle from '@/components/layout/AppContrastToggle.vue'
 
 interface NavLink { to: string; label: string; icon: string }
 interface Horizon  { value: number; label: string }

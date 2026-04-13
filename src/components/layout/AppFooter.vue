@@ -5,47 +5,47 @@
 
         <!-- Partenaires -->
         <div>
-          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
+          <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
             Partenaires institutionnels
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span
+          </h2>
+          <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
+            <li
               v-for="p in partners"
               :key="p"
               class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded"
-            >{{ p }}</span>
-          </div>
+            >{{ p }}</li>
+          </ul>
         </div>
 
         <!-- Infrastructure -->
         <div>
-          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
+          <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
             Infrastructure
-          </div>
-          <div class="space-y-1 text-xs text-slate-500">
-            <div>
+          </h2>
+          <ul class="space-y-1 text-xs text-slate-500 list-none p-0 m-0">
+            <li>
               <a href="#" class="text-eb-cyan hover:underline focus-visible:ring-2 focus-visible:ring-eb-cyan rounded">
                 <i class="fa fa-link mr-1" aria-hidden="true"></i>Documentation EarthChain v3.1
               </a>
-            </div>
-            <div>
+            </li>
+            <li>
               <a href="#" class="text-eb-cyan hover:underline focus-visible:ring-2 focus-visible:ring-eb-cyan rounded">
                 <i class="fa fa-code mr-1" aria-hidden="true"></i>API publique EarthBalance
               </a>
-            </div>
-            <div>
+            </li>
+            <li>
               <a href="#" class="text-eb-cyan hover:underline focus-visible:ring-2 focus-visible:ring-eb-cyan rounded">
                 <i class="fa fa-file-alt mr-1" aria-hidden="true"></i>Livre blanc blockchain
               </a>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
 
         <!-- Statistiques globales -->
         <div>
-          <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
+          <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
             Statistiques globales
-          </div>
+          </h2>
           <div class="space-y-1 text-xs">
             <div class="flex justify-between text-slate-500">
               <span>Décisions prises depuis le début</span>
