@@ -1,6 +1,5 @@
 <template>
   <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
-
     <div>
       <h1 class="text-2xl font-black text-white mb-1">Décisions Collectives</h1>
       <p class="text-sm text-slate-400 leading-relaxed">
