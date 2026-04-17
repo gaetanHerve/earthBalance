@@ -1,90 +1,143 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Decision, VoteOptionId, VotePcts, BlockchainState, ProspectiveNarrative } from '@/types/index'
-import { DataService } from '@/services/data.service'
-import { BlockchainService } from '@/services/blockchain.service'
-import { LLMService } from '@/services/llm.service'
+import type { Decision, DecisionBallot, PairwiseVotes } from '@/types/index'
+import { decisions as allDecisions } from '@/data/decisions'
+import { ballots as ballotData } from '@/data/ballots'
+import { condorcetWinner, bordaScores, resolveWinner, rankingToPairwiseDelta } from '@/utils/condorcet'
+
+// ─── Types internes ───────────────────────────────────────────────────────────
+
+export type RankPosition = 0 | 1 | 2  // 0 = 1er choix, 1 = 2e, 2 = 3e
+export type RankingState = [string | null, string | null, string | null]
+
+export interface BallotResult {
+  hasCycle: boolean
+  method: 'condorcet' | 'borda'
+  winnerIdx: 0 | 1 | 2
+  winnerDecision: Decision
+  bordaScores: [number, number, number]
+  pairwise: PairwiseVotes
+}
+
+// ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useDecisionsStore = defineStore('decisions', () => {
-  const activeDecision = ref<Decision | null>(null)
-  const history = ref<Decision[]>([])
-  const userVote = ref<VoteOptionId | null>(null)
-  const walletAddress = ref<string | null>(null)
-  const isValidated = ref(false)
-  const prospective = ref<Record<string, ProspectiveNarrative> | null>(null)
-  const blockchainState = ref<BlockchainState | null>(null)
-  const loading = ref(false)
-  const error = ref<string | null>(null)
 
-  const totalVotes = computed<number>(() => {
-    if (!activeDecision.value) return 0
-    const v = activeDecision.value.votes
-    return v.pour + v.contre + v.abst
+  // Index des décisions par ID
+  const decisionIndex = Object.fromEntries(allDecisions.map(d => [d.id, d]))
+
+  // Scrutins (état réactif — clonés pour permettre la mutation locale)
+  const ballots = ref<DecisionBallot[]>(ballotData.map(b => ({
+    ...b,
+    pairwise: { ...b.pairwise },
+  })))
+
+  // Scrutin actif
+  const activeBallot = computed<DecisionBallot | null>(() =>
+    ballots.value.find(b => b.status === 'active') ?? null
+  )
+
+  // Scrutins clôturés (du plus récent au plus ancien)
+  const closedBallots = computed<DecisionBallot[]>(() =>
+    ballots.value.filter(b => b.status === 'closed').slice().reverse()
+  )
+
+  // Décisions candidates du scrutin actif
+  const activeCandidates = computed<[Decision, Decision, Decision] | null>(() => {
+    if (!activeBallot.value) return null
+    const [a, b, c] = activeBallot.value.decisionIds
+    const da = decisionIndex[a]
+    const db = decisionIndex[b]
+    const dc = decisionIndex[c]
+    if (!da || !db || !dc) return null
+    return [da, db, dc]
   })
 
-  const votePcts = computed<VotePcts>(() => {
-    if (!activeDecision.value || totalVotes.value === 0) return { pour: 0, contre: 0, abst: 0 }
-    const v = activeDecision.value.votes
-    const t = totalVotes.value
+  // Classement en cours de l'utilisateur
+  // ranking[0] = ID de la décision placée en 1er choix, etc.  (null = position vide)
+  const ranking = ref<RankingState>([null, null, null])
+  const hasVoted = ref(false)
+
+  const isRankingComplete = computed<boolean>(() =>
+    ranking.value.every(v => v !== null)
+  )
+
+  // Position attribuée à une décision dans le classement courant (null = non classée)
+  function getRankOf(decisionId: string): RankPosition | null {
+    const idx = ranking.value.indexOf(decisionId)
+    return idx === -1 ? null : idx as RankPosition
+  }
+
+  // Attribue (ou déplace) une décision à une position donnée
+  function setRank(decisionId: string, position: RankPosition): void {
+    const r: RankingState = [...ranking.value]
+    // Retirer ce candidat de toute position précédente
+    for (let i = 0; i < 3; i++) if (r[i] === decisionId) r[i] = null
+    // Déplacer l'éventuel occupant de la cible
+    const displaced = r[position]
+    if (displaced !== null) {
+      const freeSlot = r.findIndex((v, i) => v === null && i !== position)
+      if (freeSlot !== -1) r[freeSlot] = displaced
+      else r[position] = null  // plus de place : on efface simplement
+    }
+    r[position] = decisionId
+    ranking.value = r
+  }
+
+  // Soumet le classement : incrémente les compteurs pairwise du scrutin actif
+  function submitRanking(): void {
+    if (!activeBallot.value || !isRankingComplete.value || hasVoted.value) return
+
+    const ballot = activeBallot.value
+    const userRanking = ranking.value as [string, string, string]
+    const delta = rankingToPairwiseDelta(userRanking, ballot.decisionIds)
+
+    ballot.pairwise.ab += delta.ab
+    ballot.pairwise.ba += delta.ba
+    ballot.pairwise.ac += delta.ac
+    ballot.pairwise.ca += delta.ca
+    ballot.pairwise.bc += delta.bc
+    ballot.pairwise.cb += delta.cb
+    ballot.totalVoters++
+
+    hasVoted.value = true
+  }
+
+  // Calcule le résultat complet d'un scrutin (null si aucun vote)
+  function getBallotResult(ballot: DecisionBallot): BallotResult | null {
+    if (ballot.totalVoters === 0) return null
+
+    const hasCycle   = condorcetWinner(ballot.pairwise) === null
+    const { winner: winnerIdx, method } = resolveWinner(ballot.pairwise)
+    const winnerDecision = decisionIndex[ballot.decisionIds[winnerIdx]]
+    if (!winnerDecision) return null
+
     return {
-      pour:   Math.round((v.pour   / t) * 100),
-      contre: Math.round((v.contre / t) * 100),
-      abst:   Math.round((v.abst   / t) * 100),
-    }
-  })
-
-  const consensusPct = computed<number>(() => votePcts.value.pour)
-
-  const hasReachedConsensus = computed<boolean>(() => {
-    if (!activeDecision.value) return false
-    return consensusPct.value >= activeDecision.value.consensusThreshold
-  })
-
-  async function fetchAll(): Promise<void> {
-    loading.value = true
-    try {
-      const [active, hist, chain] = await Promise.all([
-        DataService.getActiveDecision(),
-        DataService.getDecisionHistory(),
-        DataService.getBlockchainState(),
-      ])
-      activeDecision.value = active
-      history.value = hist
-      blockchainState.value = chain
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : 'Erreur inconnue'
-    } finally {
-      loading.value = false
+      hasCycle,
+      method,
+      winnerIdx,
+      winnerDecision,
+      bordaScores: bordaScores(ballot.pairwise),
+      pairwise: ballot.pairwise,
     }
   }
 
-  async function connectWallet(): Promise<void> {
-    try {
-      walletAddress.value = await BlockchainService.connectWallet()
-    } catch (e) {
-      error.value = e instanceof Error ? e.message : 'Erreur wallet'
-    }
-  }
-
-  function castVote(optionId: VoteOptionId): void {
-    if (!activeDecision.value) return
-    userVote.value = optionId
-    activeDecision.value.votes[optionId] += 1
-    // TODO: await BlockchainService.castVote(activeDecision.value.id, optionId)
-  }
-
-  async function validateDecision(): Promise<void> {
-    if (!activeDecision.value) return
-    isValidated.value = true
-    activeDecision.value.status = 'validated'
-    // TODO: await BlockchainService.validateDecision(activeDecision.value.id)
-    prospective.value = await LLMService.generateProspective(activeDecision.value, {})
+  function getDecision(id: string): Decision | undefined {
+    return decisionIndex[id]
   }
 
   return {
-    activeDecision, history, userVote, walletAddress, isValidated,
-    prospective, blockchainState, loading, error,
-    totalVotes, votePcts, consensusPct, hasReachedConsensus,
-    fetchAll, connectWallet, castVote, validateDecision,
+    ballots,
+    activeBallot,
+    closedBallots,
+    activeCandidates,
+    ranking,
+    hasVoted,
+    isRankingComplete,
+    getRankOf,
+    setRank,
+    submitRanking,
+    getBallotResult,
+    getDecision,
   }
 })

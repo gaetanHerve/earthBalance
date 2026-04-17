@@ -153,6 +153,30 @@ export interface VoteTally {
   abst: number
 }
 
+// ─── Vote par classement — méthode de Condorcet ───────────────────────────────
+
+// Comptages pairwise pour un scrutin à 3 candidats A (idx 0), B (idx 1), C (idx 2)
+export interface PairwiseVotes {
+  ab: number  // votants préférant A à B
+  ba: number
+  ac: number  // votants préférant A à C
+  ca: number
+  bc: number  // votants préférant B à C
+  cb: number
+}
+
+export type BallotStatus = 'active' | 'closed'
+
+export interface DecisionBallot {
+  id: string
+  sessionId: number
+  decisionIds: [string, string, string]
+  pairwise: PairwiseVotes
+  totalVoters: number
+  deadline: string
+  status: BallotStatus
+}
+
 export interface DecisionResource {
   title: string
   excerpt: string
@@ -186,9 +210,9 @@ export interface Decision {
   status: DecisionStatus
   title: string
   description: string
-  options: VoteOption[]
-  votes: VoteTally
-  consensusThreshold: number
+  options?: VoteOption[]
+  votes?: VoteTally
+  consensusThreshold?: number
   deadline: string
   resources: DecisionResource[]
   projectedImpact: Record<string, number>

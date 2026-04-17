@@ -72,13 +72,17 @@
           <div
             v-for="dec in catalogue"
             :key="dec.id"
-            class="rounded-card border p-3 transition-all cursor-pointer select-none"
-            :class="isSelected(dec.id)
-              ? 'bg-eb-cyan/10 border-eb-cyan/40'
-              : 'bg-eb-card border-eb-border hover:border-eb-cyan/30 hover:bg-eb-card/80'"
-            role="button"
-            :aria-pressed="isSelected(dec.id)"
-            :tabindex="0"
+            class="rounded-card border p-3 transition-all select-none"
+            :class="[
+              isLocked(dec.id)
+                ? 'bg-eb-green/5 border-eb-green/30 cursor-default'
+                : isSelected(dec.id)
+                  ? 'bg-eb-cyan/10 border-eb-cyan/40 cursor-pointer'
+                  : 'bg-eb-card border-eb-border hover:border-eb-cyan/30 hover:bg-eb-card/80 cursor-pointer',
+            ]"
+            :role="isLocked(dec.id) ? 'listitem' : 'button'"
+            :aria-pressed="isLocked(dec.id) ? undefined : isSelected(dec.id)"
+            :tabindex="isLocked(dec.id) ? -1 : 0"
             @click="toggle(dec.id)"
             @keydown.enter.prevent="toggle(dec.id)"
             @keydown.space.prevent="toggle(dec.id)"
@@ -93,7 +97,7 @@
                       ? 'bg-green-900/40 text-eb-green border border-green-700/30'
                       : 'bg-cyan-900/30 text-eb-cyan border border-cyan-700/30'"
                   >
-                    {{ dec.status === 'validated' ? '✓ Validée' : '● Active' }}
+                    {{ dec.status === 'validated' ? '✓ Retenue' : '● Active' }}
                   </span>
                   <span class="text-xs text-slate-500">#{{ dec.number }}</span>
                 </div>
@@ -113,17 +117,21 @@
                 </div>
               </div>
 
-              <!-- Toggle button -->
-              <button
-                class="shrink-0 w-7 h-7 rounded-full border flex items-center justify-center text-xs transition-all"
-                :class="isSelected(dec.id)
-                  ? 'border-eb-cyan bg-eb-cyan/20 text-eb-cyan'
-                  : 'border-slate-600 text-slate-400 hover:border-eb-cyan/50'"
-                :aria-label="isSelected(dec.id) ? 'Retirer' : 'Ajouter'"
-                tabindex="-1"
+              <!-- Toggle / verrou -->
+              <div
+                class="shrink-0 w-7 h-7 rounded-full border flex items-center justify-center text-xs"
+                :class="isLocked(dec.id)
+                  ? 'border-eb-green/40 bg-eb-green/10 text-eb-green'
+                  : isSelected(dec.id)
+                    ? 'border-eb-cyan bg-eb-cyan/20 text-eb-cyan'
+                    : 'border-slate-600 text-slate-400'"
+                :aria-label="isLocked(dec.id) ? 'Politique retenue — non retirable' : isSelected(dec.id) ? 'Retirer' : 'Ajouter'"
               >
-                <i :class="['fa', isSelected(dec.id) ? 'fa-minus' : 'fa-plus']" aria-hidden="true"></i>
-              </button>
+                <i
+                  :class="['fa', isLocked(dec.id) ? 'fa-lock' : isSelected(dec.id) ? 'fa-minus' : 'fa-plus']"
+                  aria-hidden="true"
+                ></i>
+              </div>
             </div>
           </div>
 
@@ -155,7 +163,12 @@
           >
             <div class="flex items-center gap-2">
               <!-- Numéro d'ordre -->
-              <span class="w-6 h-6 rounded-full bg-eb-mid border border-eb-border text-xs font-bold text-eb-cyan flex items-center justify-center shrink-0">
+              <span
+                class="w-6 h-6 rounded-full border text-xs font-bold flex items-center justify-center shrink-0"
+                :class="isLocked(dec.id)
+                  ? 'bg-eb-green/10 border-eb-green/30 text-eb-green'
+                  : 'bg-eb-mid border-eb-border text-eb-cyan'"
+              >
                 {{ index + 1 }}
               </span>
 
@@ -184,13 +197,23 @@
                 </button>
               </div>
 
-              <button
-                class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-red-400 transition-colors shrink-0"
-                aria-label="Retirer"
-                @click="removeDecision(dec.id)"
-              >
-                <i class="fa fa-xmark text-xs" aria-hidden="true"></i>
-              </button>
+              <!-- Verrou ou bouton retirer -->
+              <div class="w-5 h-5 flex items-center justify-center shrink-0">
+                <i
+                  v-if="isLocked(dec.id)"
+                  class="fa fa-lock text-xs text-eb-green/60"
+                  aria-label="Politique retenue — non retirable"
+                  aria-hidden="false"
+                ></i>
+                <button
+                  v-else
+                  class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-red-400 transition-colors"
+                  aria-label="Retirer"
+                  @click="removeDecision(dec.id)"
+                >
+                  <i class="fa fa-xmark text-xs" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
 
             <!-- Mini-stats -->
@@ -334,6 +357,7 @@ const {
   catalogue,
   selectedDecisions,
   selectedIds,
+  lockedIds,
   cumulativeCo2,
   cumulativeCo2Pessimist,
   cumulativeTemp,
@@ -351,7 +375,12 @@ function isSelected(id: string): boolean {
   return selectedIds.value.includes(id)
 }
 
+function isLocked(id: string): boolean {
+  return lockedIds.value.includes(id)
+}
+
 function toggle(id: string): void {
+  if (isLocked(id)) return
   isSelected(id) ? removeDecision(id) : addDecision(id)
 }
 
