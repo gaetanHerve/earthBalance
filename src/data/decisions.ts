@@ -91,7 +91,7 @@ export const decisions: Decision[] = [
     id: 'dec-42-06',
     sessionId: 42,
     number: '42-06',
-    status: 'validated',
+    status: 'active',
     title: 'Moratoire mondial sur la déforestation primaire',
     description: 'Interdire toute coupe de forêts primaires d\'ici 2025 via un traité international contraignant.',
     options: [
@@ -187,7 +187,7 @@ export const decisions: Decision[] = [
     id: 'dec-42-04',
     sessionId: 42,
     number: '42-04',
-    status: 'active',
+    status: 'validated',
     title: 'Réduction mondiale des émissions de méthane de 34% d\'ici 2030',
     description: `Le méthane (CH₄) est responsable d'environ **0,5°C** du réchauffement actuel. Sa durée de vie atmosphérique courte (~12 ans) en fait le levier d'action climatique le plus rapide disponible. Cette proposition adopte l'objectif du Global Methane Pledge : réduire les émissions mondiales de CH₄ de **34% sous les niveaux de 2019 d'ici 2030**, couvrant les secteurs de l'énergie fossile (fuites O&G, mines de charbon), de l'agriculture (fermentation entérique, rizicultures) et des déchets. La mesure est largement coût-efficace : plus de 60% du potentiel de réduction est atteignable à coût négatif ou nul (AR6 WGIII Ch.6).`,
     options: [
@@ -868,7 +868,7 @@ export const decisions: Decision[] = [
     id: 'dec-42-13',
     sessionId: 42,
     number: '42-13',
-    status: 'validated',
+    status: 'active',
     title: 'Phase-out mondial des gaz fluorés à effet de serre (Amendement de Kigali étendu)',
     description: `Les gaz fluorés — HFC, PFC, SF₆ — sont des GES au **potentiel de réchauffement 1 000 à 23 000 fois** supérieur au CO₂. Principalement utilisés dans la réfrigération, la climatisation, les mousses isolantes et les semi-conducteurs, ils représentent ~1,5 GtCO₂eq/an (2024). L'Amendement de Kigali (2016) prévoit une réduction de 80% des HFC d'ici 2050, mais cette décision va plus loin : (1) accélération du calendrier — réduction de **85% d'ici 2036**, (2) extension aux PFC et SF₆ non couverts, (3) transfert de technologies de substitution (HFO, CO₂ naturel, ammoniac) vers les pays en développement. C'est l'une des mesures les plus **coût-efficaces** de l'ensemble du catalogue.`,
     options: [
@@ -1099,7 +1099,7 @@ export const decisions: Decision[] = [
     id: 'dec-42-16',
     sessionId: 42,
     number: '42-16',
-    status: 'active',
+    status: 'validated',
     title: 'Restauration mondiale des écosystèmes naturels : reboisement, tourbières et zones humides',
     description: `La destruction des écosystèmes naturels a transformé la biosphère terrestre d'un puits net de carbone en une source. AR6 WGIII identifie la restauration — reboisement, reforestation, conservation des tourbières, restauration des zones humides et mangroves — comme cumulant **~3,5 GtCO₂eq/an** d'ici 2030, le plus grand potentiel d'atténuation terrestre. La Décennie ONU pour la Restauration des Écosystèmes (2021–2030) vise la restauration de **1 milliard d'hectares**. Cette décision mandate : (1) un fonds de **200 Mds$/an** pour la restauration dans les pays à forêts tropicales, (2) la protection immédiate de toutes les tourbières intactes (elles stockent **2 fois plus** de carbone que toutes les forêts), (3) un programme mondial de restauration des mangroves et prairies marines (Blue Carbon).`,
     options: [

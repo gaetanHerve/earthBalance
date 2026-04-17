@@ -56,12 +56,22 @@ function tempDeltasPessimist(dec: Decision): number[] {
 
 export const useSimulationStore = defineStore('simulation', () => {
 
-  // Séquence ordonnée des décisions choisies par le joueur
-  const selectedIds = ref<string[]>([])
-
   // Décisions disponibles pour la simulation (avec modèle d'impact complet)
-  const catalogue = computed<Decision[]>(() =>
-    allDecisions.filter(d => hasImpactModel(d) && hasProjections(d))
+  const catalogue = computed<Decision[]>(() => {
+    const valid = allDecisions.filter(d => hasImpactModel(d) && hasProjections(d))
+    return [...valid.filter(d => d.status === 'validated'), ...valid.filter(d => d.status !== 'validated')]
+  })
+
+  // IDs des décisions retenues (validées par scrutin clos) — ne peuvent être retirées
+  const lockedIds = computed<string[]>(() =>
+    catalogue.value.filter(d => d.status === 'validated').map(d => d.id)
+  )
+
+  // Séquence ordonnée : initialisée avec les décisions déjà retenues
+  const selectedIds = ref<string[]>(
+    allDecisions
+      .filter(d => d.status === 'validated' && hasImpactModel(d) && hasProjections(d))
+      .map(d => d.id)
   )
 
   // Décisions sélectionnées dans l'ordre choisi
@@ -130,6 +140,7 @@ export const useSimulationStore = defineStore('simulation', () => {
   }
 
   function removeDecision(id: string): void {
+    if (lockedIds.value.includes(id)) return
     selectedIds.value = selectedIds.value.filter(i => i !== id)
   }
 
@@ -148,11 +159,12 @@ export const useSimulationStore = defineStore('simulation', () => {
   }
 
   function reset(): void {
-    selectedIds.value = []
+    selectedIds.value = lockedIds.value.slice()
   }
 
   return {
     selectedIds,
+    lockedIds,
     catalogue,
     selectedDecisions,
     cumulativeCo2,
