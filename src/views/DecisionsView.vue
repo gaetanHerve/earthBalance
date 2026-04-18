@@ -362,7 +362,7 @@ const PairwiseMatrix = defineComponent({
   name: 'PairwiseMatrix',
   props: {
     ballot:     { type: Object as PropType<DecisionBallot>, required: true },
-    candidates: { type: Array  as PropType<[Decision, Decision, Decision]>, required: true },
+    candidates: { type: Array as unknown as PropType<[Decision, Decision, Decision]>, required: true },
   },
   setup(props: { ballot: DecisionBallot; candidates: [Decision, Decision, Decision] }) {
     function sName(d: Decision): string {

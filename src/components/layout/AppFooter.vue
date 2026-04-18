@@ -70,8 +70,7 @@
       <div class="border-t border-slate-800 pt-4 flex flex-wrap justify-between items-center gap-2 text-xs text-slate-600">
         <span>🌍 EarthBalance Simulation Engine — Session #42 — Données fictives à visée pédagogique</span>
         <span>
-          Propulsé par EarthChain™ · Nœuds : {{ blockchain?.activeNodes ?? 312 }} actifs
-          · Latence : {{ blockchain?.latencyMs ?? 42 }}ms
+          Propulsé par EarthChain™ · Nœuds : 312 actifs · Latence : 42ms
         </span>
       </div>
     </div>
@@ -81,13 +80,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/dashboard.store'
-import { useDecisionsStore } from '@/store/decisions.store'
 
 const dashStore = useDashboardStore()
-const decisionsStore = useDecisionsStore()
 
 const { globalStats: stats } = storeToRefs(dashStore)
-const { blockchainState: blockchain } = storeToRefs(decisionsStore)
 
 const partners: string[] = ['🌡️ GIEC / IPCC', '🌿 PNUE / UNEP', '🌐 ONU / UN', '🍃 WWF', '🌾 FAO']
 </script>

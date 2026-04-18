@@ -76,9 +76,9 @@
 
     <!-- Compteurs de votes -->
     <div class="grid grid-cols-3 gap-3 mb-5 text-center" aria-label="Décompte des votes">
-      <div v-for="opt in decision.options" :key="opt.id" :class="[opt.bgClass, 'border rounded-lg p-2', opt.borderClass]">
+      <div v-for="opt in (decision.options ?? [])" :key="opt.id" :class="[opt.bgClass, 'border rounded-lg p-2', opt.borderClass]">
         <div class="text-xl font-black" :style="{ color: effectiveColor(opt) }">
-          {{ decision.votes[opt.id].toLocaleString('fr-FR') }}
+          {{ decision.votes?.[opt.id]?.toLocaleString('fr-FR') ?? '—' }}
         </div>
         <div class="text-xs text-slate-500">{{ opt.label }}</div>
       </div>
@@ -87,7 +87,7 @@
     <!-- Boutons de vote -->
     <div v-if="!userVote" class="flex gap-3 flex-wrap" role="group" aria-label="Voter">
       <button
-        v-for="opt in decision.options"
+        v-for="opt in (decision.options ?? [])"
         :key="opt.id"
         class="vote-btn flex items-center gap-1 px-5 py-2 rounded-xl font-bold text-sm border transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
         :style="{ color: opt.color, borderColor: opt.color, backgroundColor: opt.bgClass.replace('bg-', 'rgba(').replace('/10', ',0.1)') }"
@@ -139,7 +139,7 @@ function voteEmoji(id: string): string {
 }
 
 function labelForVote(id: VoteOptionId): string {
-  return props.decision.options.find((o: { id: string }) => o.id === id)?.label ?? id
+  return props.decision.options?.find((o: { id: string }) => o.id === id)?.label ?? id
 }
 
 function voteBarGradient(id: string): string {
