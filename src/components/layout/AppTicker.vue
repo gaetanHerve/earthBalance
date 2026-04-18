@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/dashboard.store'
 
@@ -49,6 +49,10 @@ const store = useDashboardStore()
 const { tickerItems: items } = storeToRefs(store)
 
 const paused = ref(false)
+
+onMounted(() => {
+  if (items.value.length === 0) store.fetchAll()
+})
 </script>
 
 <style scoped>

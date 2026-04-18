@@ -175,11 +175,11 @@ const allItems: SearchItem[] = [
     keywords: ['corrélations', 'comparaison', 'indicateurs', 'graphique', 'analyse'],
   },
   {
-    id: 'demo',
+    id: 'simulateur',
     label: 'Simulateur',
     description: 'Simulateur de politiques climatiques GIEC AR6',
     icon: 'fa-flask',
-    path: '/demo',
+    path: '/simulateur',
     keywords: ['simulateur', 'politiques', 'climatiques', 'co2', 'température', 'giec', 'ssp'],
   },
 ]

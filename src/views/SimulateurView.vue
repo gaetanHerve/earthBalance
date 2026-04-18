@@ -65,8 +65,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
 
       <!-- ── Catalogue ────────────────────────────────────────────────────── -->
-      <section class="xl:col-span-4" aria-labelledby="catalogue-title">
-        <SectionTitle id="catalogue-title" title="Catalogue de politiques" icon="fa-list-check" color-class="text-slate-300" />
+      <CollapsibleSection class="xl:col-span-4" title="Catalogue de politiques" icon="fa-list-check" color-class="text-slate-300">
 
         <div class="space-y-2">
           <div
@@ -139,11 +138,10 @@
             Aucune politique disponible
           </p>
         </div>
-      </section>
+      </CollapsibleSection>
 
       <!-- ── Séquence ─────────────────────────────────────────────────────── -->
-      <section class="xl:col-span-3" aria-labelledby="sequence-title">
-        <SectionTitle id="sequence-title" title="Séquence choisie" icon="fa-arrow-down-1-9" color-class="text-slate-300" />
+      <CollapsibleSection class="xl:col-span-3" title="Séquence choisie" icon="fa-arrow-down-1-9" color-class="text-slate-300">
 
         <!-- État vide -->
         <div
@@ -234,11 +232,10 @@
           Les synergies (ex. charbon + ENR) ou antagonismes (ex. gaz de transition) peuvent
           modifier les projections de ±15 à 40%.
         </p>
-      </section>
+      </CollapsibleSection>
 
       <!-- ── Projections ───────────────────────────────────────────────────── -->
-      <section class="xl:col-span-5 space-y-4" aria-labelledby="projections-title">
-        <SectionTitle id="projections-title" title="Projections cumulées" icon="fa-chart-line" color-class="text-slate-300" />
+      <CollapsibleSection class="xl:col-span-5 space-y-4" title="Projections cumulées" icon="fa-chart-line" color-class="text-slate-300">
 
         <!-- Graphique CO₂ -->
         <EbCard>
@@ -335,7 +332,7 @@
           </div>
         </EbCard>
 
-      </section>
+      </CollapsibleSection>
     </div>
 
   </main>
@@ -346,8 +343,8 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 
-import SectionTitle from '@/components/layout/SectionTitle.vue'
-import EbCard       from '@/components/layout/EbCard.vue'
+import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
+import EbCard             from '@/components/layout/EbCard.vue'
 import LineChart    from '@/components/charts/LineChart.vue'
 
 import type { ChartDataset } from '@/types/index'

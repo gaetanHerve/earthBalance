@@ -14,17 +14,13 @@
     </div>
 
     <!-- ─── Scrutin actif ──────────────────────────────────────────────────── -->
-    <section v-if="activeBallot" aria-labelledby="active-ballot-title">
-      <div class="flex items-center gap-2 mb-4">
-        <i class="fa fa-vote-yea text-eb-cyan text-sm" aria-hidden="true"></i>
-        <h2 id="active-ballot-title" class="text-base font-bold text-eb-cyan uppercase tracking-widest">
-          Scrutin en cours
-        </h2>
-        <span class="ml-auto text-xs text-slate-500">
+    <CollapsibleSection v-if="activeBallot" title="Scrutin en cours" icon="fa-vote-yea" color-class="text-eb-cyan">
+      <template #header-extra>
+        <span class="text-xs text-slate-500 mr-1">
           <i class="fa fa-clock mr-1" aria-hidden="true"></i>
           Clôture : {{ formatDeadline(activeBallot.deadline) }}
         </span>
-      </div>
+      </template>
 
       <!-- Instructions -->
       <p v-if="!hasVoted" class="text-sm text-slate-400 mb-4">
@@ -193,25 +189,18 @@
       <div v-else-if="hasVoted" class="mt-4 text-sm text-slate-500 italic text-center">
         Vous êtes le premier votant — résultats disponibles dès le deuxième vote.
       </div>
-    </section>
+    </CollapsibleSection>
 
     <!-- ─── Historique des scrutins clôturés ──────────────────────────────── -->
-    <section v-if="closedBallots.length" aria-labelledby="history-title">
-      <div class="flex items-center gap-2 mb-4">
-        <i class="fa fa-clock-rotate-left text-slate-400 text-sm" aria-hidden="true"></i>
-        <h2 id="history-title" class="text-base font-bold text-slate-400 uppercase tracking-widest">
-          Scrutins Clôturés
-        </h2>
-      </div>
-
+    <CollapsibleSection v-if="closedBallots.length" title="Scrutins Clôturés" icon="fa-clock-rotate-left" color-class="text-slate-400">
       <div class="space-y-6">
         <article
           v-for="ballot in closedBallots"
           :key="ballot.id"
-          class="rounded-xl border border-eb-border bg-eb-mid/30 overflow-hidden"
+          class="rounded-xl border border-eb-border bg-eb-mid/30"
         >
           <!-- En-tête -->
-          <div class="px-4 py-3 bg-eb-dark/50 border-b border-eb-border flex flex-wrap items-center gap-3">
+          <div class="px-4 py-3 bg-eb-dark/50 border-b border-eb-border flex flex-wrap items-center gap-3 rounded-t-xl overflow-hidden">
             <span class="text-xs text-slate-500 font-mono">{{ ballot.id }}</span>
             <span class="text-xs text-slate-500">
               Clôturé le {{ formatDeadline(ballot.deadline) }} — {{ ballot.totalVoters }} votants
@@ -267,7 +256,7 @@
           </div>
         </article>
       </div>
-    </section>
+    </CollapsibleSection>
 
   </main>
 </template>
@@ -277,6 +266,7 @@ import { computed, defineComponent, h } from 'vue'
 import type { PropType } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDecisionsStore } from '@/store/decisions.store'
+import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
 import type { RankPosition } from '@/store/decisions.store'
 import type { Decision, DecisionBallot } from '@/types/index'
 
@@ -365,9 +355,14 @@ const PairwiseMatrix = defineComponent({
     candidates: { type: Array as unknown as PropType<[Decision, Decision, Decision]>, required: true },
   },
   setup(props: { ballot: DecisionBallot; candidates: [Decision, Decision, Decision] }) {
-    function sName(d: Decision): string {
+    // Label long pour les titres de ligne, court pour les colonnes
+    function rowLabel(d: Decision): string {
       const words = d.title.split(' ')
-      return words.slice(0, 4).join(' ') + (words.length > 4 ? '…' : '')
+      return words.slice(0, 3).join(' ') + (words.length > 3 ? '…' : '')
+    }
+    function colLabel(d: Decision): string {
+      const words = d.title.split(' ')
+      return words.slice(0, 2).join(' ') + (words.length > 2 ? '…' : '')
     }
 
     return () => {
@@ -375,7 +370,6 @@ const PairwiseMatrix = defineComponent({
       const p = ballot.pairwise
       const total = ballot.totalVoters
 
-      // matrix[i][j] = votes préférant i à j (null sur la diagonale)
       const matrix: (number | null)[][] = [
         [null, p.ab, p.ac],
         [p.ba, null, p.bc],
@@ -386,38 +380,40 @@ const PairwiseMatrix = defineComponent({
         h('tr', { key: d.id }, [
           h('th', {
             scope: 'row',
-            class: 'text-left pr-3 py-1.5 text-xs text-slate-400 font-normal whitespace-nowrap max-w-32',
-          }, sName(d)),
+            title: d.title,
+            class: 'text-left pr-2 py-1.5 text-xs text-slate-400 font-normal max-w-[5rem] truncate',
+          }, rowLabel(d)),
           ...candidates.map((_, j) => {
-            if (i === j) return h('td', { key: j, class: 'px-2 py-1.5 text-center text-slate-600 text-xs' }, '—')
+            if (i === j) return h('td', { key: j, class: 'px-1.5 py-1.5 text-center text-slate-600 text-xs' }, '—')
             const v = matrix[i][j] as number
-            // votes en faveur de j sur la même paire
             const vOpp = matrix[j][i] as number
             const pct = total > 0 ? Math.round((v / total) * 100) : 0
             const wins = v > vOpp
             return h('td', {
               key: j,
-              class: `px-2 py-1.5 text-center text-xs font-bold ${wins ? 'text-eb-green bg-eb-green/10' : 'text-red-400 bg-red-500/5'} rounded`,
-            }, total > 0 ? `${v} (${pct}%)` : '—')
+              title: total > 0 ? `${v} votants` : '',
+              class: `px-1.5 py-1.5 text-center text-xs font-bold ${wins ? 'text-eb-green bg-eb-green/10' : 'text-red-400 bg-red-500/5'} rounded`,
+            }, total > 0 ? `${pct}%` : '—')
           }),
         ])
       )
 
-      return h('div', { class: 'overflow-x-auto' },
+      return h('div', { class: 'overflow-x-auto min-w-0' },
         h('table', {
-          class: 'w-full text-xs border-separate border-spacing-1',
+          class: 'w-full text-xs border-separate border-spacing-0.5',
           'aria-label': 'Matrice des comparaisons directes',
         }, [
-          h('caption', { class: 'sr-only' }, 'Ligne préférée à colonne : nombre de votants et pourcentage'),
+          h('caption', { class: 'sr-only' }, 'Ligne préférée à colonne : pourcentage de votants'),
           h('thead', {}, [
             h('tr', {}, [
-              h('th', { class: 'pr-3 py-1 text-left text-slate-500 font-normal text-xs' }, '↓ préfère à →'),
+              h('th', { class: 'pr-2 py-1 text-left text-slate-600 font-normal text-xs' }, '↓ / →'),
               ...candidates.map((d, j) =>
                 h('th', {
                   key: j,
                   scope: 'col',
-                  class: 'px-2 py-1 text-xs text-slate-500 font-normal text-center',
-                }, sName(d))
+                  title: d.title,
+                  class: 'px-1.5 py-1 text-xs text-slate-500 font-normal text-center max-w-[4rem] truncate',
+                }, colLabel(d))
               ),
             ]),
           ]),

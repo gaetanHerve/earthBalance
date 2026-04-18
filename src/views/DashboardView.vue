@@ -10,12 +10,21 @@
       :eco="ecologicalCharts"
       :visible-widgets="visibleWidgets"
     />
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <ChartSkeleton v-for="i in 5" :key="i"
+        :class="i === 1 ? 'col-span-1 md:col-span-2' : ''"
+        :height="220"
+      />
+    </div>
 
     <!-- Indicateurs Sociétaux -->
     <SocietalIndicators
       v-if="societalIndicators"
       :soc="societalIndicators"
     />
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <ChartSkeleton v-for="i in 4" :key="i" :height="180" />
+    </div>
 
     <!-- Scrutin collectif en cours (résumé) -->
     <section v-if="activeBallot" aria-labelledby="ballot-summary-title">
@@ -77,6 +86,7 @@ import SectionTitle         from '@/components/layout/SectionTitle.vue'
 import WidgetCustomizer     from '@/components/dashboard/WidgetCustomizer.vue'
 import EcologicalIndicators from '@/components/dashboard/EcologicalIndicators.vue'
 import SocietalIndicators   from '@/components/dashboard/SocietalIndicators.vue'
+import ChartSkeleton        from '@/components/charts/ChartSkeleton.vue'
 
 const dashStore      = useDashboardStore()
 const decisionsStore = useDecisionsStore()

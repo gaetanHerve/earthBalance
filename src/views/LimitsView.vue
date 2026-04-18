@@ -38,10 +38,7 @@
           :height="420"
           aria-label="Graphique radar des 9 limites planétaires montrant le niveau de dépassement de chaque limite"
         />
-        <div v-else class="flex items-center justify-center text-slate-500 text-sm" :style="{ height: '420px' }">
-          <i class="fa fa-spinner fa-spin mr-2" aria-hidden="true"></i>
-          Chargement du radar…
-        </div>
+        <ChartSkeleton v-else :height="420" label="Chargement du radar des limites planétaires…" />
         <p class="text-xs text-slate-500 text-center mt-2">
           Valeurs normalisées : ratio current/seuil — ligne pointillée jaune = seuil critique (ratio ×1)
           · Points rouges = dépassement · Points verts = en limite
@@ -53,17 +50,24 @@
     <section aria-labelledby="limits-grid-title">
       <SectionTitle id="limits-grid-title" title="Fiches Détaillées" icon="fa-table-cells" color-class="text-eb-green" />
 
-      <div v-if="loading" class="text-center py-12 text-slate-500">
-        <i class="fa fa-spinner fa-spin text-2xl mb-2" aria-label="Chargement en cours"></i>
-        <p>Chargement des données…</p>
-      </div>
-
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <PlanetaryLimitCard
-          v-for="limit in limits"
-          :key="limit.id"
-          :limit="limit"
-        />
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <template v-if="loading">
+          <div
+            v-for="i in 9"
+            :key="i"
+            class="rounded-xl bg-eb-border/30 animate-pulse"
+            style="height: 220px"
+            role="status"
+            aria-label="Chargement d'une limite planétaire…"
+          ></div>
+        </template>
+        <template v-else>
+          <PlanetaryLimitCard
+            v-for="limit in limits"
+            :key="limit.id"
+            :limit="limit"
+          />
+        </template>
       </div>
     </section>
 
@@ -78,6 +82,7 @@ import { usePlanetsStore } from '@/store/planets.store'
 import SectionTitle       from '@/components/layout/SectionTitle.vue'
 import EbCard             from '@/components/layout/EbCard.vue'
 import RadarChart         from '@/components/charts/RadarChart.vue'
+import ChartSkeleton      from '@/components/charts/ChartSkeleton.vue'
 import PlanetaryLimitCard from '@/components/limits/PlanetaryLimitCard.vue'
 
 const store = usePlanetsStore()

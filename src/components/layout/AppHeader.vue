@@ -184,7 +184,7 @@ const navLinks: NavLink[] = [
   { to: '/limites-planetaires', label: 'Limites Planétaires', icon: 'fa-earth-europe'    },
   { to: '/decisions',           label: 'Décisions',           icon: 'fa-vote-yea'        },
   { to: '/correlations',        label: 'Corrélations',        icon: 'fa-diagram-project' },
-  { to: '/demo',                label: 'Simulateur',          icon: 'fa-flask'           },
+  { to: '/simulateur',          label: 'Simulateur',          icon: 'fa-flask'           },
 ]
 
 const horizons: Horizon[] = [
