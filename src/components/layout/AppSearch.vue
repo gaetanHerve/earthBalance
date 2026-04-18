@@ -22,7 +22,8 @@
       id="search-panel"
       role="search"
       aria-label="Recherche dans EarthBalance"
-      class="absolute right-0 top-full mt-2 w-80 bg-eb-mid border border-eb-border rounded-xl shadow-2xl z-50 overflow-hidden"
+      :class="['absolute top-full mt-2 w-80 bg-eb-mid border border-eb-border rounded-xl shadow-2xl z-50 overflow-hidden',
+               align === 'left' ? 'left-0' : 'right-0']"
     >
       <!-- Input -->
       <div class="p-3 border-b border-eb-border">
@@ -127,6 +128,9 @@ interface SearchItem {
   path: string
   keywords: string[]
 }
+
+const props = withDefaults(defineProps<{ align?: 'left' | 'right' }>(), { align: 'right' })
+const { align } = props
 
 const router = useRouter()
 

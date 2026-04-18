@@ -31,12 +31,17 @@
       <SectionTitle id="radar-title" title="Vue Radar Globale" icon="fa-circle-nodes" color-class="text-eb-cyan" />
       <EbCard>
         <RadarChart
+          v-if="radarData"
           canvas-id="globalRadar"
-          :labels="radarData?.labels ?? []"
-          :values="radarData?.values ?? []"
+          :labels="radarData.labels"
+          :values="radarData.values"
           :height="420"
           aria-label="Graphique radar des 9 limites planétaires montrant le niveau de dépassement de chaque limite"
         />
+        <div v-else class="flex items-center justify-center text-slate-500 text-sm" :style="{ height: '420px' }">
+          <i class="fa fa-spinner fa-spin mr-2" aria-hidden="true"></i>
+          Chargement du radar…
+        </div>
         <p class="text-xs text-slate-500 text-center mt-2">
           Valeurs normalisées : ratio current/seuil — ligne pointillée jaune = seuil critique (ratio ×1)
           · Points rouges = dépassement · Points verts = en limite

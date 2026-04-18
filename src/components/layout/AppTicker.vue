@@ -20,7 +20,7 @@
     >
       <!-- Contenu animé : c'est lui qui translate, pas le clipper -->
       <div
-        class="ticker-inner flex whitespace-nowrap gap-12 px-4 text-xs text-slate-500"
+        class="animate-ticker flex whitespace-nowrap gap-12 px-4 text-xs text-slate-500"
         :class="{ 'ticker-paused': paused }"
       >
         <template v-for="pass in 2" :key="pass">
@@ -48,14 +48,11 @@ import { useDashboardStore } from '@/store/dashboard.store'
 const store = useDashboardStore()
 const { tickerItems: items } = storeToRefs(store)
 
-const paused = ref(true)
+const paused = ref(false)
 </script>
 
 <style scoped>
-.ticker-inner {
-  animation: ticker 30s linear infinite;
-}
-.ticker-inner.ticker-paused {
+.ticker-paused {
   animation-play-state: paused;
 }
 </style>
