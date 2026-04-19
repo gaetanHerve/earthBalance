@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-2 flex-wrap mb-6">
     <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">
-      <i class="fa fa-sliders mr-1" aria-hidden="true"></i> Graphiques affichés :
+      <i class="fa fa-sliders mr-1" aria-hidden="true"></i> {{ t('widgets.label') }} :
     </span>
     <button
       v-for="widget in allWidgets"
@@ -19,15 +19,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 defineProps<{ visible: string[] }>()
 defineEmits<{ toggle: [id: string] }>()
 
+const { t } = useI18n()
+
 interface Widget { id: string; label: string }
-const allWidgets: Widget[] = [
-  { id: 'co2',        label: '💨 CO₂' },
-  { id: 'temperature',label: '🌡️ Température' },
-  { id: 'forest',     label: '🌲 Forêt' },
-  { id: 'energyMix',  label: '⚡ Énergie' },
-  { id: 'resources',  label: '⛏️ Ressources' },
-]
+const allWidgets = computed<Widget[]>(() => [
+  { id: 'co2',         label: t('widgets.co2') },
+  { id: 'temperature', label: t('widgets.temperature') },
+  { id: 'forest',      label: t('widgets.forest') },
+  { id: 'energyMix',   label: t('widgets.energyMix') },
+  { id: 'resources',   label: t('widgets.resources') },
+])
 </script>

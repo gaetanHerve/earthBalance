@@ -3,32 +3,28 @@
     <!-- Intro + légende statuts -->
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-black text-white mb-1">Les 9 Limites Planétaires</h1>
-        <p class="text-sm text-slate-400 max-w-2xl leading-relaxed">
-          Concept défini par Rockström et al. (2009) — ces limites définissent un espace de développement
-          sûr pour l'humanité. Dépasser ces seuils risque de provoquer des changements environnementaux
-          abrupts et irréversibles.
-        </p>
+        <h1 class="text-2xl font-black text-white mb-1">{{ t('limits.title') }}</h1>
+        <p class="text-sm text-slate-400 max-w-2xl leading-relaxed">{{ t('limits.intro') }}</p>
       </div>
       <div class="flex gap-3 text-xs shrink-0">
         <span class="flex items-center gap-1 bg-red-900/30 text-red-400 border border-red-700/30 px-2 py-1 rounded-full">
           <span class="w-2 h-2 rounded-full bg-red-400 inline-block" aria-hidden="true"></span>
-          Dépassé ({{ limitsByStatus.depasse.length }})
+          {{ t('limits.exceeded') }} ({{ limitsByStatus.depasse.length }})
         </span>
         <span class="flex items-center gap-1 bg-yellow-900/30 text-yellow-400 border border-yellow-700/30 px-2 py-1 rounded-full">
           <span class="w-2 h-2 rounded-full bg-yellow-400 inline-block" aria-hidden="true"></span>
-          Zone risque ({{ limitsByStatus.zone_incertitude.length }})
+          {{ t('limits.risk_zone') }} ({{ limitsByStatus.zone_incertitude.length }})
         </span>
         <span class="flex items-center gap-1 bg-green-900/30 text-eb-green border border-green-700/30 px-2 py-1 rounded-full">
           <span class="w-2 h-2 rounded-full bg-eb-green inline-block" aria-hidden="true"></span>
-          Sûr ({{ limitsByStatus.safe.length }})
+          {{ t('limits.safe') }} ({{ limitsByStatus.safe.length }})
         </span>
       </div>
     </div>
 
     <!-- Graphique radar global -->
     <section aria-labelledby="radar-title">
-      <SectionTitle id="radar-title" title="Vue Radar Globale" icon="fa-circle-nodes" color-class="text-eb-cyan" />
+      <SectionTitle id="radar-title" :title="t('limits.radar_title')" icon="fa-circle-nodes" color-class="text-eb-cyan" />
       <EbCard>
         <RadarChart
           v-if="radarData"
@@ -36,19 +32,16 @@
           :labels="radarData.labels"
           :values="radarData.values"
           :height="420"
-          aria-label="Graphique radar des 9 limites planétaires montrant le niveau de dépassement de chaque limite"
+          :aria-label="t('limits.radar_aria')"
         />
-        <ChartSkeleton v-else :height="420" label="Chargement du radar des limites planétaires…" />
-        <p class="text-xs text-slate-500 text-center mt-2">
-          Valeurs normalisées : ratio current/seuil — ligne pointillée jaune = seuil critique (ratio ×1)
-          · Points rouges = dépassement · Points verts = en limite
-        </p>
+        <ChartSkeleton v-else :height="420" :label="t('limits.loading_radar')" />
+        <p class="text-xs text-slate-500 text-center mt-2">{{ t('limits.radar_note') }}</p>
       </EbCard>
     </section>
 
     <!-- 9 fiches individuelles -->
     <section aria-labelledby="limits-grid-title">
-      <SectionTitle id="limits-grid-title" title="Fiches Détaillées" icon="fa-table-cells" color-class="text-eb-green" />
+      <SectionTitle id="limits-grid-title" :title="t('limits.cards_title')" icon="fa-table-cells" color-class="text-eb-green" />
 
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <template v-if="loading">
@@ -58,7 +51,7 @@
             class="rounded-xl bg-eb-border/30 animate-pulse"
             style="height: 220px"
             role="status"
-            aria-label="Chargement d'une limite planétaire…"
+            :aria-label="t('limits.loading_card')"
           ></div>
         </template>
         <template v-else>
@@ -76,6 +69,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { usePlanetsStore } from '@/store/planets.store'
 
@@ -85,6 +79,7 @@ import RadarChart         from '@/components/charts/RadarChart.vue'
 import ChartSkeleton      from '@/components/charts/ChartSkeleton.vue'
 import PlanetaryLimitCard from '@/components/limits/PlanetaryLimitCard.vue'
 
+const { t } = useI18n()
 const store = usePlanetsStore()
 const { limits, radarData, loading, limitsByStatus } = storeToRefs(store)
 

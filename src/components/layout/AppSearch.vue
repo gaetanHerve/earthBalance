@@ -9,11 +9,11 @@
         : 'border-eb-border text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
       :aria-expanded="isOpen"
       aria-controls="search-panel"
-      aria-label="Ouvrir la recherche dans EarthBalance"
+      :aria-label="t('search.open')"
       @click="toggle"
     >
       <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
-      <span>Rechercher</span>
+      <span>{{ t('search.label') }}</span>
     </button>
 
     <!-- Panneau de recherche -->
@@ -21,14 +21,14 @@
       v-show="isOpen"
       id="search-panel"
       role="search"
-      aria-label="Recherche dans EarthBalance"
+      :aria-label="t('search.panel_aria')"
       :class="['absolute top-full mt-2 w-80 bg-eb-mid border border-eb-border rounded-xl shadow-2xl z-50 overflow-hidden',
                align === 'left' ? 'left-0' : 'right-0']"
     >
       <!-- Input -->
       <div class="p-3 border-b border-eb-border">
         <label for="search-input" class="sr-only">
-          Rechercher une page ou une fonctionnalité
+          {{ t('search.sr_label') }}
         </label>
         <div class="flex items-center gap-2">
           <i class="fa fa-magnifying-glass text-slate-500 shrink-0 text-xs" aria-hidden="true"></i>
@@ -37,7 +37,7 @@
             ref="inputRef"
             v-model="query"
             type="search"
-            placeholder="Rechercher une page…"
+            :placeholder="t('search.placeholder')"
             class="flex-1 bg-transparent text-sm text-slate-200 placeholder-slate-600 outline-none"
             autocomplete="off"
             role="combobox"
@@ -63,7 +63,7 @@
         v-if="results.length > 0"
         id="search-results"
         role="listbox"
-        aria-label="Résultats de recherche"
+        :aria-label="t('search.pages')"
         class="py-1 max-h-64 overflow-y-auto"
       >
         <li
@@ -94,12 +94,12 @@
         role="status"
       >
         <i class="fa fa-circle-xmark text-xl mb-2 block opacity-40" aria-hidden="true"></i>
-        Aucun résultat pour « {{ query }} »
+        {{ t('search.no_results') }} « {{ query }} »
       </div>
 
       <!-- Suggestions initiales (panneau vide) -->
       <div v-else class="p-3">
-        <p class="text-xs text-slate-600 mb-2 uppercase tracking-wider">Pages</p>
+        <p class="text-xs text-slate-600 mb-2 uppercase tracking-wider">{{ t('search.pages') }}</p>
         <ul class="list-none p-0 m-0 space-y-0.5">
           <li v-for="item in allItems" :key="item.id">
             <button
@@ -119,6 +119,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface SearchItem {
   id: string
@@ -133,6 +134,7 @@ const props = withDefaults(defineProps<{ align?: 'left' | 'right' }>(), { align:
 const { align } = props
 
 const router = useRouter()
+const { t } = useI18n()
 
 const isOpen = ref(false)
 const query = ref('')
@@ -141,53 +143,53 @@ const containerRef = ref<HTMLElement | null>(null)
 const inputRef = ref<HTMLInputElement | null>(null)
 const liveAnnouncement = ref('')
 
-const allItems: SearchItem[] = [
+const allItems = computed<SearchItem[]>(() => [
   {
     id: 'dashboard',
-    label: 'Dashboard',
-    description: 'Indicateurs écologiques et sociétaux',
+    label: t('search.items.dashboard.label'),
+    description: t('search.items.dashboard.description'),
     icon: 'fa-gauge-high',
     path: '/',
-    keywords: ['dashboard', 'indicateurs', 'écologiques', 'sociétaux', 'accueil', 'graphiques'],
+    keywords: ['dashboard', 'indicateurs', 'écologiques', 'sociétaux', 'accueil', 'graphiques', 'indicators', 'ecological'],
   },
   {
     id: 'limits',
-    label: 'Limites Planétaires',
-    description: 'Les 9 limites planétaires de Rockström',
+    label: t('search.items.limits.label'),
+    description: t('search.items.limits.description'),
     icon: 'fa-earth-europe',
     path: '/limites-planetaires',
-    keywords: ['limites', 'planétaires', 'rockström', 'seuils', 'biodiversité', 'carbone', 'radar'],
+    keywords: ['limites', 'planétaires', 'rockström', 'seuils', 'biodiversité', 'carbone', 'radar', 'limits', 'boundaries'],
   },
   {
     id: 'mitigationPolicies',
-    label: 'Politiques',
-    description: 'Votez sur les propositions communautaires',
+    label: t('search.items.policies.label'),
+    description: t('search.items.policies.description'),
     icon: 'fa-vote-yea',
     path: '/mitigation-policies',
-    keywords: ['politiques', 'décisions', 'vote', 'propositions', 'consensus', 'blockchain', 'gouvernance'],
+    keywords: ['politiques', 'décisions', 'vote', 'propositions', 'consensus', 'blockchain', 'gouvernance', 'policies', 'governance'],
   },
   {
     id: 'correlations',
-    label: 'Corrélations',
-    description: 'Superposez et comparez les indicateurs',
+    label: t('search.items.correlations.label'),
+    description: t('search.items.correlations.description'),
     icon: 'fa-diagram-project',
     path: '/correlations',
-    keywords: ['corrélations', 'comparaison', 'indicateurs', 'graphique', 'analyse'],
+    keywords: ['corrélations', 'comparaison', 'indicateurs', 'graphique', 'analyse', 'correlations', 'indicators'],
   },
   {
     id: 'simulateur',
-    label: 'Simulateur',
-    description: 'Simulateur de politiques climatiques GIEC AR6',
+    label: t('search.items.simulator.label'),
+    description: t('search.items.simulator.description'),
     icon: 'fa-flask',
     path: '/simulateur',
-    keywords: ['simulateur', 'politiques', 'climatiques', 'co2', 'température', 'giec', 'ssp'],
+    keywords: ['simulateur', 'politiques', 'climatiques', 'co2', 'température', 'giec', 'ssp', 'simulator', 'climate'],
   },
-]
+])
 
 const results = computed<SearchItem[]>(() => {
   const q = query.value.trim().toLowerCase()
   if (!q) return []
-  return allItems.filter(item =>
+  return allItems.value.filter(item =>
     item.label.toLowerCase().includes(q) ||
     item.description.toLowerCase().includes(q) ||
     item.keywords.some(k => k.includes(q))
@@ -198,8 +200,8 @@ watch(results, (newResults) => {
   focusedIndex.value = newResults.length > 0 ? 0 : -1
   if (query.value.trim()) {
     liveAnnouncement.value = newResults.length > 0
-      ? `${newResults.length} résultat${newResults.length > 1 ? 's' : ''} trouvé${newResults.length > 1 ? 's' : ''}`
-      : 'Aucun résultat'
+      ? t('search.live_found', newResults.length)
+      : t('search.live_none')
   }
 })
 

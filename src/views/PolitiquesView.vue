@@ -3,39 +3,30 @@
 
     <!-- En-tête -->
     <div>
-      <h1 class="text-2xl font-black text-white mb-1">Politiques</h1>
-      <p class="text-sm text-slate-400 leading-relaxed max-w-3xl">
-        Chaque scrutin soumet trois politiques climatiques au vote de la communauté.
-        Classez-les de votre première à votre troisième préférence.
-        Le gagnant est déterminé par la <strong class="text-eb-cyan">méthode de Condorcet</strong> :
-        la politique qui bat toutes les autres en comparaisons directes.
-        En cas de cycle, un <strong class="text-yellow-400">score de Borda</strong> départage.
-      </p>
+      <h1 class="text-2xl font-black text-white mb-1">{{ t('policies.title') }}</h1>
+      <p class="text-sm text-slate-400 leading-relaxed max-w-3xl">{{ t('policies.intro') }}</p>
     </div>
 
     <!-- ─── Scrutin actif ──────────────────────────────────────────────────── -->
-    <CollapsibleSection v-if="activeBallot" title="Scrutin en cours" icon="fa-vote-yea" color-class="text-eb-cyan">
+    <CollapsibleSection v-if="activeBallot" :title="t('policies.active_ballot_title')" icon="fa-vote-yea" color-class="text-eb-cyan">
       <template #header-extra>
         <span class="text-xs text-slate-500 mr-1">
           <i class="fa fa-clock mr-1" aria-hidden="true"></i>
-          Clôture : {{ formatDeadline(activeBallot.deadline) }}
+          {{ t('policies.deadline_slot') }} : {{ formatDeadline(activeBallot.deadline) }}
         </span>
       </template>
 
       <!-- Instructions -->
       <p v-if="!hasVoted" class="text-sm text-slate-400 mb-4">
-        Attribuez les positions <strong class="text-white">1er</strong>,
-        <strong class="text-white">2e</strong> et
-        <strong class="text-white">3e</strong> aux trois politiques ci-dessous,
-        puis soumettez votre classement.
+        {{ t('policies.instructions_novote', { r1: t('policies.r1'), r2: t('policies.r2'), r3: t('policies.r3') }) }}
       </p>
       <p v-else class="text-sm text-eb-green mb-4">
         <i class="fa fa-circle-check mr-1" aria-hidden="true"></i>
-        Votre classement a été enregistré. Résultats mis à jour en temps réel.
+        {{ t('policies.ranked_done') }}
       </p>
 
       <!-- 3 cartes candidates -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6" role="group" aria-label="Candidats du scrutin">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6" role="group" :aria-label="t('policies.candidates_aria')">
         <article
           v-for="(decision, idx) in activeCandidates"
           :key="decision.id"
@@ -78,7 +69,7 @@
               class="bg-eb-dark border border-eb-border rounded px-2 py-0.5"
               :class="decision.status === 'validated' ? 'text-eb-green' : 'text-yellow-400'"
             >
-              {{ decision.status === 'validated' ? '✓ Validée' : '⏳ Active' }}
+              {{ decision.status === 'validated' ? t('policies.status_validated') : t('policies.status_active') }}
             </span>
           </div>
 
@@ -113,7 +104,7 @@
             :to="`/mitigation-policies/${decision.id}`"
             class="mt-1 self-end text-xs text-slate-500 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
           >
-            <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>Détail
+            <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>{{ t('policies.detail_link') }}
           </RouterLink>
         </article>
       </div>
@@ -137,7 +128,7 @@
           @click="submitRanking"
         >
           <i class="fa fa-paper-plane mr-1.5" aria-hidden="true"></i>
-          Soumettre mon classement
+          {{ t('policies.submit') }}
         </button>
       </div>
 
@@ -159,10 +150,10 @@
             <div>
               <div class="text-xs text-slate-400">
                 <template v-if="activeResult.method === 'condorcet'">
-                  Gagnant de Condorcet — bat toutes les autres politiques en duel direct
+                  {{ t('policies.condorcet_winner') }}
                 </template>
                 <template v-else>
-                  Cycle détecté — gagnant désigné par score de Borda
+                  {{ t('policies.cycle_detected') }}
                 </template>
               </div>
               <div class="font-bold text-white text-sm">{{ activeResult.winnerPolicy.title }}</div>
@@ -174,7 +165,7 @@
             v-if="activeResult.hasCycle && activeCandidates"
             class="p-3 rounded-lg border border-yellow-700/30 bg-yellow-900/10 mb-4"
           >
-            <div class="text-xs font-bold text-yellow-400 mb-2">Scores de Borda (victoires pairwise cumulées)</div>
+            <div class="text-xs font-bold text-yellow-400 mb-2">{{ t('policies.borda_scores_title') }}</div>
             <div class="flex gap-6">
               <div v-for="(d, i) in activeCandidates" :key="d.id" class="text-xs">
                 <span class="text-slate-400">{{ shortName(d) }} : </span>
@@ -195,12 +186,12 @@
         </div>
       </template>
       <div v-else-if="hasVoted" class="mt-4 text-sm text-slate-500 italic text-center">
-        Vous êtes le premier votant — résultats disponibles dès le deuxième vote.
+        {{ t('policies.first_voter') }}
       </div>
     </CollapsibleSection>
 
     <!-- ─── Historique des scrutins clôturés ──────────────────────────────── -->
-    <CollapsibleSection v-if="closedBallots.length" title="Scrutins Clôturés" icon="fa-clock-rotate-left" color-class="text-slate-400">
+    <CollapsibleSection v-if="closedBallots.length" :title="t('policies.closed_ballots_title')" icon="fa-clock-rotate-left" color-class="text-slate-400">
       <div class="space-y-6">
         <article
           v-for="ballot in closedBallots"
@@ -211,7 +202,7 @@
           <div class="px-4 py-3 bg-eb-dark/50 border-b border-eb-border flex flex-wrap items-center gap-3 rounded-t-xl overflow-hidden">
             <span class="text-xs text-slate-500 font-mono">{{ ballot.id }}</span>
             <span class="text-xs text-slate-500">
-              Clôturé le {{ formatDeadline(ballot.deadline) }} — {{ ballot.totalVoters }} votants
+              {{ t('policies.closed_meta', { date: formatDeadline(ballot.deadline), count: ballot.totalVoters }) }}
             </span>
             <span
               class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full"
@@ -219,7 +210,7 @@
                 ? 'bg-yellow-900/40 text-yellow-400 border border-yellow-700/30'
                 : 'bg-cyan-900/40 text-eb-cyan border border-cyan-700/30'"
             >
-              {{ ballotMethod(ballot) === 'borda' ? '⚠ Borda (cycle)' : '✓ Condorcet' }}
+              {{ ballotMethod(ballot) === 'borda' ? t('policies.borda_method') : t('policies.condorcet_method') }}
             </span>
           </div>
 
@@ -231,9 +222,9 @@
               </div>
               <div>
                 <div class="text-xs text-slate-500 mb-0.5">
-                  Politique retenue
+                  {{ t('policies.policy_retained') }}
                   <span v-if="ballotHasCycle(ballot)" class="text-yellow-400">
-                    (cycle Condorcet — départage Borda)
+                    ({{ t('policies.cycle_note') }})
                   </span>
                 </div>
                 <RouterLink
@@ -276,11 +267,16 @@
 <script setup lang="ts">
 import { computed, defineComponent, h } from 'vue'
 import type { PropType } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
 import type { RankPosition } from '@/store/mitigationPolicies.store'
 import type { MitigationPolicy, DecisionBallot } from '@/types/index'
+
+// ─── i18n ─────────────────────────────────────────────────────────────────────
+
+const { t } = useI18n()
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 
@@ -299,12 +295,12 @@ const activeResult = computed(() =>
 
 // ─── Constantes UI ───────────────────────────────────────────────────────────
 
-const rankButtons = ['1er', '2e', '3e'] as const
+const rankButtons = computed(() => [t('policies.r1'), t('policies.r2'), t('policies.r3')] as const)
 
 // ─── Helpers template (évitent ! et as TypeName dans le template) ─────────────
 
 function rankLabel(pos: RankPosition): string {
-  return rankButtons[pos]
+  return rankButtons.value[pos]
 }
 
 function rankLabelSafe(decisionId: string): string {

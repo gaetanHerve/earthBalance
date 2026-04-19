@@ -5,16 +5,18 @@
       ? 'border-eb-cyan text-eb-cyan bg-eb-cyan/10'
       : 'border-eb-border text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
     :aria-pressed="highContrast"
-    :aria-label="highContrast ? 'Désactiver le mode fort contraste' : 'Activer le mode fort contraste'"
+    :aria-label="highContrast ? t('contrast.disable') : t('contrast.enable')"
     @click="toggle"
   >
     <i class="fa fa-circle-half-stroke" aria-hidden="true"></i>
-    <span>Contraste</span>
+    <span>{{ t('contrast.label') }}</span>
   </button>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useContrastMode } from '@/composables/useContrastMode'
 
+const { t } = useI18n()
 const { highContrast, toggle } = useContrastMode()
 </script>

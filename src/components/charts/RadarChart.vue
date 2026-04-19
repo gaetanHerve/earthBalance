@@ -5,8 +5,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import { Chart, registerables } from 'chart.js'
+import { useI18n } from 'vue-i18n'
 
 Chart.register(...registerables)
 
@@ -25,6 +26,8 @@ const props = withDefaults(defineProps<{
   maxValue: 2,
 })
 
+const { t, locale } = useI18n()
+
 let chart: ChartType | null = null
 
 function initChart() {
@@ -37,7 +40,7 @@ function initChart() {
       labels: props.labels,
       datasets: [
         {
-          label: 'État actuel (ratio seuil)',
+          label: t('limits.radar_dataset'),
           data: props.values,
           borderColor: '#00e5ff',
           backgroundColor: 'rgba(0,229,255,0.15)',
@@ -48,7 +51,7 @@ function initChart() {
         },
         {
           // Ligne de seuil critique (ratio = 1)
-          label: 'Seuil critique',
+          label: t('limits.radar_threshold'),
           data: new Array(props.labels.length).fill(1),
           borderColor: 'rgba(250,204,21,0.6)',
           backgroundColor: 'transparent',
@@ -76,8 +79,8 @@ function initChart() {
           callbacks: {
             label: (ctx) => {
               const ratio = ctx.parsed.r
-              const status = ratio > 1 ? '⚠ Dépassé' : '✓ En limite'
-              return `${status} — ratio : ×${ratio.toFixed(2)}`
+              const status = ratio > 1 ? t('limits.radar_exceeded') : t('limits.radar_at_limit')
+              return `${status} — ${t('limits.radar_ratio')} : ×${ratio.toFixed(2)}`
             },
           },
         },
@@ -104,6 +107,12 @@ function initChart() {
 }
 
 onMounted(initChart)
+
+watch(locale, () => {
+  chart?.destroy()
+  chart = null
+  nextTick(initChart)
+})
 
 watch(() => props.values, (newVals) => {
   if (!chart) return

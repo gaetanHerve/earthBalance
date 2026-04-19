@@ -2,7 +2,7 @@
   <section aria-labelledby="societal-title">
     <SectionTitle
       id="societal-title"
-      title="Indicateurs Sociétaux"
+      :title="t('dashboard.soc_title')"
       icon="fa-globe"
       color-class="text-eb-cyan"
     />
@@ -13,7 +13,7 @@
       <EbCard extra-class="flex flex-col items-center">
         <div class="text-xs font-bold text-slate-400 mb-2 text-center">
           <i class="fa fa-wheat-awn text-yellow-500 mr-1" aria-hidden="true"></i>
-          Sécurité alimentaire
+          {{ t('dashboard.food_title') }}
         </div>
         <GaugeChart
           canvas-id="foodGauge"
@@ -21,19 +21,19 @@
           track-color="#facc15"
           :size="110"
           :font-size="22"
-          :aria-label="`Sécurité alimentaire mondiale : ${soc.foodSecurity.current}/100`"
+          :aria-label="t('dashboard.food_aria', { value: soc.foodSecurity.current })"
         >
           <span class="text-xl font-black text-yellow-400">{{ soc.foodSecurity.current }}</span>
           <span class="text-xs text-slate-500">/100</span>
         </GaugeChart>
-        <div class="mt-2 text-xs text-slate-500">Indice mondial FAO</div>
+        <div class="mt-2 text-xs text-slate-500">{{ t('dashboard.food_note') }}</div>
       </EbCard>
 
       <!-- Accès eau potable -->
       <EbCard extra-class="flex flex-col items-center">
         <div class="text-xs font-bold text-slate-400 mb-2 text-center">
           <i class="fa fa-droplet text-blue-400 mr-1" aria-hidden="true"></i>
-          Accès eau potable
+          {{ t('dashboard.water_title') }}
         </div>
         <GaugeChart
           canvas-id="waterGauge"
@@ -41,19 +41,19 @@
           track-color="#38bdf8"
           :size="110"
           :font-size="22"
-          :aria-label="`Accès à l'eau potable : ${soc.waterAccess.current}% de la population mondiale`"
+          :aria-label="t('dashboard.water_aria', { value: soc.waterAccess.current })"
         >
           <span class="text-xl font-black text-blue-400">{{ soc.waterAccess.current }}</span>
           <span class="text-xs text-slate-500">%</span>
         </GaugeChart>
-        <div class="mt-2 text-xs text-slate-500">Population mondiale</div>
+        <div class="mt-2 text-xs text-slate-500">{{ t('dashboard.water_note') }}</div>
       </EbCard>
 
       <!-- Conflits géopolitiques -->
       <EbCard>
         <div class="text-xs font-bold text-slate-400 mb-3">
           <i class="fa fa-shield-halved text-red-400 mr-1" aria-hidden="true"></i>
-          Conflits géopolitiques
+          {{ t('dashboard.conflicts_title') }}
         </div>
         <div class="space-y-2">
           <div
@@ -85,7 +85,7 @@
       <EbCard>
         <div class="text-xs font-bold text-slate-400 mb-3">
           <i class="fa fa-heart-pulse text-pink-400 mr-1" aria-hidden="true"></i>
-          Santé globale
+          {{ t('dashboard.health_title') }}
         </div>
         <div class="space-y-2">
           <div
@@ -103,7 +103,7 @@
       <EbCard>
         <div class="text-xs font-bold text-slate-400 mb-3">
           <i class="fa fa-scale-balanced text-purple-400 mr-1" aria-hidden="true"></i>
-          Inégalités (Gini)
+          {{ t('dashboard.inequality_title') }}
         </div>
         <div class="space-y-2">
           <div
@@ -122,11 +122,14 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import SectionTitle from '@/components/layout/SectionTitle.vue'
 import EbCard from '@/components/layout/EbCard.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 
 import type { SocietalIndicators } from '@/types/index'
+
+const { t } = useI18n()
 
 defineProps<{ soc: SocietalIndicators }>()
 </script>

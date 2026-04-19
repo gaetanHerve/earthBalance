@@ -11,17 +11,17 @@
           <router-link
             to="/"
             class="font-black text-xl tracking-tight gradient-text focus-visible:ring-2 focus-visible:ring-eb-cyan rounded"
-            aria-label="EarthBalance — Retour au dashboard"
+            :aria-label="`EarthBalance — ${t('header.tagline')}`"
           >
             EarthBalance
           </router-link>
-          <div class="text-xs text-slate-500 hidden sm:block">Planetary Simulation Engine v2.4</div>
+          <div class="text-xs text-slate-500 hidden sm:block">{{ t('header.tagline') }}</div>
         </div>
       </div>
 
       <!-- Desktop : nav + contrôles (masqué sur mobile) -->
       <div class="hidden md:flex items-center gap-4 flex-wrap flex-1 justify-end">
-        <nav aria-label="Navigation principale">
+        <nav :aria-label="t('header.main_nav')">
           <ul class="flex items-center gap-1 flex-wrap list-none p-0 m-0">
             <li v-for="link in navLinks" :key="link.to">
               <router-link
@@ -43,22 +43,23 @@
 
         <AppSearch />
         <AppContrastToggle />
+        <AppLangToggle />
 
         <div class="flex items-center gap-4 text-sm flex-wrap">
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
             <span class="text-slate-400">
-              Session <span class="text-eb-green font-bold">#42</span> — 2024
+              {{ t('header.session_label') }} <span class="text-eb-green font-bold">#42</span> — 2024
             </span>
           </div>
           <div class="flex items-center gap-1 text-slate-400">
             <i class="fa fa-users text-eb-cyan text-xs" aria-hidden="true"></i>
             <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
-            <span>joueurs</span>
+            <span>{{ t('header.players') }}</span>
           </div>
-          <div class="flex items-center gap-2" role="group" aria-label="Sélecteur d'horizon temporel">
+          <div class="flex items-center gap-2" role="group" :aria-label="t('header.horizon_selector')">
             <span class="text-xs text-slate-500">
-              <i class="fa fa-clock" aria-hidden="true"></i> Horizon :
+              <i class="fa fa-clock" aria-hidden="true"></i> {{ t('header.horizon_label') }} :
             </span>
             <button
               v-for="h in horizons"
@@ -81,7 +82,7 @@
         class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-eb-border text-slate-400 hover:text-slate-200 hover:border-eb-cyan/50 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
         :aria-expanded="menuOpen"
         aria-controls="mobile-menu"
-        :aria-label="menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'"
+        :aria-label="menuOpen ? t('header.close_menu') : t('header.open_menu')"
         @click="menuOpen = !menuOpen"
       >
         <i :class="['fa', menuOpen ? 'fa-xmark' : 'fa-bars', 'text-sm']" aria-hidden="true"></i>
@@ -96,7 +97,7 @@
       class="md:hidden border-t border-eb-border bg-eb-dark/95 px-4 py-4 space-y-5"
     >
       <!-- Navigation -->
-      <nav aria-label="Navigation principale">
+      <nav :aria-label="t('header.main_nav')">
         <ul class="space-y-1 list-none p-0 m-0">
           <li v-for="link in navLinks" :key="link.to">
             <router-link
@@ -116,30 +117,31 @@
         </ul>
       </nav>
 
-      <!-- Recherche + contraste -->
+      <!-- Recherche + contraste + langue -->
       <div class="flex items-center gap-3 pt-1 border-t border-eb-border">
         <AppSearch class="flex-1" align="left" />
         <AppContrastToggle />
+        <AppLangToggle />
       </div>
 
       <!-- Session info -->
       <div class="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-eb-border">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
-          Session <span class="text-eb-green font-bold ml-1">#42</span>
+          {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#42</span>
           <span class="text-slate-600">— 2024</span>
         </div>
         <div class="flex items-center gap-1">
           <i class="fa fa-users text-eb-cyan" aria-hidden="true"></i>
           <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
-          <span>joueurs</span>
+          <span>{{ t('header.players') }}</span>
         </div>
       </div>
 
       <!-- Horizon temporel -->
-      <div class="pt-1 border-t border-eb-border" role="group" aria-label="Sélecteur d'horizon temporel">
+      <div class="pt-1 border-t border-eb-border" role="group" :aria-label="t('header.horizon_selector')">
         <div class="text-xs text-slate-500 mb-2">
-          <i class="fa fa-clock mr-1" aria-hidden="true"></i> Horizon temporel
+          <i class="fa fa-clock mr-1" aria-hidden="true"></i> {{ t('header.horizon_label') }}
         </div>
         <div class="flex gap-2 flex-wrap">
           <button
@@ -162,43 +164,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { usePlanetsStore } from '@/store/planets.store'
 import AppSearch from '@/components/layout/AppSearch.vue'
 import AppContrastToggle from '@/components/layout/AppContrastToggle.vue'
+import AppLangToggle from '@/components/layout/AppLangToggle.vue'
 
 interface NavLink { to: string; label: string; icon: string }
 interface Horizon  { value: number; label: string }
 
+const { t } = useI18n()
 const planetsStore = usePlanetsStore()
 const { selectedHorizon } = storeToRefs(planetsStore)
 const route = useRoute()
 
-const menuOpen   = ref(false)
+const menuOpen    = ref(false)
 const playerCount = ref<number>(1247)
 
-const navLinks: NavLink[] = [
-  { to: '/',                    label: 'Dashboard',           icon: 'fa-gauge-high'      },
-  { to: '/limites-planetaires', label: 'Limites Planétaires', icon: 'fa-earth-europe'    },
-  { to: '/mitigation-policies', label: 'Politiques',           icon: 'fa-vote-yea'        },
-  { to: '/correlations',        label: 'Corrélations',        icon: 'fa-diagram-project' },
-  { to: '/simulateur',          label: 'Simulateur',          icon: 'fa-flask'           },
-]
+const navLinks = computed<NavLink[]>(() => [
+  { to: '/',                    label: t('nav.dashboard'),    icon: 'fa-gauge-high'      },
+  { to: '/limites-planetaires', label: t('nav.limits'),       icon: 'fa-earth-europe'    },
+  { to: '/mitigation-policies', label: t('nav.policies'),     icon: 'fa-vote-yea'        },
+  { to: '/correlations',        label: t('nav.correlations'), icon: 'fa-diagram-project' },
+  { to: '/simulateur',          label: t('nav.simulator'),    icon: 'fa-flask'           },
+])
 
-const horizons: Horizon[] = [
-  { value: 0,  label: "Aujourd'hui" },
-  { value: 10, label: '+10 ans' },
-  { value: 20, label: '+20 ans' },
-  { value: 50, label: '+50 ans' },
-]
+const horizons = computed<Horizon[]>(() => [
+  { value: 0,  label: t('header.horizons.today')  },
+  { value: 10, label: t('header.horizons.ten')    },
+  { value: 20, label: t('header.horizons.twenty') },
+  { value: 50, label: t('header.horizons.fifty')  },
+])
 
 function setHorizon(value: number): void {
   planetsStore.setHorizon(value)
 }
 
-// Fermeture automatique lors d'un changement de route
 watch(() => route.path, () => { menuOpen.value = false })
 </script>
 
