@@ -29,7 +29,7 @@
         </div>
         <LineChart
           canvas-id="prospCO2Chart"
-          :labels="decision.projections.labels"
+          :labels="mitigationPolicy.projections.labels"
           :datasets="co2Datasets"
           :height="200"
           :show-legend="true"
@@ -42,7 +42,7 @@
         </div>
         <LineChart
           canvas-id="prospTempChart"
-          :labels="decision.projections.labels"
+          :labels="mitigationPolicy.projections.labels"
           :datasets="tempDatasets"
           :height="200"
           :show-legend="true"
@@ -74,20 +74,20 @@ import EbCard from '@/components/layout/EbCard.vue'
 import SectionTitle from '@/components/layout/SectionTitle.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 
-import type { Decision } from '@/types/index'
+import type { MitigationPolicy } from '@/types/index'
 
 const props = withDefaults(defineProps<{
-  visible?:        boolean
-  decision:        Decision
-  finalConsensus?: number
-  validatedHash?:  string
-  validatedBlock?: number
+  visible?:          boolean
+  mitigationPolicy:  MitigationPolicy
+  finalConsensus?:   number
+  validatedHash?:    string
+  validatedBlock?:   number
 }>(), { visible: false, finalConsensus: 68, validatedHash: '0x…', validatedBlock: 1848 })
 
-const narratives = computed(() => props.decision.prospectiveNarratives ?? {})
+const narratives = computed(() => props.mitigationPolicy.prospectiveNarratives ?? {})
 
 const co2Datasets = computed(() => {
-  const p = props.decision.projections?.co2
+  const p = props.mitigationPolicy.projections?.co2
   if (!p) return []
   return [
     { label: 'Scénario décidé',   data: p.decided,   borderColor: '#00ff88', backgroundColor: 'rgba(0,255,136,0.08)', fill: true },
@@ -97,7 +97,7 @@ const co2Datasets = computed(() => {
 })
 
 const tempDatasets = computed(() => {
-  const p = props.decision.projections?.temperature
+  const p = props.mitigationPolicy.projections?.temperature
   if (!p) return []
   return [
     { label: 'Scénario décidé',   data: p.decided,   borderColor: '#00ff88', backgroundColor: 'rgba(0,255,136,0.08)', fill: true },

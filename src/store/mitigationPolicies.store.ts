@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Decision, DecisionBallot, PairwiseVotes } from '@/types/index'
-import { decisions as allDecisions } from '@/data/decisions'
+import type { MitigationPolicy, DecisionBallot, PairwiseVotes } from '@/types/index'
+import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import { ballots as ballotData } from '@/data/ballots'
 import { condorcetWinner, bordaScores, resolveWinner, rankingToPairwiseDelta } from '@/utils/condorcet'
 
@@ -14,17 +14,17 @@ export interface BallotResult {
   hasCycle: boolean
   method: 'condorcet' | 'borda'
   winnerIdx: 0 | 1 | 2
-  winnerDecision: Decision
+  winnerPolicy: MitigationPolicy
   bordaScores: [number, number, number]
   pairwise: PairwiseVotes
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 
-export const useDecisionsStore = defineStore('decisions', () => {
+export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () => {
 
-  // Index des décisions par ID
-  const decisionIndex = Object.fromEntries(allDecisions.map(d => [d.id, d]))
+  // Index des politiques par ID
+  const policyIndex = Object.fromEntries(allMitigationPolicies.map(d => [d.id, d]))
 
   // Scrutins (état réactif — clonés pour permettre la mutation locale)
   const ballots = ref<DecisionBallot[]>(ballotData.map(b => ({
@@ -42,13 +42,13 @@ export const useDecisionsStore = defineStore('decisions', () => {
     ballots.value.filter(b => b.status === 'closed').slice().reverse()
   )
 
-  // Décisions candidates du scrutin actif
-  const activeCandidates = computed<[Decision, Decision, Decision] | null>(() => {
+  // Politiques candidates du scrutin actif
+  const activeCandidates = computed<[MitigationPolicy, MitigationPolicy, MitigationPolicy] | null>(() => {
     if (!activeBallot.value) return null
     const [a, b, c] = activeBallot.value.decisionIds
-    const da = decisionIndex[a]
-    const db = decisionIndex[b]
-    const dc = decisionIndex[c]
+    const da = policyIndex[a]
+    const db = policyIndex[b]
+    const dc = policyIndex[c]
     if (!da || !db || !dc) return null
     return [da, db, dc]
   })
@@ -109,21 +109,21 @@ export const useDecisionsStore = defineStore('decisions', () => {
 
     const hasCycle   = condorcetWinner(ballot.pairwise) === null
     const { winner: winnerIdx, method } = resolveWinner(ballot.pairwise)
-    const winnerDecision = decisionIndex[ballot.decisionIds[winnerIdx]]
-    if (!winnerDecision) return null
+    const winnerPolicy = policyIndex[ballot.decisionIds[winnerIdx]]
+    if (!winnerPolicy) return null
 
     return {
       hasCycle,
       method,
       winnerIdx,
-      winnerDecision,
+      winnerPolicy,
       bordaScores: bordaScores(ballot.pairwise),
       pairwise: ballot.pairwise,
     }
   }
 
-  function getDecision(id: string): Decision | undefined {
-    return decisionIndex[id]
+  function getMitigationPolicy(id: string): MitigationPolicy | undefined {
+    return policyIndex[id]
   }
 
   return {
@@ -138,6 +138,6 @@ export const useDecisionsStore = defineStore('decisions', () => {
     setRank,
     submitRanking,
     getBallotResult,
-    getDecision,
+    getMitigationPolicy,
   }
 })

@@ -182,7 +182,7 @@ const playerCount = ref<number>(1247)
 const navLinks: NavLink[] = [
   { to: '/',                    label: 'Dashboard',           icon: 'fa-gauge-high'      },
   { to: '/limites-planetaires', label: 'Limites Planétaires', icon: 'fa-earth-europe'    },
-  { to: '/decisions',           label: 'Décisions',           icon: 'fa-vote-yea'        },
+  { to: '/mitigation-policies', label: 'Politiques',           icon: 'fa-vote-yea'        },
   { to: '/correlations',        label: 'Corrélations',        icon: 'fa-diagram-project' },
   { to: '/simulateur',          label: 'Simulateur',          icon: 'fa-flask'           },
 ]

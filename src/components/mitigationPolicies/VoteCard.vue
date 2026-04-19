@@ -4,9 +4,9 @@
     <div class="flex items-start justify-between gap-4 mb-4">
       <div>
         <div class="text-xs text-eb-cyan font-bold uppercase tracking-widest mb-1">
-          Proposition #{{ decision.number }}
+          Proposition #{{ mitigationPolicy.number }}
         </div>
-        <h2 class="text-lg font-black text-white leading-tight">{{ decision.title }}</h2>
+        <h2 class="text-lg font-black text-white leading-tight">{{ mitigationPolicy.title }}</h2>
       </div>
       <span class="shrink-0 text-xs bg-eb-cyan/10 text-eb-cyan border border-eb-cyan/30 px-2 py-1 rounded-full flex items-center gap-1">
         <span class="w-1.5 h-1.5 rounded-full bg-eb-cyan animate-pulse-dot inline-block" aria-hidden="true"></span>
@@ -15,16 +15,16 @@
     </div>
 
     <!-- Description -->
-    <p class="text-sm text-slate-400 mb-5 leading-relaxed">{{ decision.description }}</p>
+    <p class="text-sm text-slate-400 mb-5 leading-relaxed">{{ mitigationPolicy.description }}</p>
 
     <!-- Sources documentaires -->
-    <div v-if="decision.resources?.length" class="mb-5">
+    <div v-if="mitigationPolicy.resources?.length" class="mb-5">
       <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
         <i class="fa fa-book-open mr-1" aria-hidden="true"></i> Documentation
       </div>
       <ul class="space-y-2">
         <li
-          v-for="res in decision.resources"
+          v-for="res in mitigationPolicy.resources"
           :key="res.url"
           class="bg-eb-mid rounded-lg p-3 border border-eb-border text-xs"
         >
@@ -41,7 +41,7 @@
 
     <!-- Barres de vote -->
     <div class="space-y-3 mb-5" aria-label="Résultats du vote">
-      <div v-for="opt in decision.options" :key="opt.id">
+      <div v-for="opt in mitigationPolicy.options" :key="opt.id">
         <div class="flex justify-between text-xs mb-1">
           <span class="font-bold" :style="{ color: effectiveColor(opt) }">
             <i :class="optionIcon(opt.id)" aria-hidden="true"></i>
@@ -67,18 +67,18 @@
         ></div>
         <div
           class="absolute top-0 h-full border-r-2 border-yellow-400 border-dashed"
-          :style="{ left: decision.consensusThreshold + '%' }"
+          :style="{ left: mitigationPolicy.consensusThreshold + '%' }"
           aria-hidden="true"
         ></div>
       </div>
-      <span class="text-yellow-400 font-bold whitespace-nowrap">Seuil : {{ decision.consensusThreshold }}%</span>
+      <span class="text-yellow-400 font-bold whitespace-nowrap">Seuil : {{ mitigationPolicy.consensusThreshold }}%</span>
     </div>
 
     <!-- Compteurs de votes -->
     <div class="grid grid-cols-3 gap-3 mb-5 text-center" aria-label="Décompte des votes">
-      <div v-for="opt in (decision.options ?? [])" :key="opt.id" :class="[opt.bgClass, 'border rounded-lg p-2', opt.borderClass]">
+      <div v-for="opt in (mitigationPolicy.options ?? [])" :key="opt.id" :class="[opt.bgClass, 'border rounded-lg p-2', opt.borderClass]">
         <div class="text-xl font-black" :style="{ color: effectiveColor(opt) }">
-          {{ decision.votes?.[opt.id]?.toLocaleString('fr-FR') ?? '—' }}
+          {{ mitigationPolicy.votes?.[opt.id]?.toLocaleString('fr-FR') ?? '—' }}
         </div>
         <div class="text-xs text-slate-500">{{ opt.label }}</div>
       </div>
@@ -87,7 +87,7 @@
     <!-- Boutons de vote -->
     <div v-if="!userVote" class="flex gap-3 flex-wrap" role="group" aria-label="Voter">
       <button
-        v-for="opt in (decision.options ?? [])"
+        v-for="opt in (mitigationPolicy.options ?? [])"
         :key="opt.id"
         class="vote-btn flex items-center gap-1 px-5 py-2 rounded-xl font-bold text-sm border transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
         :style="{ color: opt.color, borderColor: opt.color, backgroundColor: opt.bgClass.replace('bg-', 'rgba(').replace('/10', ',0.1)') }"
@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Decision, VotePcts, VoteOptionId } from '@/types/index'
+import type { MitigationPolicy, VotePcts, VoteOptionId } from '@/types/index'
 import EbCard from '@/components/layout/EbCard.vue'
 import { useContrastMode } from '@/composables/useContrastMode'
 
@@ -122,10 +122,10 @@ function effectiveColor(opt: { id: string; color: string }): string {
 }
 
 const props = defineProps<{
-  decision:     Decision
-  votePcts:     VotePcts
-  consensusPct: number
-  userVote:     VoteOptionId | null
+  mitigationPolicy: MitigationPolicy
+  votePcts:         VotePcts
+  consensusPct:     number
+  userVote:         VoteOptionId | null
 }>()
 
 defineEmits<{ vote: [optionId: VoteOptionId] }>()
@@ -139,7 +139,7 @@ function voteEmoji(id: string): string {
 }
 
 function labelForVote(id: VoteOptionId): string {
-  return props.decision.options?.find((o: { id: string }) => o.id === id)?.label ?? id
+  return props.mitigationPolicy.options?.find((o: { id: string }) => o.id === id)?.label ?? id
 }
 
 function voteBarGradient(id: string): string {

@@ -15,8 +15,8 @@
       </div>
       <button
         class="flex items-center gap-2 text-xs px-4 py-2 rounded-full border border-slate-600 text-slate-400 hover:border-red-500/50 hover:text-red-400 transition-all"
-        :disabled="selectedDecisions.length === 0"
-        :class="selectedDecisions.length === 0 ? 'opacity-40 cursor-not-allowed' : ''"
+        :disabled="selectedMitigationPolicies.length === 0"
+        :class="selectedMitigationPolicies.length === 0 ? 'opacity-40 cursor-not-allowed' : ''"
         @click="reset"
       >
         <i class="fa fa-rotate-left" aria-hidden="true"></i>
@@ -145,7 +145,7 @@
 
         <!-- État vide -->
         <div
-          v-if="selectedDecisions.length === 0"
+          v-if="selectedMitigationPolicies.length === 0"
           class="border border-dashed border-eb-border rounded-card p-6 text-center text-slate-500 text-xs"
         >
           <i class="fa fa-hand-pointer text-2xl mb-2 block opacity-30" aria-hidden="true"></i>
@@ -155,7 +155,7 @@
         <!-- Séquence ordonnée -->
         <TransitionGroup name="seq" tag="div" class="space-y-2">
           <div
-            v-for="(dec, index) in selectedDecisions"
+            v-for="(dec, index) in selectedMitigationPolicies"
             :key="dec.id"
             class="bg-eb-card border border-eb-border rounded-card p-3"
           >
@@ -187,7 +187,7 @@
                 </button>
                 <button
                   class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-200 disabled:opacity-25 transition-colors"
-                  :disabled="index === selectedDecisions.length - 1"
+                  :disabled="index === selectedMitigationPolicies.length - 1"
                   aria-label="Descendre"
                   @click="moveDown(index)"
                 >
@@ -207,7 +207,7 @@
                   v-else
                   class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-red-400 transition-colors"
                   aria-label="Retirer"
-                  @click="removeDecision(dec.id)"
+                  @click="removeMitigationPolicy(dec.id)"
                 >
                   <i class="fa fa-xmark text-xs" aria-hidden="true"></i>
                 </button>
@@ -226,7 +226,7 @@
         </TransitionGroup>
 
         <!-- Note méthodologique -->
-        <p v-if="selectedDecisions.length > 0" class="text-xs text-slate-600 mt-3 leading-relaxed">
+        <p v-if="selectedMitigationPolicies.length > 0" class="text-xs text-slate-600 mt-3 leading-relaxed">
           <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>
           Cumul additif — interactions inter-politiques non modélisées dans ce POC.
           Les synergies (ex. charbon + ENR) ou antagonismes (ex. gaz de transition) peuvent
@@ -297,13 +297,13 @@
         </EbCard>
 
         <!-- Résumé par décision sélectionnée -->
-        <EbCard v-if="selectedDecisions.length > 0">
+        <EbCard v-if="selectedMitigationPolicies.length > 0">
           <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">
             Contribution individuelle (plein effet)
           </h3>
           <div class="space-y-2">
             <div
-              v-for="dec in selectedDecisions"
+              v-for="dec in selectedMitigationPolicies"
               :key="dec.id"
               class="flex items-center gap-2"
             >
@@ -352,7 +352,7 @@ import type { ChartDataset } from '@/types/index'
 const store = useSimulationStore()
 const {
   catalogue,
-  selectedDecisions,
+  selectedMitigationPolicies,
   selectedIds,
   lockedIds,
   cumulativeCo2,
@@ -364,7 +364,7 @@ const {
   totalAnnualReduction,
 } = storeToRefs(store)
 
-const { addDecision, removeDecision, moveUp, moveDown, reset } = store
+const { addMitigationPolicy, removeMitigationPolicy, moveUp, moveDown, reset } = store
 
 // ─── Helpers UI ──────────────────────────────────────────────────────────────
 
@@ -378,7 +378,7 @@ function isLocked(id: string): boolean {
 
 function toggle(id: string): void {
   if (isLocked(id)) return
-  isSelected(id) ? removeDecision(id) : addDecision(id)
+  isSelected(id) ? removeMitigationPolicy(id) : addMitigationPolicy(id)
 }
 
 function uncertaintyColor(score: unknown): string {

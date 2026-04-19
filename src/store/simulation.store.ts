@@ -13,8 +13,8 @@
 
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { decisions as allDecisions } from '@/data/decisions'
-import type { Decision, DecisionProjections } from '@/types/index'
+import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
+import type { MitigationPolicy, MitigationPolicyProjections } from '@/types/index'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
 export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
@@ -23,90 +23,90 @@ export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function hasImpactModel(d: Decision): boolean {
+function hasImpactModel(d: MitigationPolicy): boolean {
   return typeof d.projectedImpact['emissionsReductionGtCO2yr'] === 'number'
 }
 
-function hasProjections(d: Decision): d is Decision & { projections: DecisionProjections } {
-  const p = d.projections as Partial<DecisionProjections>
+function hasProjections(d: MitigationPolicy): d is MitigationPolicy & { projections: MitigationPolicyProjections } {
+  const p = d.projections as Partial<MitigationPolicyProjections>
   return Array.isArray(p?.co2?.decided) && Array.isArray(p?.temperature?.decided)
 }
 
-function co2Deltas(dec: Decision): number[] {
+function co2Deltas(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_CO2.map(() => 0)
-  return (dec.projections as DecisionProjections).co2.decided.map((v, i) => v - BASELINE_CO2[i])
+  return (dec.projections as MitigationPolicyProjections).co2.decided.map((v, i) => v - BASELINE_CO2[i])
 }
 
-function co2DeltasPessimist(dec: Decision): number[] {
+function co2DeltasPessimist(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_CO2.map(() => 0)
-  return (dec.projections as DecisionProjections).co2.pessimist.map((v, i) => v - BASELINE_CO2[i])
+  return (dec.projections as MitigationPolicyProjections).co2.pessimist.map((v, i) => v - BASELINE_CO2[i])
 }
 
-function tempDeltas(dec: Decision): number[] {
+function tempDeltas(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_TEMP.map(() => 0)
-  return (dec.projections as DecisionProjections).temperature.decided.map((v, i) => v - BASELINE_TEMP[i])
+  return (dec.projections as MitigationPolicyProjections).temperature.decided.map((v, i) => v - BASELINE_TEMP[i])
 }
 
-function tempDeltasPessimist(dec: Decision): number[] {
+function tempDeltasPessimist(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_TEMP.map(() => 0)
-  return (dec.projections as DecisionProjections).temperature.pessimist.map((v, i) => v - BASELINE_TEMP[i])
+  return (dec.projections as MitigationPolicyProjections).temperature.pessimist.map((v, i) => v - BASELINE_TEMP[i])
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useSimulationStore = defineStore('simulation', () => {
 
-  // Décisions disponibles pour la simulation (avec modèle d'impact complet)
-  const catalogue = computed<Decision[]>(() => {
-    const valid = allDecisions.filter(d => hasImpactModel(d) && hasProjections(d))
+  // Politiques disponibles pour la simulation (avec modèle d'impact complet)
+  const catalogue = computed<MitigationPolicy[]>(() => {
+    const valid = allMitigationPolicies.filter(d => hasImpactModel(d) && hasProjections(d))
     return [...valid.filter(d => d.status === 'validated'), ...valid.filter(d => d.status !== 'validated')]
   })
 
-  // IDs des décisions retenues (validées par scrutin clos) — ne peuvent être retirées
+  // IDs des politiques retenues (validées par scrutin clos) — ne peuvent être retirées
   const lockedIds = computed<string[]>(() =>
     catalogue.value.filter(d => d.status === 'validated').map(d => d.id)
   )
 
-  // Séquence ordonnée : initialisée avec les décisions déjà retenues
+  // Séquence ordonnée : initialisée avec les politiques déjà retenues
   const selectedIds = ref<string[]>(
-    allDecisions
+    allMitigationPolicies
       .filter(d => d.status === 'validated' && hasImpactModel(d) && hasProjections(d))
       .map(d => d.id)
   )
 
-  // Décisions sélectionnées dans l'ordre choisi
-  const selectedDecisions = computed<Decision[]>(() =>
+  // Politiques sélectionnées dans l'ordre choisi
+  const selectedMitigationPolicies = computed<MitigationPolicy[]>(() =>
     selectedIds.value
       .map(id => catalogue.value.find(d => d.id === id))
-      .filter((d): d is Decision => d !== undefined)
+      .filter((d): d is MitigationPolicy => d !== undefined)
   )
 
   // ─── Projections cumulées ──────────────────────────────────────────────────
 
   const cumulativeCo2 = computed<number[]>(() =>
     BASELINE_CO2.map((base, i) => {
-      const delta = selectedDecisions.value.reduce((s, dec) => s + co2Deltas(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + co2Deltas(dec)[i], 0)
       return Math.round((base + delta) * 10) / 10
     })
   )
 
   const cumulativeCo2Pessimist = computed<number[]>(() =>
     BASELINE_CO2.map((base, i) => {
-      const delta = selectedDecisions.value.reduce((s, dec) => s + co2DeltasPessimist(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + co2DeltasPessimist(dec)[i], 0)
       return Math.round((base + delta) * 10) / 10
     })
   )
 
   const cumulativeTemp = computed<number[]>(() =>
     BASELINE_TEMP.map((base, i) => {
-      const delta = selectedDecisions.value.reduce((s, dec) => s + tempDeltas(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + tempDeltas(dec)[i], 0)
       return Math.round((base + delta) * 100) / 100
     })
   )
 
   const cumulativeTempPessimist = computed<number[]>(() =>
     BASELINE_TEMP.map((base, i) => {
-      const delta = selectedDecisions.value.reduce((s, dec) => s + tempDeltasPessimist(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + tempDeltasPessimist(dec)[i], 0)
       return Math.round((base + delta) * 100) / 100
     })
   )
@@ -127,19 +127,19 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   // Réduction totale d'émissions annuelles cumulées
   const totalAnnualReduction = computed<number>(() =>
-    selectedDecisions.value.reduce((s, dec) =>
+    selectedMitigationPolicies.value.reduce((s, dec) =>
       s + (dec.projectedImpact['emissionsReductionGtCO2yr'] as number ?? 0), 0)
   )
 
   // ─── Mutations ────────────────────────────────────────────────────────────
 
-  function addDecision(id: string): void {
+  function addMitigationPolicy(id: string): void {
     if (!selectedIds.value.includes(id)) {
       selectedIds.value = [...selectedIds.value, id]
     }
   }
 
-  function removeDecision(id: string): void {
+  function removeMitigationPolicy(id: string): void {
     if (lockedIds.value.includes(id)) return
     selectedIds.value = selectedIds.value.filter(i => i !== id)
   }
@@ -166,7 +166,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     selectedIds,
     lockedIds,
     catalogue,
-    selectedDecisions,
+    selectedMitigationPolicies,
     cumulativeCo2,
     cumulativeCo2Pessimist,
     cumulativeTemp,
@@ -176,8 +176,8 @@ export const useSimulationStore = defineStore('simulation', () => {
     co2SavedIn2050,
     co2In2050Decided,
     totalAnnualReduction,
-    addDecision,
-    removeDecision,
+    addMitigationPolicy,
+    removeMitigationPolicy,
     moveUp,
     moveDown,
     reset,

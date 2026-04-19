@@ -48,10 +48,10 @@ export function resolveWinner(p: PairwiseVotes): { winner: 0 | 1 | 2; method: Wi
  */
 export function rankingToPairwiseDelta(
   ranking: [string, string, string],
-  decisionIds: [string, string, string],
+  policyIds: [string, string, string],
 ): PairwiseVotes {
-  // Position dans le ballot pour chaque décision
-  const pos = (id: string) => decisionIds.indexOf(id)  // 0=A, 1=B, 2=C
+  // Position dans le ballot pour chaque politique
+  const pos = (id: string) => policyIds.indexOf(id)  // 0=A, 1=B, 2=C
   const userRank = (ballotIdx: number) =>
     [pos(ranking[0]), pos(ranking[1]), pos(ranking[2])].indexOf(ballotIdx)
 

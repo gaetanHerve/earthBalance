@@ -14,10 +14,10 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Limites Planétaires — EarthBalance' },
   },
   {
-    path: '/decisions',
-    name: 'decisions',
-    component: () => import('@/views/DecisionsView.vue'),
-    meta: { title: 'Décisions Collectives — EarthBalance' },
+    path: '/mitigation-policies',
+    name: 'mitigationPolicies',
+    component: () => import('@/views/PolitiquesView.vue'),
+    meta: { title: 'Politiques — EarthBalance' },
   },
   {
     path: '/correlations',

@@ -23,30 +23,30 @@
  *    Format JSON : { optimistic, moderate, pessimistic } — champs: horizon, text."
  */
 
-import type { Decision, ProspectiveNarrative } from '@/types/index'
+import type { MitigationPolicy, ProspectiveNarrative } from '@/types/index'
 
 type ProspectiveResult = Record<string, ProspectiveNarrative>
 
 export const LLMService = {
   async generateProspective(
-    decision: Decision,
+    mitigationPolicy: MitigationPolicy,
     _currentIndicators: Record<string, unknown>,
   ): Promise<ProspectiveResult> {
     // TODO: POST /api/llm/prospective via backend proxy (ne jamais exposer la clé API côté client)
     // const response = await fetch('/api/llm/prospective', {
     //   method: 'POST',
     //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ decision, currentIndicators: _currentIndicators }),
+    //   body: JSON.stringify({ mitigationPolicy, currentIndicators: _currentIndicators }),
     // })
     // if (!response.ok) throw new Error('Erreur LLM service')
     // return await response.json()
     console.warn('[LLMService] generateProspective — non implémenté (stub). Données fictives retournées.')
-    return decision.prospectiveNarratives as ProspectiveResult
+    return mitigationPolicy.prospectiveNarratives as ProspectiveResult
   },
 
-  async summarizeDecision(decision: Decision): Promise<string> {
+  async summarizeMitigationPolicy(mitigationPolicy: MitigationPolicy): Promise<string> {
     // TODO: POST /api/llm/summarize via backend proxy
-    console.warn('[LLMService] summarizeDecision — non implémenté (stub)')
-    return decision.description.slice(0, 120) + '…'
+    console.warn('[LLMService] summarizeMitigationPolicy — non implémenté (stub)')
+    return mitigationPolicy.description.slice(0, 120) + '…'
   },
 }

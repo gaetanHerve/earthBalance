@@ -136,7 +136,7 @@ export interface EcologicalCharts {
 
 // ─── Décisions & Vote ─────────────────────────────────────────────────────────
 
-export type DecisionStatus = 'active' | 'validated' | 'rejected' | 'expired'
+export type MitigationPolicyStatus = 'active' | 'validated' | 'rejected' | 'expired'
 export type VoteOptionId = 'pour' | 'contre' | 'abst'
 
 export interface VoteOption {
@@ -177,7 +177,7 @@ export interface DecisionBallot {
   status: BallotStatus
 }
 
-export interface DecisionResource {
+export interface MitigationPolicyResource {
   title: string
   excerpt: string
   url: string
@@ -197,27 +197,27 @@ export interface ProjectionSeries {
   pessimist: number[]
 }
 
-export interface DecisionProjections {
+export interface MitigationPolicyProjections {
   labels: number[]
   co2: ProjectionSeries
   temperature: ProjectionSeries
 }
 
-export interface Decision {
+export interface MitigationPolicy {
   id: string
   sessionId: number
   number: string
-  status: DecisionStatus
+  status: MitigationPolicyStatus
   title: string
   description: string
   options?: VoteOption[]
   votes?: VoteTally
   consensusThreshold?: number
   deadline: string
-  resources: DecisionResource[]
+  resources: MitigationPolicyResource[]
   projectedImpact: Record<string, number>
   prospectiveNarratives: Record<string, ProspectiveNarrative>
-  projections: DecisionProjections | Record<string, never>
+  projections: MitigationPolicyProjections | Record<string, never>
 }
 
 export interface VotePcts {

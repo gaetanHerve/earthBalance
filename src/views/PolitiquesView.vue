@@ -3,7 +3,7 @@
 
     <!-- En-tête -->
     <div>
-      <h1 class="text-2xl font-black text-white mb-1">Décisions Collectives</h1>
+      <h1 class="text-2xl font-black text-white mb-1">Politiques</h1>
       <p class="text-sm text-slate-400 leading-relaxed max-w-3xl">
         Chaque scrutin soumet trois politiques climatiques au vote de la communauté.
         Classez-les de votre première à votre troisième préférence.
@@ -157,7 +157,7 @@
                   Cycle détecté — gagnant désigné par score de Borda
                 </template>
               </div>
-              <div class="font-bold text-white text-sm">{{ activeResult.winnerDecision.title }}</div>
+              <div class="font-bold text-white text-sm">{{ activeResult.winnerPolicy.title }}</div>
             </div>
           </div>
 
@@ -265,19 +265,19 @@
 import { computed, defineComponent, h } from 'vue'
 import type { PropType } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useDecisionsStore } from '@/store/decisions.store'
+import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
-import type { RankPosition } from '@/store/decisions.store'
-import type { Decision, DecisionBallot } from '@/types/index'
+import type { RankPosition } from '@/store/mitigationPolicies.store'
+import type { MitigationPolicy, DecisionBallot } from '@/types/index'
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 
-const store = useDecisionsStore()
+const store = useMitigationPoliciesStore()
 const {
   activeBallot, activeCandidates, closedBallots,
   ranking, hasVoted, isRankingComplete,
 } = storeToRefs(store)
-const { getRankOf, setRank, submitRanking, getBallotResult, getDecision } = store
+const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy } = store
 
 // ─── Résultat du scrutin actif ────────────────────────────────────────────────
 
@@ -306,15 +306,15 @@ function onRankClick(decisionId: string, pos: number): void {
 
 function getDecisionTitleAt(pos: number): string {
   const id = ranking.value[pos]
-  return id ? truncate(getDecision(id)?.title ?? '', 30) : '—'
+  return id ? truncate(getMitigationPolicy(id)?.title ?? '', 30) : '—'
 }
 
-function impactVal(d: Decision, key: string): number | undefined {
+function impactVal(d: MitigationPolicy, key: string): number | undefined {
   return d.projectedImpact?.[key]
 }
 
-function getCandidatesFor(ballot: DecisionBallot): [Decision, Decision, Decision] {
-  return ballot.decisionIds.map(id => getDecision(id)!) as [Decision, Decision, Decision]
+function getCandidatesFor(ballot: DecisionBallot): [MitigationPolicy, MitigationPolicy, MitigationPolicy] {
+  return ballot.decisionIds.map(id => getMitigationPolicy(id)!) as [MitigationPolicy, MitigationPolicy, MitigationPolicy]
 }
 
 function ballotMethod(ballot: DecisionBallot): string {
@@ -325,15 +325,15 @@ function ballotHasCycle(ballot: DecisionBallot): boolean {
   return getBallotResult(ballot)?.hasCycle ?? false
 }
 
-function ballotWinner(ballot: DecisionBallot): Decision | undefined {
-  return getBallotResult(ballot)?.winnerDecision
+function ballotWinner(ballot: DecisionBallot): MitigationPolicy | undefined {
+  return getBallotResult(ballot)?.winnerPolicy
 }
 
 function ballotWinnerImpact(ballot: DecisionBallot, key: string): number | undefined {
-  return getBallotResult(ballot)?.winnerDecision.projectedImpact?.[key]
+  return getBallotResult(ballot)?.winnerPolicy.projectedImpact?.[key]
 }
 
-function shortName(d: Decision): string {
+function shortName(d: MitigationPolicy): string {
   const words = d.title.split(' ')
   return words.slice(0, 4).join(' ') + (words.length > 4 ? '…' : '')
 }
@@ -352,15 +352,15 @@ const PairwiseMatrix = defineComponent({
   name: 'PairwiseMatrix',
   props: {
     ballot:     { type: Object as PropType<DecisionBallot>, required: true },
-    candidates: { type: Array as unknown as PropType<[Decision, Decision, Decision]>, required: true },
+    candidates: { type: Array as unknown as PropType<[MitigationPolicy, MitigationPolicy, MitigationPolicy]>, required: true },
   },
-  setup(props: { ballot: DecisionBallot; candidates: [Decision, Decision, Decision] }) {
+  setup(props: { ballot: DecisionBallot; candidates: [MitigationPolicy, MitigationPolicy, MitigationPolicy] }) {
     // Label long pour les titres de ligne, court pour les colonnes
-    function rowLabel(d: Decision): string {
+    function rowLabel(d: MitigationPolicy): string {
       const words = d.title.split(' ')
       return words.slice(0, 3).join(' ') + (words.length > 3 ? '…' : '')
     }
-    function colLabel(d: Decision): string {
+    function colLabel(d: MitigationPolicy): string {
       const words = d.title.split(' ')
       return words.slice(0, 2).join(' ') + (words.length > 2 ? '…' : '')
     }
@@ -376,7 +376,7 @@ const PairwiseMatrix = defineComponent({
         [p.ca, p.cb, null],
       ]
 
-      const rows = candidates.map((d: Decision, i: number) =>
+      const rows = candidates.map((d: MitigationPolicy, i: number) =>
         h('tr', { key: d.id }, [
           h('th', {
             scope: 'row',

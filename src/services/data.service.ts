@@ -1,11 +1,11 @@
 import type {
   PlanetaryLimit, RadarData, SocietalIndicators,
-  EcologicalCharts, TickerItem, Decision,
+  EcologicalCharts, TickerItem, MitigationPolicy,
   GlobalStats, BlockchainState,
 } from '@/types/index'
 import { planetaryLimits, radarData } from '@/data/planetaryLimits'
 import { societalIndicators, ecologicalCharts, tickerItems } from '@/data/societalIndicators'
-import { decisions, globalStats, blockchainState } from '@/data/decisions'
+import { mitigationPolicies, globalStats, blockchainState } from '@/data/mitigationPolicies'
 
 export const DataService = {
   async getPlanetaryLimits(): Promise<PlanetaryLimit[]> {
@@ -31,19 +31,19 @@ export const DataService = {
     return tickerItems
   },
 
-  async getActiveDecision(): Promise<Decision | null> {
-    const active = decisions.find((d) => d.status === 'active')
-    // TODO: GET /api/blockchain/decisions/active
+  async getActiveMitigationPolicy(): Promise<MitigationPolicy | null> {
+    const active = mitigationPolicies.find((d) => d.status === 'active')
+    // TODO: GET /api/blockchain/mitigation-policies/active
     return active ?? null
   },
 
-  async getDecisionHistory(): Promise<Decision[]> {
-    // TODO: GET /api/blockchain/decisions?status=validated
-    return decisions.filter((d) => d.status !== 'active')
+  async getMitigationPolicyHistory(): Promise<MitigationPolicy[]> {
+    // TODO: GET /api/blockchain/mitigation-policies?status=validated
+    return mitigationPolicies.filter((d) => d.status !== 'active')
   },
 
-  async getAllDecisions(): Promise<Decision[]> {
-    return decisions
+  async getAllMitigationPolicies(): Promise<MitigationPolicy[]> {
+    return mitigationPolicies
   },
 
   async getGlobalStats(): Promise<GlobalStats> {

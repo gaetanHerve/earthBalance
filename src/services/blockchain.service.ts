@@ -22,7 +22,7 @@ export const BlockchainService = {
     return '0xDEMO…0000'
   },
 
-  async castVote(_decisionId: string, _optionId: VoteOptionId): Promise<BlockchainVoteResult> {
+  async castVote(_mitigationPolicyId: string, _optionId: VoteOptionId): Promise<BlockchainVoteResult> {
     // TODO: const tx = await this.contract.castVote(_decisionId, _optionId)
     // const receipt = await tx.wait()
     // return { hash: receipt.hash, blockNumber: receipt.blockNumber }
@@ -31,19 +31,19 @@ export const BlockchainService = {
     return { hash: fakeHash, blockNumber: 1848 }
   },
 
-  async getVoteTally(_decisionId: string): Promise<VoteTally> {
+  async getVoteTally(_mitigationPolicyId: string): Promise<VoteTally> {
     // TODO: const [pour, contre, abst] = await this.contract.getVoteTally(_decisionId)
     console.warn('[BlockchainService] getVoteTally — non implémenté (stub)')
     return { pour: 673, contre: 386, abst: 188 }
   },
 
-  async validateDecision(_decisionId: string): Promise<{ hash: string }> {
-    // TODO: const tx = await this.contract.validateDecision(_decisionId)
+  async validateMitigationPolicy(_mitigationPolicyId: string): Promise<{ hash: string }> {
+    // TODO: const tx = await this.contract.validateMitigationPolicy(_mitigationPolicyId)
     console.warn('[BlockchainService] validateDecision — non implémenté (stub)')
     return { hash: '0x' + Math.random().toString(16).slice(2, 10) + '…' + Math.random().toString(16).slice(2, 6) }
   },
 
-  subscribeToVotes(_decisionId: string, _onVote: (event: unknown) => void): void {
+  subscribeToVotes(_mitigationPolicyId: string, _onVote: (event: unknown) => void): void {
     // TODO: this.contract.on('VoteCast', (voter, dId, option, event) => { if (dId === _decisionId) _onVote(event) })
     console.warn('[BlockchainService] subscribeToVotes — non implémenté (stub)')
   },

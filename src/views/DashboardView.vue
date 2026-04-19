@@ -50,19 +50,19 @@
         <!-- 3 candidats (aperçu) -->
         <div v-if="activeCandidates" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div
-            v-for="(decision, idx) in activeCandidates"
-            :key="decision.id"
+            v-for="(mitigationPolicy, idx) in activeCandidates"
+            :key="mitigationPolicy.id"
             class="rounded-lg border border-eb-border bg-eb-dark/60 p-3"
           >
             <div class="text-xs text-slate-500 font-mono mb-1">Candidat {{ idx + 1 }}</div>
-            <div class="text-sm font-bold text-white line-clamp-2 leading-snug">{{ decision.title }}</div>
+            <div class="text-sm font-bold text-white line-clamp-2 leading-snug">{{ mitigationPolicy.title }}</div>
           </div>
         </div>
 
         <!-- CTA -->
         <div class="flex justify-end">
           <RouterLink
-            to="/decisions"
+            to="/mitigation-policies"
             class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-eb-cyan text-eb-dark font-bold text-sm hover:bg-cyan-300 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
           >
             <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -80,7 +80,7 @@ import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { useDashboardStore }  from '@/store/dashboard.store'
-import { useDecisionsStore }  from '@/store/decisions.store'
+import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 
 import SectionTitle         from '@/components/layout/SectionTitle.vue'
 import WidgetCustomizer     from '@/components/dashboard/WidgetCustomizer.vue'
@@ -88,11 +88,11 @@ import EcologicalIndicators from '@/components/dashboard/EcologicalIndicators.vu
 import SocietalIndicators   from '@/components/dashboard/SocietalIndicators.vue'
 import ChartSkeleton        from '@/components/charts/ChartSkeleton.vue'
 
-const dashStore      = useDashboardStore()
-const decisionsStore = useDecisionsStore()
+const dashStore               = useDashboardStore()
+const mitigationPoliciesStore = useMitigationPoliciesStore()
 
 const { ecologicalCharts, societalIndicators, visibleWidgets } = storeToRefs(dashStore)
-const { activeBallot, activeCandidates, hasVoted } = storeToRefs(decisionsStore)
+const { activeBallot, activeCandidates, hasVoted } = storeToRefs(mitigationPoliciesStore)
 
 onMounted(() => dashStore.fetchAll())
 

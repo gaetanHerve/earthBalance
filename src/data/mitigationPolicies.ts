@@ -1,4 +1,4 @@
-import type { Decision, GlobalStats, BlockchainState } from '@/types/index'
+import type { MitigationPolicy, GlobalStats, BlockchainState } from '@/types/index'
 
 // ─── Baseline SSP2-4.5 (référence partagée pour toutes les projections) ────────
 // labels : [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
@@ -8,7 +8,7 @@ import type { Decision, GlobalStats, BlockchainState } from '@/types/index'
 // Les courbes "decided" et "pessimist" sont calculées en ajoutant les deltas
 // issus des modèles d'impact JSON (src/data/models/) à la baseline SSP2-4.5.
 
-export const decisions: Decision[] = [
+export const mitigationPolicies: MitigationPolicy[] = [
   // ─── Décision existante 42-07 ─────────────────────────────────────────────
   {
     id: 'dec-42-07',

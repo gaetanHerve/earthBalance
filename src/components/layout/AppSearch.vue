@@ -159,12 +159,12 @@ const allItems: SearchItem[] = [
     keywords: ['limites', 'planétaires', 'rockström', 'seuils', 'biodiversité', 'carbone', 'radar'],
   },
   {
-    id: 'decisions',
-    label: 'Décisions Collectives',
+    id: 'mitigationPolicies',
+    label: 'Politiques',
     description: 'Votez sur les propositions communautaires',
     icon: 'fa-vote-yea',
-    path: '/decisions',
-    keywords: ['décisions', 'vote', 'propositions', 'consensus', 'blockchain', 'gouvernance'],
+    path: '/mitigation-policies',
+    keywords: ['politiques', 'décisions', 'vote', 'propositions', 'consensus', 'blockchain', 'gouvernance'],
   },
   {
     id: 'correlations',
