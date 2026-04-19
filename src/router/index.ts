@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Politiques — EarthBalance' },
   },
   {
+    path: '/mitigation-policies/:id',
+    name: 'policyDetail',
+    component: () => import('@/views/PolicyDetailView.vue'),
+    meta: { title: 'Politique — EarthBalance' },
+  },
+  {
     path: '/correlations',
     name: 'correlations',
     component: () => import('@/views/CorrelationsView.vue'),

@@ -114,6 +114,13 @@
                     {{ uncertaintyLabel(dec.projectedImpact['uncertaintyScore']) }}
                   </span>
                 </div>
+                <RouterLink
+                  :to="`/mitigation-policies/${dec.id}`"
+                  class="inline-flex items-center gap-1 mt-1.5 text-xs text-slate-600 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
+                  @click.stop
+                >
+                  <i class="fa fa-circle-info" aria-hidden="true"></i>Détail
+                </RouterLink>
               </div>
 
               <!-- Toggle / verrou -->

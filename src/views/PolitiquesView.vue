@@ -107,6 +107,14 @@
           <div v-else class="mt-auto text-xs text-slate-500 text-center">
             Votre choix : <strong class="text-white">{{ rankLabelSafe(decision.id) || '—' }}</strong>
           </div>
+
+          <!-- Lien détail -->
+          <RouterLink
+            :to="`/mitigation-policies/${decision.id}`"
+            class="mt-1 self-end text-xs text-slate-500 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
+          >
+            <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>Détail
+          </RouterLink>
         </article>
       </div>
 
@@ -228,9 +236,13 @@
                     (cycle Condorcet — départage Borda)
                   </span>
                 </div>
-                <div class="text-sm font-bold text-white leading-snug">
+                <RouterLink
+                  v-if="ballotWinner(ballot)"
+                  :to="`/mitigation-policies/${ballotWinnerId(ballot)}`"
+                  class="text-sm font-bold text-white leading-snug hover:text-eb-cyan transition-colors"
+                >
                   {{ ballotWinner(ballot)?.title }}
-                </div>
+                </RouterLink>
                 <div class="flex flex-wrap gap-2 mt-1.5 text-xs">
                   <span
                     v-if="ballotWinnerImpact(ballot, 'emissionsReductionGtCO2yr')"
@@ -331,6 +343,12 @@ function ballotWinner(ballot: DecisionBallot): MitigationPolicy | undefined {
 
 function ballotWinnerImpact(ballot: DecisionBallot, key: string): number | undefined {
   return getBallotResult(ballot)?.winnerPolicy.projectedImpact?.[key]
+}
+
+function ballotWinnerId(ballot: DecisionBallot): string {
+  const result = getBallotResult(ballot)
+  if (!result) return ''
+  return ballot.decisionIds[result.winnerIdx]
 }
 
 function shortName(d: MitigationPolicy): string {

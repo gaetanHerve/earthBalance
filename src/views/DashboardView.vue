@@ -49,14 +49,18 @@
 
         <!-- 3 candidats (aperçu) -->
         <div v-if="activeCandidates" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div
+          <RouterLink
             v-for="(mitigationPolicy, idx) in activeCandidates"
             :key="mitigationPolicy.id"
-            class="rounded-lg border border-eb-border bg-eb-dark/60 p-3"
+            :to="`/mitigation-policies/${mitigationPolicy.id}`"
+            class="rounded-lg border border-eb-border bg-eb-dark/60 p-3 hover:border-eb-cyan/40 hover:bg-eb-cyan/5 transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none block"
           >
             <div class="text-xs text-slate-500 font-mono mb-1">Candidat {{ idx + 1 }}</div>
             <div class="text-sm font-bold text-white line-clamp-2 leading-snug">{{ mitigationPolicy.title }}</div>
-          </div>
+            <div class="text-xs text-slate-600 mt-1.5">
+              <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>Voir le détail
+            </div>
+          </RouterLink>
         </div>
 
         <!-- CTA -->

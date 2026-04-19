@@ -203,13 +203,23 @@ export interface MitigationPolicyProjections {
   temperature: ProjectionSeries
 }
 
+export interface IpccReference {
+  report: string
+  section: string
+  sectionTitle: string
+  excerpt: string
+  url: string
+}
+
 export interface MitigationPolicy {
   id: string
   sessionId: number
   number: string
   status: MitigationPolicyStatus
   title: string
+  summary?: string
   description: string
+  ipccReference?: IpccReference
   options?: VoteOption[]
   votes?: VoteTally
   consensusThreshold?: number
