@@ -14,6 +14,7 @@ export interface PlanetaryLimit {
   icon: string
   color: string
   definition: string
+  definitionEn: string
   unit: string
   threshold: number
   currentValue: number

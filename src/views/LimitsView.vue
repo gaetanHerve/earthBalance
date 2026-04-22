@@ -29,7 +29,7 @@
         <RadarChart
           v-if="radarData"
           canvas-id="globalRadar"
-          :labels="radarData.labels"
+          :labels="localizedRadarLabels"
           :values="radarData.values"
           :height="420"
           :aria-label="t('limits.radar_aria')"
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { usePlanetsStore } from '@/store/planets.store'
@@ -79,9 +79,13 @@ import RadarChart         from '@/components/charts/RadarChart.vue'
 import ChartSkeleton      from '@/components/charts/ChartSkeleton.vue'
 import PlanetaryLimitCard from '@/components/limits/PlanetaryLimitCard.vue'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const store = usePlanetsStore()
 const { limits, radarData, loading, limitsByStatus } = storeToRefs(store)
+
+const localizedRadarLabels = computed<string[]>(() =>
+  limits.value.map((l: { name: string; nameEn: string }) => locale.value === 'en' ? l.nameEn : l.name)
+)
 
 onMounted(() => store.fetchAll())
 </script>

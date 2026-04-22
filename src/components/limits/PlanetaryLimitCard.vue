@@ -4,7 +4,7 @@
     <div class="flex items-start justify-between gap-2 mb-3">
       <div class="flex items-center gap-2">
         <i :class="['fa', limit.icon, 'text-lg']" :style="{ color: limit.color }" aria-hidden="true"></i>
-        <h3 class="text-sm font-bold text-slate-200">{{ limit.name }}</h3>
+        <h3 class="text-sm font-bold text-slate-200">{{ displayName }}</h3>
       </div>
       <span
         class="text-xs px-2 py-0.5 rounded-full font-bold shrink-0"
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Définition -->
-    <p class="text-xs text-slate-500 mb-3 leading-relaxed">{{ limit.definition }}</p>
+    <p class="text-xs text-slate-500 mb-3 leading-relaxed">{{ displayDefinition }}</p>
 
     <!-- Valeurs clés -->
     <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
@@ -66,7 +66,7 @@
       :canvas-id="`chart-${limit.id}`"
       :labels="limit.timeSeries.years"
       :datasets="[{
-        label: limit.name,
+        label: displayName.value,
         data: limit.timeSeries.values,
         borderColor: limit.color,
         backgroundColor: hexToRgba(limit.color, 0.08),
@@ -74,7 +74,7 @@
         pointRadius: 2,
       }]"
       :height="120"
-      :aria-label="t('limits.chart_evolution', { name: limit.name })"
+      :aria-label="t('limits.chart_evolution', { name: displayName })"
     />
 
     <!-- Seuil critique en référence visuelle -->
@@ -93,8 +93,11 @@ import LineChart from '@/components/charts/LineChart.vue'
 
 import type { PlanetaryLimit, LimitStatus } from '@/types/index'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const props = defineProps<{ limit: PlanetaryLimit }>()
+
+const displayName       = computed(() => locale.value === 'en' ? props.limit.nameEn : props.limit.name)
+const displayDefinition = computed(() => locale.value === 'en' ? props.limit.definitionEn : props.limit.definition)
 
 const STATUS_CLASS: Record<LimitStatus, string> = {
   depasse:          'bg-red-900/40 text-red-400 border border-red-700/30',
