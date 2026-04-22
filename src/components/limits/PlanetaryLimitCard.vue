@@ -66,7 +66,7 @@
       :canvas-id="`chart-${limit.id}`"
       :labels="limit.timeSeries.years"
       :datasets="[{
-        label: displayName.value,
+        label: displayName,
         data: limit.timeSeries.values,
         borderColor: limit.color,
         backgroundColor: hexToRgba(limit.color, 0.08),
