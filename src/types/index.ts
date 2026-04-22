@@ -271,4 +271,6 @@ export interface ChartDataset {
   fill?: boolean
   tension?: number
   pointRadius?: number
+  pointStyle?: string
+  borderDash?: number[]
 }

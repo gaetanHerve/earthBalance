@@ -118,7 +118,8 @@ watch(() => props.values, (newVals) => {
   if (!chart) return
   chart.data.datasets[0].data = newVals
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(chart.data.datasets[0] as any).pointBackgroundColor = newVals.map((v) => v > 1 ? '#ff5050' : '#00ff88')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(chart.data.datasets[0] as any).pointBackgroundColor = newVals.map((v: number) => v > 1 ? '#ff5050' : '#00ff88')
   chart.update('active')
 }, { deep: true })
 

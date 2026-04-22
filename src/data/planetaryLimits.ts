@@ -1,5 +1,6 @@
 import type { PlanetaryLimit, RadarData } from '@/types/index'
 
+
 const years: number[] = [
   1950, 1955, 1960, 1965, 1970, 1975, 1980, 1985,
   1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024,

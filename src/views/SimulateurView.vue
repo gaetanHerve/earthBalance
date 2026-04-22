@@ -276,6 +276,7 @@
             canvas-id="sim-co2-chart"
             :labels="displayLabels"
             :datasets="co2Datasets"
+            :show-legend="false"
             :height="180"
             :y-min="15"
             :y-max="75"
@@ -300,6 +301,7 @@
             canvas-id="sim-temp-chart"
             :labels="displayLabels"
             :datasets="tempDatasets"
+            :show-legend="false"
             :height="180"
             :y-min="1.2"
             :y-max="4.5"
@@ -544,7 +546,6 @@ const tempDatasets = computed<ChartDataset[]>(() => {
       backgroundColor: 'transparent',
       fill: false,
       tension: 0,
-      pointRadius: 0,
     },
     {
       label: t('simulator.threshold_2c'),
@@ -553,7 +554,6 @@ const tempDatasets = computed<ChartDataset[]>(() => {
       backgroundColor: 'transparent',
       fill: false,
       tension: 0,
-      pointRadius: 0,
     },
   ]
 })
