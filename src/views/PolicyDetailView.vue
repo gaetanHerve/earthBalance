@@ -153,6 +153,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
+import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 import { policyDetails } from '@/data/policyDetails'
 import SectionTitle from '@/components/layout/SectionTitle.vue'
 import EbCard       from '@/components/layout/EbCard.vue'
@@ -160,10 +161,14 @@ import EbCard       from '@/components/layout/EbCard.vue'
 const { t } = useI18n()
 const route = useRoute()
 const store = useMitigationPoliciesStore()
+const { localizedPolicy, localizedDetail } = useLocalizedPolicies()
 
 const id     = computed(() => route.params.id as string)
-const policy = computed(() => store.getMitigationPolicy(id.value))
-const detail = computed(() => policyDetails[id.value] ?? null)
+const policy = computed(() => {
+  const p = store.getMitigationPolicy(id.value)
+  return p ? localizedPolicy(p) : undefined
+})
+const detail = computed(() => localizedDetail(id.value, policyDetails[id.value] ?? null))
 
 const statusStyle = computed(() => {
   switch (policy.value?.status) {

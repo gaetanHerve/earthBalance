@@ -28,13 +28,13 @@
       <!-- 3 cartes candidates -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6" role="group" :aria-label="t('policies.candidates_aria')">
         <article
-          v-for="(decision, idx) in activeCandidates"
+          v-for="(decision, idx) in localizedCandidates"
           :key="decision.id"
           class="rounded-xl border p-4 flex flex-col gap-3 transition-all"
           :class="getRankOf(decision.id) !== null
             ? 'border-eb-cyan/50 bg-eb-cyan/5'
             : 'border-eb-border bg-eb-mid/40'"
-          :aria-label="`Candidat ${idx + 1} : ${decision.title}`"
+          :aria-label="t('policies.candidate_aria', { n: idx + 1, title: decision.title })"
         >
           <!-- Badge rang actuel -->
           <div class="flex items-start justify-between gap-2">
@@ -63,7 +63,7 @@
               v-if="impactVal(decision, 'tempReductionC2100')"
               class="bg-eb-dark border border-eb-border rounded px-2 py-0.5 text-eb-cyan font-bold"
             >
-              −{{ impactVal(decision, 'tempReductionC2100') }}°C en 2100
+              −{{ impactVal(decision, 'tempReductionC2100') }}°C {{ t('policies.in_2100') }}
             </span>
             <span
               class="bg-eb-dark border border-eb-border rounded px-2 py-0.5"
@@ -78,7 +78,7 @@
             v-if="!hasVoted"
             class="flex gap-2 mt-auto"
             role="group"
-            :aria-label="`Classer ${decision.title}`"
+            :aria-label="t('policies.rank_aria', { title: decision.title })"
           >
             <button
               v-for="(label, pos) in rankButtons"
@@ -96,7 +96,7 @@
 
           <!-- Rang choisi (après vote) -->
           <div v-else class="mt-auto text-xs text-slate-500 text-center">
-            Votre choix : <strong class="text-white">{{ rankLabelSafe(decision.id) || '—' }}</strong>
+            {{ t('policies.your_choice') }} : <strong class="text-white">{{ rankLabelSafe(decision.id) || '—' }}</strong>
           </div>
 
           <!-- Lien détail -->
@@ -133,7 +133,7 @@
       </div>
 
       <!-- Résultats du scrutin actif (après premier vote) -->
-      <template v-if="activeBallot.totalVoters > 0 && activeCandidates && activeResult">
+      <template v-if="activeBallot.totalVoters > 0 && localizedCandidates && activeResult">
         <div class="mt-6">
           <!-- Bandeau gagnant -->
           <div
@@ -156,18 +156,18 @@
                   {{ t('policies.cycle_detected') }}
                 </template>
               </div>
-              <div class="font-bold text-white text-sm">{{ activeResult.winnerPolicy.title }}</div>
+              <div class="font-bold text-white text-sm">{{ localizedPolicy(activeResult.winnerPolicy).title }}</div>
             </div>
           </div>
 
           <!-- Scores de Borda si cycle -->
           <div
-            v-if="activeResult.hasCycle && activeCandidates"
+            v-if="activeResult.hasCycle && localizedCandidates"
             class="p-3 rounded-lg border border-yellow-700/30 bg-yellow-900/10 mb-4"
           >
             <div class="text-xs font-bold text-yellow-400 mb-2">{{ t('policies.borda_scores_title') }}</div>
             <div class="flex gap-6">
-              <div v-for="(d, i) in activeCandidates" :key="d.id" class="text-xs">
+              <div v-for="(d, i) in localizedCandidates" :key="d.id" class="text-xs">
                 <span class="text-slate-400">{{ shortName(d) }} : </span>
                 <span
                   class="font-bold"
@@ -179,9 +179,9 @@
 
           <!-- Matrice pairwise -->
           <PairwiseMatrix
-            v-if="activeCandidates"
+            v-if="localizedCandidates"
             :ballot="activeBallot"
-            :candidates="activeCandidates"
+            :candidates="localizedCandidates"
           />
         </div>
       </template>
@@ -270,13 +270,15 @@ import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
+import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
 import type { RankPosition } from '@/store/mitigationPolicies.store'
 import type { MitigationPolicy, DecisionBallot } from '@/types/index'
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const { localizedPolicy } = useLocalizedPolicies()
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 
@@ -286,6 +288,12 @@ const {
   ranking, hasVoted, isRankingComplete,
 } = storeToRefs(store)
 const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy } = store
+
+// ─── Candidats localisés ──────────────────────────────────────────────────────
+
+const localizedCandidates = computed(() =>
+  activeCandidates.value?.map(localizedPolicy) as [MitigationPolicy, MitigationPolicy, MitigationPolicy] | null
+)
 
 // ─── Résultat du scrutin actif ────────────────────────────────────────────────
 
@@ -314,7 +322,8 @@ function onRankClick(decisionId: string, pos: number): void {
 
 function getDecisionTitleAt(pos: number): string {
   const id = ranking.value[pos]
-  return id ? truncate(getMitigationPolicy(id)?.title ?? '', 30) : '—'
+  const p = getMitigationPolicy(id ?? '')
+  return p ? truncate(localizedPolicy(p).title, 30) : '—'
 }
 
 function impactVal(d: MitigationPolicy, key: string): number | undefined {
@@ -322,7 +331,7 @@ function impactVal(d: MitigationPolicy, key: string): number | undefined {
 }
 
 function getCandidatesFor(ballot: DecisionBallot): [MitigationPolicy, MitigationPolicy, MitigationPolicy] {
-  return ballot.decisionIds.map(id => getMitigationPolicy(id)!) as [MitigationPolicy, MitigationPolicy, MitigationPolicy]
+  return ballot.decisionIds.map(id => localizedPolicy(getMitigationPolicy(id)!)) as [MitigationPolicy, MitigationPolicy, MitigationPolicy]
 }
 
 function ballotMethod(ballot: DecisionBallot): string {
@@ -334,7 +343,8 @@ function ballotHasCycle(ballot: DecisionBallot): boolean {
 }
 
 function ballotWinner(ballot: DecisionBallot): MitigationPolicy | undefined {
-  return getBallotResult(ballot)?.winnerPolicy
+  const p = getBallotResult(ballot)?.winnerPolicy
+  return p ? localizedPolicy(p) : undefined
 }
 
 function ballotWinnerImpact(ballot: DecisionBallot, key: string): number | undefined {
@@ -353,7 +363,7 @@ function shortName(d: MitigationPolicy): string {
 }
 
 function formatDeadline(iso: string): string {
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+  return new Date(iso).toLocaleDateString(locale.value, { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 function truncate(s: string, max: number): string {
@@ -369,7 +379,7 @@ const PairwiseMatrix = defineComponent({
     candidates: { type: Array as unknown as PropType<[MitigationPolicy, MitigationPolicy, MitigationPolicy]>, required: true },
   },
   setup(props: { ballot: DecisionBallot; candidates: [MitigationPolicy, MitigationPolicy, MitigationPolicy] }) {
-    // Label long pour les titres de ligne, court pour les colonnes
+    const { t: pt } = useI18n()
     function rowLabel(d: MitigationPolicy): string {
       const words = d.title.split(' ')
       return words.slice(0, 3).join(' ') + (words.length > 3 ? '…' : '')
@@ -405,7 +415,7 @@ const PairwiseMatrix = defineComponent({
             const wins = v > vOpp
             return h('td', {
               key: j,
-              title: total > 0 ? `${v} votants` : '',
+              title: total > 0 ? pt('policies.pairwise_voters', { count: v }) : '',
               class: `px-1.5 py-1.5 text-center text-xs font-bold ${wins ? 'text-eb-green bg-eb-green/10' : 'text-red-400 bg-red-500/5'} rounded`,
             }, total > 0 ? `${pct}%` : '—')
           }),
@@ -415,9 +425,9 @@ const PairwiseMatrix = defineComponent({
       return h('div', { class: 'overflow-x-auto min-w-0' },
         h('table', {
           class: 'w-full text-xs border-separate border-spacing-0.5',
-          'aria-label': 'Matrice des comparaisons directes',
+          'aria-label': pt('policies.pairwise_aria'),
         }, [
-          h('caption', { class: 'sr-only' }, 'Ligne préférée à colonne : pourcentage de votants'),
+          h('caption', { class: 'sr-only' }, pt('policies.pairwise_caption')),
           h('thead', {}, [
             h('tr', {}, [
               h('th', { class: 'pr-2 py-1 text-left text-slate-600 font-normal text-xs' }, '↓ / →'),

@@ -1,4 +1,5 @@
 export default {
+  skip_to_content: 'Aller au contenu principal',
   nav: {
     dashboard:    'Dashboard',
     limits:       'Limites Planétaires',
@@ -150,6 +151,13 @@ export default {
     detail_link:           'Détail',
     reduce_section:        'Réduire {title}',
     expand_section:        'Développer {title}',
+    candidate_aria:        'Candidat {n} : {title}',
+    rank_aria:             'Classer {title}',
+    your_choice:           'Votre choix',
+    in_2100:               'en 2100',
+    pairwise_aria:         'Matrice des comparaisons directes',
+    pairwise_caption:      'Ligne préférée à colonne : pourcentage de votants',
+    pairwise_voters:       '{count} votants',
   },
   simulator: {
     title: 'Simulateur de Politiques Climatiques',
