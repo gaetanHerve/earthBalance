@@ -8,7 +8,7 @@ export const usePlanetsStore = defineStore('planets', () => {
   const radarData = ref<RadarData | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const selectedHorizon = ref<number>(0)
+  const selectedHorizon = ref<number>(2100)
 
   const limitById = computed(() => (id: string) => limits.value.find((l) => l.id === id))
 

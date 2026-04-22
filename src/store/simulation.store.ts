@@ -17,9 +17,9 @@ import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPo
 import type { MitigationPolicy, MitigationPolicyProjections } from '@/types/index'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
-export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
-export const BASELINE_CO2  = [37.4, 39, 40.5, 42, 45.1, 49.2, 54, 58, 63]
-export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5]
+export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
+export const BASELINE_CO2  = [37.4, 39, 40.5, 42, 45.1, 49.2, 54, 58, 63, 70]
+export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -32,24 +32,32 @@ function hasProjections(d: MitigationPolicy): d is MitigationPolicy & { projecti
   return Array.isArray(p?.co2?.decided) && Array.isArray(p?.temperature?.decided)
 }
 
+function extendedDelta(arr: number[], baseline: number[]): number[] {
+  return baseline.map((base, i) => {
+    if (i < arr.length) return arr[i] - base
+    const lastIdx = arr.length - 1
+    return arr[lastIdx] - baseline[lastIdx]
+  })
+}
+
 function co2Deltas(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_CO2.map(() => 0)
-  return (dec.projections as MitigationPolicyProjections).co2.decided.map((v, i) => v - BASELINE_CO2[i])
+  return extendedDelta((dec.projections as MitigationPolicyProjections).co2.decided, BASELINE_CO2)
 }
 
 function co2DeltasPessimist(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_CO2.map(() => 0)
-  return (dec.projections as MitigationPolicyProjections).co2.pessimist.map((v, i) => v - BASELINE_CO2[i])
+  return extendedDelta((dec.projections as MitigationPolicyProjections).co2.pessimist, BASELINE_CO2)
 }
 
 function tempDeltas(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_TEMP.map(() => 0)
-  return (dec.projections as MitigationPolicyProjections).temperature.decided.map((v, i) => v - BASELINE_TEMP[i])
+  return extendedDelta((dec.projections as MitigationPolicyProjections).temperature.decided, BASELINE_TEMP)
 }
 
 function tempDeltasPessimist(dec: MitigationPolicy): number[] {
   if (!hasProjections(dec)) return BASELINE_TEMP.map(() => 0)
-  return (dec.projections as MitigationPolicyProjections).temperature.pessimist.map((v, i) => v - BASELINE_TEMP[i])
+  return extendedDelta((dec.projections as MitigationPolicyProjections).temperature.pessimist, BASELINE_TEMP)
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -113,9 +121,9 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   // ─── Indicateurs résumés ───────────────────────────────────────────────────
 
-  // Température en 2074 (dernier point des séries)
-  const tempIn2074Decided    = computed<number>(() => cumulativeTemp.value[8])
-  const tempIn2074Pessimist  = computed<number>(() => cumulativeTempPessimist.value[8])
+  // Température en 2100 (dernier point des séries)
+  const tempIn2100Decided    = computed<number>(() => cumulativeTemp.value[9])
+  const tempIn2100Pessimist  = computed<number>(() => cumulativeTempPessimist.value[9])
 
   // CO₂ évité par rapport à la baseline en 2050
   const co2SavedIn2050 = computed<number>(() =>
@@ -171,8 +179,8 @@ export const useSimulationStore = defineStore('simulation', () => {
     cumulativeCo2Pessimist,
     cumulativeTemp,
     cumulativeTempPessimist,
-    tempIn2074Decided,
-    tempIn2074Pessimist,
+    tempIn2100Decided,
+    tempIn2100Pessimist,
     co2SavedIn2050,
     co2In2050Decided,
     totalAnnualReduction,

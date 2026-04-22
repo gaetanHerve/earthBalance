@@ -9,15 +9,36 @@
         </h1>
         <p class="text-sm text-slate-400 max-w-2xl leading-relaxed">{{ t('simulator.intro') }}</p>
       </div>
-      <button
-        class="flex items-center gap-2 text-xs px-4 py-2 rounded-full border border-slate-600 text-slate-400 hover:border-red-500/50 hover:text-red-400 transition-all"
-        :disabled="selectedMitigationPolicies.length === 0"
-        :class="selectedMitigationPolicies.length === 0 ? 'opacity-40 cursor-not-allowed' : ''"
-        @click="reset"
-      >
-        <i class="fa fa-rotate-left" aria-hidden="true"></i>
-        {{ t('simulator.reset') }}
-      </button>
+      <div class="flex items-center gap-3 flex-wrap">
+        <!-- Sélecteur d'horizon -->
+        <fieldset class="flex items-center gap-2 border-0 p-0 m-0">
+          <legend class="text-xs text-slate-500 float-left mr-2">
+            <i class="fa fa-clock" aria-hidden="true"></i> {{ t('simulator.horizon_label') }} :
+          </legend>
+          <button
+            v-for="h in horizons"
+            :key="h.value"
+            class="text-xs px-3 py-1.5 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+            :class="selectedHorizon === h.value
+              ? 'bg-eb-cyan text-eb-dark border-eb-cyan font-bold'
+              : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50'"
+            :aria-pressed="selectedHorizon === h.value"
+            @click="planetsStore.setHorizon(h.value)"
+          >
+            {{ h.label }}
+          </button>
+        </fieldset>
+        <!-- Reset -->
+        <button
+          class="flex items-center gap-2 text-xs px-4 py-2 rounded-full border border-slate-600 text-slate-400 hover:border-red-500/50 hover:text-red-400 transition-all"
+          :disabled="selectedMitigationPolicies.length === 0"
+          :class="selectedMitigationPolicies.length === 0 ? 'opacity-40 cursor-not-allowed' : ''"
+          @click="reset"
+        >
+          <i class="fa fa-rotate-left" aria-hidden="true"></i>
+          {{ t('simulator.reset') }}
+        </button>
+      </div>
     </div>
 
     <!-- ─── Bandeau budget climatique ───────────────────────────────────────── -->
@@ -32,7 +53,7 @@
       <EbCard extra-class="text-center !py-3 !px-4" :glow-class="tempGlowClass">
         <div class="text-xs text-slate-500 mb-1">{{ t('simulator.decided_label') }}</div>
         <div class="text-2xl font-black" :class="tempDecidedColor">
-          +{{ tempIn2074Decided.toFixed(2) }}°C
+          +{{ tempIn2100Decided.toFixed(2) }}°C
         </div>
         <div class="text-xs mt-0.5" :class="tempDecidedColor">
           {{ tempDecidedLabel }}
@@ -253,11 +274,11 @@
           </div>
           <LineChart
             canvas-id="sim-co2-chart"
-            :labels="SIM_LABELS"
+            :labels="displayLabels"
             :datasets="co2Datasets"
             :height="180"
             :y-min="15"
-            :y-max="70"
+            :y-max="75"
             :aria-label="t('simulator.aria_co2')"
           />
         </EbCard>
@@ -277,11 +298,11 @@
           </div>
           <LineChart
             canvas-id="sim-temp-chart"
-            :labels="SIM_LABELS"
+            :labels="displayLabels"
             :datasets="tempDatasets"
             :height="180"
             :y-min="1.2"
-            :y-max="4.0"
+            :y-max="4.5"
             :aria-label="t('simulator.aria_temp')"
           />
           <!-- Légende seuils -->
@@ -326,7 +347,7 @@
               <div class="flex gap-3 text-xs shrink-0">
                 <span class="text-eb-green font-mono font-bold">−{{ totalAnnualReduction.toFixed(1) }} Gt/an</span>
                 <span class="text-eb-cyan font-mono font-bold">
-                  −{{ (3.5 - tempIn2074Decided).toFixed(2) }}°C vs. baseline
+                  −{{ (4 - tempIn2100Decided).toFixed(2) }}°C vs. baseline
                 </span>
               </div>
             </div>
@@ -344,6 +365,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
+import { usePlanetsStore } from '@/store/planets.store'
 
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
 import EbCard             from '@/components/layout/EbCard.vue'
@@ -362,10 +384,30 @@ const {
   cumulativeCo2Pessimist,
   cumulativeTemp,
   cumulativeTempPessimist,
-  tempIn2074Decided,
+  tempIn2100Decided,
   co2SavedIn2050,
   totalAnnualReduction,
 } = storeToRefs(store)
+
+const planetsStore = usePlanetsStore()
+const { selectedHorizon } = storeToRefs(planetsStore)
+
+const horizonIndex = computed<number>(() => {
+  let last = 0
+  for (let i = 0; i < SIM_LABELS.length; i++) {
+    if (SIM_LABELS[i] <= selectedHorizon.value) last = i
+  }
+  return last
+})
+
+const displayLabels = computed<number[]>(() => SIM_LABELS.slice(0, horizonIndex.value + 1))
+
+interface Horizon { value: number; label: string }
+const horizons = computed<Horizon[]>(() => [
+  { value: 2040, label: t('simulator.horizon_2040') },
+  { value: 2050, label: t('simulator.horizon_2050') },
+  { value: 2100, label: t('simulator.horizon_2100') },
+])
 
 const { addMitigationPolicy, removeMitigationPolicy, moveUp, moveDown, reset } = store
 
@@ -406,20 +448,20 @@ function uncertaintyShort(score: unknown): string {
 // ─── Couleur dynamique température ───────────────────────────────────────────
 
 const tempDecidedColor = computed<string>(() => {
-  const t = tempIn2074Decided.value
+  const t = tempIn2100Decided.value
   if (t <= 2)   return 'text-eb-green'
   if (t <= 3)   return 'text-yellow-400'
   return 'text-red-400'
 })
 
 const tempGlowClass = computed<string>(() => {
-  const t = tempIn2074Decided.value
+  const t = tempIn2100Decided.value
   if (t <= 2) return 'shadow-[0_0_20px_rgba(0,255,136,0.15)]'
   return ''
 })
 
 const tempDecidedLabel = computed<string>(() => {
-  const temp = tempIn2074Decided.value
+  const temp = tempIn2100Decided.value
   if (temp <= 1.5) return t('simulator.temp_safe')
   if (temp <= 2)   return t('simulator.temp_ok')
   if (temp <= 3)   return t('simulator.temp_risk')
@@ -428,88 +470,93 @@ const tempDecidedLabel = computed<string>(() => {
 
 // ─── Datasets graphiques ─────────────────────────────────────────────────────
 
-// Ligne plate pour les seuils de température
 function flatLine(val: number): number[] {
-  return SIM_LABELS.map(() => val)
+  return displayLabels.value.map(() => val)
 }
 
-const co2Datasets = computed<ChartDataset[]>(() => [
-  {
-    label: t('simulator.dataset_baseline'),
-    data: BASELINE_CO2,
-    borderColor: '#64748b',
-    backgroundColor: 'rgba(100,116,139,0.05)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-  {
-    label: t('simulator.dataset_decided'),
-    data: cumulativeCo2.value,
-    borderColor: '#00ff88',
-    backgroundColor: 'rgba(0,255,136,0.08)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 3,
-  },
-  {
-    label: t('simulator.dataset_pessimist'),
-    data: cumulativeCo2Pessimist.value,
-    borderColor: '#f87171',
-    backgroundColor: 'rgba(248,113,113,0.05)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-])
+const co2Datasets = computed<ChartDataset[]>(() => {
+  const n = horizonIndex.value + 1
+  return [
+    {
+      label: t('simulator.dataset_baseline'),
+      data: BASELINE_CO2.slice(0, n),
+      borderColor: '#64748b',
+      backgroundColor: 'rgba(100,116,139,0.05)',
+      fill: false,
+      tension: 0.4,
+      pointRadius: 2,
+    },
+    {
+      label: t('simulator.dataset_decided'),
+      data: cumulativeCo2.value.slice(0, n),
+      borderColor: '#00ff88',
+      backgroundColor: 'rgba(0,255,136,0.08)',
+      fill: false,
+      tension: 0.4,
+      pointRadius: 3,
+    },
+    {
+      label: t('simulator.dataset_pessimist'),
+      data: cumulativeCo2Pessimist.value.slice(0, n),
+      borderColor: '#f87171',
+      backgroundColor: 'rgba(248,113,113,0.05)',
+      fill: false,
+      tension: 0.4,
+      pointRadius: 2,
+    },
+  ]
+})
 
-const tempDatasets = computed<ChartDataset[]>(() => [
-  {
-    label: t('simulator.dataset_baseline'),
-    data: BASELINE_TEMP,
-    borderColor: '#64748b',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-  {
-    label: t('simulator.dataset_decided'),
-    data: cumulativeTemp.value,
-    borderColor: '#00ff88',
-    backgroundColor: 'rgba(0,255,136,0.08)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 3,
-  },
-  {
-    label: t('simulator.dataset_pessimist'),
-    data: cumulativeTempPessimist.value,
-    borderColor: '#f87171',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-  {
-    label: t('simulator.threshold_paris'),
-    data: flatLine(1.5),
-    borderColor: '#facc15',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0,
-    pointRadius: 0,
-  },
-  {
-    label: t('simulator.threshold_2c'),
-    data: flatLine(2),
-    borderColor: '#f97316',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0,
-    pointRadius: 0,
-  },
-])
+const tempDatasets = computed<ChartDataset[]>(() => {
+  const n = horizonIndex.value + 1
+  return [
+    {
+      label: t('simulator.dataset_baseline'),
+      data: BASELINE_TEMP.slice(0, n),
+      borderColor: '#64748b',
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.4,
+      pointRadius: 2,
+    },
+    {
+      label: t('simulator.dataset_decided'),
+      data: cumulativeTemp.value.slice(0, n),
+      borderColor: '#00ff88',
+      backgroundColor: 'rgba(0,255,136,0.08)',
+      fill: false,
+      tension: 0.4,
+      pointRadius: 3,
+    },
+    {
+      label: t('simulator.dataset_pessimist'),
+      data: cumulativeTempPessimist.value.slice(0, n),
+      borderColor: '#f87171',
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0.4,
+      pointRadius: 2,
+    },
+    {
+      label: t('simulator.threshold_paris'),
+      data: flatLine(1.5),
+      borderColor: '#facc15',
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0,
+      pointRadius: 0,
+    },
+    {
+      label: t('simulator.threshold_2c'),
+      data: flatLine(2),
+      borderColor: '#f97316',
+      backgroundColor: 'transparent',
+      fill: false,
+      tension: 0,
+      pointRadius: 0,
+    },
+  ]
+})
 </script>
 
 <style scoped>

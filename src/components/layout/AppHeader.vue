@@ -57,23 +57,6 @@
             <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
             <span>{{ t('header.players') }}</span>
           </div>
-          <div class="flex items-center gap-2" role="group" :aria-label="t('header.horizon_selector')">
-            <span class="text-xs text-slate-500">
-              <i class="fa fa-clock" aria-hidden="true"></i> {{ t('header.horizon_label') }} :
-            </span>
-            <button
-              v-for="h in horizons"
-              :key="h.value"
-              class="text-xs px-3 py-1 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="selectedHorizon === h.value
-                ? 'bg-eb-cyan text-eb-dark border-eb-cyan font-bold'
-                : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50'"
-              :aria-pressed="selectedHorizon === h.value"
-              @click="setHorizon(h.value)"
-            >
-              {{ h.label }}
-            </button>
-          </div>
         </div>
       </div>
 
@@ -138,26 +121,6 @@
         </div>
       </div>
 
-      <!-- Horizon temporel -->
-      <div class="pt-1 border-t border-eb-border" role="group" :aria-label="t('header.horizon_selector')">
-        <div class="text-xs text-slate-500 mb-2">
-          <i class="fa fa-clock mr-1" aria-hidden="true"></i> {{ t('header.horizon_label') }}
-        </div>
-        <div class="flex gap-2 flex-wrap">
-          <button
-            v-for="h in horizons"
-            :key="h.value"
-            class="text-xs px-3 py-1.5 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-            :class="selectedHorizon === h.value
-              ? 'bg-eb-cyan text-eb-dark border-eb-cyan font-bold'
-              : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50'"
-            :aria-pressed="selectedHorizon === h.value"
-            @click="setHorizon(h.value)"
-          >
-            {{ h.label }}
-          </button>
-        </div>
-      </div>
     </div>
 
   </header>
@@ -167,18 +130,13 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { storeToRefs } from 'pinia'
-import { usePlanetsStore } from '@/store/planets.store'
 import AppSearch from '@/components/layout/AppSearch.vue'
 import AppContrastToggle from '@/components/layout/AppContrastToggle.vue'
 import AppLangToggle from '@/components/layout/AppLangToggle.vue'
 
 interface NavLink { to: string; label: string; icon: string }
-interface Horizon  { value: number; label: string }
 
 const { t } = useI18n()
-const planetsStore = usePlanetsStore()
-const { selectedHorizon } = storeToRefs(planetsStore)
 const route = useRoute()
 
 const menuOpen    = ref(false)
@@ -191,17 +149,6 @@ const navLinks = computed<NavLink[]>(() => [
   { to: '/correlations',        label: t('nav.correlations'), icon: 'fa-diagram-project' },
   { to: '/simulateur',          label: t('nav.simulator'),    icon: 'fa-flask'           },
 ])
-
-const horizons = computed<Horizon[]>(() => [
-  { value: 0,  label: t('header.horizons.today')  },
-  { value: 10, label: t('header.horizons.ten')    },
-  { value: 20, label: t('header.horizons.twenty') },
-  { value: 50, label: t('header.horizons.fifty')  },
-])
-
-function setHorizon(value: number): void {
-  planetsStore.setHorizon(value)
-}
 
 watch(() => route.path, () => { menuOpen.value = false })
 </script>
