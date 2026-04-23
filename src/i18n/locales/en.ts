@@ -240,7 +240,8 @@ export default {
     selector:     'Indicator selection (to be implemented)',
   },
   common: {
-    loading_chart: 'Loading chart…',
+    loading_chart:  'Loading chart…',
+    page_loading:   'Loading page…',
   },
   widgets: {
     label:       'Displayed charts',

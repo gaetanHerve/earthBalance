@@ -257,7 +257,7 @@
       </CollapsibleSection>
 
       <!-- ── Projections ───────────────────────────────────────────────────── -->
-      <CollapsibleSection class="xl:col-span-5 space-y-4" :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-slate-300">
+      <CollapsibleSection class="xl:col-span-5 space-y-4s" :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-slate-300">
 
         <!-- Graphique CO₂ -->
         <EbCard>
@@ -266,10 +266,28 @@
               <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.co2_chart_title') }}</h3>
               <p class="text-xs text-slate-500">{{ t('simulator.co2_chart_sub') }}</p>
             </div>
-            <div class="flex gap-3 text-xs">
-              <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-slate-500 inline-block rounded"></span>{{ t('simulator.legend_baseline') }}</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-green-400 inline-block rounded"></span>{{ t('simulator.legend_decided') }}</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-red-400 inline-block rounded"></span>{{ t('simulator.legend_pessimist') }}</span>
+            <div class="flex gap-3 text-xs text-slate-400">
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
+                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
+                </svg>
+                {{ t('simulator.legend_baseline') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
+                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
+                </svg>
+                {{ t('simulator.legend_decided') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
+                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
+                </svg>
+                {{ t('simulator.legend_pessimist') }}
+              </span>
             </div>
           </div>
           <LineChart
@@ -291,10 +309,28 @@
               <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.temp_chart_title') }}</h3>
               <p class="text-xs text-slate-500">{{ t('simulator.temp_chart_sub') }}</p>
             </div>
-            <div class="flex gap-3 text-xs">
-              <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-slate-500 inline-block rounded"></span>{{ t('simulator.legend_baseline') }}</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-green-400 inline-block rounded"></span>{{ t('simulator.legend_decided') }}</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-0.5 bg-red-400 inline-block rounded"></span>{{ t('simulator.legend_pessimist') }}</span>
+            <div class="flex gap-3 text-xs text-slate-400">
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
+                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
+                </svg>
+                {{ t('simulator.legend_baseline') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
+                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
+                </svg>
+                {{ t('simulator.legend_decided') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
+                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
+                </svg>
+                {{ t('simulator.legend_pessimist') }}
+              </span>
             </div>
           </div>
           <LineChart
@@ -309,12 +345,16 @@
           />
           <!-- Légende seuils -->
           <div class="flex gap-4 mt-2 text-xs text-slate-500">
-            <span class="flex items-center gap-1">
-              <span class="w-3 h-0.5 bg-yellow-400 inline-block rounded"></span>
+            <span class="flex items-center gap-1.5">
+              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
+                <line x1="0" y1="2" x2="20" y2="2" stroke="#facc15" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>
+              </svg>
               {{ t('simulator.threshold_paris') }}
             </span>
-            <span class="flex items-center gap-1">
-              <span class="w-3 h-0.5 bg-orange-500 inline-block rounded"></span>
+            <span class="flex items-center gap-1.5">
+              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
+                <line x1="0" y1="2" x2="20" y2="2" stroke="#f97316" stroke-width="2" stroke-dasharray="8 4" stroke-linecap="round"/>
+              </svg>
               {{ t('simulator.threshold_2c') }}
             </span>
           </div>
@@ -546,6 +586,8 @@ const tempDatasets = computed<ChartDataset[]>(() => {
       backgroundColor: 'transparent',
       fill: false,
       tension: 0,
+      borderDash: [2, 4],
+      pointRadius: 0,
     },
     {
       label: t('simulator.threshold_2c'),
@@ -554,6 +596,8 @@ const tempDatasets = computed<ChartDataset[]>(() => {
       backgroundColor: 'transparent',
       fill: false,
       tension: 0,
+      borderDash: [8, 4],
+      pointRadius: 0,
     },
   ]
 })

@@ -240,7 +240,8 @@ export default {
     selector:      "Sélection d'indicateurs (à implémenter)",
   },
   common: {
-    loading_chart: 'Chargement du graphique…',
+    loading_chart:  'Chargement du graphique…',
+    page_loading:   'Chargement de la page…',
   },
   widgets: {
     label:       'Graphiques affichés',
