@@ -2,7 +2,7 @@
 
 > 🇬🇧 [English version below](#earthbalance--participatory-ecological-game)
 
-Application web collaborative permettant à une communauté de prendre des décisions collectives pour maintenir les **9 limites planétaires** en-dessous de leurs seuils critiques d'ici 2075, sans compromettre les indicateurs sociétaux (sécurité alimentaire, accès à l'eau, santé, inégalités, etc.).
+Serious Game web collaboratif permettant à une communauté de prendre des décisions collectives pour maintenir les **9 limites planétaires** en-dessous de leurs seuils critiques, sans compromettre les indicateurs sociétaux (sécurité alimentaire, accès à l'eau, santé, inégalités, etc.).
 
 ---
 
@@ -13,9 +13,10 @@ Application web collaborative permettant à une communauté de prendre des déci
 | Framework UI | Vue 3 (Composition API, `<script setup lang="ts">`) |
 | Typage | TypeScript 5 (strict mode) |
 | État global | Pinia |
-| Routing | Vue Router 4 |
+| Routing | Vue Router 4 (hash history) |
 | Graphiques | Chart.js 4 (line, bar, radar, doughnut) |
 | Styles | Tailwind CSS 3 |
+| Internationalisation | vue-i18n 9 (FR / EN) |
 | Build | Vite 5 |
 | Blockchain *(stub)* | À intégrer — ethers.js v6 + Polygon PoS |
 | LLM *(stub)* | À intégrer — Claude API via proxy backend |
@@ -40,29 +41,76 @@ npm run preview    # prévisualisation du build
 ```
 src/
 ├── types/
-│   └── index.ts               # Interfaces TypeScript centralisées
+│   ├── index.ts               # Interfaces TypeScript centralisées
+│   └── impactModel.ts         # Types pour les modèles d'impact GIEC
 ├── data/                      # Données de démonstration (à remplacer par APIs)
 │   ├── planetaryLimits.ts     # 9 limites planétaires — séries 1950–2024
 │   ├── societalIndicators.ts  # Indicateurs FAO, OMS, PNUD
-│   └── decisions.ts           # Décisions collectives, votes, projections
+│   ├── mitigationPolicies.ts  # Politiques climatiques, votes, projections
+│   ├── ballots.ts             # Scrutins et résultats de vote
+│   ├── policyDetails.ts       # Descriptions étendues et références GIEC
+│   └── models/                # Modèles d'impact JSON (SSP2-4.5)
+│       ├── POL_COAL_EXIT_2030_DEV.json
+│       ├── POL_DEFORESTATION_HALT_2030.json
+│       ├── POL_DIET_SHIFT_PLANTBASED.json
+│       ├── POL_METHANE_REDUCTION_2030.json
+│       └── POL_TRANSPORT_ELECTRIFICATION.json
+├── i18n/
+│   ├── index.ts               # Configuration vue-i18n (détection locale navigateur)
+│   ├── locales/
+│   │   ├── fr.ts              # Traductions françaises
+│   │   └── en.ts              # Traductions anglaises
+│   └── policies/
+│       └── en.ts              # Titres et descriptions des politiques en anglais
 ├── services/
 │   ├── data.service.ts        # Façade données (local → APIs futures)
 │   ├── blockchain.service.ts  # Abstraction Web3 (stub ethers.js)
 │   └── llm.service.ts         # Abstraction LLM prospectif (stub Claude)
 ├── store/
 │   ├── planets.store.ts       # Limites planétaires + horizon temporel
-│   ├── decisions.store.ts     # Vote, consensus, validation, prospective
+│   ├── mitigationPolicies.store.ts  # Vote, consensus, validation
+│   ├── simulation.store.ts    # Moteur de simulation (projections CO₂ + T°)
 │   └── dashboard.store.ts     # Graphiques éco/soc, widgets personnalisables
+├── composables/
+│   ├── useContrastMode.ts     # Mode fort contraste (localStorage)
+│   └── useLocalizedPolicies.ts  # Titres/descriptions localisés des politiques
+├── utils/
+│   └── condorcet.ts           # Algorithme Condorcet + départage Borda
 ├── components/
-│   ├── charts/                # Graphiques réutilisables (Line, Gauge, Bar, Radar)
-│   ├── layout/                # AppHeader, AppTicker, AppFooter, EbCard
-│   ├── dashboard/             # Indicateurs écologiques et sociétaux, widget picker
-│   ├── decisions/             # VoteCard, BlockchainPanel, ProspectivePanel
-│   └── limits/                # PlanetaryLimitCard (fiche + graphique individuel)
+│   ├── charts/                # Graphiques réutilisables
+│   │   ├── LineChart.vue      # Courbes multi-datasets (légende SVG ligne+forme)
+│   │   ├── BarChart.vue
+│   │   ├── RadarChart.vue     # Radar 9 limites (formes par statut)
+│   │   ├── GaugeChart.vue
+│   │   ├── VotePieChart.vue
+│   │   └── ChartSkeleton.vue
+│   ├── layout/
+│   │   ├── AppHeader.vue
+│   │   ├── AppFooter.vue
+│   │   ├── AppTicker.vue
+│   │   ├── AppLoadingBar.vue  # Barre de progression de navigation
+│   │   ├── AppSearch.vue      # Recherche in-app
+│   │   ├── AppLangToggle.vue  # Sélecteur de langue FR/EN
+│   │   ├── AppContrastToggle.vue  # Mode fort contraste
+│   │   ├── CollapsibleSection.vue
+│   │   ├── EbCard.vue
+│   │   └── SectionTitle.vue
+│   ├── dashboard/
+│   │   ├── EcologicalIndicators.vue
+│   │   ├── SocietalIndicators.vue
+│   │   └── WidgetCustomizer.vue
+│   ├── limits/
+│   │   └── PlanetaryLimitCard.vue
+│   └── mitigationPolicies/
+│       ├── VoteCard.vue
+│       ├── BlockchainPanel.vue
+│       └── ProspectivePanel.vue
 ├── views/
-│   ├── DashboardView.vue      # Vue synthétique (indicateurs + décision en cours)
+│   ├── DashboardView.vue      # Vue synthétique (indicateurs + scrutin en cours)
 │   ├── LimitsView.vue         # Radar global + 9 fiches détaillées
-│   ├── DecisionsView.vue      # Interface de vote + historique
+│   ├── PolitiquesView.vue     # Vote Condorcet + historique des scrutins
+│   ├── PolicyDetailView.vue   # Fiche détaillée d'une politique (références GIEC)
+│   ├── SimulateurView.vue     # Simulateur de politiques climatiques GIEC AR6
 │   └── CorrelationsView.vue   # Placeholder (fonctionnalité à venir)
 └── router/index.ts
 ```
@@ -71,19 +119,37 @@ src/
 
 ## Sections de l'application
 
-### Dashboard
+### Dashboard (`/`)
 
-Vue synthétique : indicateurs écologiques (CO₂, température, forêt, énergie, ressources) et sociétaux (sécurité alimentaire, eau, conflits, santé, inégalités). Widgets personnalisables persistés en localStorage. Décision collective en cours et prospective post-validation.
+Vue synthétique : indicateurs écologiques (CO₂, température, forêt, énergie, ressources) et sociétaux (sécurité alimentaire, eau, conflits, santé, inégalités). Widgets personnalisables persistés en localStorage. Scrutin collectif en cours avec résultats en temps réel.
 
-### Limites Planétaires
+### Limites Planétaires (`/limites-planetaires`)
 
-Graphique radar des 9 limites (toile d'araignée, style Stockholm Resilience Centre) + fiches individuelles avec évolution temporelle 1950–2024.
+Graphique radar des 9 limites (toile d'araignée) + fiches individuelles avec évolution temporelle 1950–2024. Les points du radar utilisent **trois formes distinctes** selon le statut : triangle (dépassé), carré (zone de risque), cercle (sûr) — conformément aux règles RGAA (l'information ne repose pas uniquement sur la couleur).
 
-### Décisions Collectives
+### Politiques (`/mitigation-policies`)
 
-Interface de vote (Pour / Contre / Abstention), barre de consensus, registre blockchain simulé, et après validation : projections CO₂ + température sur 3 scénarios (+10/+20/+50 ans) générées par le service LLM.
+Chaque scrutin soumet trois politiques climatiques au vote de la communauté via un **classement par préférence**. Le gagnant est déterminé par la méthode de **Condorcet** (la politique qui bat toutes les autres en duels directs). En cas de cycle, un score de **Borda** départage. Historique des scrutins clos consultable.
 
-### Corrélations
+### Détail politique (`/mitigation-policies/:id`)
+
+Fiche complète d'une politique : description, impact projeté (réduction CO₂, température 2100), référence GIEC AR6, analyse prospective sur 3 scénarios.
+
+### Simulateur (`/simulateur`)
+
+Simulateur de politiques climatiques basé sur les **modèles d'impact GIEC AR6** (baseline SSP2-4.5 — trajectoire sans action : +4°C en 2100).
+
+- **Catalogue** : politiques sélectionnables et ordonnables par priorité
+- **Séquence choisie** : politiques sélectionnées avec boutons monter/descendre
+- **Projections cumulées** : courbes CO₂ et température (scénarios décidé / baseline / pessimiste)
+- **Seuils Paris** : +1,5°C (pointillés) et +2°C (tirets) sur le graphique température
+- **Horizon temporel** : Aujourd'hui / 2040 / 2050 / 2100 — met à jour les 4 indicateurs clés :
+  - *Baseline {année}* : température SSP2-4.5 à l'horizon
+  - *Scénario décidé {année}* : température projetée à l'horizon (label trajectoire évalué sur 2100)
+  - *CO₂ évité 2024→{année}* : cumul par intégrale trapèze (GtCO₂)
+  - *Réduction annuelle en {année}* : delta annuel vs. baseline à l'horizon (GtCO₂/an)
+
+### Corrélations (`/correlations`)
 
 Placeholder — sélection et superposition multi-indicateurs à venir.
 
@@ -91,10 +157,14 @@ Placeholder — sélection et superposition multi-indicateurs à venir.
 
 ## Accessibilité (RGAA)
 
+- **Formes distinctes par dataset** sur tous les graphiques multi-courbes (cercle, triangle, carré, etc.) — l'information ne repose pas uniquement sur la couleur
+- **Légende HTML SVG** : chaque entrée de légende affiche la ligne colorée avec la forme correspondante centrée dessus
+- **Radar chart** : 3 formes par statut de limite planétaire (triangle/carré/cercle)
 - Attributs `aria-*` et `role` sur tous les éléments interactifs et graphiques
-- Contrastes conformes AA (fond `#0a0f1e` / texte `#e2e8f0`)
+- Contrastes conformes AA (fond `#0a0f1e` / texte `#e2e8f0`) + **mode fort contraste** activable
 - Navigation clavier complète avec `:focus-visible` personnalisé
 - Skip link "Aller au contenu principal" sur chaque vue
+- Barre de progression de navigation (`AppLoadingBar`)
 - `@media (prefers-reduced-motion)` : animations désactivées
 - Compatible à partir de **340 px** de largeur d'écran
 
@@ -154,8 +224,9 @@ Les données actuelles sont fictives mais cohérentes avec l'état scientifique 
 - Changement climatique : 421 ppm CO₂ (seuil : 350 ppm — dépassé ×1.20)
 - Érosion biodiversité : 100 E/MSY (seuil : 10 — dépassé ×10)
 - Perturbation azote : 150 Tg N/an (seuil : 62 — dépassé ×2.42)
-- Ozone stratosphérique : 284 UD (en zone d'incertitude — récupération en cours)
-- Acidification océans : Ω 2.82 (zone d'incertitude)
+- Ozone stratosphérique : 284 UD (zone de risque — récupération en cours)
+- Acidification des océans : Ω 2.82 (zone de risque)
+- Utilisation eau douce : 2 600 km³/an (zone de risque — seuil : 4 000 km³/an)
 
 Chaque jeu de données inclut une série temporelle de 1950 à 2024 et une référence vers la source à brancher.
 
@@ -165,7 +236,7 @@ Chaque jeu de données inclut une série temporelle de 1950 à 2024 et une réf�
 
 > 🇫🇷 [Version française ci-dessus](#earthbalance--jeu-participatif-écologique)
 
-A collaborative web application enabling a community to make collective decisions to keep the **9 planetary boundaries** below their critical thresholds by 2075, without compromising societal indicators (food security, water access, health, inequality, etc.).
+A collaborative web Serious Game enabling a community to make collective decisions to keep the **9 planetary boundaries** below their critical thresholds, without compromising societal indicators (food security, water access, health, inequality, etc.).
 
 ---
 
@@ -176,9 +247,10 @@ A collaborative web application enabling a community to make collective decision
 | UI Framework | Vue 3 (Composition API, `<script setup lang="ts">`) |
 | Typing | TypeScript 5 (strict mode) |
 | Global state | Pinia |
-| Routing | Vue Router 4 |
+| Routing | Vue Router 4 (hash history) |
 | Charts | Chart.js 4 (line, bar, radar, doughnut) |
 | Styles | Tailwind CSS 3 |
+| Internationalisation | vue-i18n 9 (FR / EN) |
 | Build | Vite 5 |
 | Blockchain *(stub)* | To integrate — ethers.js v6 + Polygon PoS |
 | LLM *(stub)* | To integrate — Claude API via backend proxy |
@@ -203,29 +275,76 @@ npm run preview    # preview the production build
 ```
 src/
 ├── types/
-│   └── index.ts               # Centralised TypeScript interfaces
+│   ├── index.ts               # Centralised TypeScript interfaces
+│   └── impactModel.ts         # Types for IPCC impact models
 ├── data/                      # Demo data (to be replaced by live APIs)
 │   ├── planetaryLimits.ts     # 9 planetary limits — time series 1950–2024
 │   ├── societalIndicators.ts  # FAO, WHO, UNDP indicators
-│   └── decisions.ts           # Collective decisions, votes, projections
+│   ├── mitigationPolicies.ts  # Climate policies, votes, projections
+│   ├── ballots.ts             # Ballots and voting results
+│   ├── policyDetails.ts       # Extended descriptions and IPCC references
+│   └── models/                # JSON impact models (SSP2-4.5)
+│       ├── POL_COAL_EXIT_2030_DEV.json
+│       ├── POL_DEFORESTATION_HALT_2030.json
+│       ├── POL_DIET_SHIFT_PLANTBASED.json
+│       ├── POL_METHANE_REDUCTION_2030.json
+│       └── POL_TRANSPORT_ELECTRIFICATION.json
+├── i18n/
+│   ├── index.ts               # vue-i18n config (browser locale detection)
+│   ├── locales/
+│   │   ├── fr.ts              # French translations
+│   │   └── en.ts              # English translations
+│   └── policies/
+│       └── en.ts              # Policy titles and descriptions in English
 ├── services/
 │   ├── data.service.ts        # Data facade (local → future APIs)
 │   ├── blockchain.service.ts  # Web3 abstraction (ethers.js stub)
 │   └── llm.service.ts         # Prospective LLM abstraction (Claude stub)
 ├── store/
 │   ├── planets.store.ts       # Planetary limits + time horizon
-│   ├── decisions.store.ts     # Voting, consensus, validation, prospective
+│   ├── mitigationPolicies.store.ts  # Voting, consensus, validation
+│   ├── simulation.store.ts    # Simulation engine (CO₂ + temp projections)
 │   └── dashboard.store.ts     # Eco/societal charts, customisable widgets
+├── composables/
+│   ├── useContrastMode.ts     # High contrast mode (localStorage)
+│   └── useLocalizedPolicies.ts  # Localised policy titles/descriptions
+├── utils/
+│   └── condorcet.ts           # Condorcet algorithm + Borda tiebreaker
 ├── components/
-│   ├── charts/                # Reusable charts (Line, Gauge, Bar, Radar)
-│   ├── layout/                # AppHeader, AppTicker, AppFooter, EbCard
-│   ├── dashboard/             # Ecological & societal indicators, widget picker
-│   ├── decisions/             # VoteCard, BlockchainPanel, ProspectivePanel
-│   └── limits/                # PlanetaryLimitCard (fact sheet + individual chart)
+│   ├── charts/                # Reusable chart components
+│   │   ├── LineChart.vue      # Multi-dataset lines (SVG line+shape legend)
+│   │   ├── BarChart.vue
+│   │   ├── RadarChart.vue     # 9-limit radar (shapes per status)
+│   │   ├── GaugeChart.vue
+│   │   ├── VotePieChart.vue
+│   │   └── ChartSkeleton.vue
+│   ├── layout/
+│   │   ├── AppHeader.vue
+│   │   ├── AppFooter.vue
+│   │   ├── AppTicker.vue
+│   │   ├── AppLoadingBar.vue  # Navigation progress bar
+│   │   ├── AppSearch.vue      # In-app search
+│   │   ├── AppLangToggle.vue  # FR/EN language switcher
+│   │   ├── AppContrastToggle.vue  # High contrast toggle
+│   │   ├── CollapsibleSection.vue
+│   │   ├── EbCard.vue
+│   │   └── SectionTitle.vue
+│   ├── dashboard/
+│   │   ├── EcologicalIndicators.vue
+│   │   ├── SocietalIndicators.vue
+│   │   └── WidgetCustomizer.vue
+│   ├── limits/
+│   │   └── PlanetaryLimitCard.vue
+│   └── mitigationPolicies/
+│       ├── VoteCard.vue
+│       ├── BlockchainPanel.vue
+│       └── ProspectivePanel.vue
 ├── views/
-│   ├── DashboardView.vue      # Overview (indicators + active decision)
+│   ├── DashboardView.vue      # Overview (indicators + active ballot)
 │   ├── LimitsView.vue         # Global radar + 9 detailed fact sheets
-│   ├── DecisionsView.vue      # Voting interface + history
+│   ├── PolitiquesView.vue     # Condorcet voting + ballot history
+│   ├── PolicyDetailView.vue   # Individual policy detail (IPCC references)
+│   ├── SimulateurView.vue     # IPCC AR6 climate policy simulator
 │   └── CorrelationsView.vue   # Placeholder (upcoming feature)
 └── router/index.ts
 ```
@@ -234,19 +353,37 @@ src/
 
 ## Application Sections
 
-### Overview (Dashboard)
+### Dashboard (`/`)
 
-Overview of ecological indicators (CO₂, temperature, forest, energy, resources) and societal indicators (food security, water, conflicts, health, inequality). Customisable widgets persisted in localStorage. Active collective decision and post-validation prospective analysis.
+Overview of ecological indicators (CO₂, temperature, forest, energy, resources) and societal indicators (food security, water, conflicts, health, inequality). Customisable widgets persisted in localStorage. Active community ballot with live results.
 
-### Planetary Limits
+### Planetary Limits (`/limites-planetaires`)
 
-Radar chart of all 9 limits (spider web, Stockholm Resilience Centre style) + individual fact sheets with time series from 1950 to 2024.
+Radar chart of all 9 limits (spider web) + individual fact sheets with time series from 1950 to 2024. Radar points use **three distinct shapes** per status: triangle (exceeded), square (risk zone), circle (safe) — RGAA compliant (information is not conveyed by colour alone).
 
-### Collective Decisions
+### Policies (`/mitigation-policies`)
 
-Voting interface (For / Against / Abstain), consensus progress bar, simulated blockchain ledger, and after validation: CO₂ + temperature projections across 3 scenarios (+10/+20/+50 years) generated by the LLM service.
+Each ballot submits three climate policies to a community **ranked-choice vote**. The winner is determined by the **Condorcet method** (the policy that beats all others in head-to-head comparisons). In the event of a cycle, a **Borda score** breaks the tie. Closed ballot history is browsable.
 
-### Correlations (upcoming)
+### Policy detail (`/mitigation-policies/:id`)
+
+Full policy fact sheet: description, projected impact (CO₂ reduction, temperature 2100), IPCC AR6 reference, prospective analysis across 3 scenarios.
+
+### Simulator (`/simulateur`)
+
+Climate policy simulator based on **IPCC AR6 impact models** (SSP2-4.5 baseline — no-action trajectory: +4°C by 2100).
+
+- **Catalogue**: selectable policies, orderable by priority
+- **Chosen sequence**: selected policies with move-up/move-down controls
+- **Cumulative projections**: CO₂ and temperature curves (decided / baseline / pessimistic)
+- **Paris thresholds**: +1.5°C (dotted) and +2°C (dashed) on the temperature chart
+- **Time horizon**: Today / 2040 / 2050 / 2100 — updates all four KPI cards:
+  - *Baseline {year}*: SSP2-4.5 temperature at the horizon
+  - *Decided scenario {year}*: projected temperature at the horizon (trajectory label always assessed against 2100)
+  - *CO₂ saved 2024→{year}*: cumulative via trapezoidal integration (GtCO₂)
+  - *Annual reduction in {year}*: annual delta vs. baseline at the horizon (GtCO₂/yr)
+
+### Correlations (`/correlations`)
 
 Placeholder — multi-indicator selection and overlay feature coming soon.
 
@@ -254,10 +391,14 @@ Placeholder — multi-indicator selection and overlay feature coming soon.
 
 ## Accessibility (RGAA / WCAG AA)
 
+- **Distinct shapes per dataset** on all multi-line charts (circle, triangle, square, diamond, etc.) — information is not conveyed by colour alone
+- **HTML SVG legend**: each legend entry shows the coloured line with the corresponding shape centred on it
+- **Radar chart**: 3 shapes per planetary limit status (triangle / square / circle)
 - `aria-*` and `role` attributes on all interactive elements and charts
-- AA-compliant contrasts (background `#0a0f1e` / text `#e2e8f0`)
+- AA-compliant contrasts (background `#0a0f1e` / text `#e2e8f0`) + activatable **high contrast mode**
 - Full keyboard navigation with custom `:focus-visible`
 - "Skip to main content" link on every view
+- Navigation progress bar (`AppLoadingBar`)
 - `@media (prefers-reduced-motion)`: animations disabled
 - Responsive down to **340 px** screen width
 
@@ -317,7 +458,8 @@ Current data is fictional but consistent with the 2024 scientific consensus:
 - Climate change: 421 ppm CO₂ (threshold: 350 ppm — exceeded ×1.20)
 - Biodiversity loss: 100 E/MSY (threshold: 10 — exceeded ×10)
 - Nitrogen cycle: 150 Tg N/yr (threshold: 62 — exceeded ×2.42)
-- Stratospheric ozone: 284 DU (uncertainty zone — recovering)
-- Ocean acidification: Ω 2.82 (uncertainty zone)
+- Stratospheric ozone: 284 DU (risk zone — recovering)
+- Ocean acidification: Ω 2.82 (risk zone)
+- Freshwater use: 2,600 km³/yr (risk zone — threshold: 4,000 km³/yr)
 
 Each dataset includes a time series from 1950 to 2024 and a reference to its future live source.
