@@ -108,7 +108,7 @@ export default {
     risk_zone:       'Zone risque',
     safe:            'Sûr',
     radar_title:     'Vue Radar Globale',
-    radar_note:      'Valeurs normalisées : ratio current/seuil — ligne pointillée jaune = seuil critique (ratio ×1) · Points rouges = dépassement · Points verts = en limite',
+    radar_note:      'Valeurs normalisées : ratio actuel/seuil',
     radar_aria:      'Graphique radar des 9 limites planétaires montrant le niveau de dépassement de chaque limite',
     cards_title:     'Fiches Détaillées',
     loading_card:    "Chargement d'une limite planétaire…",

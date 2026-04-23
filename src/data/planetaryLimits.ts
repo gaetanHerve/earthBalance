@@ -18,7 +18,7 @@ export const planetaryLimits: PlanetaryLimit[] = [
     unit: 'ppm CO₂',
     threshold: 350,
     currentValue: 421,
-    ratio: 1.20,
+    ratio: 1.2,
     status: 'depasse',
     sources: 'TODO: NOAA Global Monitoring Laboratory API — https://gml.noaa.gov/aftp/data/',
     timeSeries: {
@@ -75,7 +75,7 @@ export const planetaryLimits: PlanetaryLimit[] = [
     unit: 'Tg P/an',
     threshold: 11,
     currentValue: 22,
-    ratio: 2.0,
+    ratio: 2,
     status: 'depasse',
     sources: 'TODO: FAO STAT — Fertilizers by Nutrient',
     timeSeries: {
@@ -118,7 +118,7 @@ export const planetaryLimits: PlanetaryLimit[] = [
     sources: 'TODO: SOCAT — Surface Ocean CO2 Atlas API',
     timeSeries: {
       years,
-      values: [3.44, 3.40, 3.36, 3.30, 3.23, 3.16, 3.10, 3.04, 2.99, 2.96, 2.93, 2.91, 2.88, 2.86, 2.84, 2.82],
+      values: [3.44, 3.4, 3.36, 3.3, 3.23, 3.16, 3.1, 3.04, 2.99, 2.96, 2.93, 2.91, 2.88, 2.86, 2.84, 2.82],
     },
   },
   {
@@ -176,7 +176,7 @@ export const planetaryLimits: PlanetaryLimit[] = [
     sources: 'TODO: NASA MODIS Aerosol Products — https://modis.gsfc.nasa.gov/',
     timeSeries: {
       years,
-      values: [0.12, 0.13, 0.14, 0.15, 0.17, 0.18, 0.19, 0.21, 0.22, 0.23, 0.25, 0.27, 0.28, 0.29, 0.30, 0.30],
+      values: [0.12, 0.13, 0.14, 0.15, 0.17, 0.18, 0.19, 0.21, 0.22, 0.23, 0.25, 0.27, 0.28, 0.29, 0.3, 0.3],
     },
   },
 ]

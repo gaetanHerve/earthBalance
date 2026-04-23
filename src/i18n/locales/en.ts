@@ -108,7 +108,7 @@ export default {
     risk_zone:       'Risk zone',
     safe:            'Safe',
     radar_title:     'Global Radar View',
-    radar_note:      'Normalised values: current/threshold ratio — dashed yellow line = critical threshold (ratio ×1) · Red dots = exceeded · Green dots = at limit',
+    radar_note:      'Normalised values: current/threshold ratio',
     radar_aria:      'Radar chart of the 9 planetary boundaries showing the exceedance level of each boundary',
     cards_title:     'Detailed Cards',
     loading_card:    'Loading a planetary boundary…',
