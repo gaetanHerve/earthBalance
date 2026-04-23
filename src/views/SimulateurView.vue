@@ -45,15 +45,15 @@
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
 
       <EbCard extra-class="text-center !py-3 !px-4">
-        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.baseline_label') }}</div>
-        <div class="text-2xl font-black text-red-400">{{ t('simulator.baseline_value') }}</div>
+        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.baseline_label', { year: selectedHorizon }) }}</div>
+        <div class="text-2xl font-black text-red-400">+{{ baselineAtHorizon.toFixed(2) }}°C</div>
         <div class="text-xs text-slate-500 mt-0.5">{{ t('simulator.baseline_note') }}</div>
       </EbCard>
 
       <EbCard extra-class="text-center !py-3 !px-4" :glow-class="tempGlowClass">
-        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.decided_label') }}</div>
+        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.decided_label', { year: selectedHorizon }) }}</div>
         <div class="text-2xl font-black" :class="tempDecidedColor">
-          +{{ tempIn2100Decided.toFixed(2) }}°C
+          +{{ tempDecidedAtHorizon.toFixed(2) }}°C
         </div>
         <div class="text-xs mt-0.5" :class="tempDecidedColor">
           {{ tempDecidedLabel }}
@@ -61,17 +61,17 @@
       </EbCard>
 
       <EbCard extra-class="text-center !py-3 !px-4">
-        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.co2_saved_label') }}</div>
+        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.co2_saved_label', { year: selectedHorizon }) }}</div>
         <div class="text-2xl font-black text-eb-green">
-          {{ co2SavedIn2050 > 0 ? '−' : '' }}{{ co2SavedIn2050 }} GtCO₂
+          {{ co2CumulativeSaved >= 0 ? '' : '-' }}{{ co2CumulativeSaved }} GtCO₂
         </div>
         <div class="text-xs text-slate-500 mt-0.5">{{ t('simulator.co2_saved_note') }}</div>
       </EbCard>
 
       <EbCard extra-class="text-center !py-3 !px-4">
-        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.reduction_label') }}</div>
+        <div class="text-xs text-slate-500 mb-1">{{ t('simulator.reduction_label', { year: selectedHorizon }) }}</div>
         <div class="text-2xl font-black text-eb-cyan">
-          {{ totalAnnualReduction.toFixed(1) }} Gt/an
+          {{ totalReductionAtHorizon >= 0 ? '' : '-' }}{{ totalReductionAtHorizon.toFixed(1) }} Gt/an
         </div>
         <div class="text-xs text-slate-500 mt-0.5">{{ t('simulator.reduction_note') }}</div>
       </EbCard>
@@ -387,9 +387,9 @@
             <div class="border-t border-eb-border pt-2 flex items-center justify-between">
               <span class="text-xs text-slate-400 font-bold">{{ t('simulator.total_label') }}</span>
               <div class="flex gap-3 text-xs shrink-0">
-                <span class="text-eb-green font-mono font-bold">−{{ totalAnnualReduction.toFixed(1) }} Gt/an</span>
+                <span class="text-eb-green font-mono font-bold">−{{ totalReductionAtHorizon.toFixed(1) }} Gt/an</span>
                 <span class="text-eb-cyan font-mono font-bold">
-                  −{{ (4 - tempIn2100Decided).toFixed(2) }}°C vs. baseline
+                  −{{ (baselineAtHorizon - tempDecidedAtHorizon).toFixed(2) }}°C vs. baseline
                 </span>
               </div>
             </div>
@@ -426,9 +426,6 @@ const {
   cumulativeCo2Pessimist,
   cumulativeTemp,
   cumulativeTempPessimist,
-  tempIn2100Decided,
-  co2SavedIn2050,
-  totalAnnualReduction,
 } = storeToRefs(store)
 
 const planetsStore = usePlanetsStore()
@@ -442,10 +439,37 @@ const horizonIndex = computed<number>(() => {
   return last
 })
 
-const displayLabels = computed<number[]>(() => SIM_LABELS.slice(0, horizonIndex.value + 1))
+// Quand "Aujourd'hui" est sélectionné (index 0), les graphiques affichent tout de même jusqu'en 2100
+const chartHorizonIndex = computed<number>(() =>
+  horizonIndex.value === 0 ? SIM_LABELS.length - 1 : horizonIndex.value
+)
+
+const displayLabels = computed<number[]>(() => SIM_LABELS.slice(0, chartHorizonIndex.value + 1))
+
+// Température baseline et scénario décidé à l'année de l'horizon
+const baselineAtHorizon     = computed<number>(() => BASELINE_TEMP[horizonIndex.value])
+const tempDecidedAtHorizon  = computed<number>(() => cumulativeTemp.value[horizonIndex.value])
+
+// Réduction annuelle modélisée à l'année de l'horizon (GtCO₂/an vs. baseline)
+const totalReductionAtHorizon = computed<number>(() =>
+  Math.round((BASELINE_CO2[horizonIndex.value] - cumulativeCo2.value[horizonIndex.value]) * 10) / 10
+)
+
+// CO₂ cumulé évité de 2024 à l'horizon — intégrale trapèze sur les intervalles non-uniformes
+const co2CumulativeSaved = computed<number>(() => {
+  let total = 0
+  for (let i = 0; i < horizonIndex.value; i++) {
+    const dI    = BASELINE_CO2[i]   - cumulativeCo2.value[i]
+    const dNext = BASELINE_CO2[i+1] - cumulativeCo2.value[i+1]
+    const years = SIM_LABELS[i+1]   - SIM_LABELS[i]
+    total += (dI + dNext) / 2 * years
+  }
+  return Math.round(total)
+})
 
 interface Horizon { value: number; label: string }
 const horizons = computed<Horizon[]>(() => [
+  { value: 2024, label: t('simulator.horizon_today') },
   { value: 2040, label: t('simulator.horizon_2040') },
   { value: 2050, label: t('simulator.horizon_2050') },
   { value: 2100, label: t('simulator.horizon_2100') },
@@ -489,24 +513,24 @@ function uncertaintyShort(score: unknown): string {
 
 // ─── Couleur dynamique température ───────────────────────────────────────────
 
+// Couleur et label basés sur la trajectoire 2100 (objectif Paris = température finale, pas intermédiaire)
 const tempDecidedColor = computed<string>(() => {
-  const t = tempIn2100Decided.value
-  if (t <= 2)   return 'text-eb-green'
-  if (t <= 3)   return 'text-yellow-400'
+  const temp2100 = cumulativeTemp.value[9]
+  if (temp2100 <= 2) return 'text-eb-green'
+  if (temp2100 <= 3) return 'text-yellow-400'
   return 'text-red-400'
 })
 
 const tempGlowClass = computed<string>(() => {
-  const t = tempIn2100Decided.value
-  if (t <= 2) return 'shadow-[0_0_20px_rgba(0,255,136,0.15)]'
+  if (cumulativeTemp.value[9] <= 2) return 'shadow-[0_0_20px_rgba(0,255,136,0.15)]'
   return ''
 })
 
 const tempDecidedLabel = computed<string>(() => {
-  const temp = tempIn2100Decided.value
-  if (temp <= 1.5) return t('simulator.temp_safe')
-  if (temp <= 2)   return t('simulator.temp_ok')
-  if (temp <= 3)   return t('simulator.temp_risk')
+  const temp2100 = cumulativeTemp.value[9]
+  if (temp2100 <= 1.5) return t('simulator.temp_safe')
+  if (temp2100 <= 2)   return t('simulator.temp_ok')
+  if (temp2100 <= 3)   return t('simulator.temp_risk')
   return t('simulator.temp_critical')
 })
 
@@ -517,7 +541,7 @@ function flatLine(val: number): number[] {
 }
 
 const co2Datasets = computed<ChartDataset[]>(() => {
-  const n = horizonIndex.value + 1
+  const n = chartHorizonIndex.value + 1
   return [
     {
       label: t('simulator.dataset_baseline'),
@@ -550,7 +574,7 @@ const co2Datasets = computed<ChartDataset[]>(() => {
 })
 
 const tempDatasets = computed<ChartDataset[]>(() => {
-  const n = horizonIndex.value + 1
+  const n = chartHorizonIndex.value + 1
   return [
     {
       label: t('simulator.dataset_baseline'),

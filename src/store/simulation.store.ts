@@ -125,14 +125,6 @@ export const useSimulationStore = defineStore('simulation', () => {
   const tempIn2100Decided    = computed<number>(() => cumulativeTemp.value[9])
   const tempIn2100Pessimist  = computed<number>(() => cumulativeTempPessimist.value[9])
 
-  // CO₂ évité par rapport à la baseline en 2050
-  const co2SavedIn2050 = computed<number>(() =>
-    Math.round((BASELINE_CO2[6] - cumulativeCo2.value[6]) * 10) / 10
-  )
-
-  // CO₂ annuel en 2050 dans le scénario décidé
-  const co2In2050Decided = computed<number>(() => cumulativeCo2.value[6])
-
   // Réduction totale d'émissions annuelles cumulées
   const totalAnnualReduction = computed<number>(() =>
     selectedMitigationPolicies.value.reduce((s, dec) =>
@@ -181,8 +173,6 @@ export const useSimulationStore = defineStore('simulation', () => {
     cumulativeTempPessimist,
     tempIn2100Decided,
     tempIn2100Pessimist,
-    co2SavedIn2050,
-    co2In2050Decided,
     totalAnnualReduction,
     addMitigationPolicy,
     removeMitigationPolicy,
