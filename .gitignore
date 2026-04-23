@@ -15,7 +15,8 @@ dist-ssr/
 npm-debug.log*
 
 # Éditeurs
-.vscode/extensions.json
+.vscode/
+.claude/
 .idea/
 *.suo
 *.ntvs*
