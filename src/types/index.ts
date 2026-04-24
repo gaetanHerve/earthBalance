@@ -198,10 +198,21 @@ export interface ProjectionSeries {
   pessimist: number[]
 }
 
+export interface EnergyMixDeltaSeries {
+  decided:  number[]
+  pessimist: number[]
+}
+
+export type EnergyMixKey = 'coal' | 'oil' | 'gas' | 'nuclear' | 'solar' | 'wind' | 'hydro' | 'autres'
+export type ResourceKey  = 'minerals' | 'biomass' | 'fossilFuels'
+
 export interface MitigationPolicyProjections {
   labels: number[]
   co2: ProjectionSeries
   temperature: ProjectionSeries
+  forest?: ProjectionSeries
+  energyMix?: Partial<Record<EnergyMixKey, EnergyMixDeltaSeries>>
+  resources?: Partial<Record<ResourceKey, EnergyMixDeltaSeries>>
 }
 
 export interface IpccReference {

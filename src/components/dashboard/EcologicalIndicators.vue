@@ -34,15 +34,15 @@
         </div>
         <GaugeChart
           canvas-id="forestGauge"
-          :value="eco.forest.current"
+          :value="forestCurrent"
           :max="100"
           track-color="#00ff88"
           :size="140"
           :font-size="26"
           :unit="t('dashboard.forest_remaining')"
-          :aria-label="`${t('dashboard.forest_title')} : ${eco.forest.current}%`"
+          :aria-label="`${t('dashboard.forest_title')} : ${forestCurrent}%`"
         >
-          <span class="text-2xl font-black text-eb-green">{{ eco.forest.current }}%</span>
+          <span class="text-2xl font-black text-eb-green">{{ forestCurrent }}%</span>
           <span class="text-xs text-slate-500 mt-0.5">{{ t('dashboard.forest_remaining') }}</span>
         </GaugeChart>
         <div class="mt-3 text-xs text-slate-500 text-center">
@@ -58,7 +58,7 @@
         <BarChart
           canvas-id="energyChart"
           :labels="eco.energyMix.categories.map(c => c.label)"
-          :values="eco.energyMix.categories.map(c => c.value)"
+          :values="energyMixValues"
           :colors="eco.energyMix.categories.map(c => c.color)"
           :height="180"
           :y-max="40"
@@ -96,14 +96,8 @@
         </div>
         <LineChart
           canvas-id="resourceChart"
-          :labels="eco.resources.years"
-          :datasets="eco.resources.datasets.map(d => ({
-            label: d.label,
-            data: d.values,
-            borderColor: d.color,
-            backgroundColor: d.bgColor,
-            fill: true,
-          }))"
+          :labels="resourceLabels"
+          :datasets="resourceDatasets"
           :height="180"
           :show-legend="true"
           :current-year="gameStore.currentYear"
@@ -127,12 +121,18 @@ import BarChart from '@/components/charts/BarChart.vue'
 
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
-import type { EcologicalCharts, ChartDataset } from '@/types/index'
+import type { EcologicalCharts, ChartDataset, EnergyMixKey, ResourceKey } from '@/types/index'
 
 const { t } = useI18n()
 const gameStore = useGameStore()
 const simulationStore = useSimulationStore()
-const { cumulativeCo2, cumulativeCo2Pessimist, cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simulationStore)
+const {
+  cumulativeCo2, cumulativeCo2Pessimist,
+  cumulativeTemp, cumulativeTempPessimist,
+  cumulativeForest, cumulativeForestPessimist,
+  cumulativeEnergyMix, cumulativeEnergyMixPessimist,
+  cumulativeResources, cumulativeResourcesPessimist,
+} = storeToRefs(simulationStore)
 
 // Coefficient d'interpolation entre scénario décidé (0) et pessimiste (1).
 // Valeur par défaut : 0.5 (intermédiaire). Rendre réactif plus tard si besoin.
@@ -215,4 +215,73 @@ const tempDatasets = computed<ChartDataset[]>(() => {
     fill:            true,
   }]
 })
+
+// ─── Forêt ────────────────────────────────────────────────────────────────────
+
+const forestCurrent = computed<number>(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeForest.value, cumulativeForestPessimist.value) * 10) / 10
+)
+
+// ─── Mix énergétique ─────────────────────────────────────────────────────────
+
+const CATEGORY_KEY_MAP: Record<string, EnergyMixKey> = {
+  'Charbon':    'coal',
+  'Pétrole':   'oil',
+  'Gaz':       'gas',
+  'Nucléaire': 'nuclear',
+  'Solaire':   'solar',
+  'Éolien':   'wind',
+  'Hydro':     'hydro',
+  'Autres':    'autres',
+}
+
+const energyMixValues = computed<number[]>(() => {
+  const raw = props.eco.energyMix.categories.map(cat => {
+    const key = CATEGORY_KEY_MAP[cat.label]
+    if (!key) return cat.value
+    return blendedAtYear(gameStore.currentYear, cumulativeEnergyMix.value[key], cumulativeEnergyMixPessimist.value[key])
+  })
+  const total = raw.reduce((s, v) => s + v, 0)
+  if (total <= 0) return raw
+  return raw.map(v => Math.round(v / total * 1000) / 10)
+})
+
+// ─── Ressources naturelles ────────────────────────────────────────────────────
+
+const RESOURCE_KEY_MAP: Record<string, ResourceKey> = {
+  'Minéraux':              'minerals',
+  'Biomasse':              'biomass',
+  'Combustibles fossiles': 'fossilFuels',
+}
+
+const resourceLabels = computed<number[]>(() => [
+  ...props.eco.resources.years,
+  ...projectionYearsAfter2024.value,
+])
+
+const resourceDatasets = computed<ChartDataset[]>(() =>
+  props.eco.resources.datasets.map(dataset => {
+    const key = RESOURCE_KEY_MAP[dataset.label]
+    if (!key) {
+      return {
+        label:           dataset.label,
+        data:            [...dataset.values],
+        borderColor:     dataset.color,
+        backgroundColor: dataset.bgColor,
+        fill:            true,
+      }
+    }
+    const round1 = (v: number) => Math.round(v * 10) / 10
+    const projValues = projectionYearsAfter2024.value.map(y =>
+      round1(blendedAtYear(y, cumulativeResources.value[key], cumulativeResourcesPessimist.value[key]))
+    )
+    return {
+      label:           dataset.label,
+      data:            [...dataset.values, ...projValues],
+      borderColor:     dataset.color,
+      backgroundColor: dataset.bgColor,
+      fill:            true,
+    }
+  })
+)
 </script>
