@@ -45,19 +45,32 @@
         <AppContrastToggle />
         <AppLangToggle />
 
-        <div class="flex items-center gap-4 text-sm flex-wrap">
-          <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3 text-sm flex-wrap">
+
+          <!-- Session -->
+          <div class="flex items-center gap-2 text-xs text-slate-400">
             <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
-            <span class="text-slate-400">
-              {{ t('header.session_label') }} <span class="text-eb-green font-bold">#42</span>
-              — <span class="text-eb-cyan font-bold" aria-live="polite" aria-label="`${t('header.year_aria')} ${gameStore.currentYear}`">{{ gameStore.currentYear }}</span>
-            </span>
+            {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#42</span>
           </div>
-          <div class="flex items-center gap-1 text-slate-400">
-            <i class="fa fa-users text-eb-cyan text-xs" aria-hidden="true"></i>
+
+          <!-- Année courante — game HUD -->
+          <div
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-500/30 bg-amber-950/20 select-none"
+            :aria-label="`${t('header.year_aria')} ${gameStore.currentYear}`"
+          >
+            <i class="fa fa-hourglass-half text-amber-400 text-xs" aria-hidden="true"></i>
+            <span class="text-slate-500 uppercase tracking-wider text-[10px] font-medium leading-none">{{ t('header.year_label') }}</span>
+            <span class="text-amber-300 font-black text-sm tabular-nums leading-none" aria-live="polite">{{ gameStore.currentYear }}</span>
+          </div>
+
+          <!-- Joueurs -->
+          <div class="flex items-center gap-1 text-xs text-slate-400">
+            <i class="fa fa-users text-eb-cyan" aria-hidden="true"></i>
             <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
             <span>{{ t('header.players') }}</span>
           </div>
+
+          <!-- Fin de tour -->
           <button
             class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/50 text-amber-400 text-xs hover:bg-amber-500/10 hover:border-amber-400 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
             :aria-label="t('header.end_round_aria')"
@@ -66,7 +79,17 @@
             <i class="fa fa-forward-step" aria-hidden="true"></i>
             {{ t('header.end_round') }}
           </button>
+
         </div>
+      </div>
+
+      <!-- Année courante — visible uniquement sur mobile, dans la barre principale -->
+      <div
+        class="md:hidden flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-500/30 bg-amber-950/20 select-none ml-auto"
+        :aria-label="`${t('header.year_aria')} ${gameStore.currentYear}`"
+      >
+        <i class="fa fa-hourglass-half text-amber-400 text-xs" aria-hidden="true"></i>
+        <span class="text-amber-300 font-black text-sm tabular-nums leading-none" aria-live="polite">{{ gameStore.currentYear }}</span>
       </div>
 
       <!-- Mobile : bouton hamburger -->
@@ -121,8 +144,6 @@
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
           {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#42</span>
-          <span class="text-slate-600">—</span>
-          <span class="text-eb-cyan font-bold" aria-live="polite">{{ gameStore.currentYear }}</span>
         </div>
         <div class="flex items-center gap-1">
           <i class="fa fa-users text-eb-cyan" aria-hidden="true"></i>

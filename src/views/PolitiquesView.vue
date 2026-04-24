@@ -190,6 +190,113 @@
       </div>
     </CollapsibleSection>
 
+    <!-- ─── Projections climatiques ─────────────────────────────────────── -->
+    <CollapsibleSection :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-eb-cyan">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <!-- Graphique CO₂ -->
+        <EbCard>
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.co2_chart_title') }}</h3>
+              <p class="text-xs text-slate-500">{{ t('simulator.co2_chart_sub') }}</p>
+            </div>
+            <div class="flex gap-3 text-xs text-slate-400">
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
+                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
+                </svg>
+                {{ t('simulator.legend_baseline') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
+                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
+                </svg>
+                {{ t('simulator.legend_decided') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
+                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
+                </svg>
+                {{ t('simulator.legend_pessimist') }}
+              </span>
+            </div>
+          </div>
+          <LineChart
+            canvas-id="policies-co2-chart"
+            :labels="SIM_LABELS"
+            :datasets="co2Datasets"
+            :show-legend="false"
+            :height="180"
+            :y-min="15"
+            :y-max="75"
+            :aria-label="t('simulator.aria_co2')"
+          />
+        </EbCard>
+
+        <!-- Graphique Température -->
+        <EbCard>
+          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.temp_chart_title') }}</h3>
+              <p class="text-xs text-slate-500">{{ t('simulator.temp_chart_sub') }}</p>
+            </div>
+            <div class="flex gap-3 text-xs text-slate-400">
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
+                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
+                </svg>
+                {{ t('simulator.legend_baseline') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
+                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
+                </svg>
+                {{ t('simulator.legend_decided') }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
+                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
+                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
+                </svg>
+                {{ t('simulator.legend_pessimist') }}
+              </span>
+            </div>
+          </div>
+          <LineChart
+            canvas-id="policies-temp-chart"
+            :labels="SIM_LABELS"
+            :datasets="tempDatasets"
+            :show-legend="false"
+            :height="180"
+            :y-min="1.2"
+            :y-max="4.5"
+            :aria-label="t('simulator.aria_temp')"
+          />
+          <div class="flex gap-4 mt-2 text-xs text-slate-500">
+            <span class="flex items-center gap-1.5">
+              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
+                <line x1="0" y1="2" x2="20" y2="2" stroke="#facc15" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>
+              </svg>
+              {{ t('simulator.threshold_paris') }}
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
+                <line x1="0" y1="2" x2="20" y2="2" stroke="#f97316" stroke-width="2" stroke-dasharray="8 4" stroke-linecap="round"/>
+              </svg>
+              {{ t('simulator.threshold_2c') }}
+            </span>
+          </div>
+        </EbCard>
+
+      </div>
+    </CollapsibleSection>
+
     <!-- ─── Historique des scrutins clôturés ──────────────────────────────── -->
     <CollapsibleSection v-if="closedBallots.length" :title="t('policies.closed_ballots_title')" icon="fa-clock-rotate-left" color-class="text-slate-400">
       <div class="space-y-6">
@@ -270,19 +377,23 @@ import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
+import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
+import LineChart from '@/components/charts/LineChart.vue'
+import EbCard from '@/components/layout/EbCard.vue'
 import type { RankPosition } from '@/store/mitigationPolicies.store'
-import type { MitigationPolicy, DecisionBallot } from '@/types/index'
+import type { MitigationPolicy, DecisionBallot, ChartDataset } from '@/types/index'
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
 
 const { t, locale } = useI18n()
 const { localizedPolicy } = useLocalizedPolicies()
 
-// ─── Store ────────────────────────────────────────────────────────────────────
+// ─── Stores ───────────────────────────────────────────────────────────────────
 
 const store = useMitigationPoliciesStore()
+const simulationStore = useSimulationStore()
 const {
   activeBallot, activeCandidates, closedBallots,
   ranking, hasVoted, isRankingComplete,
@@ -369,6 +480,90 @@ function formatDeadline(iso: string): string {
 function truncate(s: string, max: number): string {
   return s.length > max ? s.slice(0, max) + '…' : s
 }
+
+// ─── Datasets graphiques projections ─────────────────────────────────────────
+
+const { cumulativeCo2, cumulativeCo2Pessimist, cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simulationStore)
+
+const co2Datasets = computed<ChartDataset[]>(() => [
+  {
+    label: t('simulator.dataset_baseline'),
+    data: [...BASELINE_CO2],
+    borderColor: '#64748b',
+    backgroundColor: 'rgba(100,116,139,0.05)',
+    fill: false,
+    tension: 0.4,
+    pointRadius: 2,
+  },
+  {
+    label: t('simulator.dataset_decided'),
+    data: [...cumulativeCo2.value],
+    borderColor: '#00ff88',
+    backgroundColor: 'rgba(0,255,136,0.08)',
+    fill: false,
+    tension: 0.4,
+    pointRadius: 3,
+  },
+  {
+    label: t('simulator.dataset_pessimist'),
+    data: [...cumulativeCo2Pessimist.value],
+    borderColor: '#f87171',
+    backgroundColor: 'rgba(248,113,113,0.05)',
+    fill: false,
+    tension: 0.4,
+    pointRadius: 2,
+  },
+])
+
+const tempDatasets = computed<ChartDataset[]>(() => [
+  {
+    label: t('simulator.dataset_baseline'),
+    data: [...BASELINE_TEMP],
+    borderColor: '#64748b',
+    backgroundColor: 'transparent',
+    fill: false,
+    tension: 0.4,
+    pointRadius: 2,
+  },
+  {
+    label: t('simulator.dataset_decided'),
+    data: [...cumulativeTemp.value],
+    borderColor: '#00ff88',
+    backgroundColor: 'rgba(0,255,136,0.08)',
+    fill: false,
+    tension: 0.4,
+    pointRadius: 3,
+  },
+  {
+    label: t('simulator.dataset_pessimist'),
+    data: [...cumulativeTempPessimist.value],
+    borderColor: '#f87171',
+    backgroundColor: 'transparent',
+    fill: false,
+    tension: 0.4,
+    pointRadius: 2,
+  },
+  {
+    label: t('simulator.threshold_paris'),
+    data: SIM_LABELS.map(() => 1.5),
+    borderColor: '#facc15',
+    backgroundColor: 'transparent',
+    fill: false,
+    tension: 0,
+    borderDash: [2, 4],
+    pointRadius: 0,
+  },
+  {
+    label: t('simulator.threshold_2c'),
+    data: SIM_LABELS.map(() => 2),
+    borderColor: '#f97316',
+    backgroundColor: 'transparent',
+    fill: false,
+    tension: 0,
+    borderDash: [8, 4],
+    pointRadius: 0,
+  },
+])
 
 // ─── Composant inline : matrice pairwise ─────────────────────────────────────
 

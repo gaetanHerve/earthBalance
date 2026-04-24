@@ -22,12 +22,12 @@ export const useGameStore = defineStore('game', () => {
       simulationStore.addMitigationPolicy(winnerId)
     }
 
-    // 3. Créer un nouveau scrutin avec 3 politiques non validées aléatoires
-    policiesStore.createNewBallot()
-
-    // 4. Avancer l'année de jeu
+    // 3. Avancer l'année de jeu
     currentYear.value += GAME_CONFIG.grain
     localStorage.setItem(YEAR_KEY, String(currentYear.value))
+
+    // 4. Créer un nouveau scrutin — deadline au 31 déc. de la nouvelle année courante
+    policiesStore.createNewBallot(currentYear.value)
   }
 
   return { currentYear, endRound }

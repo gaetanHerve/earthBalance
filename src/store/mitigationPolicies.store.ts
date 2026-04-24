@@ -4,7 +4,7 @@ import type { MitigationPolicy, DecisionBallot, PairwiseVotes } from '@/types/in
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import { ballots as ballotData } from '@/data/ballots'
 import { condorcetWinner, bordaScores, resolveWinner, rankingToPairwiseDelta } from '@/utils/condorcet'
-import { GAME_CONFIG } from '@/config/game.config'
+
 
 // ─── Types internes ───────────────────────────────────────────────────────────
 
@@ -180,7 +180,8 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
   }
 
   // Crée un nouveau scrutin avec 3 politiques non validées choisies aléatoirement
-  function createNewBallot(): void {
+  // gameYear : année courante du jeu — la deadline est fixée au 31 décembre de cette année
+  function createNewBallot(gameYear: number): void {
     const validatedSet = new Set(validatedPolicyIds.value)
     const nonValidated = allMitigationPolicies.filter(p => !validatedSet.has(p.id))
 
@@ -190,8 +191,6 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     const [a, b, c] = shuffled.slice(0, 3)
 
     const nextNum = String(ballots.value.length + 1).padStart(2, '0')
-    const deadline = new Date()
-    deadline.setDate(deadline.getDate() + GAME_CONFIG.roundDuration)
 
     const newBallot: DecisionBallot = {
       id: `ballot-42-${nextNum}`,
@@ -199,7 +198,7 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
       decisionIds: [a.id, b.id, c.id],
       pairwise: { ab: 0, ba: 0, ac: 0, ca: 0, bc: 0, cb: 0 },
       totalVoters: 0,
-      deadline: deadline.toISOString(),
+      deadline: `${gameYear}-12-31T23:59:59Z`,
       status: 'active',
     }
 
