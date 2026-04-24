@@ -19,14 +19,8 @@
         </div>
         <LineChart
           canvas-id="co2Chart"
-          :labels="eco.co2.timeSeries.years"
-          :datasets="[{
-            label: t('dashboard.co2_dataset'),
-            data: eco.co2.timeSeries.values,
-            borderColor: '#ff5050',
-            backgroundColor: 'rgba(255,80,80,0.08)',
-            fill: true,
-          }]"
+          :labels="co2Labels"
+          :datasets="co2Datasets"
           :height="180"
           :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.co2_aria')"
@@ -83,14 +77,8 @@
         </div>
         <LineChart
           canvas-id="tempChart"
-          :labels="eco.temperature.timeSeries.years"
-          :datasets="[{
-            label: t('dashboard.temp_dataset'),
-            data: eco.temperature.timeSeries.values,
-            borderColor: '#fb923c',
-            backgroundColor: 'rgba(251,146,60,0.2)',
-            fill: true,
-          }]"
+          :labels="tempLabels"
+          :datasets="tempDatasets"
           :height="180"
           :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.temp_aria')"
@@ -128,7 +116,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 import SectionTitle from '@/components/layout/SectionTitle.vue'
 import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
@@ -136,10 +126,17 @@ import GaugeChart from '@/components/charts/GaugeChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 
 import { useGameStore } from '@/store/game.store'
-import type { EcologicalCharts } from '@/types/index'
+import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
+import type { EcologicalCharts, ChartDataset } from '@/types/index'
 
 const { t } = useI18n()
 const gameStore = useGameStore()
+const simulationStore = useSimulationStore()
+const { cumulativeCo2, cumulativeCo2Pessimist, cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simulationStore)
+
+// Coefficient d'interpolation entre scénario décidé (0) et pessimiste (1).
+// Valeur par défaut : 0.5 (intermédiaire). Rendre réactif plus tard si besoin.
+const BLEND = 0.5
 
 const props = withDefaults(defineProps<{
   eco:            EcologicalCharts
@@ -149,4 +146,73 @@ const props = withDefaults(defineProps<{
 function isVisible(id: string): boolean {
   return props.visibleWidgets.includes(id)
 }
+
+function interpolateAtYear(year: number, labels: number[], values: number[]): number {
+  if (year <= labels[0]) return values[0]
+  if (year >= labels[labels.length - 1]) return values[values.length - 1]
+  for (let i = 0; i < labels.length - 1; i++) {
+    if (year >= labels[i] && year <= labels[i + 1]) {
+      const t = (year - labels[i]) / (labels[i + 1] - labels[i])
+      return values[i] + t * (values[i + 1] - values[i])
+    }
+  }
+  return values[values.length - 1]
+}
+
+function blendedAtYear(year: number, decided: number[], pessimist: number[]): number {
+  const d = interpolateAtYear(year, SIM_LABELS, decided)
+  const p = interpolateAtYear(year, SIM_LABELS, pessimist)
+  return d * (1 - BLEND) + p * BLEND
+}
+
+// Années de projection > 2024 et ≤ currentYear
+const projectionYearsAfter2024 = computed<number[]>(() => {
+  const year = gameStore.currentYear
+  if (year <= 2024) return []
+  const years = SIM_LABELS.filter(y => y > 2024 && y <= year)
+  if (!SIM_LABELS.includes(year)) years.push(year)
+  return years.sort((a, b) => a - b)
+})
+
+// ─── CO₂ ──────────────────────────────────────────────────────────────────────
+
+const co2Labels = computed<number[]>(() => [
+  ...props.eco.co2.timeSeries.years,
+  ...projectionYearsAfter2024.value,
+])
+
+const co2Datasets = computed<ChartDataset[]>(() => {
+  const round1 = (v: number) => Math.round(v * 10) / 10
+  const projValues = projectionYearsAfter2024.value.map(y =>
+    round1(blendedAtYear(y, cumulativeCo2.value, cumulativeCo2Pessimist.value))
+  )
+  return [{
+    label:           t('dashboard.co2_dataset'),
+    data:            [...props.eco.co2.timeSeries.values, ...projValues],
+    borderColor:     '#ff5050',
+    backgroundColor: 'rgba(255,80,80,0.08)',
+    fill:            true,
+  }]
+})
+
+// ─── Température ──────────────────────────────────────────────────────────────
+
+const tempLabels = computed<number[]>(() => [
+  ...props.eco.temperature.timeSeries.years,
+  ...projectionYearsAfter2024.value,
+])
+
+const tempDatasets = computed<ChartDataset[]>(() => {
+  const round2 = (v: number) => Math.round(v * 100) / 100
+  const projValues = projectionYearsAfter2024.value.map(y =>
+    round2(blendedAtYear(y, cumulativeTemp.value, cumulativeTempPessimist.value))
+  )
+  return [{
+    label:           t('dashboard.temp_dataset'),
+    data:            [...props.eco.temperature.timeSeries.values, ...projValues],
+    borderColor:     '#fb923c',
+    backgroundColor: 'rgba(251,146,60,0.2)',
+    fill:            true,
+  }]
+})
 </script>
