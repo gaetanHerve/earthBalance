@@ -90,11 +90,101 @@ const props = withDefaults(defineProps<{
   yMin?:       number
   yMax?:       number
   showLegend?: boolean | 'auto'
+  currentYear?: number
 }>(), {
   height:     180,
   ariaLabel:  'Graphique linéaire',
   showLegend: 'auto',
 })
+
+// ─── Plugin : ligne verticale "année courante" ────────────────────────────────
+
+function getXForYear(chartInstance: ChartType, year: number): number | null {
+  const labels = chartInstance.data.labels as number[]
+  if (!labels?.length) return null
+
+  const first = labels[0]
+  const last  = labels[labels.length - 1]
+  if (year < first || year > last) return null
+
+  const exactIdx = labels.indexOf(year)
+  if (exactIdx !== -1) return chartInstance.scales.x.getPixelForValue(exactIdx)
+
+  let prevIdx = 0
+  for (let i = 0; i < labels.length - 1; i++) {
+    if (labels[i] <= year && labels[i + 1] >= year) { prevIdx = i; break }
+  }
+  const t  = (year - labels[prevIdx]) / (labels[prevIdx + 1] - labels[prevIdx])
+  const x0 = chartInstance.scales.x.getPixelForValue(prevIdx)
+  const x1 = chartInstance.scales.x.getPixelForValue(prevIdx + 1)
+  return x0 + (x1 - x0) * t
+}
+
+function drawRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath()
+  ctx.moveTo(x + r, y)
+  ctx.lineTo(x + w - r, y)
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+  ctx.lineTo(x + w, y + h - r)
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+  ctx.lineTo(x + r, y + h)
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+  ctx.lineTo(x, y + r)
+  ctx.quadraticCurveTo(x, y, x + r, y)
+  ctx.closePath()
+}
+
+const currentYearPlugin = {
+  id: 'currentYearLine',
+  afterDraw(chartInstance: ChartType) {
+    if (props.currentYear === undefined) return
+    const x = getXForYear(chartInstance, props.currentYear)
+    if (x === null) return
+
+    const { top, bottom } = chartInstance.chartArea
+    const ctx = chartInstance.ctx
+
+    ctx.save()
+
+    // Ligne pointillée amber
+    ctx.beginPath()
+    ctx.setLineDash([4, 3])
+    ctx.strokeStyle = '#fbbf24'
+    ctx.lineWidth = 1.5
+    ctx.globalAlpha = 0.7
+    ctx.moveTo(x, top + 21)
+    ctx.lineTo(x, bottom)
+    ctx.stroke()
+
+    // Badge année
+    const label = String(props.currentYear)
+    ctx.font = 'bold 10px ui-monospace, SFMono-Regular, monospace'
+    ctx.globalAlpha = 1
+    const textWidth = ctx.measureText(label).width
+    const padX = 5
+    const bw = textWidth + padX * 2; const bh = 14
+    const bx = x - bw / 2; const by = top + 5
+
+    ctx.fillStyle = '#451a03'
+    drawRoundRect(ctx, bx, by, bw, bh, 3)
+    ctx.fill()
+
+    ctx.strokeStyle = '#fbbf24'
+    ctx.lineWidth = 1
+    ctx.setLineDash([])
+    ctx.globalAlpha = 0.6
+    drawRoundRect(ctx, bx, by, bw, bh, 3)
+    ctx.stroke()
+
+    ctx.globalAlpha = 1
+    ctx.fillStyle = '#fbbf24'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(label, x, by + bh / 2 + 0.5)
+
+    ctx.restore()
+  },
+}
 
 let chart: ChartType | null = null
 
@@ -137,6 +227,7 @@ function initChart() {
 
   chart = new Chart(ctx, {
     type: 'line',
+    plugins: [currentYearPlugin],
     data: {
       labels:   props.labels,
       datasets: buildDatasets(),
@@ -178,6 +269,8 @@ watch(() => [props.labels, props.datasets], () => {
   chart.data.datasets = buildDatasets()
   chart.update('active')
 }, { deep: true })
+
+watch(() => props.currentYear, () => { chart?.update('active') })
 
 onBeforeUnmount(() => { chart?.destroy() })
 </script>

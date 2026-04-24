@@ -213,7 +213,7 @@ export default {
     aria_temp:           'Projections température mondiale cumulées',
     horizon_label:       'Horizon',
     horizon_selector:    "Sélecteur d'horizon temporel",
-    horizon_today:       "Aujourd'hui",
+    horizon_2024:        '2024',
     horizon_2040:        '2040',
     horizon_2050:        '2050',
     horizon_2100:        '2100',

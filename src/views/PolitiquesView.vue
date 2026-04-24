@@ -233,6 +233,7 @@
             :height="180"
             :y-min="15"
             :y-max="75"
+            :current-year="gameStore.currentYear"
             :aria-label="t('simulator.aria_co2')"
           />
         </EbCard>
@@ -276,6 +277,7 @@
             :height="180"
             :y-min="1.2"
             :y-max="4.5"
+            :current-year="gameStore.currentYear"
             :aria-label="t('simulator.aria_temp')"
           />
           <div class="flex gap-4 mt-2 text-xs text-slate-500">
@@ -378,6 +380,7 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
+import { useGameStore } from '@/store/game.store'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
 import LineChart from '@/components/charts/LineChart.vue'
@@ -394,6 +397,7 @@ const { localizedPolicy } = useLocalizedPolicies()
 
 const store = useMitigationPoliciesStore()
 const simulationStore = useSimulationStore()
+const gameStore = useGameStore()
 const {
   activeBallot, activeCandidates, closedBallots,
   ranking, hasVoted, isRankingComplete,

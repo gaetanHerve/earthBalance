@@ -295,6 +295,7 @@
             :labels="displayLabels"
             :datasets="co2Datasets"
             :show-legend="false"
+            :current-year="gameStore.currentYear"
             :height="180"
             :y-min="15"
             :y-max="75"
@@ -338,6 +339,7 @@
             :labels="displayLabels"
             :datasets="tempDatasets"
             :show-legend="false"
+            :current-year="gameStore.currentYear"
             :height="180"
             :y-min="1.2"
             :y-max="4.5"
@@ -408,6 +410,7 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 import { usePlanetsStore } from '@/store/planets.store'
+import { useGameStore } from '@/store/game.store'
 
 import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
 import EbCard             from '@/components/layout/EbCard.vue'
@@ -429,6 +432,7 @@ const {
 } = storeToRefs(store)
 
 const planetsStore = usePlanetsStore()
+const gameStore = useGameStore()
 const { selectedHorizon } = storeToRefs(planetsStore)
 
 const horizonIndex = computed<number>(() => {
@@ -469,7 +473,7 @@ const co2CumulativeSaved = computed<number>(() => {
 
 interface Horizon { value: number; label: string }
 const horizons = computed<Horizon[]>(() => [
-  { value: 2024, label: t('simulator.horizon_today') },
+  { value: 2024, label: t('simulator.horizon_2024') },
   { value: 2040, label: t('simulator.horizon_2040') },
   { value: 2050, label: t('simulator.horizon_2050') },
   { value: 2100, label: t('simulator.horizon_2100') },

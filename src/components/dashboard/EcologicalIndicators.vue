@@ -28,6 +28,7 @@
             fill: true,
           }]"
           :height="180"
+          :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.co2_aria')"
         />
       </EbCard>
@@ -91,6 +92,7 @@
             fill: true,
           }]"
           :height="180"
+          :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.temp_aria')"
         />
       </EbCard>
@@ -116,6 +118,7 @@
           }))"
           :height="180"
           :show-legend="true"
+          :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.resources_aria')"
         />
       </EbCard>
@@ -132,9 +135,11 @@ import LineChart from '@/components/charts/LineChart.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 
+import { useGameStore } from '@/store/game.store'
 import type { EcologicalCharts } from '@/types/index'
 
 const { t } = useI18n()
+const gameStore = useGameStore()
 
 const props = withDefaults(defineProps<{
   eco:            EcologicalCharts
