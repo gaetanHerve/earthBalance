@@ -12,14 +12,17 @@
 // sont incluses dans le catalogue de simulation.
 
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import type { MitigationPolicy, MitigationPolicyProjections } from '@/types/index'
+import { useMitigationPoliciesStore } from './mitigationPolicies.store'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
 export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
 export const BASELINE_CO2  = [37.4, 39, 40.5, 42, 45.1, 49.2, 54, 58, 63, 70]
 export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
+
+const SELECTED_KEY = 'eb_simulation_selected'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -64,23 +67,35 @@ function tempDeltasPessimist(dec: MitigationPolicy): number[] {
 
 export const useSimulationStore = defineStore('simulation', () => {
 
-  // Politiques disponibles pour la simulation (avec modèle d'impact complet)
+  const policiesStore = useMitigationPoliciesStore()
+
+  // Catalogue : politiques avec modèle d'impact, statuts à jour depuis le store de politiques
   const catalogue = computed<MitigationPolicy[]>(() => {
-    const valid = allMitigationPolicies.filter(d => hasImpactModel(d) && hasProjections(d))
+    const validatedSet = new Set(policiesStore.validatedPolicyIds)
+    const withStatus = allMitigationPolicies.map(p =>
+      validatedSet.has(p.id) ? { ...p, status: 'validated' as const } : p
+    )
+    const valid = withStatus.filter(d => hasImpactModel(d) && hasProjections(d))
     return [...valid.filter(d => d.status === 'validated'), ...valid.filter(d => d.status !== 'validated')]
   })
 
-  // IDs des politiques retenues (validées par scrutin clos) — ne peuvent être retirées
+  // IDs des politiques verrouillées (validées par scrutin et présentes dans le catalogue)
   const lockedIds = computed<string[]>(() =>
-    catalogue.value.filter(d => d.status === 'validated').map(d => d.id)
+    policiesStore.validatedPolicyIds.filter(id => catalogue.value.some(d => d.id === id))
   )
 
-  // Séquence ordonnée : initialisée avec les politiques déjà retenues
+  // Séquence ordonnée : initialisée depuis localStorage ou depuis les politiques déjà retenues
+  const storedSelected = localStorage.getItem(SELECTED_KEY)
   const selectedIds = ref<string[]>(
-    allMitigationPolicies
-      .filter(d => d.status === 'validated' && hasImpactModel(d) && hasProjections(d))
-      .map(d => d.id)
+    storedSelected
+      ? (JSON.parse(storedSelected) as string[])
+      : allMitigationPolicies
+          .filter(d => d.status === 'validated' && hasImpactModel(d) && hasProjections(d))
+          .map(d => d.id)
   )
+
+  // Persistance automatique de la séquence sélectionnée
+  watch(selectedIds, ids => localStorage.setItem(SELECTED_KEY, JSON.stringify(ids)), { deep: true })
 
   // Politiques sélectionnées dans l'ordre choisi
   const selectedMitigationPolicies = computed<MitigationPolicy[]>(() =>
@@ -121,11 +136,9 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   // ─── Indicateurs résumés ───────────────────────────────────────────────────
 
-  // Température en 2100 (dernier point des séries)
   const tempIn2100Decided    = computed<number>(() => cumulativeTemp.value[9])
   const tempIn2100Pessimist  = computed<number>(() => cumulativeTempPessimist.value[9])
 
-  // Réduction totale d'émissions annuelles cumulées
   const totalAnnualReduction = computed<number>(() =>
     selectedMitigationPolicies.value.reduce((s, dec) =>
       s + (dec.projectedImpact['emissionsReductionGtCO2yr'] as number ?? 0), 0)
