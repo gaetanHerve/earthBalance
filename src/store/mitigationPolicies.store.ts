@@ -4,6 +4,7 @@ import type { MitigationPolicy, DecisionBallot, PairwiseVotes } from '@/types/in
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import { ballots as ballotData } from '@/data/ballots'
 import { condorcetWinner, bordaScores, resolveWinner, rankingToPairwiseDelta } from '@/utils/condorcet'
+import { GAME_CONFIG } from '@/config/game.config'
 
 // ─── Types internes ───────────────────────────────────────────────────────────
 
@@ -19,18 +20,60 @@ export interface BallotResult {
   pairwise: PairwiseVotes
 }
 
+// ─── Persistence ──────────────────────────────────────────────────────────────
+
+const STORAGE_KEY = 'eb_policies_state'
+
+interface PersistedPoliciesState {
+  validatedPolicyIds: string[]
+  ballots: DecisionBallot[]
+}
+
+function loadPersistedState(): PersistedPoliciesState | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? (JSON.parse(raw) as PersistedPoliciesState) : null
+  } catch {
+    return null
+  }
+}
+
+function saveState(validatedIds: string[], ballots: DecisionBallot[]): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ validatedPolicyIds: validatedIds, ballots }))
+}
+
 // ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () => {
 
-  // Index des politiques par ID
-  const policyIndex = Object.fromEntries(allMitigationPolicies.map(d => [d.id, d]))
+  const saved = loadPersistedState()
 
-  // Scrutins (état réactif — clonés pour permettre la mutation locale)
-  const ballots = ref<DecisionBallot[]>(ballotData.map(b => ({
-    ...b,
-    pairwise: { ...b.pairwise },
-  })))
+  // IDs des politiques validées au runtime (initialisé depuis les données statiques + localStorage)
+  const initialValidatedIds = allMitigationPolicies
+    .filter(p => p.status === 'validated')
+    .map(p => p.id)
+
+  const validatedPolicyIds = ref<string[]>(saved?.validatedPolicyIds ?? initialValidatedIds)
+
+  // Scrutins (clonés pour permettre la mutation locale, persistés)
+  const ballots = ref<DecisionBallot[]>(
+    saved?.ballots
+      ? saved.ballots.map(b => ({ ...b, pairwise: { ...b.pairwise } }))
+      : ballotData.map(b => ({ ...b, pairwise: { ...b.pairwise } }))
+  )
+
+  // Vue unifiée des politiques avec statuts à jour (runtime override)
+  const allPoliciesWithRuntimeStatus = computed<MitigationPolicy[]>(() => {
+    const validatedSet = new Set(validatedPolicyIds.value)
+    return allMitigationPolicies.map(p =>
+      validatedSet.has(p.id) ? { ...p, status: 'validated' as const } : p
+    )
+  })
+
+  // Index des politiques par ID (avec statuts runtime)
+  const policyIndex = computed<Record<string, MitigationPolicy>>(() =>
+    Object.fromEntries(allPoliciesWithRuntimeStatus.value.map(d => [d.id, d]))
+  )
 
   // Scrutin actif
   const activeBallot = computed<DecisionBallot | null>(() =>
@@ -46,15 +89,14 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
   const activeCandidates = computed<[MitigationPolicy, MitigationPolicy, MitigationPolicy] | null>(() => {
     if (!activeBallot.value) return null
     const [a, b, c] = activeBallot.value.decisionIds
-    const da = policyIndex[a]
-    const db = policyIndex[b]
-    const dc = policyIndex[c]
+    const da = policyIndex.value[a]
+    const db = policyIndex.value[b]
+    const dc = policyIndex.value[c]
     if (!da || !db || !dc) return null
     return [da, db, dc]
   })
 
   // Classement en cours de l'utilisateur
-  // ranking[0] = ID de la décision placée en 1er choix, etc.  (null = position vide)
   const ranking = ref<RankingState>([null, null, null])
   const hasVoted = ref(false)
 
@@ -62,29 +104,24 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     ranking.value.every(v => v !== null)
   )
 
-  // Position attribuée à une décision dans le classement courant (null = non classée)
   function getRankOf(decisionId: string): RankPosition | null {
     const idx = ranking.value.indexOf(decisionId)
     return idx === -1 ? null : idx as RankPosition
   }
 
-  // Attribue (ou déplace) une décision à une position donnée
   function setRank(decisionId: string, position: RankPosition): void {
     const r: RankingState = [...ranking.value]
-    // Retirer ce candidat de toute position précédente
     for (let i = 0; i < 3; i++) if (r[i] === decisionId) r[i] = null
-    // Déplacer l'éventuel occupant de la cible
     const displaced = r[position]
     if (displaced !== null) {
       const freeSlot = r.findIndex((v, i) => v === null && i !== position)
       if (freeSlot !== -1) r[freeSlot] = displaced
-      else r[position] = null  // plus de place : on efface simplement
+      else r[position] = null
     }
     r[position] = decisionId
     ranking.value = r
   }
 
-  // Soumet le classement : incrémente les compteurs pairwise du scrutin actif
   function submitRanking(): void {
     if (!activeBallot.value || !isRankingComplete.value || hasVoted.value) return
 
@@ -101,15 +138,15 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     ballot.totalVoters++
 
     hasVoted.value = true
+    saveState(validatedPolicyIds.value, ballots.value)
   }
 
-  // Calcule le résultat complet d'un scrutin (null si aucun vote)
   function getBallotResult(ballot: DecisionBallot): BallotResult | null {
     if (ballot.totalVoters === 0) return null
 
     const hasCycle   = condorcetWinner(ballot.pairwise) === null
     const { winner: winnerIdx, method } = resolveWinner(ballot.pairwise)
-    const winnerPolicy = policyIndex[ballot.decisionIds[winnerIdx]]
+    const winnerPolicy = policyIndex.value[ballot.decisionIds[winnerIdx]]
     if (!winnerPolicy) return null
 
     return {
@@ -122,12 +159,66 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     }
   }
 
+  // Clôture le scrutin actif, valide le gagnant et retourne son ID (null si aucun vote)
+  function closeActiveBallot(): string | null {
+    const ballot = activeBallot.value
+    if (!ballot) return null
+
+    const result = getBallotResult(ballot)
+    ballot.status = 'closed'
+
+    let winnerId: string | null = null
+    if (result) {
+      winnerId = result.winnerPolicy.id
+      if (!validatedPolicyIds.value.includes(winnerId)) {
+        validatedPolicyIds.value = [...validatedPolicyIds.value, winnerId]
+      }
+    }
+
+    saveState(validatedPolicyIds.value, ballots.value)
+    return winnerId
+  }
+
+  // Crée un nouveau scrutin avec 3 politiques non validées choisies aléatoirement
+  function createNewBallot(): void {
+    const validatedSet = new Set(validatedPolicyIds.value)
+    const nonValidated = allMitigationPolicies.filter(p => !validatedSet.has(p.id))
+
+    if (nonValidated.length < 3) return
+
+    const shuffled = [...nonValidated].sort(() => Math.random() - 0.5)
+    const [a, b, c] = shuffled.slice(0, 3)
+
+    const nextNum = String(ballots.value.length + 1).padStart(2, '0')
+    const deadline = new Date()
+    deadline.setDate(deadline.getDate() + GAME_CONFIG.roundDuration)
+
+    const newBallot: DecisionBallot = {
+      id: `ballot-42-${nextNum}`,
+      sessionId: 42,
+      decisionIds: [a.id, b.id, c.id],
+      pairwise: { ab: 0, ba: 0, ac: 0, ca: 0, bc: 0, cb: 0 },
+      totalVoters: 0,
+      deadline: deadline.toISOString(),
+      status: 'active',
+    }
+
+    ballots.value = [...ballots.value, newBallot]
+
+    // Réinitialiser l'état de vote de l'utilisateur
+    ranking.value = [null, null, null]
+    hasVoted.value = false
+
+    saveState(validatedPolicyIds.value, ballots.value)
+  }
+
   function getMitigationPolicy(id: string): MitigationPolicy | undefined {
-    return policyIndex[id]
+    return policyIndex.value[id]
   }
 
   return {
     ballots,
+    validatedPolicyIds,
     activeBallot,
     closedBallots,
     activeCandidates,
@@ -139,5 +230,7 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     submitRanking,
     getBallotResult,
     getMitigationPolicy,
+    closeActiveBallot,
+    createNewBallot,
   }
 })

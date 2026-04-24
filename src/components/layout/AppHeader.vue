@@ -49,7 +49,8 @@
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
             <span class="text-slate-400">
-              {{ t('header.session_label') }} <span class="text-eb-green font-bold">#42</span> — 2024
+              {{ t('header.session_label') }} <span class="text-eb-green font-bold">#42</span>
+              — <span class="text-eb-cyan font-bold" aria-live="polite" aria-label="`${t('header.year_aria')} ${gameStore.currentYear}`">{{ gameStore.currentYear }}</span>
             </span>
           </div>
           <div class="flex items-center gap-1 text-slate-400">
@@ -57,6 +58,14 @@
             <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
             <span>{{ t('header.players') }}</span>
           </div>
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/50 text-amber-400 text-xs hover:bg-amber-500/10 hover:border-amber-400 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
+            :aria-label="t('header.end_round_aria')"
+            @click="gameStore.endRound()"
+          >
+            <i class="fa fa-forward-step" aria-hidden="true"></i>
+            {{ t('header.end_round') }}
+          </button>
         </div>
       </div>
 
@@ -112,13 +121,26 @@
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
           {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#42</span>
-          <span class="text-slate-600">— 2024</span>
+          <span class="text-slate-600">—</span>
+          <span class="text-eb-cyan font-bold" aria-live="polite">{{ gameStore.currentYear }}</span>
         </div>
         <div class="flex items-center gap-1">
           <i class="fa fa-users text-eb-cyan" aria-hidden="true"></i>
           <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
           <span>{{ t('header.players') }}</span>
         </div>
+      </div>
+
+      <!-- Fin de tour -->
+      <div class="pt-1 border-t border-eb-border">
+        <button
+          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-amber-500/50 text-amber-400 text-sm hover:bg-amber-500/10 hover:border-amber-400 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
+          :aria-label="t('header.end_round_aria')"
+          @click="gameStore.endRound(); menuOpen = false"
+        >
+          <i class="fa fa-forward-step" aria-hidden="true"></i>
+          {{ t('header.end_round') }}
+        </button>
       </div>
 
     </div>
@@ -133,11 +155,13 @@ import { useI18n } from 'vue-i18n'
 import AppSearch from '@/components/layout/AppSearch.vue'
 import AppContrastToggle from '@/components/layout/AppContrastToggle.vue'
 import AppLangToggle from '@/components/layout/AppLangToggle.vue'
+import { useGameStore } from '@/store/game.store'
 
 interface NavLink { to: string; label: string; icon: string }
 
 const { t } = useI18n()
 const route = useRoute()
+const gameStore = useGameStore()
 
 const menuOpen    = ref(false)
 const playerCount = ref<number>(1247)

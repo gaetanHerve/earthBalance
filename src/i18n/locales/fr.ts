@@ -14,6 +14,9 @@ export default {
     main_nav:         'Navigation principale',
     session_label:    'Session',
     players:          'joueurs',
+    year_aria:        'Année de jeu',
+    end_round:        'Fin de tour',
+    end_round_aria:   'Terminer le tour de jeu en cours',
     horizon_label:    'Horizon',
     horizon_selector: "Sélecteur d'horizon temporel",
     horizons: {

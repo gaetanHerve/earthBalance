@@ -14,6 +14,9 @@ export default {
     main_nav:         'Main navigation',
     session_label:    'Session',
     players:          'players',
+    year_aria:        'Game year',
+    end_round:        'End round',
+    end_round_aria:   'End the current game round',
     horizon_label:    'Horizon',
     horizon_selector: 'Time horizon selector',
     horizons: {
