@@ -45,9 +45,9 @@ export default {
     live_none:      'Aucun résultat',
   },
   footer: {
-    partners:       'Partenaires institutionnels',
-    infrastructure: 'Infrastructure',
-    stats:          'Statistiques globales',
+    partners:       'Partenaires institutionnels (fictif)',
+    infrastructure: 'Infrastructure (fictif)',
+    stats:          'Statistiques globales (fictif)',
     infra: {
       docs:       'Documentation EarthChain v3.1',
       api:        'API publique EarthBalance',
