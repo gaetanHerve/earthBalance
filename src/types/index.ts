@@ -198,10 +198,21 @@ export interface ProjectionSeries {
   pessimist: number[]
 }
 
+export interface EnergyMixDeltaSeries {
+  decided:  number[]
+  pessimist: number[]
+}
+
+export type EnergyMixKey = 'coal' | 'oil' | 'gas' | 'nuclear' | 'solar' | 'wind' | 'hydro' | 'autres'
+export type ResourceKey  = 'minerals' | 'biomass' | 'fossilFuels'
+
 export interface MitigationPolicyProjections {
   labels: number[]
   co2: ProjectionSeries
   temperature: ProjectionSeries
+  forest?: ProjectionSeries
+  energyMix?: Partial<Record<EnergyMixKey, EnergyMixDeltaSeries>>
+  resources?: Partial<Record<ResourceKey, EnergyMixDeltaSeries>>
 }
 
 export interface IpccReference {
@@ -220,6 +231,7 @@ export interface MitigationPolicy {
   title: string
   summary?: string
   description: string
+  implementationLag: number  // années entre adoption et premier effet mesurable (IPCC AR6 WG3)
   ipccReference?: IpccReference
   options?: VoteOption[]
   votes?: VoteTally
@@ -265,7 +277,7 @@ export interface GlobalStats {
 
 export interface ChartDataset {
   label: string
-  data: number[]
+  data: (number | null)[]
   borderColor: string
   backgroundColor?: string
   fill?: boolean

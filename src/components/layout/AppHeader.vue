@@ -50,7 +50,7 @@
           <!-- Session -->
           <div class="flex items-center gap-2 text-xs text-slate-400">
             <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
-            {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#42</span>
+            {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#1</span>
           </div>
 
           <!-- Année courante — game HUD -->
@@ -72,9 +72,14 @@
 
           <!-- Fin de tour -->
           <button
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-500/50 text-amber-400 text-xs hover:bg-amber-500/10 hover:border-amber-400 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
+            :class="canEndRound
+              ? 'border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400 cursor-pointer'
+              : 'border-slate-700 text-slate-600 cursor-not-allowed opacity-50'"
+            :disabled="!canEndRound"
             :aria-label="t('header.end_round_aria')"
-            @click="gameStore.endRound()"
+            :aria-disabled="!canEndRound"
+            @click="canEndRound && gameStore.endRound()"
           >
             <i class="fa fa-forward-step" aria-hidden="true"></i>
             {{ t('header.end_round') }}
@@ -155,9 +160,14 @@
       <!-- Fin de tour -->
       <div class="pt-1 border-t border-eb-border">
         <button
-          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-amber-500/50 text-amber-400 text-sm hover:bg-amber-500/10 hover:border-amber-400 transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
+          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
+          :class="canEndRound
+            ? 'border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400 cursor-pointer'
+            : 'border-slate-700 text-slate-600 cursor-not-allowed opacity-50'"
+          :disabled="!canEndRound"
           :aria-label="t('header.end_round_aria')"
-          @click="gameStore.endRound(); menuOpen = false"
+          :aria-disabled="!canEndRound"
+          @click="canEndRound && (gameStore.endRound(), menuOpen = false)"
         >
           <i class="fa fa-forward-step" aria-hidden="true"></i>
           {{ t('header.end_round') }}
@@ -173,10 +183,12 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 import AppSearch from '@/components/layout/AppSearch.vue'
 import AppContrastToggle from '@/components/layout/AppContrastToggle.vue'
 import AppLangToggle from '@/components/layout/AppLangToggle.vue'
 import { useGameStore } from '@/store/game.store'
+import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 
 interface NavLink { to: string; label: string; icon: string }
 
@@ -184,8 +196,11 @@ const { t } = useI18n()
 const route = useRoute()
 const gameStore = useGameStore()
 
+const { activeBallot } = storeToRefs(useMitigationPoliciesStore())
+const canEndRound = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
+
 const menuOpen    = ref(false)
-const playerCount = ref<number>(1247)
+const playerCount = ref<number>(1)
 
 const navLinks = computed<NavLink[]>(() => [
   { to: '/',                    label: t('nav.dashboard'),    icon: 'fa-gauge-high'      },

@@ -15,7 +15,7 @@ export const useGameStore = defineStore('game', () => {
     const simulationStore = useSimulationStore()
 
     // 1. Clôturer le scrutin actif et récupérer l'ID du gagnant
-    const winnerId = policiesStore.closeActiveBallot()
+    const winnerId = policiesStore.closeActiveBallot(currentYear.value)
 
     // 2. Ajouter le gagnant à la simulation (sera verrouillé comme politique retenue)
     if (winnerId) {
