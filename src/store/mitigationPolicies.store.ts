@@ -59,12 +59,7 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
 
   const saved = loadPersistedState()
 
-  // Métadonnées des politiques validées : id + année de vote
-  const initialMeta: ValidatedPolicyMeta[] = allMitigationPolicies
-    .filter(p => p.status === 'validated')
-    .map(p => ({ id: p.id, year: 2024 }))
-
-  const validatedPolicyMeta = ref<ValidatedPolicyMeta[]>(saved?.validatedPolicyMeta ?? initialMeta)
+  const validatedPolicyMeta = ref<ValidatedPolicyMeta[]>(saved?.validatedPolicyMeta ?? [])
 
   // Vue dérivée : IDs seuls (rétrocompatibilité avec les composants existants)
   const validatedPolicyIds = computed<string[]>(() => validatedPolicyMeta.value.map(m => m.id))

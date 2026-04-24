@@ -114,11 +114,7 @@ export const useSimulationStore = defineStore('simulation', () => {
   // Séquence ordonnée : initialisée depuis localStorage ou depuis les politiques déjà retenues
   const storedSelected = localStorage.getItem(SELECTED_KEY)
   const selectedIds = ref<string[]>(
-    storedSelected
-      ? (JSON.parse(storedSelected) as string[])
-      : allMitigationPolicies
-          .filter(d => d.status === 'validated' && hasImpactModel(d) && hasProjections(d))
-          .map(d => d.id)
+    storedSelected ? (JSON.parse(storedSelected) as string[]) : []
   )
 
   // Persistance automatique de la séquence sélectionnée
