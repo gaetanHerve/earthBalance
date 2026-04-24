@@ -22,7 +22,6 @@
           :labels="co2Labels"
           :datasets="co2Datasets"
           :height="180"
-          :show-legend="hasProjection"
           :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.co2_aria')"
         />
@@ -81,7 +80,6 @@
           :labels="tempLabels"
           :datasets="tempDatasets"
           :height="180"
-          :show-legend="hasProjection"
           :current-year="gameStore.currentYear"
           :aria-label="t('dashboard.temp_aria')"
         />
@@ -128,13 +126,17 @@ import GaugeChart from '@/components/charts/GaugeChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 
 import { useGameStore } from '@/store/game.store'
-import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
+import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
 import type { EcologicalCharts, ChartDataset } from '@/types/index'
 
 const { t } = useI18n()
 const gameStore = useGameStore()
 const simulationStore = useSimulationStore()
 const { cumulativeCo2, cumulativeCo2Pessimist, cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simulationStore)
+
+// Coefficient d'interpolation entre scénario décidé (0) et pessimiste (1).
+// Valeur par défaut : 0.5 (intermédiaire). Rendre réactif plus tard si besoin.
+const BLEND = 0.5
 
 const props = withDefaults(defineProps<{
   eco:            EcologicalCharts
@@ -157,6 +159,12 @@ function interpolateAtYear(year: number, labels: number[], values: number[]): nu
   return values[values.length - 1]
 }
 
+function blendedAtYear(year: number, decided: number[], pessimist: number[]): number {
+  const d = interpolateAtYear(year, SIM_LABELS, decided)
+  const p = interpolateAtYear(year, SIM_LABELS, pessimist)
+  return d * (1 - BLEND) + p * BLEND
+}
+
 // Années de projection > 2024 et ≤ currentYear
 const projectionYearsAfter2024 = computed<number[]>(() => {
   const year = gameStore.currentYear
@@ -166,8 +174,6 @@ const projectionYearsAfter2024 = computed<number[]>(() => {
   return years.sort((a, b) => a - b)
 })
 
-const hasProjection = computed(() => projectionYearsAfter2024.value.length > 0)
-
 // ─── CO₂ ──────────────────────────────────────────────────────────────────────
 
 const co2Labels = computed<number[]>(() => [
@@ -176,52 +182,17 @@ const co2Labels = computed<number[]>(() => [
 ])
 
 const co2Datasets = computed<ChartDataset[]>(() => {
-  const histYears  = props.eco.co2.timeSeries.years
-  const histValues = props.eco.co2.timeSeries.values
-  const projYears  = projectionYearsAfter2024.value
-  const nullsBefore = Array<null>(histYears.length - 1).fill(null)
-
   const round1 = (v: number) => Math.round(v * 10) / 10
-  const decided   = [round1(interpolateAtYear(2024, SIM_LABELS, cumulativeCo2.value)),
-                     ...projYears.map(y => round1(interpolateAtYear(y, SIM_LABELS, cumulativeCo2.value)))]
-  const pessimist = [round1(interpolateAtYear(2024, SIM_LABELS, cumulativeCo2Pessimist.value)),
-                     ...projYears.map(y => round1(interpolateAtYear(y, SIM_LABELS, cumulativeCo2Pessimist.value)))]
-
-  const datasets: ChartDataset[] = [
-    {
-      label:           t('dashboard.co2_dataset'),
-      data:            [...histValues, ...projYears.map(() => null)],
-      borderColor:     '#ff5050',
-      backgroundColor: 'rgba(255,80,80,0.08)',
-      fill:            true,
-      borderDash:      [],
-    },
-  ]
-
-  if (hasProjection.value) {
-    datasets.push(
-      {
-        label:           t('dashboard.scenario_decided'),
-        data:            [...nullsBefore, ...decided],
-        borderColor:     '#ff5050',
-        backgroundColor: 'rgba(255,80,80,0.05)',
-        fill:            false,
-        borderDash:      [6, 3],
-        pointRadius:     2,
-      },
-      {
-        label:           t('dashboard.scenario_pessimist'),
-        data:            [...nullsBefore, ...pessimist],
-        borderColor:     'rgba(255,80,80,0.45)',
-        backgroundColor: 'transparent',
-        fill:            false,
-        borderDash:      [2, 4],
-        pointRadius:     0,
-      },
-    )
-  }
-
-  return datasets
+  const projValues = projectionYearsAfter2024.value.map(y =>
+    round1(blendedAtYear(y, cumulativeCo2.value, cumulativeCo2Pessimist.value))
+  )
+  return [{
+    label:           t('dashboard.co2_dataset'),
+    data:            [...props.eco.co2.timeSeries.values, ...projValues],
+    borderColor:     '#ff5050',
+    backgroundColor: 'rgba(255,80,80,0.08)',
+    fill:            true,
+  }]
 })
 
 // ─── Température ──────────────────────────────────────────────────────────────
@@ -232,51 +203,16 @@ const tempLabels = computed<number[]>(() => [
 ])
 
 const tempDatasets = computed<ChartDataset[]>(() => {
-  const histYears  = props.eco.temperature.timeSeries.years
-  const histValues = props.eco.temperature.timeSeries.values
-  const projYears  = projectionYearsAfter2024.value
-  const nullsBefore = Array<null>(histYears.length - 1).fill(null)
-
   const round2 = (v: number) => Math.round(v * 100) / 100
-  const decided   = [round2(interpolateAtYear(2024, SIM_LABELS, cumulativeTemp.value)),
-                     ...projYears.map(y => round2(interpolateAtYear(y, SIM_LABELS, cumulativeTemp.value)))]
-  const pessimist = [round2(interpolateAtYear(2024, SIM_LABELS, cumulativeTempPessimist.value)),
-                     ...projYears.map(y => round2(interpolateAtYear(y, SIM_LABELS, cumulativeTempPessimist.value)))]
-
-  const datasets: ChartDataset[] = [
-    {
-      label:           t('dashboard.temp_dataset'),
-      data:            [...histValues, ...projYears.map(() => null)],
-      borderColor:     '#fb923c',
-      backgroundColor: 'rgba(251,146,60,0.2)',
-      fill:            true,
-      borderDash:      [],
-    },
-  ]
-
-  if (hasProjection.value) {
-    datasets.push(
-      {
-        label:           t('dashboard.scenario_decided'),
-        data:            [...nullsBefore, ...decided],
-        borderColor:     '#fb923c',
-        backgroundColor: 'rgba(251,146,60,0.08)',
-        fill:            false,
-        borderDash:      [6, 3],
-        pointRadius:     2,
-      },
-      {
-        label:           t('dashboard.scenario_pessimist'),
-        data:            [...nullsBefore, ...pessimist],
-        borderColor:     'rgba(251,146,60,0.4)',
-        backgroundColor: 'transparent',
-        fill:            false,
-        borderDash:      [2, 4],
-        pointRadius:     0,
-      },
-    )
-  }
-
-  return datasets
+  const projValues = projectionYearsAfter2024.value.map(y =>
+    round2(blendedAtYear(y, cumulativeTemp.value, cumulativeTempPessimist.value))
+  )
+  return [{
+    label:           t('dashboard.temp_dataset'),
+    data:            [...props.eco.temperature.timeSeries.values, ...projValues],
+    borderColor:     '#fb923c',
+    backgroundColor: 'rgba(251,146,60,0.2)',
+    fill:            true,
+  }]
 })
 </script>
