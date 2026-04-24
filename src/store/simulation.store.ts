@@ -35,32 +35,59 @@ function hasProjections(d: MitigationPolicy): d is MitigationPolicy & { projecti
   return Array.isArray(p?.co2?.decided) && Array.isArray(p?.temperature?.decided)
 }
 
-function extendedDelta(arr: number[], baseline: number[]): number[] {
-  return baseline.map((base, i) => {
-    if (i < arr.length) return arr[i] - base
-    const lastIdx = arr.length - 1
-    return arr[lastIdx] - baseline[lastIdx]
+// Interpolation linéaire dans une série temporelle (labels, values)
+function interpol(year: number, labels: number[], values: number[]): number {
+  if (year <= labels[0]) return values[0]
+  if (year >= labels[labels.length - 1]) return values[values.length - 1]
+  for (let i = 0; i < labels.length - 1; i++) {
+    if (year >= labels[i] && year <= labels[i + 1]) {
+      const t = (year - labels[i]) / (labels[i + 1] - labels[i])
+      return values[i] + t * (values[i + 1] - values[i])
+    }
+  }
+  return values[values.length - 1]
+}
+
+// Delta d'une politique avec décalage temporel (startYear + implementationLag).
+// À l'année t :
+//   - si t < effectiveStart → delta = 0 (politique pas encore en vigueur)
+//   - sinon → delta de l'original à l'année 2024 + (t - effectiveStart)
+//     (la courbe d'effet est "rejouée" depuis effectiveStart plutôt que depuis 2024)
+function shiftedDeltas(
+  projLabels: number[],
+  projValues: number[],
+  projBaseline: number[],
+  effectiveStart: number,
+): number[] {
+  return SIM_LABELS.map(year => {
+    if (year < effectiveStart) return 0
+    const mappedYear = 2024 + (year - effectiveStart)
+    return interpol(mappedYear, projLabels, projValues) - interpol(mappedYear, projLabels, projBaseline)
   })
 }
 
-function co2Deltas(dec: MitigationPolicy): number[] {
-  if (!hasProjections(dec)) return BASELINE_CO2.map(() => 0)
-  return extendedDelta((dec.projections as MitigationPolicyProjections).co2.decided, BASELINE_CO2)
+function co2Deltas(dec: MitigationPolicy, effectiveStart: number): number[] {
+  if (!hasProjections(dec)) return SIM_LABELS.map(() => 0)
+  const proj = dec.projections as MitigationPolicyProjections
+  return shiftedDeltas(proj.labels, proj.co2.decided, proj.co2.baseline, effectiveStart)
 }
 
-function co2DeltasPessimist(dec: MitigationPolicy): number[] {
-  if (!hasProjections(dec)) return BASELINE_CO2.map(() => 0)
-  return extendedDelta((dec.projections as MitigationPolicyProjections).co2.pessimist, BASELINE_CO2)
+function co2DeltasPessimist(dec: MitigationPolicy, effectiveStart: number): number[] {
+  if (!hasProjections(dec)) return SIM_LABELS.map(() => 0)
+  const proj = dec.projections as MitigationPolicyProjections
+  return shiftedDeltas(proj.labels, proj.co2.pessimist, proj.co2.baseline, effectiveStart)
 }
 
-function tempDeltas(dec: MitigationPolicy): number[] {
-  if (!hasProjections(dec)) return BASELINE_TEMP.map(() => 0)
-  return extendedDelta((dec.projections as MitigationPolicyProjections).temperature.decided, BASELINE_TEMP)
+function tempDeltas(dec: MitigationPolicy, effectiveStart: number): number[] {
+  if (!hasProjections(dec)) return SIM_LABELS.map(() => 0)
+  const proj = dec.projections as MitigationPolicyProjections
+  return shiftedDeltas(proj.labels, proj.temperature.decided, proj.temperature.baseline, effectiveStart)
 }
 
-function tempDeltasPessimist(dec: MitigationPolicy): number[] {
-  if (!hasProjections(dec)) return BASELINE_TEMP.map(() => 0)
-  return extendedDelta((dec.projections as MitigationPolicyProjections).temperature.pessimist, BASELINE_TEMP)
+function tempDeltasPessimist(dec: MitigationPolicy, effectiveStart: number): number[] {
+  if (!hasProjections(dec)) return SIM_LABELS.map(() => 0)
+  const proj = dec.projections as MitigationPolicyProjections
+  return shiftedDeltas(proj.labels, proj.temperature.pessimist, proj.temperature.baseline, effectiveStart)
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -106,30 +133,43 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   // ─── Projections cumulées ──────────────────────────────────────────────────
 
+  // Retourne l'année d'effet réelle d'une politique : année de vote + lag
+  // Les politiques initialement validées (year: 2024) accumulent aussi leur lag
+  function effectiveStartOf(decId: string): number {
+    const meta = policiesStore.validatedPolicyMeta.find(m => m.id === decId)
+    const startYear = meta?.year ?? 2024
+    const lag = policiesStore.getMitigationPolicy(decId)?.implementationLag ?? 0
+    return startYear + lag
+  }
+
   const cumulativeCo2 = computed<number[]>(() =>
     BASELINE_CO2.map((base, i) => {
-      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + co2Deltas(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + co2Deltas(dec, effectiveStartOf(dec.id))[i], 0)
       return Math.round((base + delta) * 10) / 10
     })
   )
 
   const cumulativeCo2Pessimist = computed<number[]>(() =>
     BASELINE_CO2.map((base, i) => {
-      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + co2DeltasPessimist(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + co2DeltasPessimist(dec, effectiveStartOf(dec.id))[i], 0)
       return Math.round((base + delta) * 10) / 10
     })
   )
 
   const cumulativeTemp = computed<number[]>(() =>
     BASELINE_TEMP.map((base, i) => {
-      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + tempDeltas(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + tempDeltas(dec, effectiveStartOf(dec.id))[i], 0)
       return Math.round((base + delta) * 100) / 100
     })
   )
 
   const cumulativeTempPessimist = computed<number[]>(() =>
     BASELINE_TEMP.map((base, i) => {
-      const delta = selectedMitigationPolicies.value.reduce((s, dec) => s + tempDeltasPessimist(dec)[i], 0)
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + tempDeltasPessimist(dec, effectiveStartOf(dec.id))[i], 0)
       return Math.round((base + delta) * 100) / 100
     })
   )

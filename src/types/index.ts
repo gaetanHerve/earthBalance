@@ -220,6 +220,7 @@ export interface MitigationPolicy {
   title: string
   summary?: string
   description: string
+  implementationLag: number  // années entre adoption et premier effet mesurable (IPCC AR6 WG3)
   ipccReference?: IpccReference
   options?: VoteOption[]
   votes?: VoteTally

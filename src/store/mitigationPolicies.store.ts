@@ -24,22 +24,33 @@ export interface BallotResult {
 
 const STORAGE_KEY = 'eb_policies_state'
 
+export interface ValidatedPolicyMeta { id: string; year: number }
+
 interface PersistedPoliciesState {
-  validatedPolicyIds: string[]
+  validatedPolicyMeta: ValidatedPolicyMeta[]
   ballots: DecisionBallot[]
 }
 
 function loadPersistedState(): PersistedPoliciesState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as PersistedPoliciesState) : null
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    // Rétrocompatibilité : ancien format stockait validatedPolicyIds (string[])
+    if (Array.isArray(parsed.validatedPolicyIds) && !parsed.validatedPolicyMeta) {
+      return {
+        validatedPolicyMeta: (parsed.validatedPolicyIds as string[]).map(id => ({ id, year: 2024 })),
+        ballots: parsed.ballots ?? [],
+      }
+    }
+    return parsed as PersistedPoliciesState
   } catch {
     return null
   }
 }
 
-function saveState(validatedIds: string[], ballots: DecisionBallot[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ validatedPolicyIds: validatedIds, ballots }))
+function saveState(meta: ValidatedPolicyMeta[], ballots: DecisionBallot[]): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ validatedPolicyMeta: meta, ballots }))
 }
 
 // ─── Store ────────────────────────────────────────────────────────────────────
@@ -48,12 +59,15 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
 
   const saved = loadPersistedState()
 
-  // IDs des politiques validées au runtime (initialisé depuis les données statiques + localStorage)
-  const initialValidatedIds = allMitigationPolicies
+  // Métadonnées des politiques validées : id + année de vote
+  const initialMeta: ValidatedPolicyMeta[] = allMitigationPolicies
     .filter(p => p.status === 'validated')
-    .map(p => p.id)
+    .map(p => ({ id: p.id, year: 2024 }))
 
-  const validatedPolicyIds = ref<string[]>(saved?.validatedPolicyIds ?? initialValidatedIds)
+  const validatedPolicyMeta = ref<ValidatedPolicyMeta[]>(saved?.validatedPolicyMeta ?? initialMeta)
+
+  // Vue dérivée : IDs seuls (rétrocompatibilité avec les composants existants)
+  const validatedPolicyIds = computed<string[]>(() => validatedPolicyMeta.value.map(m => m.id))
 
   // Scrutins (clonés pour permettre la mutation locale, persistés)
   const ballots = ref<DecisionBallot[]>(
@@ -138,7 +152,7 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     ballot.totalVoters++
 
     hasVoted.value = true
-    saveState(validatedPolicyIds.value, ballots.value)
+    saveState(validatedPolicyMeta.value, ballots.value)
   }
 
   function getBallotResult(ballot: DecisionBallot): BallotResult | null {
@@ -160,7 +174,8 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
   }
 
   // Clôture le scrutin actif, valide le gagnant et retourne son ID (null si aucun vote)
-  function closeActiveBallot(): string | null {
+  // gameYear : année courante du jeu au moment du vote — enregistrée comme année d'adoption
+  function closeActiveBallot(gameYear: number): string | null {
     const ballot = activeBallot.value
     if (!ballot) return null
 
@@ -171,11 +186,11 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     if (result) {
       winnerId = result.winnerPolicy.id
       if (!validatedPolicyIds.value.includes(winnerId)) {
-        validatedPolicyIds.value = [...validatedPolicyIds.value, winnerId]
+        validatedPolicyMeta.value = [...validatedPolicyMeta.value, { id: winnerId, year: gameYear }]
       }
     }
 
-    saveState(validatedPolicyIds.value, ballots.value)
+    saveState(validatedPolicyMeta.value, ballots.value)
     return winnerId
   }
 
@@ -208,7 +223,7 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     ranking.value = [null, null, null]
     hasVoted.value = false
 
-    saveState(validatedPolicyIds.value, ballots.value)
+    saveState(validatedPolicyMeta.value, ballots.value)
   }
 
   function getMitigationPolicy(id: string): MitigationPolicy | undefined {
@@ -217,6 +232,7 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
 
   return {
     ballots,
+    validatedPolicyMeta,
     validatedPolicyIds,
     activeBallot,
     closedBallots,

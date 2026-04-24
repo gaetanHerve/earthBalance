@@ -15,6 +15,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-07',
     status: 'active',
+    implementationLag: 2,
     title: 'Taxe carbone mondiale à 150 $/tonne d\'ici 2030 ?',
     description: `Cette proposition vise à instaurer une taxe carbone universelle de **150 $/tonne de CO₂** applicable à toutes les nations signataires de l'Accord de Paris d'ici 2030. Les revenus seraient redistribués à 60% vers les pays en développement pour financer la transition énergétique, et à 40% vers un fonds mondial d'adaptation climatique. Enjeux : compétitivité industrielle, justice climatique, efficacité de réduction des émissions.`,
     options: [
@@ -92,6 +93,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-06',
     status: 'active',
+    implementationLag: 3,
     title: 'Moratoire mondial sur la déforestation primaire',
     description: 'Interdire toute coupe de forêts primaires d\'ici 2025 via un traité international contraignant.',
     options: [
@@ -114,6 +116,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-05',
     status: 'validated',
+    implementationLag: 3,
     title: 'Sortie du charbon pour la production électrique dans les pays développés d\'ici 2030',
     description: `Fermeture programmée de toutes les centrales électriques au charbon sans captage de CO₂ dans les pays de l'Annexe I (OCDE + UE) avant fin 2030. La transition serait accompagnée d'un plan de reconversion pour les bassins miniers et d'un mécanisme de compensation pour les pays encore dépendants. D'après AR6 WGIII, le charbon représente ~30% des émissions mondiales de CO₂ liées à l'énergie ; les pays développés en assurent ~45%. Cette mesure s'inscrit dans les trajectoires C1 (1,5°C) qui exigent une baisse de **67%** [46–86%] de la production charbonnière mondiale dès 2030.`,
     options: [
@@ -188,6 +191,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-04',
     status: 'validated',
+    implementationLag: 2,
     title: 'Réduction mondiale des émissions de méthane de 34% d\'ici 2030',
     description: `Le méthane (CH₄) est responsable d'environ **0,5°C** du réchauffement actuel. Sa durée de vie atmosphérique courte (~12 ans) en fait le levier d'action climatique le plus rapide disponible. Cette proposition adopte l'objectif du Global Methane Pledge : réduire les émissions mondiales de CH₄ de **34% sous les niveaux de 2019 d'ici 2030**, couvrant les secteurs de l'énergie fossile (fuites O&G, mines de charbon), de l'agriculture (fermentation entérique, rizicultures) et des déchets. La mesure est largement coût-efficace : plus de 60% du potentiel de réduction est atteignable à coût négatif ou nul (AR6 WGIII Ch.6).`,
     options: [
@@ -262,6 +266,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-03',
     status: 'validated',
+    implementationLag: 4,
     title: 'Arrêt de la déforestation tropicale et restauration des forêts d\'ici 2030',
     description: `Cette décision engage les nations signataires à **stopper toute déforestation nette des forêts tropicales primaires d'ici 2030** et à restaurer 350 millions d'hectares de forêts dégradées d'ici 2030 (engagement Glasgow 2021). La déforestation tropicale représente ~4 GtCO₂eq/an — soit l'équivalent de toutes les émissions de l'Union Européenne. Les forêts tropicales abritent plus de **50% des espèces terrestres mondiales** et régulent le cycle hydrologique de régions entières. La principale cause (>70%) est l'expansion agricole liée à l'élevage et aux cultures d'exportation (soja, huile de palme). Un fonds de **500 Mds$** serait mobilisé via des paiements pour services écosystémiques (REDD+).`,
     options: [
@@ -336,6 +341,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-02',
     status: 'active',
+    implementationLag: 7,
     title: 'Transition mondiale vers des régimes alimentaires durables à base végétale',
     description: `Le système alimentaire mondial génère **10 à 14 GtCO₂eq/an** — soit 20 à 30% des émissions anthropiques mondiales, dont 60% sont liées aux produits d'origine animale. Le régime EAT-Lancet (une planète saine pour 10 milliards de personnes) préconise de réduire la consommation mondiale de viande rouge de **50%** et les produits laitiers de **30%** d'ici 2050. Cette décision engage à subventionner les protéines végétales, instaurer un étiquetage carbone obligatoire sur les aliments et réformer les subventions agricoles. Le potentiel d'atténuation est de **3 à 7 GtCO₂eq/an** (AR6 WGIII Ch.7), avec des co-bénéfices majeurs sur la biodiversité, l'eau et la santé publique.`,
     options: [
@@ -410,6 +416,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-01',
     status: 'active',
+    implementationLag: 4,
     title: 'Électrification des transports terrestres et mobilités durables d\'ici 2050',
     description: `Le secteur des transports représente **~8 GtCO₂/an** (2019), dont 75% pour les transports terrestres (voitures, camions, bus). Cette décision fixe : (1) l'interdiction des nouvelles immatriculations de véhicules thermiques dès **2035** dans tous les pays signataires, (2) le déploiement prioritaire des transports collectifs électrifiés (train, bus rapide, métro) dans les zones urbaines de plus de 500 000 habitants, (3) un plan de développement des infrastructures de recharge accessible. Prérequis : la décision est contingente à la décarbonation du mix électrique — un VE chargé sur un réseau charbonnier peut émettre davantage qu'un hybride thermique.`,
     options: [
@@ -484,6 +491,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-08',
     status: 'active',
+    implementationLag: 3,
     title: 'Déploiement massif du solaire et de l\'éolien : 100% électricité décarbonée d\'ici 2050',
     description: `Le solaire photovoltaïque et l'éolien représentent le **plus grand potentiel d'atténuation** parmi toutes les options d'énergie selon AR6 WGIII Figure SPM.6 — plus de **5 GtCO₂eq/an** évitables d'ici 2030 à un coût inférieur à 20 $/tCO₂. Entre 2010 et 2022, le coût du solaire PV a chuté de **85%**, celui de l'éolien de **55%**. Cette décision mandate : (1) un triplement des capacités renouvelables d'ici 2030, (2) la fin des nouvelles centrales fossiles non-abattues, (3) un fonds international de 500 Mds$/an pour les pays en développement. La décarbonation du secteur électrique est le prérequis à toutes les décisions d'électrification (transports, bâtiments, industrie).`,
     options: [
@@ -561,6 +569,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-09',
     status: 'active',
+    implementationLag: 4,
     title: 'Rénovation thermique universelle des bâtiments d\'ici 2050 : zéro énergie fossile',
     description: `Le secteur du bâtiment représente **~21% des émissions mondiales** de GES. AR6 WGIII identifie un potentiel de réduction de **67%** de la demande finale d'énergie dans les bâtiments avant même l'électrification supplémentaire. Cette décision impose : (1) des normes de rénovation obligatoires pour tous les bâtiments existants d'ici 2050, (2) l'interdiction des nouvelles chaudières fossiles dès 2030 dans les pays de l'OCDE, (3) des pompes à chaleur comme technologie de référence. Les co-bénéfices sont immenses : réduction de la précarité énergétique, amélioration du confort thermique, création d'emplois non-délocalisables dans le secteur de la construction.`,
     options: [
@@ -638,6 +647,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     sessionId: 42,
     number: '42-10',
     status: 'active',
+    implementationLag: 5,
     title: 'Économie circulaire et efficacité matière dans l\'industrie mondiale',
     description: `L'industrie représente **~24% des émissions mondiales** de GES. AR6 WGIII identifie l'efficacité matière, la circularité et la substitution des matériaux de construction comme des options d'atténuation cumulant **~2 GtCO₂eq/an** d'ici 2030. Cette décision cible : (1) des standards d'écoconception obligatoires pour tous les produits manufacturés (durabilité, réparabilité, recyclabilité), (2) un objectif de **50% de taux de recyclage** des matériaux critiques (acier, aluminium, ciment, plastiques) d'ici 2035, (3) des incitations fiscales à l'utilisation de matériaux biosourcés en substitution du béton et de l'acier primaire. L'acier recyclé émet **75% moins** de CO₂ que l'acier primaire au haut fourneau.`,
     options: [
@@ -714,6 +724,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-11',
     sessionId: 42,
     number: '42-11',
+    implementationLag: 7,
     status: 'active',
     title: 'Déploiement du captage et stockage du carbone (CCS) pour l\'industrie lourde d\'ici 2050',
     description: `Certains secteurs industriels — ciment, acier, chimie, raffinage — produisent des émissions de CO₂ **incompressibles** par les seuls leviers d'efficacité et d'électrification. Le CCS (Carbon Capture and Storage) est la seule technologie permettant leur décarbonation profonde. AR6 WGIII estime le potentiel du CCS industriel à **3–4 GtCO₂/an** d'ici 2050. Cette décision mandate : (1) l'obligation de CCS sur toutes les nouvelles installations cimentières et sidérurgiques dès 2030, (2) un réseau mondial de pipelines CO₂ et de sites de stockage géologique certifiés, (3) un mécanisme de prix carbone minimal de **80 $/tCO₂** pour rendre le CCS compétitif. Actuellement, seuls 50 MtCO₂/an sont captés — il faudra multiplier par 100.`,
@@ -791,6 +802,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-12',
     sessionId: 42,
     number: '42-12',
+    implementationLag: 10,
     status: 'active',
     title: 'Expansion du nucléaire comme énergie de base décarbonée : doublement des capacités d\'ici 2050',
     description: `Le nucléaire produit **~10%** de l'électricité mondiale avec des émissions de cycle de vie parmi les plus basses de toutes les sources d'énergie (~12 gCO₂eq/kWh, comparable à l'éolien). AR6 WGIII identifie l'expansion nucléaire comme une option d'atténuation de **~1,5 GtCO₂eq/an** d'ici 2050. Cette décision propose : (1) un programme mondial de construction de nouveaux réacteurs (dont SMR — petits réacteurs modulaires) dans les pays disposant d'un cadre réglementaire robuste, (2) la prolongation de la durée de vie des réacteurs existants sûrs de 20 ans supplémentaires, (3) un traité de non-prolifération renforcé pour les nouvelles nations nucléaires civiles. Option controversée : coûts élevés, risques de sûreté, gestion des déchets, opposition publique dans certains pays.`,
@@ -868,6 +880,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-13',
     sessionId: 42,
     number: '42-13',
+    implementationLag: 3,
     status: 'active',
     title: 'Phase-out mondial des gaz fluorés à effet de serre (Amendement de Kigali étendu)',
     description: `Les gaz fluorés — HFC, PFC, SF₆ — sont des GES au **potentiel de réchauffement 1 000 à 23 000 fois** supérieur au CO₂. Principalement utilisés dans la réfrigération, la climatisation, les mousses isolantes et les semi-conducteurs, ils représentent ~1,5 GtCO₂eq/an (2024). L'Amendement de Kigali (2016) prévoit une réduction de 80% des HFC d'ici 2050, mais cette décision va plus loin : (1) accélération du calendrier — réduction de **85% d'ici 2036**, (2) extension aux PFC et SF₆ non couverts, (3) transfert de technologies de substitution (HFO, CO₂ naturel, ammoniac) vers les pays en développement. C'est l'une des mesures les plus **coût-efficaces** de l'ensemble du catalogue.`,
@@ -945,6 +958,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-14',
     sessionId: 42,
     number: '42-14',
+    implementationLag: 5,
     status: 'active',
     title: 'Réduction de 50% du gaspillage alimentaire mondial d\'ici 2030 (ODD 12.3)',
     description: `**1/3 de toute la nourriture produite** dans le monde est gaspillée ou perdue, représentant ~2 GtCO₂eq/an (AR6 WGIII Fig 4.4). Si le gaspillage alimentaire était un pays, ce serait le **3ème émetteur mondial** de GES. Cette décision adopte l'objectif ODD 12.3 — réduire de **50% les pertes et gaspillages d'ici 2030** — via : (1) des normes d'étiquetage et de conservation améliorées, (2) des infrastructures de froid et logistiques dans les pays en développement (50–70% des pertes sont post-récolte), (3) des campagnes de sensibilisation dans les pays riches (40–50% du gaspillage est au niveau du consommateur). Co-bénéfices : sécurité alimentaire mondiale, réduction de la pression foncière, eau et biodiversité.`,
@@ -1022,6 +1036,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-15',
     sessionId: 42,
     number: '42-15',
+    implementationLag: 5,
     status: 'active',
     title: 'Agroforesterie mondiale et séquestration du carbone dans les sols agricoles',
     description: `Les sols agricoles mondiaux ont perdu **50 à 70%** de leur stock de carbone organique depuis le début de l'agriculture intensive. AR6 WGIII identifie la séquestration carbone dans l'agriculture — via l'agroforesterie, le carbone des sols, les cultures de couverture, l'agriculture de conservation — comme une option cumulant **~2,5 GtCO₂eq/an** d'ici 2030. Cette décision : (1) mandate un programme mondial d'agroforesterie sur **500 millions d'hectares** d'ici 2035 (arbres intégrés aux cultures et prairies), (2) instaure des paiements pour la séquestration carbone des sols vérifiable par satellite, (3) finance la transition vers l'agriculture régénératrice dans les pays en développement. Avantage décisif : la séquestration carbone des sols améliore simultanément la fertilité, la rétention d'eau et la résilience aux sécheresses.`,
@@ -1099,6 +1114,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-16',
     sessionId: 42,
     number: '42-16',
+    implementationLag: 7,
     status: 'validated',
     title: 'Restauration mondiale des écosystèmes naturels : reboisement, tourbières et zones humides',
     description: `La destruction des écosystèmes naturels a transformé la biosphère terrestre d'un puits net de carbone en une source. AR6 WGIII identifie la restauration — reboisement, reforestation, conservation des tourbières, restauration des zones humides et mangroves — comme cumulant **~3,5 GtCO₂eq/an** d'ici 2030, le plus grand potentiel d'atténuation terrestre. La Décennie ONU pour la Restauration des Écosystèmes (2021–2030) vise la restauration de **1 milliard d'hectares**. Cette décision mandate : (1) un fonds de **200 Mds$/an** pour la restauration dans les pays à forêts tropicales, (2) la protection immédiate de toutes les tourbières intactes (elles stockent **2 fois plus** de carbone que toutes les forêts), (3) un programme mondial de restauration des mangroves et prairies marines (Blue Carbon).`,
@@ -1176,6 +1192,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
     id: 'dec-42-17',
     sessionId: 42,
     number: '42-17',
+    implementationLag: 12,
     status: 'active',
     title: 'Déploiement de la bioénergie avec captage et stockage du carbone (BECCS) à grande échelle',
     description: `La BECCS (Bioenergy with Carbon Capture and Storage) est la principale technologie de **CO₂ removal (CDR)** dans la plupart des modèles limitant le réchauffement à 1,5°C. Son principe : brûler de la biomasse (cultures énergétiques, résidus agricoles, forestiers) pour produire de l'énergie ou des carburants, puis capter et stocker le CO₂ émis — résultat net : des émissions **négatives**. AR6 WGIII estime le potentiel à ~2 GtCO₂/an net d'ici 2050. Cette décision mandate : (1) 10 projets pilotes BECCS commerciaux d'ici 2030 dans les secteurs de la bioélectricité et des biocarburants, (2) une gouvernance stricte sur les cultures énergétiques (biodiversité, eau, droits fonciers), (3) un mécanisme de crédit carbone "négatif" rémunérateur. Controverses majeures : concurrence avec les terres agricoles et la biodiversité.`,
