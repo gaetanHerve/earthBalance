@@ -1249,6 +1249,8 @@ export const mitigationPolicies: MitigationPolicy[] = [
   },
 ]
 
+// Mock data
+
 export const globalStats: GlobalStats = {
   totalDecisions: 2847,
   validatedDecisions: 1203,

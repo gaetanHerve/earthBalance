@@ -45,9 +45,9 @@ export default {
     live_none:      'Aucun résultat',
   },
   footer: {
-    partners:       'Partenaires institutionnels',
-    infrastructure: 'Infrastructure',
-    stats:          'Statistiques globales',
+    partners:       'Partenaires institutionnels (fictif)',
+    infrastructure: 'Infrastructure (fictif)',
+    stats:          'Statistiques globales (fictif)',
     infra: {
       docs:       'Documentation EarthChain v3.1',
       api:        'API publique EarthBalance',
@@ -94,6 +94,8 @@ export default {
     temp_aria:         "Évolution de l'anomalie de température globale depuis 1990",
     resources_title:   'Extraction de ressources naturelles',
     resources_aria:    "Évolution de l'extraction de ressources naturelles par type depuis 1990",
+    scenario_decided:   'Scénario décidé',
+    scenario_pessimist: 'Scénario pessimiste',
     soc_title:         'Indicateurs Sociétaux',
     food_title:        'Sécurité alimentaire',
     food_aria:         'Sécurité alimentaire mondiale : {value}/100',

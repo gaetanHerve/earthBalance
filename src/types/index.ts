@@ -265,7 +265,7 @@ export interface GlobalStats {
 
 export interface ChartDataset {
   label: string
-  data: number[]
+  data: (number | null)[]
   borderColor: string
   backgroundColor?: string
   fill?: boolean
