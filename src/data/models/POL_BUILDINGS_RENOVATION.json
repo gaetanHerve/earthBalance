@@ -1,0 +1,65 @@
+{
+  "politique_id": "POL_BUILDINGS_RENOVATION",
+  "decision_id": "dec-42-09",
+  "label": "Rénovation thermique universelle des bâtiments d'ici 26 ans : zéro énergie fossile",
+  "version": "1.0.0",
+  "generated_at": "2026-04-26",
+  "conditions": {
+    "scope": "global",
+    "sectors": ["buildings", "construction"],
+    "implementation_year": 2025,
+    "full_effect_year": 2045,
+    "prerequisites": []
+  },
+  "emissions_impact": {
+    "type": "reduction",
+    "unit": "GtCO2eq_yr",
+    "median": 2.5,
+    "range": { "min": 1.5, "max": 3.5 },
+    "ramp_start_year": 2025,
+    "ramp_end_year": 2045,
+    "curve": "sigmoid",
+    "sources": [
+      "IPCC AR6 WGIII Ch.9 — Buildings sector has 67% potential reduction in final energy demand before additional electrification",
+      "IPCC AR6 SYR Section 4.5.3 — Integrated building design offers growing examples of zero-energy or zero-carbon buildings across regions",
+      "IEA Global Heat Pump Report 2023 — Heat pumps reduce heating emissions 40–80% vs gas boilers depending on grid mix"
+    ]
+  },
+  "temperature_impact": {
+    "delta_C_median": -0.10,
+    "range": { "min": -0.06, "max": -0.15 },
+    "horizon_year": 2100,
+    "dependencies": ["POL_SOLAR_WIND_SCALE_2030"],
+    "sources": [
+      "IPCC AR6 WGIII Ch.9 — Buildings mitigation potential reaches 2.5–3 GtCO2eq/yr by 2030 at costs below $100/tCO2"
+    ]
+  },
+  "planetary_limits": [
+    { "id": "climate_change", "direction": "improve", "magnitude": "medium" },
+    { "id": "freshwater_use", "direction": "improve", "magnitude": "low", "note": "Reduced cooling demand lowers water use in cooling towers" }
+  ],
+  "societal_indicators": [
+    { "id": "energy_poverty", "direction": "improve", "note": "Renovated buildings reduce energy bills 40–60% for low-income households" },
+    { "id": "employment", "direction": "improve", "note": "Construction is non-delocalisable; EU estimates 160 000 additional jobs per doubling of renovation rate" }
+  ],
+  "interactions": [
+    { "policy_id": "POL_SOLAR_WIND_SCALE_2030", "type": "synergy", "note": "Heat pumps deliver full decarbonisation benefit only when powered by clean electricity" },
+    { "policy_id": "POL_CARBON_TAX_150", "type": "synergy", "note": "Carbon price accelerates investment in deep renovation by raising heating fuel costs" }
+  ],
+  "projections": {
+    "co2_delta_GtCO2_yr": {
+      "years": [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.0, -1.5, -2.1, -2.5, -2.7, -3.0, -3.0],
+      "optimistic":  [0.0, -2.0, -2.8, -3.3, -3.6, -4.0, -4.0],
+      "pessimistic": [0.0, -0.8, -1.3, -1.5, -1.8, -2.2, -2.2]
+    },
+    "temp_delta_C": {
+      "years": [2025, 2030, 2035, 2040, 2050, 2075, 2100],
+      "median":      [0.00, -0.02, -0.04, -0.05, -0.07, -0.09, -0.10],
+      "optimistic":  [0.00, -0.03, -0.06, -0.08, -0.11, -0.13, -0.15],
+      "pessimistic": [0.00, -0.01, -0.02, -0.03, -0.05, -0.06, -0.06]
+    }
+  },
+  "uncertainty_level": "medium",
+  "methodological_note": "Median impact of 2.5 GtCO2/yr calibrated against IPCC AR6 WGIII Ch.9 which identifies 1.5–3 GtCO2eq/yr potential in buildings at <$100/tCO2. Slow ramp (full effect year 2045) reflects building stock inertia (50–80 year lifetime). Pessimistic scenario accounts for rebound effect (lower energy costs encouraging more consumption) and slower adoption in developing-nation construction boom. Projection baseline: SSP2-4.5."
+}

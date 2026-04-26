@@ -119,12 +119,17 @@ export interface EcologicalCharts {
     criticalThreshold: number
     current: number
     source: string
+    timeSeries: TimeSeries
   }
   energyMix: {
     label: string
     unit: string
     source: string
     categories: EnergyCategory[]
+    timeSeries: {
+      years: number[]
+      byCategory: Record<EnergyMixKey, number[]>
+    }
   }
   resources: {
     label: string

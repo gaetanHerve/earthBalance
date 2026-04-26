@@ -26,54 +26,10 @@
       <ChartSkeleton v-for="i in 4" :key="i" :height="180" />
     </div>
 
-    <!-- Scrutin collectif en cours (résumé) -->
+    <!-- Scrutin collectif en cours -->
     <section v-if="activeBallot" aria-labelledby="ballot-summary-title">
       <SectionTitle id="ballot-summary-title" :title="t('dashboard.ballot_section')" icon="fa-vote-yea" color-class="text-eb-cyan" />
-
-      <div class="rounded-xl border border-eb-cyan/30 bg-eb-mid/40 p-5 flex flex-col gap-4">
-        <!-- Méta -->
-        <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
-          <span class="flex items-center gap-1">
-            <i class="fa fa-users text-eb-cyan" aria-hidden="true"></i>
-            {{ activeBallot.totalVoters.toLocaleString('fr-FR') }} {{ t('dashboard.voters') }}
-          </span>
-          <span class="flex items-center gap-1">
-            <i class="fa fa-clock" aria-hidden="true"></i>
-            {{ t('dashboard.deadline') }} : {{ formatDeadline(activeBallot.deadline) }}
-          </span>
-          <span v-if="hasVoted" class="flex items-center gap-1 text-eb-green font-bold">
-            <i class="fa fa-circle-check" aria-hidden="true"></i>
-            {{ t('dashboard.ranked_registered') }}
-          </span>
-        </div>
-
-        <!-- 3 candidats (aperçu) -->
-        <div v-if="activeCandidates" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <RouterLink
-            v-for="(mitigationPolicy, idx) in activeCandidates"
-            :key="mitigationPolicy.id"
-            :to="`/mitigation-policies/${mitigationPolicy.id}`"
-            class="rounded-lg border border-eb-border bg-eb-dark/60 p-3 hover:border-eb-cyan/40 hover:bg-eb-cyan/5 transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none block"
-          >
-            <div class="text-xs text-slate-500 font-mono mb-1">{{ t('dashboard.candidate') }} {{ idx + 1 }}</div>
-            <div class="text-sm font-bold text-white line-clamp-2 leading-snug">{{ mitigationPolicy.title }}</div>
-            <div class="text-xs text-slate-600 mt-1.5">
-              <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>{{ t('dashboard.see_detail') }}
-            </div>
-          </RouterLink>
-        </div>
-
-        <!-- CTA -->
-        <div class="flex justify-end">
-          <RouterLink
-            to="/mitigation-policies"
-            class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-eb-cyan text-eb-dark font-bold text-sm hover:bg-cyan-300 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-          >
-            <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            {{ hasVoted ? t('dashboard.see_results') : t('dashboard.participate') }}
-          </RouterLink>
-        </div>
-      </div>
+      <BallotWidget />
     </section>
 
   </main>
@@ -84,13 +40,14 @@ import { onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
-import { useDashboardStore }  from '@/store/dashboard.store'
+import { useDashboardStore }          from '@/store/dashboard.store'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 
 import SectionTitle         from '@/components/layout/SectionTitle.vue'
 import WidgetCustomizer     from '@/components/dashboard/WidgetCustomizer.vue'
 import EcologicalIndicators from '@/components/dashboard/EcologicalIndicators.vue'
 import SocietalIndicators   from '@/components/dashboard/SocietalIndicators.vue'
+import BallotWidget         from '@/components/dashboard/BallotWidget.vue'
 import ChartSkeleton        from '@/components/charts/ChartSkeleton.vue'
 
 const { t } = useI18n()
@@ -98,15 +55,11 @@ const dashStore               = useDashboardStore()
 const mitigationPoliciesStore = useMitigationPoliciesStore()
 
 const { ecologicalCharts, societalIndicators, visibleWidgets } = storeToRefs(dashStore)
-const { activeBallot, activeCandidates, hasVoted } = storeToRefs(mitigationPoliciesStore)
+const { activeBallot } = storeToRefs(mitigationPoliciesStore)
 
 onMounted(() => dashStore.fetchAll())
 
 function toggleWidget(id: string): void {
   dashStore.toggleWidget(id)
-}
-
-function formatDeadline(iso: string): string {
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 </script>
