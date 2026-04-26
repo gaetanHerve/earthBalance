@@ -16,6 +16,7 @@ import { ref, computed, watch } from 'vue'
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import type { MitigationPolicy, MitigationPolicyProjections, EnergyMixKey, ResourceKey } from '@/types/index'
 import { useMitigationPoliciesStore } from './mitigationPolicies.store'
+import { GAME_CONFIG } from '@/config/game.config'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
 export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
@@ -49,9 +50,11 @@ export const BASELINE_RESOURCES: Record<ResourceKey, number[]> = {
   fossilFuels: [13.9, 14.3, 14.7, 15.0, 15.5, 16.0, 16.5, 16.8, 17.0],
 }
 
-const SELECTED_KEY = 'eb_simulation_selected'
+const SELECTED_KEY  = 'eb_simulation_selected'
+const BASELINE_KEY  = 'eb_simulation_baseline_mode'
+const SIM_BASE_YEAR = 2024
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers projection ───────────────────────────────────────────────────────
 
 function hasImpactModel(d: MitigationPolicy): boolean {
   return typeof d.projectedImpact['emissionsReductionGtCO2yr'] === 'number'
@@ -75,11 +78,10 @@ function interpol(year: number, labels: number[], values: number[]): number {
   return values[values.length - 1]
 }
 
-// Delta d'une politique avec décalage temporel (startYear + implementationLag).
+// Delta d'une politique avec décalage temporel (effectiveStart).
 // À l'année t :
 //   - si t < effectiveStart → delta = 0 (politique pas encore en vigueur)
 //   - sinon → delta de l'original à l'année 2024 + (t - effectiveStart)
-//     (la courbe d'effet est "rejouée" depuis effectiveStart plutôt que depuis 2024)
 function shiftedDeltas(
   projLabels: number[],
   projValues: number[],
@@ -117,7 +119,7 @@ function tempDeltasPessimist(dec: MitigationPolicy, effectiveStart: number): num
   return shiftedDeltas(proj.labels, proj.temperature.pessimist, proj.temperature.baseline, effectiveStart)
 }
 
-// Delta direct (deltas déjà exprimés en valeur absolue, non en différence vs baseline)
+// Delta direct (valeurs déjà exprimées en delta vs. baseline)
 function shiftedDeltasDirect(projDeltas: number[], effectiveStart: number): number[] {
   return SIM_LABELS.map(year => {
     if (year < effectiveStart) return 0
@@ -152,6 +154,19 @@ function resourceDeltaArr(dec: MitigationPolicy, effectiveStart: number, res: Re
   return shiftedDeltasDirect(deltas, effectiveStart)
 }
 
+// ─── Helpers simulateur (séquence grain-based) ────────────────────────────────
+
+// Année d'adoption simulée pour la position `index` dans la séquence
+// Toutes les politiques (verrouillées ou non) suivent la même règle
+export function simulatorAdoptionYearAt(index: number): number {
+  return SIM_BASE_YEAR + index * GAME_CONFIG.grain
+}
+
+// Année de premier effet simulée = adoption + lag
+function simEffectiveStart(index: number, lag: number): number {
+  return simulatorAdoptionYearAt(index) + lag
+}
+
 // ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useSimulationStore = defineStore('simulation', () => {
@@ -173,26 +188,75 @@ export const useSimulationStore = defineStore('simulation', () => {
     policiesStore.validatedPolicyIds.filter(id => catalogue.value.some(d => d.id === id))
   )
 
-  // Séquence ordonnée : initialisée depuis localStorage ou depuis les politiques déjà retenues
+  // ─── Toggle mode jeu / mode libre ─────────────────────────────────────────
+  //
+  // Mode jeu (true)  : politiques verrouillées ancrées en tête de séquence,
+  //                    dans l'ordre de validation, non-déplaçables.
+  //                    Projection "à partir de l'année courante du jeu".
+  //
+  // Mode libre (false) : toutes les politiques librement ajoutables /
+  //                      retirables / ordonnables. Projection à partir de 2024.
+
+  const includeGameBaseline = ref<boolean>(
+    localStorage.getItem(BASELINE_KEY) !== 'false'
+  )
+
+  watch(includeGameBaseline, (newVal) => {
+    localStorage.setItem(BASELINE_KEY, String(newVal))
+    // En mode jeu, épure selectedIds des éventuels IDs verrouillés
+    // (ils seront injectés automatiquement via fullSequenceIds)
+    if (newVal) {
+      selectedIds.value = selectedIds.value.filter(id => !lockedIds.value.includes(id))
+    }
+  })
+
+  // ─── Séquence ─────────────────────────────────────────────────────────────
+
   const storedSelected = localStorage.getItem(SELECTED_KEY)
   const selectedIds = ref<string[]>(
     storedSelected ? (JSON.parse(storedSelected) as string[]) : []
   )
 
-  // Persistance automatique de la séquence sélectionnée
   watch(selectedIds, ids => localStorage.setItem(SELECTED_KEY, JSON.stringify(ids)), { deep: true })
 
-  // Politiques sélectionnées dans l'ordre choisi
+  // Séquence complète ordonnée :
+  //   Mode jeu  → [locked₀, locked₁, …, libre₀, libre₁, …]
+  //   Mode libre → selectedIds tel quel
+  const fullSequenceIds = computed<string[]>(() => {
+    if (includeGameBaseline.value) {
+      const freeIds = selectedIds.value.filter(id => !lockedIds.value.includes(id))
+      return [...lockedIds.value, ...freeIds]
+    }
+    return selectedIds.value
+  })
+
+  // Politiques dans l'ordre de la séquence complète
   const selectedMitigationPolicies = computed<MitigationPolicy[]>(() =>
-    selectedIds.value
+    fullSequenceIds.value
       .map(id => catalogue.value.find(d => d.id === id))
       .filter((d): d is MitigationPolicy => d !== undefined)
   )
 
-  // ─── Projections cumulées ──────────────────────────────────────────────────
+  // IDs effectivement verrouillés (non-déplaçables) : uniquement en mode jeu
+  const effectiveLockedIds = computed<string[]>(() =>
+    includeGameBaseline.value ? lockedIds.value : []
+  )
 
-  // Retourne l'année d'effet réelle d'une politique : année de vote + lag
-  // Les politiques initialement validées (year: 2024) accumulent aussi leur lag
+  // ─── Années d'adoption et de premier effet simulées ───────────────────────
+
+  const simulatorAdoptionYears = computed<number[]>(() =>
+    selectedMitigationPolicies.value.map((_, index) => simulatorAdoptionYearAt(index))
+  )
+
+  const simulatorEffectYears = computed<number[]>(() =>
+    selectedMitigationPolicies.value.map((dec, index) =>
+      simEffectiveStart(index, dec.implementationLag ?? 0)
+    )
+  )
+
+  // ─── Projections dashboard (logique meta.year + lag, inchangée) ───────────
+  // Utilisées par EcologicalIndicators.vue
+
   function effectiveStartOf(decId: string): number {
     const meta = policiesStore.validatedPolicyMeta.find(m => m.id === decId)
     const startYear = meta?.year ?? 2024
@@ -300,10 +364,46 @@ export const useSimulationStore = defineStore('simulation', () => {
     return result
   })
 
+  // ─── Projections simulateur (séquence grain-based) ────────────────────────
+  // Utilisées par SimulateurView.vue.
+  // Toutes les politiques : effectiveStart = 2024 + index × grain + implementationLag
+
+  const simCumulativeCo2 = computed<number[]>(() =>
+    BASELINE_CO2.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec, idx) => s + co2Deltas(dec, simEffectiveStart(idx, dec.implementationLag ?? 0))[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const simCumulativeCo2Pessimist = computed<number[]>(() =>
+    BASELINE_CO2.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec, idx) => s + co2DeltasPessimist(dec, simEffectiveStart(idx, dec.implementationLag ?? 0))[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const simCumulativeTemp = computed<number[]>(() =>
+    BASELINE_TEMP.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec, idx) => s + tempDeltas(dec, simEffectiveStart(idx, dec.implementationLag ?? 0))[i], 0)
+      return Math.round((base + delta) * 100) / 100
+    })
+  )
+
+  const simCumulativeTempPessimist = computed<number[]>(() =>
+    BASELINE_TEMP.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec, idx) => s + tempDeltasPessimist(dec, simEffectiveStart(idx, dec.implementationLag ?? 0))[i], 0)
+      return Math.round((base + delta) * 100) / 100
+    })
+  )
+
   // ─── Indicateurs résumés ───────────────────────────────────────────────────
 
-  const tempIn2100Decided    = computed<number>(() => cumulativeTemp.value[9])
-  const tempIn2100Pessimist  = computed<number>(() => cumulativeTempPessimist.value[9])
+  const tempIn2100Decided   = computed<number>(() => cumulativeTemp.value[9])
+  const tempIn2100Pessimist = computed<number>(() => cumulativeTempPessimist.value[9])
 
   const totalAnnualReduction = computed<number>(() =>
     selectedMitigationPolicies.value.reduce((s, dec) =>
@@ -313,39 +413,76 @@ export const useSimulationStore = defineStore('simulation', () => {
   // ─── Mutations ────────────────────────────────────────────────────────────
 
   function addMitigationPolicy(id: string): void {
+    // En mode jeu, les locked sont déjà dans fullSequenceIds — ne pas dupliquer dans selectedIds
+    if (includeGameBaseline.value && lockedIds.value.includes(id)) return
     if (!selectedIds.value.includes(id)) {
       selectedIds.value = [...selectedIds.value, id]
     }
   }
 
   function removeMitigationPolicy(id: string): void {
-    if (lockedIds.value.includes(id)) return
+    // En mode jeu, les locked ne peuvent pas être retirés
+    if (includeGameBaseline.value && lockedIds.value.includes(id)) return
     selectedIds.value = selectedIds.value.filter(i => i !== id)
   }
 
   function moveUp(index: number): void {
-    if (index <= 0) return
-    const arr = [...selectedIds.value]
-    ;[arr[index - 1], arr[index]] = [arr[index], arr[index - 1]]
-    selectedIds.value = arr
+    if (includeGameBaseline.value) {
+      const nLocked = lockedIds.value.length
+      // Les locked (index < nLocked) et la première politique libre ne montent pas
+      if (index <= nLocked) return
+      const freeIndex = index - nLocked
+      // Opère sur la partie libre de selectedIds (filtre les locked résiduels)
+      const free = selectedIds.value.filter(id => !lockedIds.value.includes(id))
+      if (freeIndex <= 0 || freeIndex >= free.length) return
+      ;[free[freeIndex - 1], free[freeIndex]] = [free[freeIndex], free[freeIndex - 1]]
+      const lockedInSelected = selectedIds.value.filter(id => lockedIds.value.includes(id))
+      selectedIds.value = [...free, ...lockedInSelected]
+    } else {
+      if (index <= 0) return
+      const arr = [...selectedIds.value]
+      ;[arr[index - 1], arr[index]] = [arr[index], arr[index - 1]]
+      selectedIds.value = arr
+    }
   }
 
   function moveDown(index: number): void {
-    if (index >= selectedIds.value.length - 1) return
-    const arr = [...selectedIds.value]
-    ;[arr[index], arr[index + 1]] = [arr[index + 1], arr[index]]
-    selectedIds.value = arr
+    if (includeGameBaseline.value) {
+      const nLocked = lockedIds.value.length
+      // Les locked (index < nLocked) ne descendent pas
+      if (index < nLocked) return
+      const freeIndex = index - nLocked
+      const free = selectedIds.value.filter(id => !lockedIds.value.includes(id))
+      if (freeIndex >= free.length - 1) return
+      ;[free[freeIndex], free[freeIndex + 1]] = [free[freeIndex + 1], free[freeIndex]]
+      const lockedInSelected = selectedIds.value.filter(id => lockedIds.value.includes(id))
+      selectedIds.value = [...free, ...lockedInSelected]
+    } else {
+      if (index >= selectedIds.value.length - 1) return
+      const arr = [...selectedIds.value]
+      ;[arr[index], arr[index + 1]] = [arr[index + 1], arr[index]]
+      selectedIds.value = arr
+    }
   }
 
   function reset(): void {
-    selectedIds.value = lockedIds.value.slice()
+    // Vide les sélections libres. En mode jeu, les locked restent via fullSequenceIds.
+    selectedIds.value = []
+  }
+
+  function toggleGameBaseline(): void {
+    includeGameBaseline.value = !includeGameBaseline.value
   }
 
   return {
     selectedIds,
     lockedIds,
+    effectiveLockedIds,
+    includeGameBaseline,
     catalogue,
     selectedMitigationPolicies,
+    simulatorAdoptionYears,
+    simulatorEffectYears,
     cumulativeCo2,
     cumulativeCo2Pessimist,
     cumulativeTemp,
@@ -356,6 +493,10 @@ export const useSimulationStore = defineStore('simulation', () => {
     cumulativeEnergyMixPessimist,
     cumulativeResources,
     cumulativeResourcesPessimist,
+    simCumulativeCo2,
+    simCumulativeCo2Pessimist,
+    simCumulativeTemp,
+    simCumulativeTempPessimist,
     tempIn2100Decided,
     tempIn2100Pessimist,
     totalAnnualReduction,
@@ -364,5 +505,6 @@ export const useSimulationStore = defineStore('simulation', () => {
     moveUp,
     moveDown,
     reset,
+    toggleGameBaseline,
   }
 })

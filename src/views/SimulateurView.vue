@@ -167,6 +167,20 @@
       <!-- ── Séquence ─────────────────────────────────────────────────────── -->
       <CollapsibleSection class="xl:col-span-3" :title="t('simulator.sequence_title')" icon="fa-arrow-down-1-9" color-class="text-slate-300">
 
+        <template #header-extra>
+          <button
+            class="text-xs px-2.5 py-1 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none shrink-0"
+            :class="includeGameBaseline
+              ? 'bg-eb-green/10 text-eb-green border-eb-green/30 hover:bg-eb-green/20'
+              : 'bg-transparent text-slate-400 border-slate-600 hover:border-eb-cyan/50 hover:text-slate-200'"
+            :aria-pressed="includeGameBaseline"
+            @click="toggleGameBaseline"
+          >
+            <i :class="['fa', includeGameBaseline ? 'fa-lock' : 'fa-unlock', 'mr-1']" aria-hidden="true"></i>
+            {{ includeGameBaseline ? t('simulator.mode_game') : t('simulator.mode_free') }}
+          </button>
+        </template>
+
         <!-- État vide -->
         <div
           v-if="selectedMitigationPolicies.length === 0"
@@ -203,7 +217,7 @@
               <div class="flex flex-col gap-1 shrink-0">
                 <button
                   class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-200 disabled:opacity-25 transition-colors"
-                  :disabled="index === 0"
+                  :disabled="index === 0 || isLocked(dec.id)"
                   :aria-label="t('simulator.move_up')"
                   @click="moveUp(index)"
                 >
@@ -211,7 +225,7 @@
                 </button>
                 <button
                   class="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-200 disabled:opacity-25 transition-colors"
-                  :disabled="index === selectedMitigationPolicies.length - 1"
+                  :disabled="index === selectedMitigationPolicies.length - 1 || isLocked(dec.id)"
                   :aria-label="t('simulator.move_down')"
                   @click="moveDown(index)"
                 >
@@ -238,13 +252,21 @@
               </div>
             </div>
 
+            <!-- Badges adoption + effet -->
+            <div class="flex gap-1.5 mt-1.5 pl-8 flex-wrap">
+              <span class="text-xs px-1.5 py-0.5 rounded bg-eb-mid border border-eb-border text-slate-400 font-mono">
+                {{ t('simulator.adoption_label') }} {{ simulatorAdoptionYears[index] }}
+              </span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-eb-cyan/10 border border-eb-cyan/25 text-eb-cyan font-mono">
+                → {{ t('simulator.effect_from', { year: simulatorEffectYears[index] }) }}
+              </span>
+            </div>
+
             <!-- Mini-stats -->
-            <div class="flex gap-2 mt-1.5 pl-8 text-xs text-slate-500">
+            <div class="flex gap-2 mt-1 pl-8 text-xs text-slate-500">
               <span class="text-eb-green">−{{ dec.projectedImpact['emissionsReductionGtCO2yr'] }} Gt/an</span>
               <span>·</span>
               <span class="text-eb-cyan">−{{ dec.projectedImpact['tempReductionC2100'] }}°C</span>
-              <span>·</span>
-              <span>{{ t('simulator.full_effect') }} {{ dec.projectedImpact['fullEffectYear'] }}</span>
             </div>
           </div>
         </TransitionGroup>
@@ -424,11 +446,14 @@ const {
   catalogue,
   selectedMitigationPolicies,
   selectedIds,
-  lockedIds,
-  cumulativeCo2,
-  cumulativeCo2Pessimist,
-  cumulativeTemp,
-  cumulativeTempPessimist,
+  effectiveLockedIds,
+  includeGameBaseline,
+  simulatorAdoptionYears,
+  simulatorEffectYears,
+  simCumulativeCo2,
+  simCumulativeCo2Pessimist,
+  simCumulativeTemp,
+  simCumulativeTempPessimist,
 } = storeToRefs(store)
 
 const planetsStore = usePlanetsStore()
@@ -452,19 +477,19 @@ const displayLabels = computed<number[]>(() => SIM_LABELS.slice(0, chartHorizonI
 
 // Température baseline et scénario décidé à l'année de l'horizon
 const baselineAtHorizon     = computed<number>(() => BASELINE_TEMP[horizonIndex.value])
-const tempDecidedAtHorizon  = computed<number>(() => cumulativeTemp.value[horizonIndex.value])
+const tempDecidedAtHorizon  = computed<number>(() => simCumulativeTemp.value[horizonIndex.value])
 
 // Réduction annuelle modélisée à l'année de l'horizon (GtCO₂/an vs. baseline)
 const totalReductionAtHorizon = computed<number>(() =>
-  Math.round((BASELINE_CO2[horizonIndex.value] - cumulativeCo2.value[horizonIndex.value]) * 10) / 10
+  Math.round((BASELINE_CO2[horizonIndex.value] - simCumulativeCo2.value[horizonIndex.value]) * 10) / 10
 )
 
 // CO₂ cumulé évité de 2024 à l'horizon — intégrale trapèze sur les intervalles non-uniformes
 const co2CumulativeSaved = computed<number>(() => {
   let total = 0
   for (let i = 0; i < horizonIndex.value; i++) {
-    const dI    = BASELINE_CO2[i]   - cumulativeCo2.value[i]
-    const dNext = BASELINE_CO2[i+1] - cumulativeCo2.value[i+1]
+    const dI    = BASELINE_CO2[i]   - simCumulativeCo2.value[i]
+    const dNext = BASELINE_CO2[i+1] - simCumulativeCo2.value[i+1]
     const years = SIM_LABELS[i+1]   - SIM_LABELS[i]
     total += (dI + dNext) / 2 * years
   }
@@ -479,7 +504,7 @@ const horizons = computed<Horizon[]>(() => [
   { value: 2100, label: t('simulator.horizon_2100') },
 ])
 
-const { addMitigationPolicy, removeMitigationPolicy, moveUp, moveDown, reset } = store
+const { addMitigationPolicy, removeMitigationPolicy, moveUp, moveDown, reset, toggleGameBaseline } = store
 
 // ─── Helpers UI ──────────────────────────────────────────────────────────────
 
@@ -488,7 +513,7 @@ function isSelected(id: string): boolean {
 }
 
 function isLocked(id: string): boolean {
-  return lockedIds.value.includes(id)
+  return effectiveLockedIds.value.includes(id)
 }
 
 function toggle(id: string): void {
@@ -519,19 +544,19 @@ function uncertaintyShort(score: unknown): string {
 
 // Couleur et label basés sur la trajectoire 2100 (objectif Paris = température finale, pas intermédiaire)
 const tempDecidedColor = computed<string>(() => {
-  const temp2100 = cumulativeTemp.value[9]
+  const temp2100 = simCumulativeTemp.value[9]
   if (temp2100 <= 2) return 'text-eb-green'
   if (temp2100 <= 3) return 'text-yellow-400'
   return 'text-red-400'
 })
 
 const tempGlowClass = computed<string>(() => {
-  if (cumulativeTemp.value[9] <= 2) return 'shadow-[0_0_20px_rgba(0,255,136,0.15)]'
+  if (simCumulativeTemp.value[9] <= 2) return 'shadow-[0_0_20px_rgba(0,255,136,0.15)]'
   return ''
 })
 
 const tempDecidedLabel = computed<string>(() => {
-  const temp2100 = cumulativeTemp.value[9]
+  const temp2100 = simCumulativeTemp.value[9]
   if (temp2100 <= 1.5) return t('simulator.temp_safe')
   if (temp2100 <= 2)   return t('simulator.temp_ok')
   if (temp2100 <= 3)   return t('simulator.temp_risk')
@@ -558,7 +583,7 @@ const co2Datasets = computed<ChartDataset[]>(() => {
     },
     {
       label: t('simulator.dataset_decided'),
-      data: cumulativeCo2.value.slice(0, n),
+      data: simCumulativeCo2.value.slice(0, n),
       borderColor: '#00ff88',
       backgroundColor: 'rgba(0,255,136,0.08)',
       fill: false,
@@ -567,7 +592,7 @@ const co2Datasets = computed<ChartDataset[]>(() => {
     },
     {
       label: t('simulator.dataset_pessimist'),
-      data: cumulativeCo2Pessimist.value.slice(0, n),
+      data: simCumulativeCo2Pessimist.value.slice(0, n),
       borderColor: '#f87171',
       backgroundColor: 'rgba(248,113,113,0.05)',
       fill: false,
@@ -591,7 +616,7 @@ const tempDatasets = computed<ChartDataset[]>(() => {
     },
     {
       label: t('simulator.dataset_decided'),
-      data: cumulativeTemp.value.slice(0, n),
+      data: simCumulativeTemp.value.slice(0, n),
       borderColor: '#00ff88',
       backgroundColor: 'rgba(0,255,136,0.08)',
       fill: false,
@@ -600,7 +625,7 @@ const tempDatasets = computed<ChartDataset[]>(() => {
     },
     {
       label: t('simulator.dataset_pessimist'),
-      data: cumulativeTempPessimist.value.slice(0, n),
+      data: simCumulativeTempPessimist.value.slice(0, n),
       borderColor: '#f87171',
       backgroundColor: 'transparent',
       fill: false,
