@@ -43,11 +43,12 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://carbonpricingdashboard.worldbank.org/',
       },
     ],
+    // Source : src/data/models/POL_CARBON_TAX_150.json
     projectedImpact: {
-      co2ReductionPct: 22,
-      tempReductionBy2050: 0.3,
-      renewableShareIn2034: 51,
-      deforestationReductionPct: 35,
+      emissionsReductionGtCO2yr: 6,
+      tempReductionC2100: 0.22,
+      fullEffectYear: 2050,
+      uncertaintyScore: 2,
     },
     prospectiveNarratives: {
       optimistic: {
@@ -75,14 +76,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 39, 40.5, 42, 45.1, 49.2, 54, 58, 63],
-        decided:   [37.4, 36.8, 35, 32.4, 29.1, 26, 23.5, 22, 21],
-        pessimist: [37.4, 38.5, 39.8, 41.2, 43.5, 46.8, 50, 53, 56],
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.5, 39.0, 39.0, 40.6, 43.7, 48.0, 52.0, 57.0],
+        pessimist: [37.4, 38.8, 40.0, 40.8, 43.1, 46.7, 51.0, 55.0, 60.0],
       },
       temperature: {
-        baseline:  [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5],
-        decided:   [1.4, 1.42, 1.44, 1.45, 1.48, 1.52, 1.6, 1.65, 1.7],
-        pessimist: [1.4, 1.48, 1.56, 1.65, 1.82, 2.05, 2.3, 2.55, 2.8],
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.49, 1.57, 1.67, 1.87, 2.08, 2.43, 2.80, 3.28],
+        pessimist: [1.4, 1.50, 1.59, 1.70, 1.92, 2.15, 2.52, 2.91, 3.40],
       },
       forest: {
         baseline:  [58.0, 57.4, 56.8, 56.2, 55.0, 53.2, 50.0, 47.0, 42.5],
@@ -90,29 +91,6 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [58.0, 57.4, 56.9, 56.4, 55.2, 53.5, 50.8, 47.8, 43.2],
       },
     },
-  },
-
-  // ─── Décision existante 42-06 ─────────────────────────────────────────────
-  {
-    id: 'dec-42-06',
-    sessionId: 42,
-    number: '42-06',
-    status: 'active',
-    implementationLag: 3,
-    title: 'Moratoire mondial sur la déforestation primaire',
-    description: 'Interdire toute coupe de forêts primaires d\'ici 1 an via un traité international contraignant.',
-    options: [
-      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
-      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
-      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
-    ],
-    votes: { pour: 891, contre: 201, abst: 155 },
-    consensusThreshold: 67,
-    deadline: '2024-02-28T18:00:00Z',
-    resources: [],
-    projectedImpact: {},
-    prospectiveNarratives: {},
-    projections: {},
   },
 
   // ─── Décision 42-05 — Modèle : POL_COAL_EXIT_2030_DEV ────────────────────
@@ -557,6 +535,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.irena.org/Publications/2024/Sep/Renewable-Power-Generation-Costs-in-2023',
       },
     ],
+    // Source : src/data/models/POL_SOLAR_WIND_SCALE_2030.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 5,
       tempReductionC2100: 0.22,
@@ -646,6 +625,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://energy.ec.europa.eu/topics/energy-efficiency/energy-efficient-buildings/renovation-wave_en',
       },
     ],
+    // Source : src/data/models/POL_BUILDINGS_RENOVATION.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 2.5,
       tempReductionC2100: 0.1,
@@ -724,6 +704,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.unep.org/resources/report/global-resources-outlook-2024',
       },
     ],
+    // Source : src/data/models/POL_CIRCULAR_ECONOMY_INDUSTRY.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 2,
       tempReductionC2100: 0.08,
@@ -806,6 +787,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.globalccsinstitute.com/resources/global-status-of-ccs-2024/',
       },
     ],
+    // Source : src/data/models/POL_INDUSTRIAL_CCS.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 3.5,
       tempReductionC2100: 0.14,
@@ -884,6 +866,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.iaea.org/topics/nuclear-power',
       },
     ],
+    // Source : src/data/models/POL_NUCLEAR_EXPANSION.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 1.5,
       tempReductionC2100: 0.07,
@@ -971,6 +954,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.ccacoalition.org/short-lived-climate-pollutants/hfcs',
       },
     ],
+    // Source : src/data/models/POL_FGAS_PHASEOUT_KIGALI.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 1.5,
       tempReductionC2100: 0.08,
@@ -1049,6 +1033,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.unep.org/resources/report/unep-food-waste-index-report-2024',
       },
     ],
+    // Source : src/data/models/POL_FOOD_WASTE_REDUCTION.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 2,
       tempReductionC2100: 0.08,
@@ -1127,6 +1112,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://rodaleinstitute.org/why-organic/organic-basics/regenerative-organic-agriculture/',
       },
     ],
+    // Source : src/data/models/POL_AGROFORESTRY_SOILCARBON.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 2.5,
       tempReductionC2100: 0.1,
@@ -1210,6 +1196,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://www.science.org/doi/10.1126/science.aax0848',
       },
     ],
+    // Source : src/data/models/POL_ECOSYSTEM_RESTORATION.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 3.5,
       tempReductionC2100: 0.15,
@@ -1293,6 +1280,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
         url: 'https://royalsociety.org/greenhouse-gas-removal/',
       },
     ],
+    // Source : src/data/models/POL_BECCS_SCALE.json
     projectedImpact: {
       emissionsReductionGtCO2yr: 2,
       tempReductionC2100: 0.1,
