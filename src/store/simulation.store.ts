@@ -26,8 +26,14 @@ export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
 // Labels des projections dans les données de politique (9 points, hors 2100)
 const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
 
-// Forêt mondiale restante (% de la surface forestière de référence) — SSP2-4.5
-export const BASELINE_FOREST = [58.0, 57.4, 56.8, 56.2, 55.0, 53.2, 50.0, 47.0, 42.5, 34.0]
+// Forêt tropicale humide restante (% TMF, base 1990 = 100%) — SSP2-4.5
+// Recalibré sur données Vancutsem et al. 2021 (JRC/TMF) : 80 % en 2024
+export const BASELINE_FOREST = [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6, 46.9]
+
+// Total énergie primaire mondiale (TWh, hors biomasse traditionnelle) — IEA STEPS / SSP2-4.5
+// Utilisé pour convertir les parts % du mix en valeurs absolues TWh
+// 2024 : données réelles Energy Institute ; 2026-2100 : projection tendancielle
+export const BASELINE_ENERGY_TOTAL_TWH = [175272, 180000, 184000, 188000, 197000, 213000, 236000, 256000, 278000, 305000]
 
 // Mix énergétique mondial (% du total énergie primaire) — IEA STEPS
 const ENERGY_MIX_KEYS: EnergyMixKey[] = ['coal', 'oil', 'gas', 'nuclear', 'solar', 'wind', 'hydro', 'autres']

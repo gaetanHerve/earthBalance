@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-eb-dark text-slate-200 font-sans">
     <AppLoadingBar />
+    <GameIntroOverlay />
     <a
       href="#"
       class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-eb-cyan text-eb-dark px-3 py-1 rounded font-bold z-[100]"
@@ -18,10 +19,11 @@
 <script setup lang="ts">
 import { watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
-import AppHeader     from '@/components/layout/AppHeader.vue'
-import AppTicker     from '@/components/layout/AppTicker.vue'
-import AppFooter     from '@/components/layout/AppFooter.vue'
-import AppLoadingBar from '@/components/layout/AppLoadingBar.vue'
+import AppHeader        from '@/components/layout/AppHeader.vue'
+import AppTicker        from '@/components/layout/AppTicker.vue'
+import AppFooter        from '@/components/layout/AppFooter.vue'
+import AppLoadingBar    from '@/components/layout/AppLoadingBar.vue'
+import GameIntroOverlay from '@/components/layout/GameIntroOverlay.vue'
 
 const { t, locale } = useI18n()
 
