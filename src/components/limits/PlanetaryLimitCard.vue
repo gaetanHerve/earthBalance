@@ -64,16 +64,10 @@
     <!-- Graphique d'évolution temporelle -->
     <LineChart
       :canvas-id="`chart-${limit.id}`"
-      :labels="limit.timeSeries.years"
-      :datasets="[{
-        label: displayName,
-        data: limit.timeSeries.values,
-        borderColor: limit.color,
-        backgroundColor: hexToRgba(limit.color, 0.08),
-        fill: true,
-        pointRadius: 2,
-      }]"
+      :labels="chartLabels"
+      :datasets="chartDatasets"
       :height="120"
+      :current-year="projDecided ? gameStore.currentYear : undefined"
       :aria-label="t('limits.chart_evolution', { name: displayName })"
     />
 
@@ -90,11 +84,21 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
+import { useGameStore } from '@/store/game.store'
+import { SIM_LABELS } from '@/store/simulation.store'
 
-import type { PlanetaryLimit, LimitStatus } from '@/types/index'
+import type { PlanetaryLimit, LimitStatus, ChartDataset } from '@/types/index'
+
+const BLEND = 0.5
 
 const { t, locale } = useI18n()
-const props = defineProps<{ limit: PlanetaryLimit }>()
+const gameStore = useGameStore()
+
+const props = defineProps<{
+  limit:          PlanetaryLimit
+  projDecided?:   number[]
+  projPessimist?: number[]
+}>()
 
 const displayName       = computed(() => locale.value === 'en' ? props.limit.nameEn : props.limit.name)
 const displayDefinition = computed(() => locale.value === 'en' ? props.limit.definitionEn : props.limit.definition)
@@ -120,9 +124,69 @@ const statusLabel  = computed(() => t(STATUS_KEY[props.limit.status]))
 const statusIcon   = computed(() => STATUS_ICON[props.limit.status as LimitStatus])
 
 function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
+  const r = Number.parseInt(hex.slice(1, 3), 16)
+  const g = Number.parseInt(hex.slice(3, 5), 16)
+  const b = Number.parseInt(hex.slice(5, 7), 16)
   return `rgba(${r},${g},${b},${alpha})`
 }
+
+// ─── Projection helpers ───────────────────────────────────────────────────────
+
+function interpolateAtYear(year: number, values: number[]): number {
+  if (year <= SIM_LABELS[0]) return values[0]
+  if (year >= SIM_LABELS[SIM_LABELS.length - 1]) return values[values.length - 1]
+  for (let i = 0; i < SIM_LABELS.length - 1; i++) {
+    if (year >= SIM_LABELS[i] && year <= SIM_LABELS[i + 1]) {
+      const frac = (year - SIM_LABELS[i]) / (SIM_LABELS[i + 1] - SIM_LABELS[i])
+      return values[i] + frac * (values[i + 1] - values[i])
+    }
+  }
+  return values[values.length - 1]
+}
+
+function blendedAtYear(year: number): number {
+  if (!props.projDecided || !props.projPessimist) return 0
+  const d = interpolateAtYear(year, props.projDecided)
+  const p = interpolateAtYear(year, props.projPessimist)
+  return d * (1 - BLEND) + p * BLEND
+}
+
+const projectionYearsAfter2024 = computed<number[]>(() => {
+  if (!props.projDecided) return []
+  const cur = gameStore.currentYear
+  if (cur <= 2024) return []
+  const years = SIM_LABELS.filter(y => y > 2024 && y <= cur)
+  if (!SIM_LABELS.includes(cur)) years.push(cur)
+  return years.sort((a, b) => a - b)
+})
+
+const chartLabels = computed<number[]>(() => [
+  ...props.limit.timeSeries.years,
+  ...projectionYearsAfter2024.value,
+])
+
+const chartDatasets = computed<ChartDataset[]>(() => {
+  const historical = props.limit.timeSeries.values
+  const color      = props.limit.color
+  if (!props.projDecided || projectionYearsAfter2024.value.length === 0) {
+    return [{
+      label:           displayName.value,
+      data:            [...historical],
+      borderColor:     color,
+      backgroundColor: hexToRgba(color, 0.08),
+      fill:            true,
+      pointRadius:     2,
+    }]
+  }
+  const round2     = (v: number) => Math.round(v * 100) / 100
+  const projValues = projectionYearsAfter2024.value.map(y => round2(blendedAtYear(y)))
+  return [{
+    label:           displayName.value,
+    data:            [...historical, ...projValues],
+    borderColor:     color,
+    backgroundColor: hexToRgba(color, 0.08),
+    fill:            true,
+    pointRadius:     2,
+  }]
+})
 </script>

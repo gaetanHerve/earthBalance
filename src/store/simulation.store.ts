@@ -26,6 +26,9 @@ export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
 // Labels des projections dans les données de politique (9 points, hors 2100)
 const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
 
+// Concentration atmosphérique de CO₂ (ppm) — SSP2-4.5 (source : CMIP6 / Meinshausen et al.)
+export const BASELINE_CO2_PPM = [421, 425, 429, 433, 441, 453, 480, 502, 522, 549]
+
 // Forêt tropicale humide restante (% TMF, base 1990 = 100%) — SSP2-4.5
 // Recalibré sur données Vancutsem et al. 2021 (JRC/TMF) : 80 % en 2024
 export const BASELINE_FOREST = [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6, 46.9]
@@ -160,6 +163,25 @@ function resourceDeltaArr(dec: MitigationPolicy, effectiveStart: number, res: Re
   return shiftedDeltasDirect(deltas, effectiveStart)
 }
 
+// ─── Helpers ppm CO₂ ─────────────────────────────────────────────────────────
+// Airborne fraction × (1 ppm = 7.81 GtCO₂): 0.45 / 7.81 ≈ 0.0576 ppm per GtCO₂/yr per year
+const PPM_PER_GTCO2_YR = 0.45 / 7.81
+
+// Compute atmospheric CO₂ ppm from annual emissions array (same indices as SIM_LABELS).
+// Policy-induced emission savings reduce atmospheric accumulation relative to baseline.
+function ppmFromEmissionSavings(annualEmissions: number[]): number[] {
+  const result: number[] = [BASELINE_CO2_PPM[0]]
+  let cumSaved = 0
+  for (let i = 0; i < SIM_LABELS.length - 1; i++) {
+    const years      = SIM_LABELS[i + 1] - SIM_LABELS[i]
+    const savingI    = BASELINE_CO2[i]     - annualEmissions[i]
+    const savingNext = BASELINE_CO2[i + 1] - annualEmissions[i + 1]
+    cumSaved += (savingI + savingNext) / 2 * years * PPM_PER_GTCO2_YR
+    result.push(Math.round((BASELINE_CO2_PPM[i + 1] - cumSaved) * 10) / 10)
+  }
+  return result
+}
+
 // ─── Helpers simulateur (séquence grain-based) ────────────────────────────────
 
 // Année d'adoption simulée pour la position `index` dans la séquence
@@ -285,6 +307,9 @@ export const useSimulationStore = defineStore('simulation', () => {
       return Math.round((base + delta) * 10) / 10
     })
   )
+
+  const cumulativeCo2Ppm          = computed<number[]>(() => ppmFromEmissionSavings(cumulativeCo2.value))
+  const cumulativeCo2PpmPessimist = computed<number[]>(() => ppmFromEmissionSavings(cumulativeCo2Pessimist.value))
 
   const cumulativeTemp = computed<number[]>(() =>
     BASELINE_TEMP.map((base, i) => {
@@ -491,6 +516,8 @@ export const useSimulationStore = defineStore('simulation', () => {
     simulatorEffectYears,
     cumulativeCo2,
     cumulativeCo2Pessimist,
+    cumulativeCo2Ppm,
+    cumulativeCo2PpmPessimist,
     cumulativeTemp,
     cumulativeTempPessimist,
     cumulativeForest,
