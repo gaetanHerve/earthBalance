@@ -283,7 +283,7 @@ export default {
     disable: 'Disable high contrast mode',
   },
   game_intro: {
-    p1:  '2024. The sixth IPCC assessment report has just been published.',
+    p1:  '2023. The sixth IPCC assessment report has just been published.',
     p2:  'Its conclusions are unequivocal: without coordinated and immediate action at a planetary scale, current climate trajectories will lead the world toward irreversible transformations before the end of the century.',
     p3:  'This time, popular pressure is such that governments can no longer delay. A historic agreement is signed: an international climate cooperation body is established, endowed with an unprecedented mandate.',
     p4:  "For the first time in human history, the mitigation measures proposed by the IPCC are put to a direct vote by the world's population. Every citizen has access to all the information needed to understand the stakes of each measure — and to decide, with full knowledge of the facts.",

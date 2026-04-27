@@ -283,7 +283,7 @@ export default {
     disable: 'Désactiver le mode fort contraste',
   },
   game_intro: {
-    p1:  "2024. Le sixième rapport du GIEC vient d'être publié.",
+    p1:  "2023. Le sixième rapport du GIEC vient d'être publié.",
     p2:  "Ses conclusions sont sans appel : sans actions coordonnées et immédiates à l'échelle planétaire, les trajectoires climatiques actuelles mèneront le monde vers des transformations irréversibles avant la fin du siècle.",
     p3:  "Cette fois, la pression populaire est telle que les gouvernements ne peuvent plus différer. Un accord historique est signé : une instance de coopération climatique internationale est créée, dotée d'un mandat inédit.",
     p4:  "Pour la première fois dans l'histoire de l'humanité, les mesures de mitigation proposées par le GIEC sont soumises au vote direct de la population mondiale. Chaque citoyen, chaque citoyenne, a accès à l'ensemble des informations nécessaires pour comprendre les enjeux de chaque mesure — et pour décider, en connaissance de cause.",
