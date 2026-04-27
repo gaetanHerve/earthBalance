@@ -66,6 +66,8 @@
             v-for="limit in limits"
             :key="limit.id"
             :limit="limit"
+            :proj-decided="projDecided(limit.id)"
+            :proj-pessimist="projPessimist(limit.id)"
           />
         </template>
       </div>
@@ -79,6 +81,7 @@ import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { usePlanetsStore } from '@/store/planets.store'
+import { useSimulationStore } from '@/store/simulation.store'
 
 import SectionTitle       from '@/components/layout/SectionTitle.vue'
 import EbCard             from '@/components/layout/EbCard.vue'
@@ -89,6 +92,20 @@ import PlanetaryLimitCard from '@/components/limits/PlanetaryLimitCard.vue'
 const { t, locale } = useI18n()
 const store = usePlanetsStore()
 const { limits, radarData, loading, limitsByStatus } = storeToRefs(store)
+
+const simStore = useSimulationStore()
+const { cumulativeCo2Ppm, cumulativeCo2PpmPessimist, cumulativeForest, cumulativeForestPessimist } = storeToRefs(simStore)
+
+function projDecided(id: string): number[] | undefined {
+  if (id === 'changement-climatique') return cumulativeCo2Ppm.value
+  if (id === 'usage-terres')          return cumulativeForest.value
+  return undefined
+}
+function projPessimist(id: string): number[] | undefined {
+  if (id === 'changement-climatique') return cumulativeCo2PpmPessimist.value
+  if (id === 'usage-terres')          return cumulativeForestPessimist.value
+  return undefined
+}
 
 type LimitStatus = 'safe' | 'zone_incertitude' | 'depasse'
 

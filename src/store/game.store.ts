@@ -4,11 +4,23 @@ import { GAME_CONFIG } from '@/config/game.config'
 import { useMitigationPoliciesStore } from './mitigationPolicies.store'
 import { useSimulationStore } from './simulation.store'
 
-const YEAR_KEY = 'eb_game_year'
+const YEAR_KEY        = 'eb_game_year'
+const POLICIES_KEY    = 'eb_policies_state'
+const SIMULATION_KEY  = 'eb_simulation_selected'
+const BASELINE_KEY    = 'eb_simulation_baseline_mode'
 
 export const useGameStore = defineStore('game', () => {
   const stored = localStorage.getItem(YEAR_KEY)
-  const currentYear = ref<number>(stored !== null ? parseInt(stored, 10) : 2024)
+  const currentYear    = ref<number>(stored !== null ? parseInt(stored, 10) : 2024)
+  const sessionNumber  = ref<number>(1)
+
+  function resetGame(): void {
+    localStorage.removeItem(YEAR_KEY)
+    localStorage.removeItem(POLICIES_KEY)
+    localStorage.removeItem(SIMULATION_KEY)
+    localStorage.removeItem(BASELINE_KEY)
+    window.location.reload()
+  }
 
   function endRound(): void {
     const policiesStore = useMitigationPoliciesStore()
@@ -30,5 +42,5 @@ export const useGameStore = defineStore('game', () => {
     policiesStore.createNewBallot(currentYear.value)
   }
 
-  return { currentYear, endRound }
+  return { currentYear, sessionNumber, endRound, resetGame }
 })

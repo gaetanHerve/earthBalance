@@ -1,4 +1,4 @@
-import type { IpccReference } from '@/types/index'
+﻿import type { IpccReference } from '@/types/index'
 
 export interface PolicyDetail {
   summary: string
@@ -10,7 +10,7 @@ const AR6_REPORT  = 'IPCC AR6 — Rapport de synthèse (SYR), 2023'
 
 export const policyDetails: Record<string, PolicyDetail> = {
 
-  'dec-42-07': {
+  'dec-07': {
     summary: `La tarification du carbone est l'un des instruments les plus efficaces pour orienter l'économie vers une trajectoire bas-carbone. Une taxe universelle à 150 $/tCO₂ placerait le signal-prix au niveau requis par les scénarios 1,5°C du GIEC pour 2030. Elle génère en parallèle des recettes publiques redistribuables vers les pays en développement et vers la reconversion des travailleurs des secteurs carbonés.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -21,7 +21,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-06': {
+  'dec-06': {
     summary: `Les forêts primaires constituent des puits de carbone irremplaçables — leur destruction libère des stocks accumulés sur des siècles tout en détruisant la biodiversité. Un moratoire contraignant permettrait de stabiliser les émissions du secteur AFOLU (Agriculture, Forêts, Usage des terres) et de préserver des écosystèmes dont la restauration est impossible à l'échelle humaine. Le GIEC classe la protection des forêts existantes parmi les options d'atténuation au coût le plus faible et au co-bénéfice le plus élevé.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -32,7 +32,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-05': {
+  'dec-05': {
     summary: `Le charbon est la source d'énergie la plus carbonée : sa combustion sans captage émet environ deux fois plus de CO₂ par kWh que le gaz naturel. Les scénarios C1 (1,5°C) du GIEC exigent une réduction de 67 % de la production électrique charbonnière mondiale entre 2019 et 2030. Les pays développés, dotés des alternatives renouvelables matures, peuvent et doivent mener cette transition en premier. Le coût des renouvelables a chuté de 85 % (solaire) et 55 % (éolien) depuis 2010, rendant la substitution économiquement viable dans la quasi-totalité des régions.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -43,7 +43,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-04': {
+  'dec-04': {
     summary: `Le méthane est un gaz à effet de serre 80 fois plus puissant que le CO₂ sur 20 ans. Contrairement au CO₂, sa durée de vie atmosphérique courte (≈12 ans) signifie que des réductions rapides se traduisent en refroidissement perceptible dans la décennie suivante. Les scénarios 1,5°C du GIEC imposent une réduction de 34 % des émissions mondiales de CH₄ d'ici 2030. Les principales sources sont l'agriculture (élevage, riziculture), les combustibles fossiles (fuites gazières) et les déchets — toutes accessibles à des politiques ciblées.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -54,7 +54,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-03': {
+  'dec-03': {
     summary: `Les forêts tropicales abritent plus de 50 % de la biodiversité terrestre et stockent 250 milliards de tonnes de carbone. Leur déforestation représente environ 10 % des émissions mondiales annuelles. Arrêter la destruction et restaurer 350 Mha d'ici 2030 permettrait de séquestrer 1,5 à 3 GtCO₂/an supplémentaires. Ces mesures sont classées parmi les plus rentables par le GIEC, avec un coût inférieur à 20 USD/tCO₂ pour la protection des forêts existantes.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -65,7 +65,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-02': {
+  'dec-02': {
     summary: `Les systèmes alimentaires sont responsables de 21 à 37 % des émissions mondiales de GES. Une transition vers des régimes moins riches en protéines animales — notamment la viande bovine — constitue l'option de demande au plus grand potentiel d'atténuation selon le GIEC. Elle réduit simultanément la pression foncière sur les forêts tropicales, les émissions de méthane agricole et les risques de maladies chroniques liées à l'alimentation.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -76,7 +76,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-01': {
+  'dec-01': {
     summary: `Les transports terrestres représentent environ 12 % des émissions mondiales de CO₂. La combinaison de l'électrification des véhicules et de la décarbonation du réseau électrique offre le chemin le plus direct vers des transports zéro émission. L'éolien et le solaire ayant rendu l'électricité moins chère que l'essence dans de nombreuses régions, le coût total de possession des véhicules électriques est désormais compétitif. Le GIEC identifie cette option comme à la fois techniquement mature et soutenue par le public.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -87,7 +87,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-08': {
+  'dec-08': {
     summary: `Le solaire et l'éolien sont aujourd'hui les sources d'électricité les moins chères dans la majorité des régions du monde, après une baisse de coûts sans précédent (−85 % pour le solaire, −55 % pour l'éolien depuis 2010). Un système électrique 100 % décarboné est la colonne vertébrale de toute stratégie net-zéro : il rend vertueux l'électrification des transports, du chauffage et de l'industrie. Le GIEC classe le solaire et l'éolien parmi les options d'atténuation à la fois les moins chères, les plus matures et les plus acceptées socialement.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -98,7 +98,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-09': {
+  'dec-09': {
     summary: `Les bâtiments représentent environ 21 % de la consommation mondiale d'énergie finale. L'efficacité thermique est l'option d'atténuation la plus rentable dans ce secteur : une rénovation profonde peut réduire les besoins de chauffage de 50 à 90 %. Combinée à l'électrification (pompes à chaleur) et à la décarbonation du réseau, elle permet d'atteindre des bâtiments à énergie positive. Le GIEC souligne que la rénovation présente également des co-bénéfices majeurs pour la santé, le confort et la précarité énergétique.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -109,7 +109,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-10': {
+  'dec-10': {
     summary: `L'industrie est responsable d'environ 24 % des émissions mondiales de GES, dont une part difficile à décarboner (procédés à haute température, émissions de process). L'économie circulaire — réduire, réutiliser, recycler — diminue la demande de matières premières énergivores et donc les émissions amont. Le GIEC estime que l'efficacité matière et l'économie circulaire pourraient réduire les émissions industrielles de 40 % d'ici 2050, en complément de l'électrification et du CCS.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -120,7 +120,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-11': {
+  'dec-11': {
     summary: `Certaines industries — acier, ciment, chimie, raffinage — produisent des émissions de procédé impossibles à éliminer par la seule électrification. Le captage et stockage du carbone (CCS) est le seul outil permettant de décarboner ces secteurs à court-moyen terme. Le GIEC indique que les scénarios limitant le réchauffement à 2°C recourent quasi-universellement au CCS pour l'industrie lourde. Le défi est l'échelle : aujourd'hui, les capacités mondiales de captage représentent moins de 0,1 % du volume nécessaire en 2050.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -131,7 +131,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-12': {
+  'dec-12': {
     summary: `L'énergie nucléaire produit de l'électricité avec des émissions de cycle de vie comparables à l'éolien (4–16 gCO₂eq/kWh). Le GIEC la reconnaît comme option d'atténuation à faibles émissions, bien que sa faisabilité soit contrainte par les coûts d'investissement élevés, les délais de construction et la gestion des déchets. Dans les scénarios 1,5°C, le nucléaire joue un rôle variable : certaines trajectoires tablent sur une expansion, d'autres sur son maintien ou son recul au profit des renouvelables.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -142,7 +142,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-13': {
+  'dec-13': {
     summary: `Les gaz fluorés (HFC, PFC, SF₆, NF₃) sont des GES dont le potentiel de réchauffement global dépasse 1 000 à 25 000 fois celui du CO₂. Ils représentent environ 2,5 % des émissions mondiales mais leur croissance est rapide. L'Amendement de Kigali (2016) engage les pays à réduire les HFC de 85 % d'ici 2047 — des alternatives existent pour la quasi-totalité des usages actuels.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -153,7 +153,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-14': {
+  'dec-14': {
     summary: `Un tiers de la nourriture produite dans le monde est perdue ou gaspillée — représentant 8 à 10 % des émissions mondiales de GES. Réduire ce gaspillage de 50 % d'ici 2030 (ODD 12.3) éliminerait 2 à 4 GtCO₂eq/an sans nécessiter de changement technologique majeur. C'est l'une des options d'atténuation les plus rentables identifiées par le GIEC, avec des co-bénéfices sur la sécurité alimentaire mondiale.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -164,7 +164,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-15': {
+  'dec-15': {
     summary: `L'agroforesterie intègre des arbres dans les systèmes agricoles, créant des synergies entre production alimentaire, séquestration du carbone et biodiversité. Les sols agricoles dégradés représentent un potentiel de séquestration de 0,9 à 1,85 GtCO₂/an si gérés durablement. Ces pratiques s'inscrivent dans les options AFOLU (Agriculture, Forêts, Usages des terres) que le GIEC identifie comme complémentaires indispensables aux mesures énergétiques.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -175,7 +175,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-16': {
+  'dec-16': {
     summary: `La restauration des écosystèmes dégradés — forêts, tourbières, zones humides, mangroves — constitue une priorité urgente tant pour le climat que pour la biodiversité. Les tourbières stockent à elles seules deux fois plus de carbone que toutes les forêts du monde, malgré leur faible surface. La décennie ONU pour la restauration des écosystèmes (2021–2030) vise 350 Mha restaurés. Le GIEC souligne que la protection des écosystèmes existants est systématiquement moins chère et plus efficace que leur restauration après dégradation.`,
     ipccReference: {
       report: AR6_REPORT,
@@ -186,7 +186,7 @@ export const policyDetails: Record<string, PolicyDetail> = {
     },
   },
 
-  'dec-42-17': {
+  'dec-17': {
     summary: `La bioénergie avec captage et stockage du carbone (BECCS) génère de l'énergie à partir de biomasse tout en captant et stockant le CO₂ émis, produisant ainsi des émissions négatives nettes. La quasi-totalité des scénarios 1,5°C y recourent pour compenser les émissions résiduelles incompressibles. Toutefois, le GIEC souligne des risques majeurs : concurrence avec les terres agricoles et la biodiversité, disponibilité de l'eau, faisabilité à grande échelle encore incertaine.`,
     ipccReference: {
       report: AR6_REPORT,

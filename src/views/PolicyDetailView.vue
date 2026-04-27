@@ -24,7 +24,7 @@
       <!-- ─── En-tête ─────────────────────────────────────────────────────── -->
       <div class="space-y-3">
         <div class="flex flex-wrap items-center gap-2 text-xs">
-          <span class="font-mono text-slate-500">Session {{ policy.sessionId }} — Politique #{{ policy.number }}</span>
+          <span class="font-mono text-slate-500">Session {{ policy.sessionId }} — Politique #{{ policy.sessionId }}-{{ policy.number }}</span>
           <span
             class="px-2 py-0.5 rounded-full font-bold border"
             :class="statusStyle.class"

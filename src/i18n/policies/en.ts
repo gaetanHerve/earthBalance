@@ -1,4 +1,4 @@
-// English translations for mitigation policy content.
+﻿// English translations for mitigation policy content.
 // Fields not listed here fall back to the French originals in mitigationPolicies.ts / policyDetails.ts.
 
 export interface PolicyNarrative {
@@ -18,8 +18,8 @@ export interface PolicyI18n {
 
 export const policyI18n: Record<string, PolicyI18n> = {
 
-  // ─── dec-42-07 — Global carbon tax ─────────────────────────────────────────
-  'dec-42-07': {
+  // ─── dec-07 — Global carbon tax ─────────────────────────────────────────
+  'dec-07': {
     title: 'Global carbon tax at $150/tonne within 6 years?',
     description: `This proposal aims to establish a universal carbon tax of **$150/tonne of CO₂** applicable to all Paris Agreement signatories within 6 years. Revenues would be redistributed: 60% to developing countries to finance the energy transition, and 40% to a global climate adaptation fund. Key issues: industrial competitiveness, climate justice, and effectiveness of emissions reduction.`,
     summary: `Carbon pricing is one of the most effective instruments for steering economies towards a low-carbon trajectory. A universal tax at $150/tCO₂ would place the price signal at the level required by IPCC 1.5°C scenarios for 2030. It simultaneously generates public revenues redistributable to developing countries and to workers in carbon-intensive sectors undergoing transition.`,
@@ -57,16 +57,16 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-06 — Primary forest moratorium ──────────────────────────────────
-  'dec-42-06': {
+  // ─── dec-06 — Primary forest moratorium ──────────────────────────────────
+  'dec-06': {
     title: 'Global moratorium on primary deforestation',
     description: 'Ban all primary forest logging within 1 year through a binding international treaty.',
     summary: `Primary forests are irreplaceable carbon sinks — their destruction releases stocks accumulated over centuries while destroying biodiversity. A binding moratorium would stabilise emissions from the AFOLU sector and preserve ecosystems whose restoration is impossible on a human timescale. The IPCC ranks protection of existing forests among the lowest-cost, highest co-benefit mitigation options.`,
     sectionTitle: 'Land systems — AFOLU: forests and land use',
   },
 
-  // ─── dec-42-05 — Coal phase-out ─────────────────────────────────────────────
-  'dec-42-05': {
+  // ─── dec-05 — Coal phase-out ─────────────────────────────────────────────
+  'dec-05': {
     title: 'Coal phase-out in developed countries\' electricity sector within 6 years',
     description: `Planned closure of all coal-fired power plants without CO₂ capture in Annex I countries (OECD + EU) within the first 6 years. The transition would be supported by a retraining plan for mining communities and a compensation mechanism for still-dependent countries. According to AR6 WGIII, coal accounts for ~30% of global energy-related CO₂ emissions; developed countries contribute ~45%. This measure aligns with C1 (1.5°C) pathways requiring a **67%** [46–86%] reduction in global coal electricity generation within 6 years.`,
     summary: `Coal is the most carbon-intensive energy source: its combustion without capture emits roughly twice as much CO₂ per kWh as natural gas. IPCC C1 (1.5°C) scenarios require a 67% reduction in global coal electricity generation between 2019 and 2030. Developed countries, with mature renewable alternatives, can and must lead this transition. The cost of renewables has fallen by 85% (solar) and 55% (wind) since 2010, making substitution economically viable in almost all regions.`,
@@ -100,8 +100,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-04 — Methane reduction ──────────────────────────────────────────
-  'dec-42-04': {
+  // ─── dec-04 — Methane reduction ──────────────────────────────────────────
+  'dec-04': {
     title: '34% global methane emissions reduction within 6 years',
     description: `Methane is a greenhouse gas **80 times more potent** than CO₂ over 20 years. Unlike CO₂, its short atmospheric lifetime (~12 years) means rapid reductions translate into measurable cooling within the following decade. IPCC 1.5°C pathways require a 34% reduction in global CH₄ emissions within 6 years. Main sources — agriculture (livestock, rice), fossil fuels (gas leaks) and waste — are all amenable to targeted policies.`,
     summary: `Methane is a greenhouse gas 80 times more potent than CO₂ over 20 years. Unlike CO₂, its short atmospheric lifetime (~12 years) means that rapid reductions translate into measurable cooling within the following decade. IPCC 1.5°C scenarios require a 34% reduction in global CH₄ emissions within 6 years. The main sources are agriculture (livestock, rice), fossil fuels (gas leaks) and waste — all amenable to targeted policies.`,
@@ -125,8 +125,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-03 — Deforestation halt ─────────────────────────────────────────
-  'dec-42-03': {
+  // ─── dec-03 — Deforestation halt ─────────────────────────────────────────
+  'dec-03': {
     title: 'Halt tropical deforestation and restore forests within 6 years',
     description: `Tropical forests harbour over 50% of terrestrial biodiversity and store 250 billion tonnes of carbon. Their deforestation accounts for approximately 10% of annual global emissions. Halting destruction and restoring 350 Mha within 6 years could sequester an additional **1.5–3 GtCO₂/year**. These measures rank among the most cost-effective in the IPCC catalogue, at less than **$20/tCO₂** for protecting existing forests.`,
     summary: `Tropical forests harbour more than 50% of terrestrial biodiversity and store 250 billion tonnes of carbon. Deforestation accounts for approximately 10% of annual global emissions. Halting destruction and restoring 350 Mha within 6 years could sequester an additional 1.5–3 GtCO₂/year. These measures rank among the most cost-effective identified by the IPCC, at less than $20/tCO₂ for protecting existing forests.`,
@@ -150,8 +150,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-02 — Plant-based diets ──────────────────────────────────────────
-  'dec-42-02': {
+  // ─── dec-02 — Plant-based diets ──────────────────────────────────────────
+  'dec-02': {
     title: 'Global transition towards plant-based sustainable diets',
     description: `Food systems are responsible for **21–37%** of global GHG emissions. A transition towards diets lower in animal protein — particularly beef — represents the demand-side option with the greatest mitigation potential according to the IPCC. It simultaneously reduces land-use pressure on tropical forests, agricultural methane emissions, and risks of diet-related chronic diseases.`,
     summary: `Food systems are responsible for 21–37% of global GHG emissions. A transition towards diets lower in animal protein — particularly beef — represents the demand-side option with the greatest mitigation potential according to the IPCC. It simultaneously reduces land-use pressure on tropical forests, agricultural methane emissions, and chronic disease risks associated with diet.`,
@@ -175,8 +175,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-01 — Transport electrification ──────────────────────────────────
-  'dec-42-01': {
+  // ─── dec-01 — Transport electrification ──────────────────────────────────
+  'dec-01': {
     title: 'Electrification of land transport and sustainable mobility within 26 years',
     description: `Land transport accounts for approximately **12%** of global CO₂ emissions. Combining vehicle electrification with decarbonisation of the electricity grid offers the most direct path to zero-emission transport. With solar and wind making electricity cheaper than petrol in many regions, the total cost of ownership of EVs is now competitive. The IPCC identifies this option as technically mature and publicly supported.`,
     summary: `Land transport accounts for approximately 12% of global CO₂ emissions. The combination of vehicle electrification and decarbonisation of the electricity grid offers the most direct path to zero-emission transport. With wind and solar making electricity cheaper than petrol in many regions, the total cost of ownership of electric vehicles is now competitive. The IPCC identifies this option as both technically mature and publicly supported.`,
@@ -200,8 +200,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-08 — Solar + Wind ────────────────────────────────────────────────
-  'dec-42-08': {
+  // ─── dec-08 — Solar + Wind ────────────────────────────────────────────────
+  'dec-08': {
     title: 'Massive deployment of solar and wind: 100% decarbonised electricity within 26 years',
     description: `Solar and wind are now the cheapest sources of electricity in the majority of the world's regions, after unprecedented cost declines (−85% for solar, −55% for wind since 2010). A fully decarbonised electricity system is the backbone of any net-zero strategy: it makes electrification of transport, heating and industry climate-positive. The IPCC ranks solar and wind among the lowest-cost, most mature, and most socially accepted mitigation options.`,
     summary: `Solar and wind are today the cheapest sources of electricity in the majority of the world's regions, after an unprecedented cost decline (−85% for solar, −55% for wind since 2010). A 100% decarbonised electricity system is the backbone of any net-zero strategy: it makes electrification of transport, heating and industry virtuous. The IPCC ranks solar and wind among the lowest-cost, most mature and most socially accepted mitigation options.`,
@@ -225,8 +225,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-09 — Building renovation ────────────────────────────────────────
-  'dec-42-09': {
+  // ─── dec-09 — Building renovation ────────────────────────────────────────
+  'dec-09': {
     title: 'Universal deep energy retrofit of buildings within 26 years: zero fossil fuels',
     description: `Buildings account for approximately **21%** of global final energy consumption. Thermal efficiency is the most cost-effective mitigation option in this sector: a deep retrofit can reduce heating needs by **50–90%**. Combined with electrification (heat pumps) and grid decarbonisation, it enables positive-energy buildings. The IPCC highlights that retrofitting also presents major co-benefits for health, comfort and energy poverty.`,
     summary: `Buildings account for approximately 21% of global final energy consumption. Thermal efficiency is the most cost-effective mitigation option in this sector: a deep retrofit can reduce heating needs by 50–90%. Combined with electrification (heat pumps) and grid decarbonisation, it enables positive-energy buildings. The IPCC highlights that retrofitting also presents major co-benefits for health, comfort and energy poverty.`,
@@ -250,8 +250,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-10 — Circular economy ───────────────────────────────────────────
-  'dec-42-10': {
+  // ─── dec-10 — Circular economy ───────────────────────────────────────────
+  'dec-10': {
     title: 'Circular economy and material efficiency in global industry',
     description: `Industry accounts for approximately **24%** of global GHG emissions, including a hard-to-abate share (high-temperature processes, process emissions). The circular economy — reduce, reuse, recycle — cuts demand for energy-intensive raw materials and thus upstream emissions. The IPCC estimates that material efficiency and the circular economy could reduce industrial emissions by **40%** within 26 years, complementing electrification and CCS.`,
     summary: `Industry is responsible for approximately 24% of global GHG emissions, including a hard-to-abate share (high-temperature processes, process emissions). The circular economy — reduce, reuse, recycle — reduces demand for energy-intensive raw materials and thus upstream emissions. The IPCC estimates that material efficiency and the circular economy could reduce industrial emissions by 40% within 26 years, in addition to electrification and CCS.`,
@@ -275,8 +275,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-11 — Industrial CCS ─────────────────────────────────────────────
-  'dec-42-11': {
+  // ─── dec-11 — Industrial CCS ─────────────────────────────────────────────
+  'dec-11': {
     title: 'Deployment of carbon capture and storage (CCS) for heavy industry within 26 years',
     description: `Some industries — steel, cement, chemicals, refining — produce process emissions impossible to eliminate through electrification alone. Carbon capture and storage (CCS) is the only near-to-medium-term tool to decarbonise these sectors. The IPCC indicates that pathways limiting warming to 2°C almost universally deploy CCS for heavy industry. The challenge is scale: today, global capture capacities represent less than **0.1%** of the volume needed within 26 years.`,
     summary: `Some industries — steel, cement, chemicals, refining — produce process emissions impossible to eliminate through electrification alone. Carbon capture and storage (CCS) is the only tool to decarbonise these sectors in the short-to-medium term. The IPCC indicates that pathways limiting warming to 2°C almost universally deploy CCS for heavy industry. The challenge is scale: today, global capture capacities represent less than 0.1% of the volume needed within 26 years.`,
@@ -300,8 +300,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-12 — Nuclear ────────────────────────────────────────────────────
-  'dec-42-12': {
+  // ─── dec-12 — Nuclear ────────────────────────────────────────────────────
+  'dec-12': {
     title: 'Nuclear expansion as decarbonised baseload: double capacity within 26 years',
     description: `Nuclear energy generates electricity with lifecycle emissions comparable to wind **(4–16 gCO₂eq/kWh)**. The IPCC recognises it as a low-emission mitigation option, though its feasibility is constrained by high investment costs, long construction timelines and waste management. In 1.5°C scenarios, nuclear plays a variable role: some pathways assume expansion, others maintenance or decline in favour of renewables.`,
     summary: `Nuclear energy generates electricity with lifecycle emissions comparable to wind (4–16 gCO₂eq/kWh). The IPCC recognises it as a low-emission mitigation option, though its feasibility is constrained by high investment costs, long construction timelines and waste management. In 1.5°C scenarios, nuclear plays a variable role: some pathways assume expansion, others maintenance or decline in favour of renewables.`,
@@ -325,8 +325,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-13 — Fluorinated gases ──────────────────────────────────────────
-  'dec-42-13': {
+  // ─── dec-13 — Fluorinated gases ──────────────────────────────────────────
+  'dec-13': {
     title: 'Global phase-out of fluorinated greenhouse gases (extended Kigali Amendment)',
     description: `Fluorinated gases — HFCs, PFCs, SF₆ — are GHGs with **global warming potential 1,000 to 23,000 times** that of CO₂. Principally used in refrigeration, air conditioning, insulating foams and semiconductors, they represent ~1.5 GtCO₂eq/year (2024). The Kigali Amendment (2016) targets an 80% reduction in HFCs by 2050, but this decision goes further: (1) accelerated timeline — **85% reduction within 12 years**, (2) extension to uncovered PFCs and SF₆, (3) technology transfer for substitutes (HFOs, natural CO₂, ammonia) to developing countries. This is one of the most **cost-effective** measures in the entire catalogue.`,
     summary: `Fluorinated gases (HFCs, PFCs, SF₆, NF₃) are GHGs with a global warming potential 1,000 to 25,000 times that of CO₂. They represent approximately 2.5% of global emissions but are growing rapidly. The Kigali Amendment (2016) commits countries to reduce HFCs by 85% by 2047 — alternatives exist for virtually all current uses.`,
@@ -350,8 +350,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-14 — Food waste ──────────────────────────────────────────────────
-  'dec-42-14': {
+  // ─── dec-14 — Food waste ──────────────────────────────────────────────────
+  'dec-14': {
     title: '50% reduction in global food waste and loss within 6 years (SDG 12.3)',
     description: `**One-third** of the world's food production is lost or wasted — representing 8–10% of global GHG emissions. Reducing this waste by **50% within 6 years** (SDG 12.3) would eliminate 2–4 GtCO₂eq/year without requiring major technological change. It is one of the most cost-effective mitigation options identified by the IPCC, with co-benefits for global food security.`,
     summary: `One-third of the world's food production is lost or wasted — representing 8–10% of global GHG emissions. Reducing this waste by 50% within 6 years (SDG 12.3) would eliminate 2–4 GtCO₂eq/year without requiring major technological change. It is one of the most cost-effective mitigation options identified by the IPCC, with co-benefits for global food security.`,
@@ -375,8 +375,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-15 — Agroforestry ────────────────────────────────────────────────
-  'dec-42-15': {
+  // ─── dec-15 — Agroforestry ────────────────────────────────────────────────
+  'dec-15': {
     title: 'Global agroforestry and carbon sequestration in agricultural soils',
     description: `Agroforestry integrates trees into agricultural systems, creating synergies between food production, carbon sequestration and biodiversity. Degraded agricultural soils represent a sequestration potential of **0.9–1.85 GtCO₂/year** if sustainably managed. These practices are part of the AFOLU options that the IPCC identifies as essential complements to energy-sector measures.`,
     summary: `Agroforestry integrates trees into agricultural systems, creating synergies between food production, carbon sequestration and biodiversity. Degraded agricultural soils represent a sequestration potential of 0.9–1.85 GtCO₂/year if sustainably managed. These practices are part of the AFOLU options that the IPCC identifies as essential complements to energy-sector measures.`,
@@ -400,8 +400,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-16 — Ecosystem restoration ──────────────────────────────────────
-  'dec-42-16': {
+  // ─── dec-16 — Ecosystem restoration ──────────────────────────────────────
+  'dec-16': {
     title: 'Global ecosystem restoration: reforestation, peatlands and wetlands',
     description: `Restoring degraded ecosystems — forests, peatlands, wetlands, mangroves — is an urgent priority for both climate and biodiversity. Peatlands alone store **twice as much carbon** as all the world's forests, despite their small surface area. The UN Decade on Ecosystem Restoration (2021–2030) targets 1 billion hectares restored. This decision mandates: (1) a **$200 billion/year** fund for restoration in tropical forest countries, (2) immediate protection of all intact peatlands, (3) a global mangrove and seagrass restoration programme (Blue Carbon).`,
     summary: `Restoring degraded ecosystems — forests, peatlands, wetlands, mangroves — is an urgent priority for both climate and biodiversity. Peatlands alone store twice as much carbon as all the world's forests combined, despite their small surface area. The UN Decade on Ecosystem Restoration (2021–2030) targets 350 Mha restored. The IPCC consistently shows that protecting existing ecosystems is cheaper and more effective than restoration after degradation.`,
@@ -425,8 +425,8 @@ export const policyI18n: Record<string, PolicyI18n> = {
     },
   },
 
-  // ─── dec-42-17 — BECCS ──────────────────────────────────────────────────────
-  'dec-42-17': {
+  // ─── dec-17 — BECCS ──────────────────────────────────────────────────────
+  'dec-17': {
     title: 'Large-scale deployment of bioenergy with carbon capture and storage (BECCS)',
     description: `Bioenergy with carbon capture and storage (BECCS) generates energy from biomass while capturing and storing the CO₂ emitted, producing **net negative emissions**. Almost all 1.5°C scenarios deploy it to offset irreducible residual emissions. However, the IPCC highlights major risks: competition with agricultural land and biodiversity, water availability, and large-scale feasibility that **remains uncertain**.`,
     summary: `Bioenergy with carbon capture and storage (BECCS) generates energy from biomass while capturing and storing the CO₂ emitted, producing net negative emissions. Almost all 1.5°C scenarios deploy it to offset irreducible residual emissions. However, the IPCC highlights major risks: competition with agricultural land and biodiversity, water availability, and large-scale feasibility that remains uncertain.`,

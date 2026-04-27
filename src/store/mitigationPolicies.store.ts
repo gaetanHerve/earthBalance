@@ -4,6 +4,7 @@ import type { MitigationPolicy, DecisionBallot, PairwiseVotes } from '@/types/in
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import { ballots as ballotData } from '@/data/ballots'
 import { condorcetWinner, bordaScores, resolveWinner, rankingToPairwiseDelta } from '@/utils/condorcet'
+import { useGameStore } from '@/store/game.store'
 
 
 // ─── Types internes ───────────────────────────────────────────────────────────
@@ -202,9 +203,10 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
 
     const nextNum = String(ballots.value.length + 1).padStart(2, '0')
 
+    const gameStore = useGameStore()
     const newBallot: DecisionBallot = {
-      id: `ballot-42-${nextNum}`,
-      sessionId: 42,
+      id: `ballot-${gameStore.sessionNumber}-${nextNum}`,
+      sessionId: gameStore.sessionNumber,
       decisionIds: [a.id, b.id, c.id],
       pairwise: { ab: 0, ba: 0, ac: 0, ca: 0, bc: 0, cb: 0 },
       totalVoters: 0,

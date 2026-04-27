@@ -1,4 +1,4 @@
-import type { MitigationPolicy, GlobalStats, BlockchainState } from '@/types/index'
+﻿import type { MitigationPolicy, GlobalStats, BlockchainState } from '@/types/index'
 
 // ─── Baseline SSP2-4.5 (référence partagée pour toutes les projections) ────────
 // labels : [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
@@ -11,9 +11,9 @@ import type { MitigationPolicy, GlobalStats, BlockchainState } from '@/types/ind
 export const mitigationPolicies: MitigationPolicy[] = [
   // ─── Décision existante 42-07 ─────────────────────────────────────────────
   {
-    id: 'dec-42-07',
-    sessionId: 42,
-    number: '42-07',
+    id: 'dec-07',
+    sessionId: 1,
+    number: '07',
     status: 'active',
     implementationLag: 2,
     title: 'Taxe carbone mondiale à 150 $/tonne d\'ici 6 ans ?',
@@ -86,18 +86,19 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.50, 1.59, 1.70, 1.92, 2.15, 2.52, 2.91, 3.40],
       },
       forest: {
-        baseline:  [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6],
-        decided:   [80.0, 79.3, 78.8, 78.2, 76.6, 74.2, 71.0, 66.9, 60.7],
-        pessimist: [80.0, 79.2, 78.5, 77.8, 76.1, 73.8, 70.1, 65.9, 59.6],
+        // % forêts primaires mondiales — baseline Mackey et al. 2015 ; deltas TMF rescalés ×0.6
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.6, 57.3, 56.9, 55.7, 54.0, 51.7, 48.8, 44.8],
+        pessimist: [58.0, 57.5, 57.1, 56.7, 55.4, 53.7, 51.2, 48.2, 44.1],
       },
     },
   },
 
-  // ─── Décision 42-05 — Modèle : POL_COAL_EXIT_2030_DEV ────────────────────
+  // ─── Décision 05 — Modèle : POL_COAL_EXIT_2030_DEV ────────────────────
   {
-    id: 'dec-42-05',
-    sessionId: 42,
-    number: '42-05',
+    id: 'dec-05',
+    sessionId: 1,
+    number: '05',
     status: 'active',
     implementationLag: 3,
     title: 'Sortie du charbon pour la production électrique dans les pays développés d\'ici 6 ans',
@@ -178,11 +179,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-04 — Modèle : POL_METHANE_REDUCTION_2030 ────────────────
+  // ─── Décision 04 — Modèle : POL_METHANE_REDUCTION_2030 ────────────────
   {
-    id: 'dec-42-04',
-    sessionId: 42,
-    number: '42-04',
+    id: 'dec-04',
+    sessionId: 1,
+    number: '04',
     status: 'active',
     implementationLag: 2,
     title: 'Réduction mondiale des émissions de méthane de 34% d\'ici 6 ans',
@@ -253,11 +254,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-03 — Modèle : POL_DEFORESTATION_HALT_2030 ───────────────
+  // ─── Décision 03 — Modèle : POL_DEFORESTATION_HALT_2030 ───────────────
   {
-    id: 'dec-42-03',
-    sessionId: 42,
-    number: '42-03',
+    id: 'dec-03',
+    sessionId: 1,
+    number: '03',
     status: 'active',
     implementationLag: 4,
     title: 'Arrêt de la déforestation tropicale et restauration des forêts d\'ici 6 ans',
@@ -326,18 +327,18 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.93, 2.16, 2.53, 2.92, 3.4],
       },
       forest: {
-        baseline:  [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6],
-        decided:   [80.0, 79.9, 79.4, 79.0, 78.6, 78.3, 77.5, 76.6, 74.5],
-        pessimist: [80.0, 79.3, 78.8, 78.2, 77.0, 75.2, 72.4, 69.7, 64.8],
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.9, 57.7, 57.4, 56.9, 56.4, 55.6, 54.6, 53.0],
+        pessimist: [58.0, 57.6, 57.3, 56.9, 56.0, 54.6, 52.5, 50.4, 47.2],
       },
     },
   },
 
-  // ─── Décision 42-02 — Modèle : POL_DIET_SHIFT_PLANTBASED ─────────────────
+  // ─── Décision 02 — Modèle : POL_DIET_SHIFT_PLANTBASED ─────────────────
   {
-    id: 'dec-42-02',
-    sessionId: 42,
-    number: '42-02',
+    id: 'dec-02',
+    sessionId: 1,
+    number: '02',
     status: 'active',
     implementationLag: 7,
     title: 'Transition mondiale vers des régimes alimentaires durables à base végétale',
@@ -406,9 +407,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.94, 2.18, 2.56, 2.95, 3.43],
       },
       forest: {
-        baseline:  [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6],
-        decided:   [80.0, 79.2, 78.3, 77.9, 76.6, 74.2, 71.0, 67.6, 61.4],
-        pessimist: [80.0, 79.2, 78.3, 77.7, 76.1, 73.7, 70.1, 66.2, 60.0],
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.5, 57.0, 56.7, 55.7, 54.0, 51.7, 49.2, 45.2],
+        pessimist: [58.0, 57.5, 57.0, 56.6, 55.4, 53.7, 51.2, 48.3, 44.3],
       },
       resources: {
         biomass: { decided: [0, 0, -0.2, -0.5, -1.0, -1.8, -2.5, -3.0, -3.5], pessimist: [0, 0, -0.1, -0.3, -0.7, -1.2, -1.8, -2.2, -2.8] },
@@ -416,11 +417,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-01 — Modèle : POL_TRANSPORT_ELECTRIFICATION ────────────
+  // ─── Décision 01 — Modèle : POL_TRANSPORT_ELECTRIFICATION ────────────
   {
-    id: 'dec-42-01',
-    sessionId: 42,
-    number: '42-01',
+    id: 'dec-01',
+    sessionId: 1,
+    number: '01',
     status: 'active',
     implementationLag: 4,
     title: 'Électrification des transports terrestres et mobilités durables d\'ici 26 ans',
@@ -501,11 +502,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-08 — Solaire & éolien à grande échelle ──────────────────
+  // ─── Décision 08 — Solaire & éolien à grande échelle ──────────────────
   {
-    id: 'dec-42-08',
-    sessionId: 42,
-    number: '42-08',
+    id: 'dec-08',
+    sessionId: 1,
+    number: '08',
     status: 'active',
     implementationLag: 3,
     title: 'Déploiement massif du solaire et de l\'éolien : 100% électricité décarbonée d\'ici 26 ans',
@@ -591,11 +592,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-09 — Rénovation thermique des bâtiments ─────────────────
+  // ─── Décision 09 — Rénovation thermique des bâtiments ─────────────────
   {
-    id: 'dec-42-09',
-    sessionId: 42,
-    number: '42-09',
+    id: 'dec-09',
+    sessionId: 1,
+    number: '09',
     status: 'active',
     implementationLag: 4,
     title: 'Rénovation thermique universelle des bâtiments d\'ici 26 ans : zéro énergie fossile',
@@ -670,11 +671,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-10 — Économie circulaire dans l'industrie ───────────────
+  // ─── Décision 10 — Économie circulaire dans l'industrie ───────────────
   {
-    id: 'dec-42-10',
-    sessionId: 42,
-    number: '42-10',
+    id: 'dec-10',
+    sessionId: 1,
+    number: '10',
     status: 'active',
     implementationLag: 5,
     title: 'Économie circulaire et efficacité matière dans l\'industrie mondiale',
@@ -753,11 +754,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-11 — CCS pour l'industrie lourde ────────────────────────
+  // ─── Décision 11 — CCS pour l'industrie lourde ────────────────────────
   {
-    id: 'dec-42-11',
-    sessionId: 42,
-    number: '42-11',
+    id: 'dec-11',
+    sessionId: 1,
+    number: '11',
     implementationLag: 7,
     status: 'active',
     title: 'Déploiement du captage et stockage du carbone (CCS) pour l\'industrie lourde d\'ici 26 ans',
@@ -832,11 +833,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-12 — Expansion du nucléaire ─────────────────────────────
+  // ─── Décision 12 — Expansion du nucléaire ─────────────────────────────
   {
-    id: 'dec-42-12',
-    sessionId: 42,
-    number: '42-12',
+    id: 'dec-12',
+    sessionId: 1,
+    number: '12',
     implementationLag: 10,
     status: 'active',
     title: 'Expansion du nucléaire comme énergie de base décarbonée : doublement des capacités d\'ici 2050',
@@ -920,11 +921,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-13 — Phase-out des gaz fluorés ───────────────────────────
+  // ─── Décision 13 — Phase-out des gaz fluorés ───────────────────────────
   {
-    id: 'dec-42-13',
-    sessionId: 42,
-    number: '42-13',
+    id: 'dec-13',
+    sessionId: 1,
+    number: '13',
     implementationLag: 3,
     status: 'active',
     title: 'Phase-out mondial des gaz fluorés à effet de serre (Amendement de Kigali étendu)',
@@ -999,11 +1000,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-14 — Réduction du gaspillage alimentaire ────────────────
+  // ─── Décision 14 — Réduction du gaspillage alimentaire ────────────────
   {
-    id: 'dec-42-14',
-    sessionId: 42,
-    number: '42-14',
+    id: 'dec-14',
+    sessionId: 1,
+    number: '14',
     implementationLag: 5,
     status: 'active',
     title: 'Réduction de 50% du gaspillage alimentaire mondial d\'ici 6 ans (ODD 12.3)',
@@ -1078,11 +1079,11 @@ export const mitigationPolicies: MitigationPolicy[] = [
     },
   },
 
-  // ─── Décision 42-15 — Agroforesterie et carbone des sols ─────────────────
+  // ─── Décision 15 — Agroforesterie et carbone des sols ─────────────────
   {
-    id: 'dec-42-15',
-    sessionId: 42,
-    number: '42-15',
+    id: 'dec-15',
+    sessionId: 1,
+    number: '15',
     implementationLag: 5,
     status: 'active',
     title: 'Agroforesterie mondiale et séquestration du carbone dans les sols agricoles',
@@ -1155,18 +1156,18 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.94, 2.18, 2.56, 2.95, 3.44],
       },
       forest: {
-        baseline:  [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6],
-        decided:   [80.0, 79.2, 78.6, 78.2, 77.0, 75.2, 72.4, 69.7, 64.1],
-        pessimist: [80.0, 79.2, 78.3, 77.8, 76.3, 74.1, 71.0, 66.9, 60.7],
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.5, 57.2, 56.9, 56.0, 54.6, 52.5, 50.4, 46.8],
+        pessimist: [58.0, 57.5, 57.0, 56.7, 55.5, 53.9, 51.7, 48.8, 44.8],
       },
     },
   },
 
-  // ─── Décision 42-16 — Restauration des écosystèmes ───────────────────────
+  // ─── Décision 16 — Restauration des écosystèmes ───────────────────────
   {
-    id: 'dec-42-16',
-    sessionId: 42,
-    number: '42-16',
+    id: 'dec-16',
+    sessionId: 1,
+    number: '16',
     implementationLag: 7,
     status: 'active',
     title: 'Restauration mondiale des écosystèmes naturels : reboisement, tourbières et zones humides',
@@ -1239,18 +1240,18 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.94, 2.17, 2.55, 2.94, 3.43],
       },
       forest: {
-        baseline:  [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6],
-        decided:   [80.0, 79.2, 78.6, 78.3, 78.3, 77.9, 77.2, 75.9, 71.7],
-        pessimist: [80.0, 79.2, 78.3, 77.9, 77.0, 75.2, 71.7, 68.3, 61.4],
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.5, 57.2, 57.0, 56.7, 56.2, 55.4, 54.2, 51.4],
+        pessimist: [58.0, 57.5, 57.0, 56.7, 56.0, 54.6, 52.1, 49.6, 45.2],
       },
     },
   },
 
-  // ─── Décision 42-17 — BECCS ───────────────────────────────────────────────
+  // ─── Décision 17 — BECCS ───────────────────────────────────────────────
   {
-    id: 'dec-42-17',
-    sessionId: 42,
-    number: '42-17',
+    id: 'dec-17',
+    sessionId: 1,
+    number: '17',
     implementationLag: 12,
     status: 'active',
     title: 'Déploiement de la bioénergie avec captage et stockage du carbone (BECCS) à grande échelle',
@@ -1323,9 +1324,10 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.59, 2.97, 3.46],
       },
       forest: {
-        baseline:  [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6],
-        decided:   [80.0, 79.2, 78.2, 77.2, 75.4, 72.8, 67.9, 63.4, 56.8],
-        pessimist: [80.0, 79.2, 78.2, 77.2, 75.4, 72.7, 67.6, 63.2, 56.6],
+        // BECCS exerce une pression négative sur les forêts primaires (biomasse)
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.5, 56.9, 56.3, 55.0, 53.1, 49.8, 46.7, 42.4],
+        pessimist: [58.0, 57.5, 56.9, 56.3, 55.0, 53.1, 49.7, 46.5, 42.3],
       },
       resources: {
         biomass: { decided: [0, 0, +0.1, +0.3, +0.8, +1.5, +2.0, +2.5, +3.0], pessimist: [0, 0, 0, +0.1, +0.3, +0.7, +1.0, +1.2, +1.5] },
