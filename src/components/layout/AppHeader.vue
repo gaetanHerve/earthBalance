@@ -226,6 +226,7 @@ const navLinks = computed<NavLink[]>(() => [
   { to: '/mitigation-policies', label: t('nav.policies'),     icon: 'fa-vote-yea'        },
   { to: '/correlations',        label: t('nav.correlations'), icon: 'fa-diagram-project' },
   { to: '/simulateur',          label: t('nav.simulator'),    icon: 'fa-flask'           },
+  { to: '/carte-systemique',    label: t('nav.systemic_map'), icon: 'fa-share-nodes'     },
 ])
 
 watch(() => route.path, () => { menuOpen.value = false })
