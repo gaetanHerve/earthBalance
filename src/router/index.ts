@@ -37,6 +37,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/SimulateurView.vue'),
     meta: { title: 'Simulateur — EarthBalance' },
   },
+  {
+    path: '/carte-systemique',
+    name: 'systemicMap',
+    component: () => import('@/views/SystemicMapView.vue'),
+    meta: { title: 'Carte systémique — EarthBalance' },
+  },
 ]
 
 const router = createRouter({
