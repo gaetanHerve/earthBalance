@@ -94,14 +94,16 @@ const store = usePlanetsStore()
 const { limits, radarData, loading, limitsByStatus } = storeToRefs(store)
 
 const simStore = useSimulationStore()
-const { cumulativeCo2Ppm, cumulativeCo2PpmPessimist } = storeToRefs(simStore)
+const { cumulativeCo2Ppm, cumulativeCo2PpmPessimist, cumulativeForest, cumulativeForestPessimist } = storeToRefs(simStore)
 
 function projDecided(id: string): number[] | undefined {
   if (id === 'changement-climatique') return cumulativeCo2Ppm.value
+  if (id === 'usage-terres')          return cumulativeForest.value
   return undefined
 }
 function projPessimist(id: string): number[] | undefined {
   if (id === 'changement-climatique') return cumulativeCo2PpmPessimist.value
+  if (id === 'usage-terres')          return cumulativeForestPessimist.value
   return undefined
 }
 

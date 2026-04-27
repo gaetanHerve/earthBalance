@@ -103,15 +103,15 @@ export const ecologicalCharts: EcologicalCharts = {
   },
 
   forest: {
-    label: 'Forêt tropicale humide restante',
-    unit: '% TMF (base 1990 = 100 %)',
+    label: 'Forêts primaires mondiales restantes',
+    unit: '% de la couverture originelle',
     color: '#00ff88',
-    criticalThreshold: 55,
-    current: 80,
-    source: 'Vancutsem et al. (2021), Science Advances — JRC Tropical Moist Forest dataset ; Global Forest Watch / GLAD-UMD (2024)',
+    criticalThreshold: 75,
+    current: 58,
+    source: 'Mackey et al. (2015) — Intact Forest Landscapes ; Steffen et al. (2015) — Planetary Boundaries ; Curtis et al. (2018), Science',
     timeSeries: {
-      years:  [1990,  1995,  2000,  2005,  2010,  2015,  2020,  2024],
-      values: [100.0,  96.1,  93.0,  90.2,  87.4,  84.5,  82.1,  80.0],
+      years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
+      values: [  71,   68,   66,   64,   62,   60,   59,   58],
     },
   },
 

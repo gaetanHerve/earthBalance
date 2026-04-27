@@ -92,7 +92,7 @@
           </div>
           <div class="flex items-center gap-2">
             <span v-if="forestLineMode" class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">
-              % TMF
+              % prim.
             </span>
             <button
               class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
@@ -136,8 +136,8 @@
             :datasets="forestDatasets"
             :height="180"
             :current-year="gameStore.currentYear"
-            :y-min="40"
-            :y-max="105"
+            :y-min="20"
+            :y-max="80"
             :aria-label="t('dashboard.forest_aria')"
           />
         </template>

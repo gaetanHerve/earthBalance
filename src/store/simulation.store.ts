@@ -27,11 +27,11 @@ export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
 const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
 
 // Concentration atmosphérique de CO₂ (ppm) — SSP2-4.5 (source : CMIP6 / Meinshausen et al.)
-export const BASELINE_CO2_PPM = [421, 425, 429, 433, 441, 453, 480, 502, 522, 549]
+export const BASELINE_CO2_PPM = [421, 425, 429, 433, 443, 460, 487, 510, 527, 549]
 
-// Forêt tropicale humide restante (% TMF, base 1990 = 100%) — SSP2-4.5
-// Recalibré sur données Vancutsem et al. 2021 (JRC/TMF) : 80 % en 2024
-export const BASELINE_FOREST = [80.0, 79.2, 78.3, 77.5, 75.9, 73.4, 69.0, 64.8, 58.6, 46.9]
+// Forêts primaires mondiales restantes (% de la couverture originelle) — SSP2-4.5
+// Source : Mackey et al. 2015 / Steffen et al. 2015 (limite planétaire usage des terres) : 58 % en 2024
+export const BASELINE_FOREST = [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5, 42.0]
 
 // Total énergie primaire mondiale (TWh, hors biomasse traditionnelle) — IEA STEPS / SSP2-4.5
 // Utilisé pour convertir les parts % du mix en valeurs absolues TWh
