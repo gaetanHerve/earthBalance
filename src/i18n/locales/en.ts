@@ -18,6 +18,8 @@ export default {
     year_aria:        'Game year',
     end_round:        'End round',
     end_round_aria:   'End the current game round',
+    reset_game:       'Reset',
+    reset_game_aria:  'Reset the game and start over',
     horizon_label:    'Horizon',
     horizon_selector: 'Time horizon selector',
     horizons: {

@@ -50,7 +50,7 @@
           <!-- Session -->
           <div class="flex items-center gap-2 text-xs text-slate-400">
             <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
-            {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#1</span>
+            {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#{{ gameStore.sessionNumber }}</span>
           </div>
 
           <!-- Année courante — game HUD -->
@@ -83,6 +83,16 @@
           >
             <i class="fa fa-forward-step" aria-hidden="true"></i>
             {{ t('header.end_round') }}
+          </button>
+
+          <!-- Réinitialiser -->
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-red-400 outline-none border-red-800/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 cursor-pointer"
+            :aria-label="t('header.reset_game_aria')"
+            @click="gameStore.resetGame()"
+          >
+            <i class="fa fa-rotate-left" aria-hidden="true"></i>
+            {{ t('header.reset_game') }}
           </button>
 
         </div>
@@ -148,7 +158,7 @@
       <div class="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-eb-border">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot inline-block" aria-hidden="true"></span>
-          {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#42</span>
+          {{ t('header.session_label') }} <span class="text-eb-green font-bold ml-1">#{{ gameStore.sessionNumber }}</span>
         </div>
         <div class="flex items-center gap-1">
           <i class="fa fa-users text-eb-cyan" aria-hidden="true"></i>
@@ -157,8 +167,8 @@
         </div>
       </div>
 
-      <!-- Fin de tour -->
-      <div class="pt-1 border-t border-eb-border">
+      <!-- Fin de tour + Réinitialiser -->
+      <div class="pt-1 border-t border-eb-border space-y-2">
         <button
           class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
           :class="canEndRound
@@ -171,6 +181,14 @@
         >
           <i class="fa fa-forward-step" aria-hidden="true"></i>
           {{ t('header.end_round') }}
+        </button>
+        <button
+          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-red-400 outline-none border-red-800/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 cursor-pointer"
+          :aria-label="t('header.reset_game_aria')"
+          @click="gameStore.resetGame()"
+        >
+          <i class="fa fa-rotate-left" aria-hidden="true"></i>
+          {{ t('header.reset_game') }}
         </button>
       </div>
 

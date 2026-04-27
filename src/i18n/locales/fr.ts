@@ -18,6 +18,8 @@ export default {
     year_aria:        'Année de jeu',
     end_round:        'Fin de tour',
     end_round_aria:   'Terminer le tour de jeu en cours',
+    reset_game:       'Réinitialiser',
+    reset_game_aria:  'Réinitialiser la partie et recommencer depuis le début',
     horizon_label:    'Horizon',
     horizon_selector: "Sélecteur d'horizon temporel",
     horizons: {
