@@ -119,7 +119,7 @@ export default {
     water_title:       'Accès eau potable',
     water_aria:        "Accès à l'eau potable : {value}% de la population mondiale",
     water_note:        'Population mondiale',
-    conflicts_title:   'Conflits géopolitiques',
+    conflicts_title:   'Tensions géopolitiques',
     health_title:      'Santé globale',
     inequality_title:  'Inégalités (Gini)',
   },

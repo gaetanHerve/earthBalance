@@ -32,7 +32,7 @@ export const societalIndicators: SocietalIndicators = {
   },
 
   geopoliticalConflicts: {
-    label: 'Conflits géopolitiques',
+    label: 'Tensions géopolitiques',
     icon: 'fa-shield-halved',
     color: '#ff5050',
     subIndicators: [

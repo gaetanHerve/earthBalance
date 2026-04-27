@@ -14,7 +14,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
-import type { MitigationPolicy, MitigationPolicyProjections, EnergyMixKey, ResourceKey } from '@/types/index'
+import type { MitigationPolicy, MitigationPolicyProjections, EnergyMixKey, ResourceKey, SocietalKey } from '@/types/index'
 import { useMitigationPoliciesStore } from './mitigationPolicies.store'
 import { GAME_CONFIG } from '@/config/game.config'
 
@@ -58,6 +58,32 @@ export const BASELINE_RESOURCES: Record<ResourceKey, number[]> = {
   biomass:     [17.1, 17.4, 17.7, 18.0, 18.6, 19.5, 21.0, 22.5, 24.0],
   fossilFuels: [13.9, 14.3, 14.7, 15.0, 15.5, 16.0, 16.5, 16.8, 17.0],
 }
+
+// Sécurité alimentaire (indice FAO /100) — SSP2-4.5 : dégradation après 2030 sous pression climatique
+// Source : AR6 WGII Ch.5 (agricultural systems) ; FAO SOFI 2023
+export const BASELINE_FOOD_SECURITY = [63, 62.8, 62.5, 62, 61, 59.5, 57, 54, 50, 46]
+
+// Accès à l'eau potable (% population mondiale) — SSP2-4.5 : progression continue mais ralentissante
+// Source : WHO/UNICEF JMP ; AR6 WGII Ch.4 (water resources)
+export const BASELINE_WATER_ACCESS = [71, 71.5, 72, 72.5, 73.5, 75, 77, 79, 81, 82]
+
+// Tensions géopolitiques — scores de tension (0-100, plus haut = pire) — SSP2-4.5 sans action
+// Source : AR6 WGII Ch.7 (conflits, migrations) ; ACLED ; UNHCR
+export const BASELINE_RESOURCE_CONFLICTS  = [74, 74.5, 75, 76, 78, 80, 82, 84, 85, 87]
+export const BASELINE_WATER_TENSIONS      = [61, 61.5, 62, 63, 65, 68, 71, 73, 75, 77]
+export const BASELINE_CLIMATE_MIGRATIONS  = [55, 55.5, 56.5, 58, 61, 65, 68, 71, 74, 77]
+
+// Santé globale — SSP2-4.5 sans action
+// Source : AR6 WGII Ch.7 (santé) ; OMS GHO ; Lancet Countdown on Health & Climate Change
+export const BASELINE_LIFE_EXPECTANCY      = [73.4, 73.3, 73.2, 73.0, 72.5, 71.8, 70.5, 69.0, 67.0, 65.0]  // années
+export const BASELINE_RESPIRATORY_DISEASES = [18, 19, 20, 21, 23, 26, 30, 34, 38, 42]                        // % d'augmentation vs 2000
+export const BASELINE_WHO_HEALTH_INDEX     = [67, 66.5, 66, 65.5, 64.5, 63, 61, 59, 57, 55]                 // /100
+
+// Inégalités — SSP2-4.5 sans action : les impacts climatiques creusent les inégalités
+// Source : AR6 WGII Ch.16 (pauvreté & inégalité) ; World Inequality Report 2022 ; WID.world
+export const BASELINE_GINI_COEFFICIENT     = [0.670, 0.671, 0.673, 0.675, 0.679, 0.684, 0.692, 0.700, 0.708, 0.715]
+export const BASELINE_WEALTH_CONCENTRATION = [45, 45.3, 45.6, 46.0, 47.0, 48.5, 50.5, 52.5, 54.5, 56.0]    // % richesse du top 1%
+export const BASELINE_EDUCATION_ACCESS     = [61, 61.3, 61.5, 61.8, 62.3, 63.0, 63.5, 64.0, 64.3, 64.5]    // % population avec accès éducation secondaire+
 
 const SELECTED_KEY  = 'eb_simulation_selected'
 const BASELINE_KEY  = 'eb_simulation_baseline_mode'
@@ -159,6 +185,13 @@ function energyMixDeltaArr(dec: MitigationPolicy, effectiveStart: number, cat: E
 function resourceDeltaArr(dec: MitigationPolicy, effectiveStart: number, res: ResourceKey, scenario: 'decided' | 'pessimist'): number[] {
   const proj = dec.projections as Partial<MitigationPolicyProjections>
   const deltas = proj?.resources?.[res]?.[scenario]
+  if (!Array.isArray(deltas)) return SIM_LABELS.map(() => 0)
+  return shiftedDeltasDirect(deltas, effectiveStart)
+}
+
+function societalDeltaArr(dec: MitigationPolicy, effectiveStart: number, key: SocietalKey, scenario: 'decided' | 'pessimist'): number[] {
+  const proj = dec.projections as Partial<MitigationPolicyProjections>
+  const deltas = proj?.societal?.[key]?.[scenario]
   if (!Array.isArray(deltas)) return SIM_LABELS.map(() => 0)
   return shiftedDeltasDirect(deltas, effectiveStart)
 }
@@ -395,6 +428,182 @@ export const useSimulationStore = defineStore('simulation', () => {
     return result
   })
 
+  const cumulativeFoodSecurity = computed<number[]>(() =>
+    BASELINE_FOOD_SECURITY.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'foodSecurity', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeFoodSecurityPessimist = computed<number[]>(() =>
+    BASELINE_FOOD_SECURITY.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'foodSecurity', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWaterAccess = computed<number[]>(() =>
+    BASELINE_WATER_ACCESS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'waterAccess', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWaterAccessPessimist = computed<number[]>(() =>
+    BASELINE_WATER_ACCESS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'waterAccess', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeResourceConflicts = computed<number[]>(() =>
+    BASELINE_RESOURCE_CONFLICTS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'resourceConflicts', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeResourceConflictsPessimist = computed<number[]>(() =>
+    BASELINE_RESOURCE_CONFLICTS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'resourceConflicts', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWaterTensions = computed<number[]>(() =>
+    BASELINE_WATER_TENSIONS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'waterTensions', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWaterTensionsPessimist = computed<number[]>(() =>
+    BASELINE_WATER_TENSIONS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'waterTensions', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeClimateMigrations = computed<number[]>(() =>
+    BASELINE_CLIMATE_MIGRATIONS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'climateMigrations', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeClimateMigrationsPessimist = computed<number[]>(() =>
+    BASELINE_CLIMATE_MIGRATIONS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'climateMigrations', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeLifeExpectancy = computed<number[]>(() =>
+    BASELINE_LIFE_EXPECTANCY.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'lifeExpectancy', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeLifeExpectancyPessimist = computed<number[]>(() =>
+    BASELINE_LIFE_EXPECTANCY.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'lifeExpectancy', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeRespiratoryDiseases = computed<number[]>(() =>
+    BASELINE_RESPIRATORY_DISEASES.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'respiratoryDiseases', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeRespiratoryDiseasesPessimist = computed<number[]>(() =>
+    BASELINE_RESPIRATORY_DISEASES.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'respiratoryDiseases', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWhoHealthIndex = computed<number[]>(() =>
+    BASELINE_WHO_HEALTH_INDEX.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'whoHealthIndex', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWhoHealthIndexPessimist = computed<number[]>(() =>
+    BASELINE_WHO_HEALTH_INDEX.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'whoHealthIndex', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeGiniCoefficient = computed<number[]>(() =>
+    BASELINE_GINI_COEFFICIENT.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'giniCoefficient', 'decided')[i], 0)
+      return Math.round((base + delta) * 1000) / 1000
+    })
+  )
+
+  const cumulativeGiniCoefficientPessimist = computed<number[]>(() =>
+    BASELINE_GINI_COEFFICIENT.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'giniCoefficient', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 1000) / 1000
+    })
+  )
+
+  const cumulativeWealthConcentration = computed<number[]>(() =>
+    BASELINE_WEALTH_CONCENTRATION.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'wealthConcentration', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeWealthConcentrationPessimist = computed<number[]>(() =>
+    BASELINE_WEALTH_CONCENTRATION.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'wealthConcentration', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeEducationAccess = computed<number[]>(() =>
+    BASELINE_EDUCATION_ACCESS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'educationAccess', 'decided')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
+  const cumulativeEducationAccessPessimist = computed<number[]>(() =>
+    BASELINE_EDUCATION_ACCESS.map((base, i) => {
+      const delta = selectedMitigationPolicies.value.reduce(
+        (s, dec) => s + societalDeltaArr(dec, effectiveStartOf(dec.id), 'educationAccess', 'pessimist')[i], 0)
+      return Math.round((base + delta) * 10) / 10
+    })
+  )
+
   // ─── Projections simulateur (séquence grain-based) ────────────────────────
   // Utilisées par SimulateurView.vue.
   // Toutes les politiques : effectiveStart = 2024 + index × grain + implementationLag
@@ -526,6 +735,28 @@ export const useSimulationStore = defineStore('simulation', () => {
     cumulativeEnergyMixPessimist,
     cumulativeResources,
     cumulativeResourcesPessimist,
+    cumulativeFoodSecurity,
+    cumulativeFoodSecurityPessimist,
+    cumulativeWaterAccess,
+    cumulativeWaterAccessPessimist,
+    cumulativeResourceConflicts,
+    cumulativeResourceConflictsPessimist,
+    cumulativeWaterTensions,
+    cumulativeWaterTensionsPessimist,
+    cumulativeClimateMigrations,
+    cumulativeClimateMigrationsPessimist,
+    cumulativeLifeExpectancy,
+    cumulativeLifeExpectancyPessimist,
+    cumulativeRespiratoryDiseases,
+    cumulativeRespiratoryDiseasesPessimist,
+    cumulativeWhoHealthIndex,
+    cumulativeWhoHealthIndexPessimist,
+    cumulativeGiniCoefficient,
+    cumulativeGiniCoefficientPessimist,
+    cumulativeWealthConcentration,
+    cumulativeWealthConcentrationPessimist,
+    cumulativeEducationAccess,
+    cumulativeEducationAccessPessimist,
     simCumulativeCo2,
     simCumulativeCo2Pessimist,
     simCumulativeTemp,

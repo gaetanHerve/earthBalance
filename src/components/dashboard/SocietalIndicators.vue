@@ -17,13 +17,13 @@
         </div>
         <GaugeChart
           canvas-id="foodGauge"
-          :value="soc.foodSecurity.current"
+          :value="foodSecurityCurrent"
           track-color="#facc15"
           :size="110"
           :font-size="22"
-          :aria-label="t('dashboard.food_aria', { value: soc.foodSecurity.current })"
+          :aria-label="t('dashboard.food_aria', { value: foodSecurityCurrent })"
         >
-          <span class="text-xl font-black text-yellow-400">{{ soc.foodSecurity.current }}</span>
+          <span class="text-xl font-black text-yellow-400">{{ foodSecurityCurrent }}</span>
           <span class="text-xs text-slate-500">/100</span>
         </GaugeChart>
         <div class="mt-2 text-xs text-slate-500">{{ t('dashboard.food_note') }}</div>
@@ -37,19 +37,19 @@
         </div>
         <GaugeChart
           canvas-id="waterGauge"
-          :value="soc.waterAccess.current"
+          :value="waterAccessCurrent"
           track-color="#38bdf8"
           :size="110"
           :font-size="22"
-          :aria-label="t('dashboard.water_aria', { value: soc.waterAccess.current })"
+          :aria-label="t('dashboard.water_aria', { value: waterAccessCurrent })"
         >
-          <span class="text-xl font-black text-blue-400">{{ soc.waterAccess.current }}</span>
+          <span class="text-xl font-black text-blue-400">{{ waterAccessCurrent }}</span>
           <span class="text-xs text-slate-500">%</span>
         </GaugeChart>
         <div class="mt-2 text-xs text-slate-500">{{ t('dashboard.water_note') }}</div>
       </EbCard>
 
-      <!-- Conflits géopolitiques -->
+      <!-- Tensions géopolitiques -->
       <EbCard>
         <div class="text-xs font-bold text-slate-400 mb-3">
           <i class="fa fa-shield-halved text-red-400 mr-1" aria-hidden="true"></i>
@@ -57,7 +57,7 @@
         </div>
         <div class="space-y-2">
           <div
-            v-for="indicator in soc.geopoliticalConflicts.subIndicators"
+            v-for="indicator in geopoliticalIndicators"
             :key="indicator.label"
           >
             <div class="flex justify-between text-xs mb-1">
@@ -89,7 +89,7 @@
         </div>
         <div class="space-y-2">
           <div
-            v-for="stat in soc.globalHealth.stats"
+            v-for="stat in globalHealthStats"
             :key="stat.label"
             class="flex items-center justify-between bg-eb-mid rounded-lg px-3 py-2 border border-eb-border"
           >
@@ -107,7 +107,7 @@
         </div>
         <div class="space-y-2">
           <div
-            v-for="stat in soc.inequality.stats"
+            v-for="stat in inequalityStats"
             :key="stat.label"
             class="flex items-center justify-between bg-eb-mid rounded-lg px-3 py-2 border border-eb-border"
           >
@@ -122,14 +122,122 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 import SectionTitle from '@/components/layout/SectionTitle.vue'
 import EbCard from '@/components/layout/EbCard.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
+import { useGameStore } from '@/store/game.store'
+import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
 
 import type { SocietalIndicators } from '@/types/index'
 
 const { t } = useI18n()
 
-defineProps<{ soc: SocietalIndicators }>()
+const props = defineProps<{ soc: SocietalIndicators }>()
+
+const gameStore = useGameStore()
+const simStore  = useSimulationStore()
+const {
+  cumulativeFoodSecurity, cumulativeFoodSecurityPessimist,
+  cumulativeWaterAccess, cumulativeWaterAccessPessimist,
+  cumulativeResourceConflicts, cumulativeResourceConflictsPessimist,
+  cumulativeWaterTensions, cumulativeWaterTensionsPessimist,
+  cumulativeClimateMigrations, cumulativeClimateMigrationsPessimist,
+  cumulativeLifeExpectancy, cumulativeLifeExpectancyPessimist,
+  cumulativeRespiratoryDiseases, cumulativeRespiratoryDiseasesPessimist,
+  cumulativeWhoHealthIndex, cumulativeWhoHealthIndexPessimist,
+  cumulativeGiniCoefficient, cumulativeGiniCoefficientPessimist,
+  cumulativeWealthConcentration, cumulativeWealthConcentrationPessimist,
+  cumulativeEducationAccess, cumulativeEducationAccessPessimist,
+} = storeToRefs(simStore)
+
+const BLEND = 0.5
+
+function interpolateAtYear(year: number, labels: number[], values: number[]): number {
+  if (year <= labels[0]) return values[0]
+  if (year >= labels[labels.length - 1]) return values[values.length - 1]
+  for (let i = 0; i < labels.length - 1; i++) {
+    if (year >= labels[i] && year <= labels[i + 1]) {
+      const t = (year - labels[i]) / (labels[i + 1] - labels[i])
+      return values[i] + t * (values[i + 1] - values[i])
+    }
+  }
+  return values[values.length - 1]
+}
+
+function blendedAtYear(year: number, decided: number[], pessimist: number[]): number {
+  const d = interpolateAtYear(year, SIM_LABELS, decided)
+  const p = interpolateAtYear(year, SIM_LABELS, pessimist)
+  return d * (1 - BLEND) + p * BLEND
+}
+
+const foodSecurityCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeFoodSecurity.value, cumulativeFoodSecurityPessimist.value) * 10) / 10
+)
+
+const waterAccessCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWaterAccess.value, cumulativeWaterAccessPessimist.value) * 10) / 10
+)
+
+const resourceConflictsCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeResourceConflicts.value, cumulativeResourceConflictsPessimist.value) * 10) / 10
+)
+
+const waterTensionsCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWaterTensions.value, cumulativeWaterTensionsPessimist.value) * 10) / 10
+)
+
+const climateMigrationsCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeClimateMigrations.value, cumulativeClimateMigrationsPessimist.value) * 10) / 10
+)
+
+const geopoliticalIndicators = computed(() => [
+  { label: props.soc.geopoliticalConflicts.subIndicators[0].label, value: resourceConflictsCurrent.value, color: props.soc.geopoliticalConflicts.subIndicators[0].color },
+  { label: props.soc.geopoliticalConflicts.subIndicators[1].label, value: waterTensionsCurrent.value,     color: props.soc.geopoliticalConflicts.subIndicators[1].color },
+  { label: props.soc.geopoliticalConflicts.subIndicators[2].label, value: climateMigrationsCurrent.value, color: props.soc.geopoliticalConflicts.subIndicators[2].color },
+])
+
+const lifeExpectancyCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeLifeExpectancy.value, cumulativeLifeExpectancyPessimist.value) * 10) / 10
+)
+
+const respiratoryDiseasesCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeRespiratoryDiseases.value, cumulativeRespiratoryDiseasesPessimist.value) * 10) / 10
+)
+
+const whoHealthIndexCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWhoHealthIndex.value, cumulativeWhoHealthIndexPessimist.value) * 10) / 10
+)
+
+function formatRespiratoryDiseases(v: number): string {
+  if (v > 0.05)  return `↑ ${Math.round(v)}%`
+  if (v < -0.05) return `↓ ${Math.round(-v)}%`
+  return `→ 0%`
+}
+
+const globalHealthStats = computed(() => [
+  { label: props.soc.globalHealth.stats[0].label, value: `${lifeExpectancyCurrent.value.toFixed(1)} ans`,      color: props.soc.globalHealth.stats[0].color },
+  { label: props.soc.globalHealth.stats[1].label, value: formatRespiratoryDiseases(respiratoryDiseasesCurrent.value), color: props.soc.globalHealth.stats[1].color },
+  { label: props.soc.globalHealth.stats[2].label, value: `${Math.round(whoHealthIndexCurrent.value)}/100`,     color: props.soc.globalHealth.stats[2].color },
+])
+
+const giniCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeGiniCoefficient.value, cumulativeGiniCoefficientPessimist.value) * 1000) / 1000
+)
+
+const wealthConcentrationCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWealthConcentration.value, cumulativeWealthConcentrationPessimist.value) * 10) / 10
+)
+
+const educationAccessCurrent = computed(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, cumulativeEducationAccess.value, cumulativeEducationAccessPessimist.value) * 10) / 10
+)
+
+const inequalityStats = computed(() => [
+  { label: props.soc.inequality.stats[0].label, value: giniCurrent.value.toFixed(2),                         color: props.soc.inequality.stats[0].color },
+  { label: props.soc.inequality.stats[1].label, value: `${wealthConcentrationCurrent.value.toFixed(1)}% richesse`, color: props.soc.inequality.stats[1].color },
+  { label: props.soc.inequality.stats[2].label, value: `${Math.round(educationAccessCurrent.value)}%`,       color: props.soc.inequality.stats[2].color },
+])
 </script>
