@@ -210,6 +210,7 @@ export interface EnergyMixDeltaSeries {
 
 export type EnergyMixKey = 'coal' | 'oil' | 'gas' | 'nuclear' | 'solar' | 'wind' | 'hydro' | 'autres'
 export type ResourceKey  = 'minerals' | 'biomass' | 'fossilFuels'
+export type SocietalKey  = 'foodSecurity' | 'waterAccess' | 'resourceConflicts' | 'waterTensions' | 'climateMigrations' | 'lifeExpectancy' | 'respiratoryDiseases' | 'whoHealthIndex' | 'giniCoefficient' | 'wealthConcentration' | 'educationAccess'
 
 export interface MitigationPolicyProjections {
   labels: number[]
@@ -218,6 +219,7 @@ export interface MitigationPolicyProjections {
   forest?: ProjectionSeries
   energyMix?: Partial<Record<EnergyMixKey, EnergyMixDeltaSeries>>
   resources?: Partial<Record<ResourceKey, EnergyMixDeltaSeries>>
+  societal?: Partial<Record<SocietalKey, EnergyMixDeltaSeries>>
 }
 
 export interface IpccReference {

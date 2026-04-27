@@ -24,7 +24,7 @@
       >{{ t('dashboard.global_toggle_detail') }}</button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 xl:grid-flow-dense gap-4">
 
       <!-- CO2 — jauge ou courbe selon le toggle -->
       <EbCard

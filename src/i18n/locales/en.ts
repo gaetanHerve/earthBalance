@@ -119,7 +119,7 @@ export default {
     water_title:       'Access to drinking water',
     water_aria:        'Access to drinking water: {value}% of the world population',
     water_note:        'World population',
-    conflicts_title:   'Geopolitical conflicts',
+    conflicts_title:   'Geopolitical tensions',
     health_title:      'Global health',
     inequality_title:  'Inequality (Gini)',
   },
