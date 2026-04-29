@@ -288,10 +288,11 @@ const PRESET_POSITIONS: Record<string, { x: number; y: number }> = {
   resources:     { x:   0, y: 480 },
 
   // ── Atmosphère (haut-centre) ──────────────────────────────────────────────
-  ghg:           { x: 260, y:  90 },
-  temperature:   { x: 430, y:  40 },
-  ocean_acid:    { x: 310, y: 210 },
-  sea_level:     { x: 610, y:  40 },
+  ghg:            { x: 260, y:  90 },
+  temperature:    { x: 430, y:  40 },
+  ocean_acid:     { x: 310, y: 210 },
+  sea_level:      { x: 610, y:  40 },
+  extreme_events: { x: 720, y: 180 },
 
   // ── Tampons écosystémiques (centre) ──────────────────────────────────────
   biodiversity:  { x: 270, y: 340 },
@@ -314,10 +315,11 @@ const PORTRAIT_POSITIONS: Record<string, { x: number; y: number }> = {
   renewable:     { x: 230, y:   0 },
   land_use:      { x: 370, y:   0 },
   resources:     { x: 480, y:   0 },
-  ghg:           { x:  90, y: 260 },
-  temperature:   { x:  40, y: 430 },
-  ocean_acid:    { x: 210, y: 310 },
-  sea_level:     { x:  40, y: 610 },
+  ghg:            { x:  90, y: 260 },
+  temperature:    { x:  40, y: 430 },
+  ocean_acid:     { x: 210, y: 310 },
+  sea_level:      { x:  40, y: 610 },
+  extreme_events: { x: 180, y: 720 },
   biodiversity:  { x: 340, y: 270 },
   forest:        { x: 210, y: 590 },
   freshwater:    { x: 230, y: 470 },
