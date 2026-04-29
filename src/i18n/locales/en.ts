@@ -316,8 +316,10 @@ export default {
     outgoing_negative: 'Outgoing beneficial',
     incoming_count:    'Incoming',
     conn_list_title:   'Relationship details',
-    enter_fullscreen:  'Full screen',
-    exit_fullscreen:   'Exit full screen',
+    enter_fullscreen:      'Full screen',
+    exit_fullscreen:       'Exit full screen',
+    feedback_loops_label:  'Feedback loops',
+    node_in_loops:         'Participates in loops',
   },
   game_intro: {
     p1:  '2024. The sixth IPCC assessment report has just been published.',

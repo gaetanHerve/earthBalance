@@ -25,6 +25,55 @@ export interface SysEdge {
   }
 }
 
+export interface FeedbackLoop {
+  id:          string
+  label:       string
+  labelEn:     string
+  nodeIds:     string[]
+  edgeIds:     string[]
+  color:       string
+  severity:    'critical' | 'high' | 'moderate'
+  warning?:    boolean
+}
+
+export const feedbackLoops: FeedbackLoop[] = [
+  {
+    id: 'permafrost_loop',
+    label: '⚠ Pergélisol', labelEn: '⚠ Permafrost',
+    nodeIds: ['temperature', 'permafrost', 'ghg'],
+    edgeIds: ['temp_perm', 'perm_ghg', 'ghg_temp'],
+    color: '#ff5050', severity: 'critical', warning: true,
+  },
+  {
+    id: 'forest_carbon_loop',
+    label: 'Forêt-Carbone', labelEn: 'Forest-Carbon',
+    nodeIds: ['temperature', 'forest', 'ghg'],
+    edgeIds: ['temp_forest', 'forest_ghg', 'ghg_temp'],
+    color: '#00ff88', severity: 'high',
+  },
+  {
+    id: 'extremes_forest_loop',
+    label: 'Extrêmes-Forêts', labelEn: 'Extremes-Forests',
+    nodeIds: ['extreme_events', 'forest', 'ghg'],
+    edgeIds: ['ext_forest', 'forest_ghg', 'ghg_ext'],
+    color: '#fb923c', severity: 'high',
+  },
+  {
+    id: 'health_inequality_loop',
+    label: 'Santé-Inégalités', labelEn: 'Health-Inequality',
+    nodeIds: ['health', 'inequality'],
+    edgeIds: ['ineq_health', 'health_ineq'],
+    color: '#00e5ff', severity: 'moderate',
+  },
+  {
+    id: 'geo_migration_loop',
+    label: 'Géopolitique-Migration', labelEn: 'Geopolitics-Migration',
+    nodeIds: ['migration', 'geopolitical'],
+    edgeIds: ['mig_geo', 'geo_mig'],
+    color: '#a78bfa', severity: 'moderate',
+  },
+]
+
 export const CATEGORY_COLORS: Record<NodeCategory, string> = {
   physical:  '#fb923c',
   ecosystem: '#00ff88',

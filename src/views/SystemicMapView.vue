@@ -63,6 +63,29 @@
       </button>
     </div>
 
+    <!-- Boucles de rétroaction -->
+    <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-eb-border/50">
+      <span class="text-xs text-slate-500 uppercase tracking-wider shrink-0">
+        <i class="fa fa-rotate mr-1" aria-hidden="true"></i>
+        {{ t('systemic_map.feedback_loops_label') }}
+      </span>
+      <button
+        v-for="loop in feedbackLoops"
+        :key="loop.id"
+        @click="toggleLoop(loop.id)"
+        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-150"
+        :style="{
+          borderColor: loop.color,
+          color: activeLoop === loop.id ? loop.color : '#64748b',
+          backgroundColor: activeLoop === loop.id ? loop.color + '18' : 'transparent',
+          opacity: activeLoop !== null && activeLoop !== loop.id ? '0.4' : '1',
+        }"
+        :aria-pressed="activeLoop === loop.id"
+      >
+        {{ locale === 'fr' ? loop.label : loop.labelEn }}
+      </button>
+    </div>
+
     <!-- Graph area -->
     <div
       ref="graphContainer"
@@ -167,6 +190,27 @@
                 </div>
               </div>
 
+              <!-- Boucles de rétroaction du nœud -->
+              <div v-if="selected.nodeLoops?.length" class="text-xs border border-eb-border rounded-lg p-3 mb-4">
+                <div class="text-slate-400 font-medium mb-2">{{ t('systemic_map.node_in_loops') }}</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    v-for="loop in selected.nodeLoops"
+                    :key="loop.id"
+                    @click="toggleLoop(loop.id)"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all duration-150"
+                    :style="{
+                      borderColor: loop.color,
+                      color: activeLoop === loop.id ? loop.color : '#94a3b8',
+                      backgroundColor: activeLoop === loop.id ? loop.color + '18' : 'transparent',
+                    }"
+                    :aria-pressed="activeLoop === loop.id"
+                  >
+                    {{ locale === 'fr' ? loop.label : loop.labelEn }}
+                  </button>
+                </div>
+              </div>
+
               <!-- Liste des relations (repliables) -->
               <div v-if="selected.connectedEdges?.length">
                 <div class="text-xs text-slate-400 font-medium mb-2">{{ t('systemic_map.conn_list_title') }}</div>
@@ -250,9 +294,9 @@ import { useI18n } from 'vue-i18n'
 import cytoscape from 'cytoscape'
 import type { Core, NodeSingular, EdgeSingular } from 'cytoscape'
 import {
-  systemicNodes, systemicEdges,
+  systemicNodes, systemicEdges, feedbackLoops,
   CATEGORY_COLORS, CATEGORY_BORDER, EDGE_COLORS,
-  type NodeCategory, type EdgeType,
+  type NodeCategory, type EdgeType, type FeedbackLoop,
 } from '@/data/systemicGraph'
 
 const { t, locale } = useI18n()
@@ -375,6 +419,7 @@ interface SelectedInfo {
   outNegative?:    number
   incoming?:       number
   connectedEdges?: EdgeListItem[]
+  nodeLoops?:      FeedbackLoop[]
   // arête
   edgeType?:      EdgeType
   sourceLabel?:   string
@@ -393,7 +438,48 @@ const loading    = ref(true)
 const showHint   = ref(true)
 const isFullscreen = ref(false)
 const visibleCategories = ref<Set<NodeCategory>>(new Set(['physical', 'ecosystem', 'societal']))
-const selected   = ref<SelectedInfo | null>(null)
+const selected    = ref<SelectedInfo | null>(null)
+const activeLoop  = ref<string | null>(null)
+
+function getNodeLoops(nodeId: string): FeedbackLoop[] {
+  return feedbackLoops.filter(l => l.nodeIds.includes(nodeId))
+}
+
+function activateLoop(loopId: string): void {
+  if (!cy) return
+  clearSelection()
+  activeLoop.value = loopId
+  const loop = feedbackLoops.find(l => l.id === loopId)
+  if (!loop) return
+
+  cy.elements().addClass('dimmed')
+  loop.nodeIds.forEach(id => {
+    const el = cy!.getElementById(id)
+    el.removeClass('dimmed')
+    el.style({ 'border-color': loop.color, 'border-width': 4 })
+  })
+  loop.edgeIds.forEach(id => {
+    const el = cy!.getElementById(id)
+    el.removeClass('dimmed')
+    el.style({ 'line-color': loop.color, 'target-arrow-color': loop.color, 'width': 3, 'opacity': 1 })
+  })
+}
+
+function deactivateLoop(): void {
+  if (!cy) return
+  activeLoop.value = null
+  cy.elements()
+    .removeClass('dimmed')
+    .removeStyle('border-color border-width line-color target-arrow-color width opacity')
+}
+
+function toggleLoop(loopId: string): void {
+  if (activeLoop.value === loopId) {
+    deactivateLoop()
+  } else {
+    activateLoop(loopId)
+  }
+}
 
 function onFullscreenChange(): void {
   const leaving = isFullscreen.value && !document.fullscreenElement
@@ -570,6 +656,7 @@ function initCytoscape() {
 
   cy.on('tap', 'node', (e) => {
     showHint.value = false
+    if (activeLoop.value) deactivateLoop()
     const node = e.target as NodeSingular
     const d    = node.data()
 
@@ -585,6 +672,7 @@ function initCytoscape() {
       outNegative:   node.outgoers('edge').filter('[type="negative"]').length,
       incoming:      node.incomers('edge').length,
       connectedEdges: buildEdgeList(node),
+      nodeLoops:     getNodeLoops(d.id as string),
     }
 
     cy!.elements().addClass('dimmed')
@@ -594,6 +682,7 @@ function initCytoscape() {
 
   cy.on('tap', 'edge', (e) => {
     showHint.value = false
+    if (activeLoop.value) deactivateLoop()
     const edge  = e.target as EdgeSingular
     const d     = edge.data()
     const srcId = edge.source().id()
@@ -620,7 +709,10 @@ function initCytoscape() {
   })
 
   cy.on('tap', (e) => {
-    if (e.target === cy) clearSelection()
+    if (e.target === cy) {
+      clearSelection()
+      deactivateLoop()
+    }
   })
 }
 
