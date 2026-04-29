@@ -305,6 +305,8 @@ export default {
     outgoing_negative: 'Relations bénéfiques sortantes',
     incoming_count:    'Relations entrantes',
     conn_list_title:   'Détail des relations',
+    enter_fullscreen:  'Plein écran',
+    exit_fullscreen:   'Quitter le plein écran',
   },
   game_intro: {
     p1:  "2024. Le sixième rapport du GIEC vient d'être publié.",

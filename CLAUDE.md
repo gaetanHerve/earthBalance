@@ -134,6 +134,11 @@ L'application doit être conforme au RGAA 4.1.2. Le référentiel complet est di
 - Pas de `as any`. Préférer des types union explicites ou des guards plutôt que des casts.
 - Les types partagés entre composants et stores vivent dans `src/types/index.ts`.
 
+### Bonnes pratiques impératives
+
+- **Pas de `setTimeout` comme approximation de timing DOM.** Si du code doit attendre qu'un élément ait ses dimensions finales, utiliser `ResizeObserver`. Si du code doit attendre un rendu Vue, utiliser `nextTick` + `requestAnimationFrame`. Les valeurs de délai arbitraires sont fragiles et non portables.
+- Préférer systématiquement les événements réels aux approximations temporelles : `ResizeObserver` pour les dimensions, `MutationObserver` pour les mutations DOM, callbacks explicites pour les états asynchrones.
+
 ### Conventions i18n
 
 - Le français est la langue source. Ajouter d'abord dans `src/i18n/locales/fr.ts`, puis dans `en.ts` en miroir.

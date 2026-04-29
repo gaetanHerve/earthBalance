@@ -20,7 +20,7 @@
       </div>
 
       <!-- Desktop : nav + contrôles (masqué sur mobile) -->
-      <div class="hidden md:flex items-center gap-4 flex-wrap flex-1 justify-end">
+      <div class="hidden lg:flex items-center gap-4 flex-wrap flex-1 justify-end">
         <nav :aria-label="t('header.main_nav')">
           <ul class="flex items-center gap-1 flex-wrap list-none p-0 m-0">
             <li v-for="link in navLinks" :key="link.to">
@@ -100,7 +100,7 @@
 
       <!-- Année courante — visible uniquement sur mobile, dans la barre principale -->
       <div
-        class="md:hidden flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-500/30 bg-amber-950/20 select-none ml-auto"
+        class="lg:hidden flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-amber-500/30 bg-amber-950/20 select-none ml-auto"
         :aria-label="`${t('header.year_aria')} ${gameStore.currentYear}`"
       >
         <i class="fa fa-hourglass-half text-amber-400 text-xs" aria-hidden="true"></i>
@@ -109,7 +109,7 @@
 
       <!-- Mobile : bouton hamburger -->
       <button
-        class="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-eb-border text-slate-400 hover:text-slate-200 hover:border-eb-cyan/50 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+        class="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-eb-border text-slate-400 hover:text-slate-200 hover:border-eb-cyan/50 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
         :aria-expanded="menuOpen"
         aria-controls="mobile-menu"
         :aria-label="menuOpen ? t('header.close_menu') : t('header.open_menu')"
@@ -124,7 +124,7 @@
     <div
       v-if="menuOpen"
       id="mobile-menu"
-      class="md:hidden border-t border-eb-border bg-eb-dark/95 px-4 py-4 space-y-5"
+      class="lg:hidden border-t border-eb-border bg-eb-dark/95 px-4 py-4 space-y-5"
     >
       <!-- Navigation -->
       <nav :aria-label="t('header.main_nav')">
