@@ -25,6 +25,55 @@ export interface SysEdge {
   }
 }
 
+export interface FeedbackLoop {
+  id:          string
+  label:       string
+  labelEn:     string
+  nodeIds:     string[]
+  edgeIds:     string[]
+  color:       string
+  severity:    'critical' | 'high' | 'moderate'
+  warning?:    boolean
+}
+
+export const feedbackLoops: FeedbackLoop[] = [
+  {
+    id: 'permafrost_loop',
+    label: '⚠ Pergélisol', labelEn: '⚠ Permafrost',
+    nodeIds: ['temperature', 'permafrost', 'ghg'],
+    edgeIds: ['temp_perm', 'perm_ghg', 'ghg_temp'],
+    color: '#ff5050', severity: 'critical', warning: true,
+  },
+  {
+    id: 'forest_carbon_loop',
+    label: 'Forêt-Carbone', labelEn: 'Forest-Carbon',
+    nodeIds: ['temperature', 'forest', 'ghg'],
+    edgeIds: ['temp_forest', 'forest_ghg', 'ghg_temp'],
+    color: '#00ff88', severity: 'high',
+  },
+  {
+    id: 'extremes_forest_loop',
+    label: 'Extrêmes-Forêts', labelEn: 'Extremes-Forests',
+    nodeIds: ['extreme_events', 'forest', 'ghg'],
+    edgeIds: ['ext_forest', 'forest_ghg', 'ghg_ext'],
+    color: '#fb923c', severity: 'high',
+  },
+  {
+    id: 'health_inequality_loop',
+    label: 'Santé-Inégalités', labelEn: 'Health-Inequality',
+    nodeIds: ['health', 'inequality'],
+    edgeIds: ['ineq_health', 'health_ineq'],
+    color: '#00e5ff', severity: 'moderate',
+  },
+  {
+    id: 'geo_migration_loop',
+    label: 'Géopolitique-Migration', labelEn: 'Geopolitics-Migration',
+    nodeIds: ['migration', 'geopolitical'],
+    edgeIds: ['mig_geo', 'geo_mig'],
+    color: '#a78bfa', severity: 'moderate',
+  },
+]
+
 export const CATEGORY_COLORS: Record<NodeCategory, string> = {
   physical:  '#fb923c',
   ecosystem: '#00ff88',
@@ -58,7 +107,7 @@ export const systemicNodes: SysNode[] = [
   },
   {
     data: {
-      id: 'temperature', label: 'Température mondiale', labelEn: 'Global Temperature',
+      id: 'temperature', label: 'Élévation de la température mondiale', labelEn: 'Global Temperature Rise',
       category: 'physical',
       description:   "Anomalie de température de surface mondiale par rapport à l'ère pré-industrielle. Nœud central du système climatique.",
       descriptionEn: 'Global surface temperature anomaly relative to pre-industrial levels. Central node of the climate system.',
@@ -67,7 +116,7 @@ export const systemicNodes: SysNode[] = [
   },
   {
     data: {
-      id: 'sea_level', label: 'Niveau des mers', labelEn: 'Sea Level Rise',
+      id: 'sea_level', label: 'Élévation du niveau des mers', labelEn: 'Sea Level Rise',
       category: 'physical',
       description:   "Élévation du niveau moyen des mers due à la dilatation thermique et à la fonte des glaces continentales.",
       descriptionEn: 'Mean sea level rise due to thermal expansion and continental ice melt.',
@@ -112,7 +161,7 @@ export const systemicNodes: SysNode[] = [
   },
   {
     data: {
-      id: 'fossil_energy', label: 'Énergie fossile', labelEn: 'Fossil Energy',
+      id: 'fossil_energy', label: 'Énergies fossiles', labelEn: 'Fossil Fuels',
       category: 'physical',
       description:   'Production et consommation de combustibles fossiles (charbon, pétrole, gaz), responsables de ~75 % des émissions mondiales de GES.',
       descriptionEn: 'Production and consumption of fossil fuels (coal, oil, gas), responsible for ~75% of global GHG emissions.',
@@ -121,11 +170,21 @@ export const systemicNodes: SysNode[] = [
   },
   {
     data: {
-      id: 'renewable', label: 'Énergie renouvelable', labelEn: 'Renewable Energy',
+      id: 'renewable', label: 'Énergies renouvelables', labelEn: 'Renewable Energies',
       category: 'physical',
       description:   'Production d\'énergie à partir de sources renouvelables (solaire, éolien, hydraulique). Levier majeur de décarbonation — mais avec une demande accrue en minéraux critiques.',
       descriptionEn: 'Energy from renewable sources (solar, wind, hydro). A major decarbonisation lever — but with increased demand for critical minerals.',
       ipccRef: 'AR6 WGIII Ch.6',
+    },
+  },
+
+  {
+    data: {
+      id: 'extreme_events', label: 'Extrêmes climatiques', labelEn: 'Climate Extremes',
+      category: 'physical',
+      description:   'Fréquence et intensité croissantes des événements extrêmes : vagues de chaleur, précipitations extrêmes, sécheresses, cyclones tropicaux et événements composites.',
+      descriptionEn: 'Growing frequency and intensity of extreme events: heat waves, extreme precipitation, droughts, tropical cyclones and compound events.',
+      ipccRef: 'AR6 WGI Ch.11',
     },
   },
 
@@ -141,7 +200,7 @@ export const systemicNodes: SysNode[] = [
   },
   {
     data: {
-      id: 'land_use', label: 'Usage des terres', labelEn: 'Land Use',
+      id: 'land_use', label: "Changement d'utilisation des terres", labelEn: 'Land Use Change',
       category: 'ecosystem',
       description:   'Transformation des écosystèmes naturels par l\'agriculture, l\'élevage et l\'urbanisation. Première cause de déforestation et de perte de biodiversité.',
       descriptionEn: 'Transformation of natural ecosystems by agriculture, livestock and urbanisation. Primary cause of deforestation and biodiversity loss.',
@@ -305,4 +364,18 @@ export const systemicEdges: SysEdge[] = [
 
   // Tensions géopolitiques →
   { data: { id: 'geo_mig', source: 'geopolitical', target: 'migration', type: 'positive', description: "Les conflits armés et l'instabilité politique sont des causes directes de déplacement forcé de populations — boucle géopolitique-migration.", descriptionEn: "Armed conflicts and political instability are direct causes of forced population displacement — a geopolitics-migration feedback loop.", ipccRef: 'AR6 WGII Ch.7' } },
+
+  // → Extrêmes climatiques (entrants)
+  { data: { id: 'ghg_ext',  source: 'ghg',         target: 'extreme_events', type: 'positive', description: "L'attribution scientifique établit que les émissions de GES augmentent directement la fréquence et l'intensité des extrêmes (SPM B.2).", descriptionEn: "Scientific attribution establishes that GHG emissions directly increase the frequency and intensity of extremes (SPM B.2).", ipccRef: 'AR6 WGI SPM B.2' } },
+  { data: { id: 'temp_ext', source: 'temperature',  target: 'extreme_events', type: 'positive', description: "Chaque +0,5°C de réchauffement multiplie la fréquence des extrêmes autrefois rares — effet non linéaire particulièrement marqué au-delà de 2°C.", descriptionEn: "Every +0.5°C of warming multiplies the frequency of once-rare extremes — a non-linear effect particularly marked beyond 2°C.", ipccRef: 'AR6 WGI Ch.11.1' } },
+  { data: { id: 'sea_ext',  source: 'sea_level',    target: 'extreme_events', type: 'positive', description: "La montée du niveau marin amplifie les inondations côtières lors de tempêtes et cyclones, transformant des événements rares en événements fréquents.", descriptionEn: "Sea level rise amplifies coastal flooding during storms and cyclones, turning rare events into frequent ones.", ipccRef: 'AR6 WGI Ch.11.5' } },
+
+  // Extrêmes climatiques →
+  { data: { id: 'ext_food',  source: 'extreme_events', target: 'food_security', type: 'positive', description: "Les sécheresses, inondations et vagues de chaleur extrêmes détruisent les récoltes et perturbent les chaînes d'approvisionnement alimentaires mondiales.", descriptionEn: "Extreme droughts, floods and heat waves destroy harvests and disrupt global food supply chains.", ipccRef: 'AR6 WGII Ch.5' } },
+  { data: { id: 'ext_water', source: 'extreme_events', target: 'water_access',  type: 'positive', description: "Les sécheresses réduisent la disponibilité en eau potable, tandis que les inondations contaminent les sources et détruisent les infrastructures de distribution.", descriptionEn: "Droughts reduce drinking water availability, while floods contaminate sources and destroy distribution infrastructure.", ipccRef: 'AR6 WGII Ch.4' } },
+  { data: { id: 'ext_health',source: 'extreme_events', target: 'health',        type: 'positive', description: "Les vagues de chaleur causent des décès directs par hyperthermie ; les inondations propagent des maladies vectorielles et diarrhéiques ; les incendies dégradent la qualité de l'air.", descriptionEn: "Heat waves cause direct deaths by hyperthermia; floods spread vector-borne and diarrhoeal diseases; wildfires degrade air quality.", ipccRef: 'AR6 WGII Ch.7' } },
+  { data: { id: 'ext_forest',source: 'extreme_events', target: 'forest',        type: 'positive', description: "Les incendies extrêmes, amplifiés par les sécheresses et les vagues de chaleur, sont devenus un moteur majeur de perte des forêts primaires.", descriptionEn: "Extreme wildfires, amplified by droughts and heat waves, have become a major driver of primary forest loss.", ipccRef: 'AR6 WGII Ch.2' } },
+  { data: { id: 'ext_bio',   source: 'extreme_events', target: 'biodiversity',  type: 'positive', description: "Les événements extrêmes (blanchissement massif des coraux, incendies, tempêtes) dépassent les capacités de résilience et de migration des espèces.", descriptionEn: "Extreme events (mass coral bleaching, wildfires, storms) exceed species resilience and migration capacity.", ipccRef: 'AR6 WGII Ch.2' } },
+  { data: { id: 'ext_mig',   source: 'extreme_events', target: 'migration',     type: 'positive', description: "Les catastrophes extrêmes (cyclones, inondations, sécheresses prolongées) sont un facteur croissant de déplacement forcé de populations.", descriptionEn: "Extreme disasters (cyclones, floods, prolonged droughts) are a growing driver of forced population displacement.", ipccRef: 'AR6 WGII Ch.7' } },
+  { data: { id: 'ext_ineq',  source: 'extreme_events', target: 'inequality',    type: 'positive', description: "Les extrêmes climatiques frappent disproportionnellement les populations à faibles revenus et les pays du Sud, creusant les inégalités mondiales.", descriptionEn: "Climate extremes disproportionately affect low-income populations and Global South countries, deepening global inequalities.", ipccRef: 'AR6 WGII Ch.16' } },
 ]

@@ -63,12 +63,44 @@
       </button>
     </div>
 
+    <!-- Boucles de rétroaction -->
+    <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-eb-border/50">
+      <span class="text-xs text-slate-500 uppercase tracking-wider shrink-0">
+        <i class="fa fa-rotate mr-1" aria-hidden="true"></i>
+        {{ t('systemic_map.feedback_loops_label') }}
+      </span>
+      <button
+        v-for="loop in feedbackLoops"
+        :key="loop.id"
+        @click="toggleLoop(loop.id)"
+        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-150"
+        :style="{
+          borderColor: loop.color,
+          color: activeLoop === loop.id ? loop.color : '#64748b',
+          backgroundColor: activeLoop === loop.id ? loop.color + '18' : 'transparent',
+          opacity: activeLoop !== null && activeLoop !== loop.id ? '0.4' : '1',
+        }"
+        :aria-pressed="activeLoop === loop.id"
+      >
+        {{ locale === 'fr' ? loop.label : loop.labelEn }}
+      </button>
+    </div>
+
     <!-- Graph area -->
     <div
-      class="relative border border-eb-border rounded-xl overflow-hidden bg-[#070c16]"
-      :style="{ height: graphHeight }"
+      ref="graphContainer"
+      class="relative border border-eb-border rounded-xl overflow-hidden bg-[#070c16] h-[60vh] sm:h-[calc(100vh-260px)]"
     >
       <div ref="cyContainer" class="w-full h-full" :aria-label="t('systemic_map.graph_aria')" role="img"></div>
+
+      <!-- Fullscreen toggle -->
+      <button
+        class="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+        @click="toggleFullscreen"
+        :aria-label="isFullscreen ? t('systemic_map.exit_fullscreen') : t('systemic_map.enter_fullscreen')"
+      >
+        <i :class="isFullscreen ? 'fa fa-compress' : 'fa fa-expand'" aria-hidden="true"></i>
+      </button>
 
       <!-- Hint -->
       <transition name="fade">
@@ -90,7 +122,7 @@
       <transition name="panel">
         <aside
           v-if="selected"
-          class="absolute right-0 top-0 bottom-0 w-80 bg-eb-dark/96 border-l border-eb-border overflow-y-auto"
+          class="absolute inset-x-0 bottom-0 max-h-[60%] sm:max-h-none sm:inset-x-auto sm:right-0 sm:top-0 sm:bottom-0 sm:w-80 bg-eb-dark/96 border-t sm:border-t-0 sm:border-l border-eb-border overflow-y-auto"
           style="backdrop-filter: blur(8px);"
           role="complementary"
           :aria-label="t('systemic_map.panel_aria')"
@@ -155,6 +187,27 @@
                     <span class="text-slate-500">{{ t('systemic_map.incoming_count') }}</span>
                     <span class="font-mono text-slate-300">{{ selected.incoming }}</span>
                   </div>
+                </div>
+              </div>
+
+              <!-- Boucles de rétroaction du nœud -->
+              <div v-if="selected.nodeLoops?.length" class="text-xs border border-eb-border rounded-lg p-3 mb-4">
+                <div class="text-slate-400 font-medium mb-2">{{ t('systemic_map.node_in_loops') }}</div>
+                <div class="flex flex-wrap gap-1.5">
+                  <button
+                    v-for="loop in selected.nodeLoops"
+                    :key="loop.id"
+                    @click="toggleLoop(loop.id)"
+                    class="px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all duration-150"
+                    :style="{
+                      borderColor: loop.color,
+                      color: activeLoop === loop.id ? loop.color : '#94a3b8',
+                      backgroundColor: activeLoop === loop.id ? loop.color + '18' : 'transparent',
+                    }"
+                    :aria-pressed="activeLoop === loop.id"
+                  >
+                    {{ locale === 'fr' ? loop.label : loop.labelEn }}
+                  </button>
                 </div>
               </div>
 
@@ -236,14 +289,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import cytoscape from 'cytoscape'
 import type { Core, NodeSingular, EdgeSingular } from 'cytoscape'
 import {
-  systemicNodes, systemicEdges,
+  systemicNodes, systemicEdges, feedbackLoops,
   CATEGORY_COLORS, CATEGORY_BORDER, EDGE_COLORS,
-  type NodeCategory, type EdgeType,
+  type NodeCategory, type EdgeType, type FeedbackLoop,
 } from '@/data/systemicGraph'
 
 const { t, locale } = useI18n()
@@ -279,10 +332,11 @@ const PRESET_POSITIONS: Record<string, { x: number; y: number }> = {
   resources:     { x:   0, y: 480 },
 
   // ── Atmosphère (haut-centre) ──────────────────────────────────────────────
-  ghg:           { x: 260, y:  90 },
-  temperature:   { x: 430, y:  40 },
-  ocean_acid:    { x: 310, y: 210 },
-  sea_level:     { x: 610, y:  40 },
+  ghg:            { x: 260, y:  90 },
+  temperature:    { x: 430, y:  40 },
+  ocean_acid:     { x: 310, y: 210 },
+  sea_level:      { x: 610, y:  40 },
+  extreme_events: { x: 720, y: 180 },
 
   // ── Tampons écosystémiques (centre) ──────────────────────────────────────
   biodiversity:  { x: 270, y: 340 },
@@ -298,13 +352,45 @@ const PRESET_POSITIONS: Record<string, { x: number; y: number }> = {
   geopolitical:  { x: 780, y: 450 },
 }
 
-const LAYOUT_OPTIONS = {
-  name: 'preset' as const,
-  positions: (node: NodeSingular) => PRESET_POSITIONS[node.id()] ?? { x: 400, y: 300 },
-  fit: true,
-  padding: 70,
-  animate: true,
-  animationDuration: 600,
+// ─── Portrait layout (x↔y inversés) — flux causal haut→bas ──────────────────
+const PORTRAIT_POSITIONS: Record<string, { x: number; y: number }> = {
+  permafrost:    { x:   0, y:  80 },
+  fossil_energy: { x: 110, y:   0 },
+  renewable:     { x: 230, y:   0 },
+  land_use:      { x: 370, y:   0 },
+  resources:     { x: 480, y:   0 },
+  ghg:            { x:  90, y: 260 },
+  temperature:    { x:  40, y: 430 },
+  ocean_acid:     { x: 210, y: 310 },
+  sea_level:      { x:  40, y: 610 },
+  extreme_events: { x: 180, y: 720 },
+  biodiversity:  { x: 340, y: 270 },
+  forest:        { x: 210, y: 590 },
+  freshwater:    { x: 230, y: 470 },
+  water_access:  { x: 440, y: 380 },
+  food_security: { x: 420, y: 530 },
+  health:        { x: 340, y: 700 },
+  inequality:    { x: 550, y: 470 },
+  migration:     { x: 530, y: 650 },
+  geopolitical:  { x: 450, y: 780 },
+}
+
+function getLayoutPadding(): number {
+  return (cyContainer.value?.offsetWidth ?? 800) < 640 ? 15 : 70
+}
+
+function getLayoutOptions() {
+  const container = cyContainer.value
+  const isPortrait = container ? container.offsetHeight > container.offsetWidth : false
+  const positions = isPortrait ? PORTRAIT_POSITIONS : PRESET_POSITIONS
+  return {
+    name: 'preset' as const,
+    positions: (node: NodeSingular) => positions[node.id()] ?? { x: 400, y: 300 },
+    fit: true,
+    padding: getLayoutPadding(),
+    animate: true,
+    animationDuration: 600,
+  }
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -333,6 +419,7 @@ interface SelectedInfo {
   outNegative?:    number
   incoming?:       number
   connectedEdges?: EdgeListItem[]
+  nodeLoops?:      FeedbackLoop[]
   // arête
   edgeType?:      EdgeType
   sourceLabel?:   string
@@ -343,15 +430,71 @@ interface SelectedInfo {
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
-const cyContainer = ref<HTMLDivElement | null>(null)
+const cyContainer   = ref<HTMLDivElement | null>(null)
+const graphContainer = ref<HTMLDivElement | null>(null)
 let cy: Core | null = null
 
 const loading    = ref(true)
 const showHint   = ref(true)
+const isFullscreen = ref(false)
 const visibleCategories = ref<Set<NodeCategory>>(new Set(['physical', 'ecosystem', 'societal']))
-const selected   = ref<SelectedInfo | null>(null)
+const selected    = ref<SelectedInfo | null>(null)
+const activeLoop  = ref<string | null>(null)
 
-const graphHeight = computed(() => 'calc(100vh - 260px)')
+function getNodeLoops(nodeId: string): FeedbackLoop[] {
+  return feedbackLoops.filter(l => l.nodeIds.includes(nodeId))
+}
+
+function activateLoop(loopId: string): void {
+  if (!cy) return
+  clearSelection()
+  activeLoop.value = loopId
+  const loop = feedbackLoops.find(l => l.id === loopId)
+  if (!loop) return
+
+  cy.elements().addClass('dimmed')
+  loop.nodeIds.forEach(id => {
+    const el = cy!.getElementById(id)
+    el.removeClass('dimmed')
+    el.style({ 'border-color': loop.color, 'border-width': 4 })
+  })
+  loop.edgeIds.forEach(id => {
+    const el = cy!.getElementById(id)
+    el.removeClass('dimmed')
+    el.style({ 'line-color': loop.color, 'target-arrow-color': loop.color, 'width': 3, 'opacity': 1 })
+  })
+}
+
+function deactivateLoop(): void {
+  if (!cy) return
+  activeLoop.value = null
+  cy.elements()
+    .removeClass('dimmed')
+    .removeStyle('border-color border-width line-color target-arrow-color width opacity')
+}
+
+function toggleLoop(loopId: string): void {
+  if (activeLoop.value === loopId) {
+    deactivateLoop()
+  } else {
+    activateLoop(loopId)
+  }
+}
+
+function onFullscreenChange(): void {
+  const leaving = isFullscreen.value && !document.fullscreenElement
+  isFullscreen.value = !!document.fullscreenElement
+  if (leaving) wasPortrait = null  // force layout re-run on next ResizeObserver tick
+}
+
+async function toggleFullscreen(): Promise<void> {
+  if (!graphContainer.value) return
+  if (document.fullscreenElement) {
+    await document.exitFullscreen()
+  } else {
+    await graphContainer.value.requestFullscreen()
+  }
+}
 
 // ─── Cytoscape ────────────────────────────────────────────────────────────────
 
@@ -497,11 +640,11 @@ function initCytoscape() {
     container: cyContainer.value,
     elements:  buildElements(),
     style:     buildStylesheet(),
-    layout:    LAYOUT_OPTIONS,
+    layout:    getLayoutOptions(),
     userZoomingEnabled:  true,
     userPanningEnabled:  true,
     boxSelectionEnabled: false,
-    minZoom: 0.25,
+    minZoom: 0.15,
     maxZoom: 3.5,
     wheelSensitivity: 0.25,
   })
@@ -513,6 +656,7 @@ function initCytoscape() {
 
   cy.on('tap', 'node', (e) => {
     showHint.value = false
+    if (activeLoop.value) deactivateLoop()
     const node = e.target as NodeSingular
     const d    = node.data()
 
@@ -528,6 +672,7 @@ function initCytoscape() {
       outNegative:   node.outgoers('edge').filter('[type="negative"]').length,
       incoming:      node.incomers('edge').length,
       connectedEdges: buildEdgeList(node),
+      nodeLoops:     getNodeLoops(d.id as string),
     }
 
     cy!.elements().addClass('dimmed')
@@ -537,6 +682,7 @@ function initCytoscape() {
 
   cy.on('tap', 'edge', (e) => {
     showHint.value = false
+    if (activeLoop.value) deactivateLoop()
     const edge  = e.target as EdgeSingular
     const d     = edge.data()
     const srcId = edge.source().id()
@@ -563,7 +709,10 @@ function initCytoscape() {
   })
 
   cy.on('tap', (e) => {
-    if (e.target === cy) clearSelection()
+    if (e.target === cy) {
+      clearSelection()
+      deactivateLoop()
+    }
   })
 }
 
@@ -611,7 +760,7 @@ function applyFilter() {
 }
 
 function resetLayout() {
-  cy?.layout(LAYOUT_OPTIONS).run()
+  cy?.layout(getLayoutOptions()).run()
 }
 
 // ─── Watchers ─────────────────────────────────────────────────────────────────
@@ -632,8 +781,36 @@ watch(locale, () => {
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
-onMounted(initCytoscape)
-onBeforeUnmount(() => cy?.destroy())
+let resizeObserver: ResizeObserver | null = null
+let wasPortrait: boolean | null = null
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', onFullscreenChange)
+  if (!cyContainer.value) return
+  resizeObserver = new ResizeObserver(entries => {
+    const { width, height } = entries[0].contentRect
+    if (width === 0 || height === 0) return
+    const isPortrait = height > width
+    if (cy) {
+      if (wasPortrait === isPortrait) {
+        cy.fit(undefined, getLayoutPadding())
+      } else {
+        wasPortrait = isPortrait
+        cy.layout(getLayoutOptions()).run()
+      }
+    } else {
+      wasPortrait = isPortrait
+      initCytoscape()
+    }
+  })
+  resizeObserver.observe(cyContainer.value)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('fullscreenchange', onFullscreenChange)
+  resizeObserver?.disconnect()
+  cy?.destroy()
+})
 </script>
 
 <style scoped>
@@ -643,8 +820,14 @@ onBeforeUnmount(() => cy?.destroy())
 }
 .panel-enter-from,
 .panel-leave-to {
-  transform: translateX(100%);
+  transform: translateY(100%);
   opacity: 0;
+}
+@media (min-width: 640px) {
+  .panel-enter-from,
+  .panel-leave-to {
+    transform: translateX(100%);
+  }
 }
 
 .fade-enter-active,
