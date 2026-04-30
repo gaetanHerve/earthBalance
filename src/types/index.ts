@@ -121,6 +121,13 @@ export interface EcologicalCharts {
     source: string
     timeSeries: TimeSeries
   }
+  seaLevel: {
+    label: string
+    unit: string
+    color: string
+    source: string
+    timeSeries: TimeSeries
+  }
   energyMix: {
     label: string
     unit: string

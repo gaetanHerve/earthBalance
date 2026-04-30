@@ -249,6 +249,65 @@
         />
       </EbCard>
 
+      <!-- Niveau des mers — jauge ou courbe selon le toggle -->
+      <EbCard
+        v-if="isVisible('seaLevel')"
+        :extra-class="seaGaugeMode ? 'flex flex-col items-center justify-center' : 'col-span-1 md:col-span-2'"
+      >
+        <div class="flex items-center justify-between mb-3 w-full">
+          <div class="text-sm font-bold text-slate-200">
+            <i class="fa fa-water text-blue-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.sea_level_title') }}
+          </div>
+          <div class="flex items-center gap-2">
+            <span v-if="!seaGaugeMode" class="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full">mm</span>
+            <button
+              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+              :class="seaGaugeMode
+                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
+                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
+              :aria-label="seaGaugeMode ? t('dashboard.sea_level_toggle_to_line') : t('dashboard.sea_level_toggle_to_gauge')"
+              :aria-pressed="seaGaugeMode"
+              @click="seaGaugeMode = !seaGaugeMode"
+            >
+              <i :class="['fa', seaGaugeMode ? 'fa-chart-line' : 'fa-gauge', 'text-xs']" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Vue jauge -->
+        <template v-if="seaGaugeMode">
+          <GaugeChart
+            canvas-id="seaLevelGauge"
+            :value="seaLevelCurrent"
+            :max="1000"
+            track-color="#60a5fa"
+            :size="140"
+            :font-size="20"
+            unit="mm"
+            :aria-label="`${t('dashboard.sea_level_title')} : +${seaLevelCurrent} mm`"
+          >
+            <span class="text-2xl font-black text-blue-400">+{{ seaLevelCurrent }}</span>
+            <span class="text-xs text-slate-500 mt-0.5">mm</span>
+          </GaugeChart>
+          <div class="mt-3 text-xs text-slate-500 text-center">{{ t('dashboard.sea_level_gauge_note') }}</div>
+        </template>
+
+        <!-- Vue courbe historique + projection -->
+        <LineChart
+          v-else
+          canvas-id="seaLevelChart"
+          :labels="seaLevelLabels"
+          :datasets="seaLevelDatasets"
+          :height="180"
+          :current-year="gameStore.currentYear"
+          :y-min="0"
+          :aria-label="t('dashboard.sea_level_aria')"
+        />
+        <div v-if="!seaGaugeMode" class="mt-1 text-[10px] text-slate-600 text-right">
+          {{ t('dashboard.sea_level_ref') }}
+        </div>
+      </EbCard>
+
       <!-- Ressources naturelles — courbe ou barres selon le toggle -->
       <EbCard v-if="isVisible('resources')" extra-class="col-span-1 md:col-span-2">
         <div class="flex items-center justify-between mb-3">
@@ -348,6 +407,7 @@ const forestLineMode   = ref(false)
 const energyLineMode   = ref(false)
 const co2GaugeMode     = ref(false)
 const tempGaugeMode    = ref(false)
+const seaGaugeMode     = ref(false)
 const resourcesBarMode = ref(false)
 
 // ─── Citations GIEC — mélangées une fois au setup ─────────────────────────────
@@ -362,15 +422,18 @@ const shuffledQuotes = _shuffled
 // ─── Toggle global (Option B : raccourci, non verrouillé) ─────────────────────
 
 const allSummary = computed(() =>
-  co2GaugeMode.value && tempGaugeMode.value && !forestLineMode.value && !energyLineMode.value && resourcesBarMode.value
+  co2GaugeMode.value && tempGaugeMode.value && seaGaugeMode.value &&
+  !forestLineMode.value && !energyLineMode.value && resourcesBarMode.value
 )
 const allHistory = computed(() =>
-  !co2GaugeMode.value && !tempGaugeMode.value && forestLineMode.value && energyLineMode.value && !resourcesBarMode.value
+  !co2GaugeMode.value && !tempGaugeMode.value && !seaGaugeMode.value &&
+  forestLineMode.value && energyLineMode.value && !resourcesBarMode.value
 )
 
 function setGlobalMode(summary: boolean) {
   co2GaugeMode.value     = summary
   tempGaugeMode.value    = summary
+  seaGaugeMode.value     = summary
   forestLineMode.value   = !summary
   energyLineMode.value   = !summary
   resourcesBarMode.value = summary
@@ -378,14 +441,19 @@ function setGlobalMode(summary: boolean) {
 
 // ─── Cases vides à xl (4 colonnes) ────────────────────────────────────────────
 
+function widgetCols(id: string, wide: boolean): number {
+  if (!props.visibleWidgets.includes(id)) return 0
+  return wide ? 2 : 1
+}
+
 const emptySlots = computed(() => {
-  const s = (id: string, wide: boolean) => props.visibleWidgets.includes(id) ? (wide ? 2 : 1) : 0
   const total =
-    s('co2',         !co2GaugeMode.value)    +
-    s('forest',       forestLineMode.value)  +
-    s('energyMix',    energyLineMode.value)  +
-    s('temperature', !tempGaugeMode.value)   +
-    s('resources',    true)
+    widgetCols('co2',         !co2GaugeMode.value)  +
+    widgetCols('forest',       forestLineMode.value) +
+    widgetCols('seaLevel',    !seaGaugeMode.value)   +
+    widgetCols('energyMix',    energyLineMode.value) +
+    widgetCols('temperature', !tempGaugeMode.value)  +
+    widgetCols('resources',    true)
   const rem = total % 4
   return rem === 0 ? 0 : 4 - rem
 })
@@ -501,6 +569,26 @@ const forestDatasets = computed<ChartDataset[]>(() => {
     fill:            true,
   }]
 })
+
+// ─── Niveau des mers ──────────────────────────────────────────────────────────
+
+const seaLevelCurrent = computed<number>(() =>
+  Math.round(interpolateAtYear(
+    gameStore.currentYear,
+    props.eco.seaLevel.timeSeries.years,
+    props.eco.seaLevel.timeSeries.values,
+  ))
+)
+
+const seaLevelLabels = computed<number[]>(() => props.eco.seaLevel.timeSeries.years)
+
+const seaLevelDatasets = computed<ChartDataset[]>(() => [{
+  label:           t('dashboard.sea_level_title'),
+  data:            props.eco.seaLevel.timeSeries.values,
+  borderColor:     '#60a5fa',
+  backgroundColor: 'rgba(96,165,250,0.08)',
+  fill:            true,
+}])
 
 // ─── Mix énergétique (barres) ─────────────────────────────────────────────────
 

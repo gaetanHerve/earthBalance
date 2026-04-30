@@ -13,7 +13,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
   const visibleWidgets = ref<string[]>(
     (JSON.parse(localStorage.getItem('eb_visible_widgets') ?? 'null') as string[] | null) ?? [
-      'co2', 'temperature', 'forest', 'energyMix', 'resources',
+      'co2', 'temperature', 'forest', 'seaLevel', 'energyMix', 'resources',
     ]
   )
 
