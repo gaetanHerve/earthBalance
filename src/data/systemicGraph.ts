@@ -25,12 +25,19 @@ export interface SysEdge {
   }
 }
 
+export interface LoopStep {
+  fromId: string
+  edgeId: string
+  toId:   string
+}
+
 export interface FeedbackLoop {
   id:          string
   label:       string
   labelEn:     string
   nodeIds:     string[]
   edgeIds:     string[]
+  steps:       LoopStep[]
   color:       string
   severity:    'critical' | 'high' | 'moderate'
   warning?:    boolean
@@ -42,6 +49,11 @@ export const feedbackLoops: FeedbackLoop[] = [
     label: '⚠ Pergélisol', labelEn: '⚠ Permafrost',
     nodeIds: ['temperature', 'permafrost', 'ghg'],
     edgeIds: ['temp_perm', 'perm_ghg', 'ghg_temp'],
+    steps: [
+      { fromId: 'temperature', edgeId: 'temp_perm',  toId: 'permafrost' },
+      { fromId: 'permafrost',  edgeId: 'perm_ghg',   toId: 'ghg' },
+      { fromId: 'ghg',         edgeId: 'ghg_temp',   toId: 'temperature' },
+    ],
     color: '#ff5050', severity: 'critical', warning: true,
   },
   {
@@ -49,6 +61,11 @@ export const feedbackLoops: FeedbackLoop[] = [
     label: 'Forêt-Carbone', labelEn: 'Forest-Carbon',
     nodeIds: ['temperature', 'forest', 'ghg'],
     edgeIds: ['temp_forest', 'forest_ghg', 'ghg_temp'],
+    steps: [
+      { fromId: 'temperature', edgeId: 'temp_forest', toId: 'forest' },
+      { fromId: 'forest',      edgeId: 'forest_ghg',  toId: 'ghg' },
+      { fromId: 'ghg',         edgeId: 'ghg_temp',    toId: 'temperature' },
+    ],
     color: '#00ff88', severity: 'high',
   },
   {
@@ -56,6 +73,11 @@ export const feedbackLoops: FeedbackLoop[] = [
     label: 'Extrêmes-Forêts', labelEn: 'Extremes-Forests',
     nodeIds: ['extreme_events', 'forest', 'ghg'],
     edgeIds: ['ext_forest', 'forest_ghg', 'ghg_ext'],
+    steps: [
+      { fromId: 'extreme_events', edgeId: 'ext_forest',  toId: 'forest' },
+      { fromId: 'forest',         edgeId: 'forest_ghg',  toId: 'ghg' },
+      { fromId: 'ghg',            edgeId: 'ghg_ext',     toId: 'extreme_events' },
+    ],
     color: '#fb923c', severity: 'high',
   },
   {
@@ -63,6 +85,10 @@ export const feedbackLoops: FeedbackLoop[] = [
     label: 'Santé-Inégalités', labelEn: 'Health-Inequality',
     nodeIds: ['health', 'inequality'],
     edgeIds: ['ineq_health', 'health_ineq'],
+    steps: [
+      { fromId: 'inequality', edgeId: 'ineq_health', toId: 'health' },
+      { fromId: 'health',     edgeId: 'health_ineq', toId: 'inequality' },
+    ],
     color: '#00e5ff', severity: 'moderate',
   },
   {
@@ -70,6 +96,10 @@ export const feedbackLoops: FeedbackLoop[] = [
     label: 'Géopolitique-Migration', labelEn: 'Geopolitics-Migration',
     nodeIds: ['migration', 'geopolitical'],
     edgeIds: ['mig_geo', 'geo_mig'],
+    steps: [
+      { fromId: 'migration',    edgeId: 'mig_geo', toId: 'geopolitical' },
+      { fromId: 'geopolitical', edgeId: 'geo_mig', toId: 'migration' },
+    ],
     color: '#a78bfa', severity: 'moderate',
   },
 ]

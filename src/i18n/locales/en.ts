@@ -320,6 +320,10 @@ export default {
     exit_fullscreen:       'Exit full screen',
     feedback_loops_label:  'Feedback loops',
     node_in_loops:         'Participates in loops',
+    loop_process:          'Feedback process',
+    loop_severity_critical: 'Critical',
+    loop_severity_high:     'High',
+    loop_severity_moderate: 'Moderate',
   },
   game_intro: {
     p1:  '2024. The sixth IPCC assessment report has just been published.',

@@ -320,6 +320,10 @@ export default {
     exit_fullscreen:       'Quitter le plein écran',
     feedback_loops_label:  'Boucles de rétroaction',
     node_in_loops:         'Participe aux boucles',
+    loop_process:          'Processus de rétroaction',
+    loop_severity_critical: 'Critique',
+    loop_severity_high:     'Élevé',
+    loop_severity_moderate: 'Modéré',
   },
   game_intro: {
     p1:  "2024. Le sixième rapport du GIEC vient d'être publié.",
