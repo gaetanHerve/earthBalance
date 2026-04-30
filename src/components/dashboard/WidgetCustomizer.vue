@@ -32,7 +32,9 @@ const allWidgets = computed<Widget[]>(() => [
   { id: 'co2',         label: t('widgets.co2') },
   { id: 'temperature', label: t('widgets.temperature') },
   { id: 'forest',      label: t('widgets.forest') },
+  { id: 'seaLevel',    label: t('widgets.seaLevel') },
   { id: 'energyMix',   label: t('widgets.energyMix') },
   { id: 'resources',   label: t('widgets.resources') },
+  { id: 'extremes',    label: t('widgets.extremes') },
 ])
 </script>

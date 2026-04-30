@@ -75,12 +75,14 @@
         @click="toggleLoop(loop.id)"
         class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-150"
         :style="{
-          borderColor: loop.color,
-          color: activeLoop === loop.id ? loop.color : '#64748b',
-          backgroundColor: activeLoop === loop.id ? loop.color + '18' : 'transparent',
-          opacity: activeLoop !== null && activeLoop !== loop.id ? '0.4' : '1',
+          borderColor:     loop.color,
+          borderWidth:     panelLoopId === loop.id ? '2px' : '1px',
+          boxShadow:       panelLoopId === loop.id ? `0 0 10px ${loop.color}50` : 'none',
+          color:           activeLoops.has(loop.id) ? loop.color : '#64748b',
+          backgroundColor: activeLoops.has(loop.id) ? loop.color + '18' : 'transparent',
+          opacity:         activeLoops.size > 0 && !activeLoops.has(loop.id) ? '0.4' : '1',
         }"
-        :aria-pressed="activeLoop === loop.id"
+        :aria-pressed="activeLoops.has(loop.id)"
       >
         {{ locale === 'fr' ? loop.label : loop.labelEn }}
       </button>
@@ -200,11 +202,13 @@
                     @click="toggleLoop(loop.id)"
                     class="px-2 py-0.5 rounded-full text-[10px] font-medium border transition-all duration-150"
                     :style="{
-                      borderColor: loop.color,
-                      color: activeLoop === loop.id ? loop.color : '#94a3b8',
-                      backgroundColor: activeLoop === loop.id ? loop.color + '18' : 'transparent',
+                      borderColor:     loop.color,
+                      borderWidth:     panelLoopId === loop.id ? '2px' : '1px',
+                      boxShadow:       panelLoopId === loop.id ? `0 0 8px ${loop.color}50` : 'none',
+                      color:           activeLoops.has(loop.id) ? loop.color : '#94a3b8',
+                      backgroundColor: activeLoops.has(loop.id) ? loop.color + '18' : 'transparent',
                     }"
-                    :aria-pressed="activeLoop === loop.id"
+                    :aria-pressed="activeLoops.has(loop.id)"
                   >
                     {{ locale === 'fr' ? loop.label : loop.labelEn }}
                   </button>
@@ -280,6 +284,88 @@
               </div>
             </template>
 
+            <!-- ── Panneau boucle ── -->
+            <template v-else-if="selected.type === 'loop' && selected.loopData">
+
+              <!-- Header -->
+              <div class="flex items-start gap-2.5 mb-4">
+                <span
+                  class="w-3 h-3 rounded-full shrink-0 mt-0.5"
+                  :style="{ background: selected.loopData.color }"
+                ></span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-0.5">
+                    <i class="fa fa-rotate mr-1" aria-hidden="true"></i>
+                    {{ t('systemic_map.feedback_loops_label') }}
+                  </p>
+                  <h2 class="text-sm font-bold text-white leading-tight">
+                    {{ locale === 'fr' ? selected.loopData.label : selected.loopData.labelEn }}
+                  </h2>
+                </div>
+                <span
+                  class="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                  :class="{
+                    'bg-red-900/30 text-red-400':       selected.loopData.severity === 'critical',
+                    'bg-orange-900/30 text-orange-400': selected.loopData.severity === 'high',
+                    'bg-cyan-900/30 text-cyan-400':     selected.loopData.severity === 'moderate',
+                  }"
+                >
+                  {{ t(`systemic_map.loop_severity_${selected.loopData.severity}`) }}
+                </span>
+              </div>
+
+              <!-- Steps -->
+              <div class="text-xs text-slate-400 font-medium mb-3">{{ t('systemic_map.loop_process') }}</div>
+
+              <div class="mb-4">
+                <template v-for="(step, i) in selected.loopData.steps" :key="step.edgeId">
+
+                  <!-- First node (shown only for the first step) -->
+                  <div v-if="i === 0" class="flex items-center gap-2.5 px-1 py-1.5">
+                    <span
+                      class="w-2.5 h-2.5 rounded-full shrink-0 border border-white/20"
+                      :style="{ background: getNodeColor(step.fromId) }"
+                    ></span>
+                    <span class="text-xs text-white font-medium leading-tight">{{ getNodeLabel(step.fromId) }}</span>
+                  </div>
+
+                  <!-- Edge connector + description -->
+                  <div class="flex items-start gap-2.5 pl-1 py-0.5">
+                    <div class="flex flex-col items-center w-2.5 shrink-0 self-stretch">
+                      <div class="flex-1 w-px bg-eb-border/70 mx-auto"></div>
+                      <span
+                        class="text-[11px] leading-none my-0.5"
+                        :class="getEdge(step.edgeId)?.data.type === 'positive' ? 'text-[#ff5050]' : 'text-[#00ff88]'"
+                      >{{ getEdge(step.edgeId)?.data.type === 'positive' ? '▲' : '▼' }}</span>
+                      <div class="flex-1 w-px bg-eb-border/70 mx-auto"></div>
+                    </div>
+                    <div class="flex-1 min-w-0 py-1">
+                      <p class="text-[11px] text-slate-400 leading-relaxed">
+                        {{ locale === 'fr' ? getEdge(step.edgeId)?.data.description : getEdge(step.edgeId)?.data.descriptionEn }}
+                      </p>
+                      <p class="font-mono text-[10px] text-slate-600 mt-0.5">{{ getEdge(step.edgeId)?.data.ipccRef }}</p>
+                    </div>
+                  </div>
+
+                  <!-- To node -->
+                  <div class="flex items-center gap-2.5 px-1 py-1.5">
+                    <span
+                      class="w-2.5 h-2.5 rounded-full shrink-0 border border-white/20"
+                      :style="{ background: getNodeColor(step.toId) }"
+                    ></span>
+                    <span class="text-xs text-white font-medium leading-tight flex-1 min-w-0">{{ getNodeLabel(step.toId) }}</span>
+                    <span
+                      v-if="i === selected.loopData.steps.length - 1"
+                      class="text-sm font-bold shrink-0"
+                      :style="{ color: selected.loopData.color }"
+                    >↺</span>
+                  </div>
+
+                </template>
+              </div>
+
+            </template>
+
           </div>
         </aside>
       </transition>
@@ -296,7 +382,7 @@ import type { Core, NodeSingular, EdgeSingular } from 'cytoscape'
 import {
   systemicNodes, systemicEdges, feedbackLoops,
   CATEGORY_COLORS, CATEGORY_BORDER, EDGE_COLORS,
-  type NodeCategory, type EdgeType, type FeedbackLoop,
+  type NodeCategory, type EdgeType, type FeedbackLoop, type SysEdge,
 } from '@/data/systemicGraph'
 
 const { t, locale } = useI18n()
@@ -407,7 +493,7 @@ interface EdgeListItem {
 }
 
 interface SelectedInfo {
-  type: 'node' | 'edge'
+  type:          'node' | 'edge' | 'loop'
   description:   string
   descriptionEn: string
   ipccRef:       string
@@ -426,6 +512,9 @@ interface SelectedInfo {
   sourceLabelEn?: string
   targetLabel?:   string
   targetLabelEn?: string
+  // boucle
+  loopId?:        string
+  loopData?:      FeedbackLoop
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -439,46 +528,78 @@ const showHint   = ref(true)
 const isFullscreen = ref(false)
 const visibleCategories = ref<Set<NodeCategory>>(new Set(['physical', 'ecosystem', 'societal']))
 const selected    = ref<SelectedInfo | null>(null)
-const activeLoop  = ref<string | null>(null)
+const activeLoops = ref<Set<string>>(new Set())
+const panelLoopId = ref<string | null>(null)
 
 function getNodeLoops(nodeId: string): FeedbackLoop[] {
   return feedbackLoops.filter(l => l.nodeIds.includes(nodeId))
 }
 
-function activateLoop(loopId: string): void {
-  if (!cy) return
-  clearSelection()
-  activeLoop.value = loopId
-  const loop = feedbackLoops.find(l => l.id === loopId)
-  if (!loop) return
+function getNodeLabel(nodeId: string): string {
+  const node = systemicNodes.find(n => n.data.id === nodeId)
+  if (!node) return nodeId
+  return locale.value === 'fr' ? node.data.label : node.data.labelEn
+}
 
+function getNodeColor(nodeId: string): string {
+  const node = systemicNodes.find(n => n.data.id === nodeId)
+  return node ? CATEGORY_COLORS[node.data.category] : '#888'
+}
+
+function getEdge(edgeId: string): SysEdge | undefined {
+  return systemicEdges.find(e => e.data.id === edgeId)
+}
+
+function reapplyLoopHighlights(): void {
+  if (!cy) return
+  cy.elements(':selected').unselect()
+  cy.elements().removeClass('dimmed').removeStyle('border-color border-width line-color target-arrow-color width opacity')
+  if (activeLoops.value.size === 0) return
   cy.elements().addClass('dimmed')
-  loop.nodeIds.forEach(id => {
-    const el = cy!.getElementById(id)
-    el.removeClass('dimmed')
-    el.style({ 'border-color': loop.color, 'border-width': 4 })
-  })
-  loop.edgeIds.forEach(id => {
-    const el = cy!.getElementById(id)
-    el.removeClass('dimmed')
-    el.style({ 'line-color': loop.color, 'target-arrow-color': loop.color, 'width': 3, 'opacity': 1 })
+  activeLoops.value.forEach(loopId => {
+    const loop = feedbackLoops.find(l => l.id === loopId)
+    if (!loop) return
+    loop.nodeIds.forEach(id => {
+      const el = cy!.getElementById(id)
+      el.removeClass('dimmed')
+      el.style({ 'border-color': loop.color, 'border-width': 4 })
+    })
+    loop.edgeIds.forEach(id => {
+      const el = cy!.getElementById(id)
+      el.removeClass('dimmed')
+      el.style({ 'line-color': loop.color, 'target-arrow-color': loop.color, 'width': 3, 'opacity': 1 })
+    })
   })
 }
 
-function deactivateLoop(): void {
+function deactivateAllLoops(): void {
+  activeLoops.value = new Set()
+  panelLoopId.value = null
   if (!cy) return
-  activeLoop.value = null
-  cy.elements()
-    .removeClass('dimmed')
-    .removeStyle('border-color border-width line-color target-arrow-color width opacity')
+  cy.elements().removeClass('dimmed').removeStyle('border-color border-width line-color target-arrow-color width opacity')
 }
 
 function toggleLoop(loopId: string): void {
-  if (activeLoop.value === loopId) {
-    deactivateLoop()
+  const loops = new Set(activeLoops.value)
+  const loop  = feedbackLoops.find(l => l.id === loopId)
+  if (!loop) return
+
+  if (loops.has(loopId)) {
+    loops.delete(loopId)
+    if (panelLoopId.value === loopId) {
+      panelLoopId.value = null
+      selected.value = null
+    }
   } else {
-    activateLoop(loopId)
+    loops.add(loopId)
+    panelLoopId.value = loopId
+    selected.value = {
+      type: 'loop', loopId, loopData: loop,
+      description: '', descriptionEn: '', ipccRef: '',
+    }
   }
+  activeLoops.value = loops
+  reapplyLoopHighlights()
 }
 
 function onFullscreenChange(): void {
@@ -656,7 +777,7 @@ function initCytoscape() {
 
   cy.on('tap', 'node', (e) => {
     showHint.value = false
-    if (activeLoop.value) deactivateLoop()
+    deactivateAllLoops()
     const node = e.target as NodeSingular
     const d    = node.data()
 
@@ -682,7 +803,7 @@ function initCytoscape() {
 
   cy.on('tap', 'edge', (e) => {
     showHint.value = false
-    if (activeLoop.value) deactivateLoop()
+    deactivateAllLoops()
     const edge  = e.target as EdgeSingular
     const d     = edge.data()
     const srcId = edge.source().id()
@@ -711,15 +832,18 @@ function initCytoscape() {
   cy.on('tap', (e) => {
     if (e.target === cy) {
       clearSelection()
-      deactivateLoop()
+      deactivateAllLoops()
     }
   })
 }
 
 function clearSelection() {
   selected.value = null
-  cy?.elements().removeClass('dimmed')
+  panelLoopId.value = null
   cy?.elements(':selected').unselect()
+  if (activeLoops.value.size === 0) {
+    cy?.elements().removeClass('dimmed')
+  }
 }
 
 function syncLabels() {
