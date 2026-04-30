@@ -26,12 +26,6 @@
       <ChartSkeleton v-for="i in 4" :key="i" :height="180" />
     </div>
 
-    <!-- Extrêmes climatiques -->
-    <section aria-labelledby="extremes-title">
-      <SectionTitle id="extremes-title" :title="t('dashboard.extremes_section')" icon="fa-bolt" color-class="text-orange-400" />
-      <ExtremeEventsWidget />
-    </section>
-
     <!-- Scrutin collectif en cours -->
     <section v-if="activeBallot" aria-labelledby="ballot-summary-title">
       <SectionTitle id="ballot-summary-title" :title="t('dashboard.ballot_section')" icon="fa-vote-yea" color-class="text-eb-cyan" />
@@ -54,7 +48,6 @@ import WidgetCustomizer     from '@/components/dashboard/WidgetCustomizer.vue'
 import EcologicalIndicators from '@/components/dashboard/EcologicalIndicators.vue'
 import SocietalIndicators   from '@/components/dashboard/SocietalIndicators.vue'
 import BallotWidget           from '@/components/dashboard/BallotWidget.vue'
-import ExtremeEventsWidget   from '@/components/dashboard/ExtremeEventsWidget.vue'
 import ChartSkeleton        from '@/components/charts/ChartSkeleton.vue'
 
 const { t } = useI18n()

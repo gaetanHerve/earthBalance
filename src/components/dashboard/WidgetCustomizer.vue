@@ -35,5 +35,6 @@ const allWidgets = computed<Widget[]>(() => [
   { id: 'seaLevel',    label: t('widgets.seaLevel') },
   { id: 'energyMix',   label: t('widgets.energyMix') },
   { id: 'resources',   label: t('widgets.resources') },
+  { id: 'extremes',    label: t('widgets.extremes') },
 ])
 </script>

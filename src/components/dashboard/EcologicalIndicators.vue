@@ -8,8 +8,8 @@
     />
 
     <!-- Toggle global vue résumé / historique -->
-    <div class="flex items-center gap-2 mb-4" role="group" :aria-label="t('dashboard.global_toggle_label')">
-      <span class="text-xs text-slate-500">{{ t('dashboard.global_toggle_label') }}</span>
+    <fieldset class="flex items-center gap-2 mb-4 border-0 p-0 m-0">
+      <legend class="text-xs text-slate-500 float-left mr-2">{{ t('dashboard.global_toggle_label') }}</legend>
       <button
         :class="['text-xs px-3 py-1 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none',
           allSummary ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan' : 'bg-transparent border-slate-600 text-slate-400 hover:border-slate-400 hover:text-slate-200']"
@@ -22,7 +22,7 @@
         :aria-pressed="allHistory"
         @click="setGlobalMode(false)"
       >{{ t('dashboard.global_toggle_detail') }}</button>
-    </div>
+    </fieldset>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 xl:grid-flow-dense gap-4">
 
@@ -35,20 +35,7 @@
           <div class="text-sm font-bold text-slate-200">
             <i class="fa fa-smog text-red-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.co2_title') }}
           </div>
-          <div class="flex items-center gap-2">
-            <span v-if="!co2GaugeMode" class="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full">GtCO₂/an</span>
-            <button
-              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="co2GaugeMode
-                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
-                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
-              :aria-label="co2GaugeMode ? t('dashboard.co2_toggle_to_line') : t('dashboard.co2_toggle_to_gauge')"
-              :aria-pressed="co2GaugeMode"
-              @click="co2GaugeMode = !co2GaugeMode"
-            >
-              <i :class="['fa', co2GaugeMode ? 'fa-chart-line' : 'fa-gauge', 'text-xs']" aria-hidden="true"></i>
-            </button>
-          </div>
+          <span v-if="!co2GaugeMode" class="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full">GtCO₂/an</span>
         </div>
 
         <!-- Vue jauge -->
@@ -90,22 +77,7 @@
           <div class="text-sm font-bold text-slate-200">
             <i class="fa fa-tree text-eb-green mr-2" aria-hidden="true"></i>{{ t('dashboard.forest_title') }}
           </div>
-          <div class="flex items-center gap-2">
-            <span v-if="forestLineMode" class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">
-              % prim.
-            </span>
-            <button
-              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="forestLineMode
-                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
-                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
-              :aria-label="forestLineMode ? t('dashboard.forest_toggle_to_gauge') : t('dashboard.forest_toggle_to_line')"
-              :aria-pressed="forestLineMode"
-              @click="forestLineMode = !forestLineMode"
-            >
-              <i :class="['fa', forestLineMode ? 'fa-gauge' : 'fa-chart-line', 'text-xs']" aria-hidden="true"></i>
-            </button>
-          </div>
+          <span v-if="forestLineMode" class="text-xs bg-green-900/40 text-green-400 px-2 py-0.5 rounded-full">% prim.</span>
         </div>
 
         <!-- Vue jauge -->
@@ -152,20 +124,7 @@
           <div class="text-sm font-bold text-slate-200">
             <i class="fa fa-bolt text-yellow-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.energy_title') }}
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">TWh</span>
-            <button
-              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="energyLineMode
-                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
-                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
-              :aria-label="energyLineMode ? t('dashboard.energy_toggle_to_bar') : t('dashboard.energy_toggle_to_line')"
-              :aria-pressed="energyLineMode"
-              @click="energyLineMode = !energyLineMode"
-            >
-              <i :class="['fa', energyLineMode ? 'fa-chart-bar' : 'fa-chart-line', 'text-xs']" aria-hidden="true"></i>
-            </button>
-          </div>
+          <span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">TWh</span>
         </div>
 
         <!-- Vue barres -->
@@ -203,20 +162,7 @@
             <i class="fa fa-thermometer-half text-orange-400 mr-2" aria-hidden="true"></i>
             {{ t('dashboard.temp_title') }}
           </div>
-          <div class="flex items-center gap-2">
-            <span v-if="!tempGaugeMode" class="text-xs bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded-full">{{ t('dashboard.temp_tag') }}</span>
-            <button
-              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="tempGaugeMode
-                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
-                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
-              :aria-label="tempGaugeMode ? t('dashboard.temp_toggle_to_line') : t('dashboard.temp_toggle_to_gauge')"
-              :aria-pressed="tempGaugeMode"
-              @click="tempGaugeMode = !tempGaugeMode"
-            >
-              <i :class="['fa', tempGaugeMode ? 'fa-chart-line' : 'fa-gauge', 'text-xs']" aria-hidden="true"></i>
-            </button>
-          </div>
+          <span v-if="!tempGaugeMode" class="text-xs bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded-full">{{ t('dashboard.temp_tag') }}</span>
         </div>
 
         <!-- Vue jauge -->
@@ -258,20 +204,7 @@
           <div class="text-sm font-bold text-slate-200">
             <i class="fa fa-water text-blue-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.sea_level_title') }}
           </div>
-          <div class="flex items-center gap-2">
-            <span v-if="!seaGaugeMode" class="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full">mm</span>
-            <button
-              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="seaGaugeMode
-                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
-                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
-              :aria-label="seaGaugeMode ? t('dashboard.sea_level_toggle_to_line') : t('dashboard.sea_level_toggle_to_gauge')"
-              :aria-pressed="seaGaugeMode"
-              @click="seaGaugeMode = !seaGaugeMode"
-            >
-              <i :class="['fa', seaGaugeMode ? 'fa-chart-line' : 'fa-gauge', 'text-xs']" aria-hidden="true"></i>
-            </button>
-          </div>
+          <span v-if="!seaGaugeMode" class="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full">mm</span>
         </div>
 
         <!-- Vue jauge -->
@@ -308,27 +241,66 @@
         </div>
       </EbCard>
 
+      <!-- Extrêmes climatiques — KPIs ou courbe selon le toggle -->
+      <EbCard
+        v-if="isVisible('extremes')"
+        :extra-class="`flex flex-col${extremesLineMode ? ' col-span-1 md:col-span-2' : ''}`"
+      >
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-sm font-bold text-slate-200">
+            <i class="fa fa-bolt text-orange-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.extremes_section') }}
+          </div>
+          <span v-if="extremesLineMode" class="text-xs bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded-full">indice</span>
+        </div>
+
+        <!-- Vue actuelle : 3 KPIs carrés + libellés sous les encadrés -->
+        <template v-if="!extremesLineMode">
+          <div class="grid grid-cols-3 gap-2 mb-3">
+            <div
+              v-for="m in extremesMetrics"
+              :key="m.valueKey"
+              class="flex flex-col items-center gap-1.5"
+            >
+              <div
+                class="w-full aspect-square flex items-center justify-center rounded-lg border border-eb-border bg-eb-mid/60"
+                :title="t(m.labelKey)"
+              >
+                <span class="text-xl font-black text-orange-400 tabular-nums">{{ t(m.valueKey) }}</span>
+              </div>
+              <span class="text-[9px] text-slate-400 text-center leading-snug">{{ t(m.shortKey) }}</span>
+            </div>
+          </div>
+          <p class="mt-auto text-[10px] text-slate-500 leading-relaxed">
+            <i class="fa fa-earth-europe text-orange-400/70 mr-1" aria-hidden="true"></i>
+            {{ t('dashboard.extremes_exposure') }}
+          </p>
+        </template>
+
+        <!-- Vue projection : courbe -->
+        <template v-else>
+          <LineChart
+            canvas-id="extremesChart"
+            :labels="extremesLabels"
+            :datasets="extremesDatasets"
+            :height="180"
+            :current-year="gameStore.currentYear"
+            :y-min="0"
+            :aria-label="t('dashboard.extremes_proj_aria')"
+          />
+          <div class="mt-1 text-[10px] text-slate-600 text-right">
+            {{ t('dashboard.extremes_proj_ref') }}
+          </div>
+        </template>
+      </EbCard>
+
       <!-- Ressources naturelles — courbe ou barres selon le toggle -->
-      <EbCard v-if="isVisible('resources')" extra-class="col-span-1 md:col-span-2">
+      <EbCard v-if="isVisible('resources')" :extra-class="!resourcesBarMode ? 'col-span-1 md:col-span-2' : ''">
         <div class="flex items-center justify-between mb-3">
           <div class="text-sm font-bold text-slate-200">
             <i class="fa fa-mountain text-slate-400 mr-2" aria-hidden="true"></i>
             {{ t('dashboard.resources_title') }}
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">Gt/an</span>
-            <button
-              class="w-7 h-7 flex items-center justify-center rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="resourcesBarMode
-                ? 'bg-eb-cyan/10 border-eb-cyan/40 text-eb-cyan'
-                : 'bg-transparent border-slate-600 text-slate-400 hover:border-eb-cyan/50 hover:text-slate-200'"
-              :aria-label="resourcesBarMode ? t('dashboard.resources_toggle_to_line') : t('dashboard.resources_toggle_to_bar')"
-              :aria-pressed="resourcesBarMode"
-              @click="resourcesBarMode = !resourcesBarMode"
-            >
-              <i :class="['fa', resourcesBarMode ? 'fa-chart-line' : 'fa-chart-bar', 'text-xs']" aria-hidden="true"></i>
-            </button>
-          </div>
+          <span class="text-xs bg-slate-700 text-slate-400 px-2 py-0.5 rounded-full">Gt</span>
         </div>
 
         <!-- Vue courbe historique + projection -->
@@ -405,10 +377,11 @@ const props = withDefaults(defineProps<{
 
 const forestLineMode   = ref(false)
 const energyLineMode   = ref(false)
-const co2GaugeMode     = ref(false)
-const tempGaugeMode    = ref(false)
-const seaGaugeMode     = ref(false)
-const resourcesBarMode = ref(false)
+const extremesLineMode = ref(false)
+const co2GaugeMode     = ref(true)
+const tempGaugeMode    = ref(true)
+const seaGaugeMode     = ref(true)
+const resourcesBarMode = ref(true)
 
 // ─── Citations GIEC — mélangées une fois au setup ─────────────────────────────
 
@@ -423,11 +396,11 @@ const shuffledQuotes = _shuffled
 
 const allSummary = computed(() =>
   co2GaugeMode.value && tempGaugeMode.value && seaGaugeMode.value &&
-  !forestLineMode.value && !energyLineMode.value && resourcesBarMode.value
+  !forestLineMode.value && !energyLineMode.value && resourcesBarMode.value && !extremesLineMode.value
 )
 const allHistory = computed(() =>
   !co2GaugeMode.value && !tempGaugeMode.value && !seaGaugeMode.value &&
-  forestLineMode.value && energyLineMode.value && !resourcesBarMode.value
+  forestLineMode.value && energyLineMode.value && !resourcesBarMode.value && extremesLineMode.value
 )
 
 function setGlobalMode(summary: boolean) {
@@ -437,6 +410,7 @@ function setGlobalMode(summary: boolean) {
   forestLineMode.value   = !summary
   energyLineMode.value   = !summary
   resourcesBarMode.value = summary
+  extremesLineMode.value = !summary
 }
 
 // ─── Cases vides à xl (4 colonnes) ────────────────────────────────────────────
@@ -448,12 +422,13 @@ function widgetCols(id: string, wide: boolean): number {
 
 const emptySlots = computed(() => {
   const total =
-    widgetCols('co2',         !co2GaugeMode.value)  +
-    widgetCols('forest',       forestLineMode.value) +
-    widgetCols('seaLevel',    !seaGaugeMode.value)   +
-    widgetCols('energyMix',    energyLineMode.value) +
-    widgetCols('temperature', !tempGaugeMode.value)  +
-    widgetCols('resources',    true)
+    widgetCols('co2',         !co2GaugeMode.value)    +
+    widgetCols('forest',       forestLineMode.value)  +
+    widgetCols('seaLevel',    !seaGaugeMode.value)    +
+    widgetCols('extremes',     extremesLineMode.value) +
+    widgetCols('energyMix',    energyLineMode.value)  +
+    widgetCols('temperature', !tempGaugeMode.value)   +
+    widgetCols('resources',   !resourcesBarMode.value)
   const rem = total % 4
   return rem === 0 ? 0 : 4 - rem
 })
@@ -484,14 +459,9 @@ function blendedAtYear(year: number, decided: number[], pessimist: number[]): nu
   return d * (1 - BLEND) + p * BLEND
 }
 
-// Années de projection > 2024 et ≤ currentYear
-const projectionYearsAfter2024 = computed<number[]>(() => {
-  const year = gameStore.currentYear
-  if (year <= 2024) return []
-  const years = SIM_LABELS.filter(y => y > 2024 && y <= year)
-  if (!SIM_LABELS.includes(year)) years.push(year)
-  return years.sort((a, b) => a - b)
-})
+// Toutes les années de projection (2026 → 2100) — toujours visibles sur le graphique.
+// Le marqueur currentYear du LineChart indique visuellement où le jeu en est.
+const PROJECTION_YEARS = SIM_LABELS.filter(y => y > 2024)
 
 // ─── CO₂ ──────────────────────────────────────────────────────────────────────
 
@@ -501,12 +471,12 @@ const co2Current = computed<number>(() =>
 
 const co2Labels = computed<number[]>(() => [
   ...props.eco.co2.timeSeries.years,
-  ...projectionYearsAfter2024.value,
+  ...PROJECTION_YEARS,
 ])
 
 const co2Datasets = computed<ChartDataset[]>(() => {
   const round1 = (v: number) => Math.round(v * 10) / 10
-  const projValues = projectionYearsAfter2024.value.map(y =>
+  const projValues = PROJECTION_YEARS.map(y =>
     round1(blendedAtYear(y, cumulativeCo2.value, cumulativeCo2Pessimist.value))
   )
   return [{
@@ -526,12 +496,12 @@ const tempCurrent = computed<number>(() =>
 
 const tempLabels = computed<number[]>(() => [
   ...props.eco.temperature.timeSeries.years,
-  ...projectionYearsAfter2024.value,
+  ...PROJECTION_YEARS,
 ])
 
 const tempDatasets = computed<ChartDataset[]>(() => {
   const round2 = (v: number) => Math.round(v * 100) / 100
-  const projValues = projectionYearsAfter2024.value.map(y =>
+  const projValues = PROJECTION_YEARS.map(y =>
     round2(blendedAtYear(y, cumulativeTemp.value, cumulativeTempPessimist.value))
   )
   return [{
@@ -553,12 +523,12 @@ const forestCurrent = computed<number>(() =>
 
 const forestLabels = computed<number[]>(() => [
   ...props.eco.forest.timeSeries.years,
-  ...projectionYearsAfter2024.value,
+  ...PROJECTION_YEARS,
 ])
 
 const forestDatasets = computed<ChartDataset[]>(() => {
   const round1 = (v: number) => Math.round(v * 10) / 10
-  const projValues = projectionYearsAfter2024.value.map(y =>
+  const projValues = PROJECTION_YEARS.map(y =>
     round1(blendedAtYear(y, cumulativeForest.value, cumulativeForestPessimist.value))
   )
   return [{
@@ -590,6 +560,24 @@ const seaLevelDatasets = computed<ChartDataset[]>(() => [{
   fill:            true,
 }])
 
+// ─── Extrêmes climatiques ─────────────────────────────────────────────────────
+
+const extremesMetrics = [
+  { valueKey: 'dashboard.extremes_m1_value', shortKey: 'dashboard.extremes_m1_short', labelKey: 'dashboard.extremes_m1_label' },
+  { valueKey: 'dashboard.extremes_m2_value', shortKey: 'dashboard.extremes_m2_short', labelKey: 'dashboard.extremes_m2_label' },
+  { valueKey: 'dashboard.extremes_m3_value', shortKey: 'dashboard.extremes_m3_short', labelKey: 'dashboard.extremes_m3_label' },
+]
+
+const extremesLabels = computed<number[]>(() => props.eco.extremes.timeSeries.years)
+
+const extremesDatasets = computed<ChartDataset[]>(() => [{
+  label:           t('dashboard.extremes_section'),
+  data:            props.eco.extremes.timeSeries.values,
+  borderColor:     '#fb923c',
+  backgroundColor: 'rgba(251,146,60,0.08)',
+  fill:            true,
+}])
+
 // ─── Mix énergétique (barres) ─────────────────────────────────────────────────
 
 const CATEGORY_KEY_MAP: Record<string, EnergyMixKey> = {
@@ -617,7 +605,7 @@ const energyMixValues = computed<number[]>(() => {
 
 const energyMixLabels = computed<number[]>(() => [
   ...props.eco.energyMix.timeSeries.years,
-  ...projectionYearsAfter2024.value,
+  ...PROJECTION_YEARS,
 ])
 
 const energyMixDatasets = computed<ChartDataset[]>(() => {
@@ -627,7 +615,7 @@ const energyMixDatasets = computed<ChartDataset[]>(() => {
       ? props.eco.energyMix.timeSeries.byCategory[key]
       : props.eco.energyMix.timeSeries.years.map(() => cat.value)
     const projValues = key
-      ? projectionYearsAfter2024.value.map(y => {
+      ? PROJECTION_YEARS.map(y => {
           const totalTWh = interpolateAtYear(y, SIM_LABELS, BASELINE_ENERGY_TOTAL_TWH)
           const pct = blendedAtYear(y, cumulativeEnergyMix.value[key], cumulativeEnergyMixPessimist.value[key])
           return Math.round(pct / 100 * totalTWh)
@@ -663,7 +651,7 @@ const resourceBarValues = computed<number[]>(() =>
 
 const resourceLabels = computed<number[]>(() => [
   ...props.eco.resources.years,
-  ...projectionYearsAfter2024.value,
+  ...PROJECTION_YEARS,
 ])
 
 const resourceDatasets = computed<ChartDataset[]>(() =>
@@ -679,7 +667,7 @@ const resourceDatasets = computed<ChartDataset[]>(() =>
       }
     }
     const round1 = (v: number) => Math.round(v * 10) / 10
-    const projValues = projectionYearsAfter2024.value.map(y =>
+    const projValues = PROJECTION_YEARS.map(y =>
       round1(blendedAtYear(y, cumulativeResources.value[key], cumulativeResourcesPessimist.value[key]))
     )
     return {

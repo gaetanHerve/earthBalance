@@ -114,4 +114,13 @@ export const ipccQuotes: IpccQuote[] = [
     source:     'AR6 SYR — Section 2.3.3',
     confidence: { fr: 'haute confiance', en: 'high confidence' },
   },
+  {
+    id: 'q13',
+    text: {
+      fr: "Chaque demi-degré de réchauffement supplémentaire augmente la fréquence des extrêmes autrefois rares — l'effet devient non linéaire au-delà de 2 °C.",
+      en: "Each additional half-degree of warming increases the frequency of once-rare extremes — the effect becomes non-linear beyond 2°C.",
+    },
+    source:     'AR6 WGI — Ch.11',
+    confidence: { fr: 'haute confiance', en: 'high confidence' },
+  },
 ]

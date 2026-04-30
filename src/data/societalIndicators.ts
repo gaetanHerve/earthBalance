@@ -87,7 +87,7 @@ export const ecologicalCharts: EcologicalCharts = {
     source: 'TODO: Global Carbon Project — https://www.globalcarbonproject.org/',
     timeSeries: {
       years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
-      values: [22.7, 23.5, 25.0, 28.1, 31.6, 35.0, 34.8, 37.4],
+      values: [22.7, 23.5, 25, 28.1, 31.6, 35, 34.8, 37.4],
     },
   },
 
@@ -98,7 +98,7 @@ export const ecologicalCharts: EcologicalCharts = {
     source: 'TODO: NASA GISS Surface Temperature Analysis — https://data.giss.nasa.gov/gistemp/',
     timeSeries: {
       years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
-      values: [0.45, 0.52, 0.62, 0.72, 0.82, 0.95, 1.10, 1.40],
+      values: [0.45, 0.52, 0.62, 0.72, 0.82, 0.95, 1.1, 1.4],
     },
   },
 
@@ -124,6 +124,19 @@ export const ecologicalCharts: EcologicalCharts = {
       // Observé 1990-2024, puis projection médiane SSP2-4.5 (AR6 Table 9.9, données éducatives)
       years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
       values: [   0,   14,   28,   42,   60,   78,   98,  118,  138,  178,  224,  281,  378,  455],
+    },
+  },
+
+  extremes: {
+    label: 'Indice de fréquence des extrêmes climatiques',
+    unit: 'indice (pré-industriel = 1)',
+    color: '#fb923c',
+    source: 'IPCC AR6 WGI Ch.11 — données observées et projection médiane SSP2-4.5',
+    timeSeries: {
+      // Indice composite observé 1950-2024, calibré à ×2,8 en 2024 (vagues de chaleur)
+      // puis projection médiane SSP2-4.5 (données éducatives)
+      years:  [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
+      values: [1.2, 1.3, 1.42, 1.58, 1.78, 2.05, 2.35, 2.6, 2.8, 3.15, 3.9, 4.9, 6.1, 7.8, 10],
     },
   },
 
@@ -165,19 +178,19 @@ export const ecologicalCharts: EcologicalCharts = {
         label: 'Minéraux',
         color: '#c084fc',
         bgColor: 'rgba(192,132,252,0.1)',
-        values: [8.2, 9.1, 10.5, 12.3, 14.8, 17.2, 19.1, 21.0],
+        values: [8.2, 9.1, 10.5, 12.3, 14.8, 17.2, 19.1, 21],
       },
       {
         label: 'Biomasse',
         color: '#00ff88',
         bgColor: 'rgba(0,255,136,0.08)',
-        values: [12.1, 12.8, 13.5, 14.2, 15.0, 15.8, 16.4, 17.1],
+        values: [12.1, 12.8, 13.5, 14.2, 15, 15.8, 16.4, 17.1],
       },
       {
         label: 'Combustibles fossiles',
         color: '#fb923c',
         bgColor: 'rgba(251,146,60,0.08)',
-        values: [7.5, 8.2, 9.0, 10.1, 11.5, 12.8, 13.2, 13.9],
+        values: [7.5, 8.2, 9, 10.1, 11.5, 12.8, 13.2, 13.9],
       },
     ],
     years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
