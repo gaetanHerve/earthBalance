@@ -9,3 +9,15 @@ export function interpolateAtYear(year: number, labels: number[], values: number
   }
   return values[values.length - 1]
 }
+
+export function blendedAtYear(
+  year: number,
+  labels: number[],
+  decided: number[],
+  pessimist: number[],
+  blend = 0.5,
+): number {
+  const d = interpolateAtYear(year, labels, decided)
+  const p = interpolateAtYear(year, labels, pessimist)
+  return d * (1 - blend) + p * blend
+}
