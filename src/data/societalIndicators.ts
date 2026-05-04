@@ -68,6 +68,12 @@ export const societalIndicators: SocietalIndicators = {
   },
 }
 
+// Trajectoire SSP2-4.5 (UN WPP 2022, compatible AR6) — milliards de personnes
+export const populationTimeSeries = {
+  years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
+  values: [ 5.3,  5.7,  6.1,  6.5,  6.9,  7.4,  7.8,  8.1,  8.5,  9.2,  9.7, 10.1, 10.4, 10.4],
+}
+
 export const tickerItems: TickerItem[] = [
   { emoji: '🌡️', label: 'Temp. globale',    value: '+1.4°C', colorClass: 'text-orange-400' },
   { emoji: '💨', label: 'CO₂ atm.',          value: '421 ppm', colorClass: 'text-red-400'    },
