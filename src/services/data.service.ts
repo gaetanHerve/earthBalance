@@ -1,10 +1,10 @@
 import type {
   PlanetaryLimit, RadarData, SocietalIndicators,
   EcologicalCharts, TickerItem, MitigationPolicy,
-  GlobalStats, BlockchainState,
+  GlobalStats, BlockchainState, TimeSeries,
 } from '@/types/index'
 import { planetaryLimits, radarData } from '@/data/planetaryLimits'
-import { societalIndicators, ecologicalCharts, tickerItems } from '@/data/societalIndicators'
+import { societalIndicators, ecologicalCharts, tickerItems, populationTimeSeries } from '@/data/societalIndicators'
 import { mitigationPolicies, globalStats, blockchainState } from '@/data/mitigationPolicies'
 
 export const DataService = {
@@ -54,5 +54,10 @@ export const DataService = {
   async getBlockchainState(): Promise<BlockchainState> {
     // TODO: blockchain.service.ts — lire l'état on-chain via ethers.js
     return blockchainState
+  },
+
+  async getPopulationTimeSeries(): Promise<TimeSeries> {
+    // TODO: GET https://population.un.org/wpp/Download/Files/...
+    return populationTimeSeries
   },
 }

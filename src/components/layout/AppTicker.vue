@@ -46,11 +46,10 @@ import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/dashboard.store'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
-import { populationTimeSeries, ecologicalCharts } from '@/data/societalIndicators'
 import { interpolateAtYear, blendedAtYear } from '@/utils/timeSeries'
 
 const dashStore = useDashboardStore()
-const { tickerItems: staticItems } = storeToRefs(dashStore)
+const { tickerItems: staticItems, ecologicalCharts: dashEco, populationTimeSeries: dashPop } = storeToRefs(dashStore)
 const gameStore = useGameStore()
 const simStore  = useSimulationStore()
 const {
@@ -77,7 +76,8 @@ const items = computed(() => {
 
   const tempVal  = (Math.round(blendedAtYear(y, SIM_LABELS, cumulativeTemp.value,   cumulativeTempPessimist.value)   * 100) / 100).toFixed(2)
   const co2Val   = Math.round(interpolateAtYear(y, co2PpmSeries.years, co2PpmSeries.values))
-  const seaMm    = interpolateAtYear(y, ecologicalCharts.seaLevel.timeSeries.years, ecologicalCharts.seaLevel.timeSeries.values)
+  const seaLevelTs = dashEco.value?.seaLevel.timeSeries
+  const seaMm    = seaLevelTs ? interpolateAtYear(y, seaLevelTs.years, seaLevelTs.values) : 0
   const seaCm    = Math.round((seaMm + SEA_LEVEL_PRE1990_MM) / 10)
   const forest   = Math.round(blendedAtYear(y, SIM_LABELS, cumulativeForest.value,  cumulativeForestPessimist.value)  * 10) / 10
   const solar    = blendedAtYear(y, SIM_LABELS, cumulativeEnergyMix.value.solar, cumulativeEnergyMixPessimist.value.solar)
@@ -86,7 +86,7 @@ const items = computed(() => {
   const renew    = Math.round(solar + wind + hydro)
   const water    = Math.round(blendedAtYear(y, SIM_LABELS, cumulativeWaterAccess.value,   cumulativeWaterAccessPessimist.value)   * 10) / 10
   const food     = Math.round(blendedAtYear(y, SIM_LABELS, cumulativeFoodSecurity.value,  cumulativeFoodSecurityPessimist.value)  * 10) / 10
-  const popRaw   = interpolateAtYear(y, populationTimeSeries.years, populationTimeSeries.values)
+  const popRaw   = dashPop.value ? interpolateAtYear(y, dashPop.value.years, dashPop.value.values) : 8.1
 
   const overrides: Record<string, string> = {
     '🌡️': `+${tempVal}°C`,

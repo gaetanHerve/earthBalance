@@ -39,8 +39,8 @@ import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 import { useGameStore } from '@/store/game.store'
-import { useSimulationStore, SIM_LABELS, BASELINE_ENERGY_TOTAL_TWH } from '@/store/simulation.store'
-import { interpolateAtYear, blendedAtYear } from '@/utils/timeSeries'
+import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
+import { blendedAtYear } from '@/utils/timeSeries'
 import type { EcologicalCharts, ChartDataset, EnergyMixKey } from '@/types/index'
 
 const { t } = useI18n()
@@ -68,7 +68,7 @@ const CATEGORY_KEY_MAP: Record<string, EnergyMixKey> = {
 }
 
 const energyMixValues = computed<number[]>(() => {
-  const totalTWh = interpolateAtYear(gameStore.currentYear, SIM_LABELS, BASELINE_ENERGY_TOTAL_TWH)
+  const totalTWh = simStore.totalEnergyTWhAt(gameStore.currentYear)
   return props.series.categories.map(cat => {
     const key = CATEGORY_KEY_MAP[cat.label]
     if (!key) return cat.value
@@ -90,7 +90,7 @@ const energyMixDatasets = computed<ChartDataset[]>(() =>
       : props.series.timeSeries.years.map(() => cat.value)
     const projValues = key
       ? PROJECTION_YEARS.map(y => {
-          const totalTWh = interpolateAtYear(y, SIM_LABELS, BASELINE_ENERGY_TOTAL_TWH)
+          const totalTWh = simStore.totalEnergyTWhAt(y)
           const pct = blendedAtYear(y, SIM_LABELS, cumulativeEnergyMix.value[key], cumulativeEnergyMixPessimist.value[key])
           return Math.round(pct / 100 * totalTWh)
         })

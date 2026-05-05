@@ -1,24 +1,21 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { GAME_CONFIG } from '@/config/game.config'
+import { STORAGE_KEYS } from '@/config/storageKeys'
 import { useMitigationPoliciesStore } from './mitigationPolicies.store'
 import { useSimulationStore } from './simulation.store'
 
-const YEAR_KEY        = 'eb_game_year'
-const POLICIES_KEY    = 'eb_policies_state'
-const SIMULATION_KEY  = 'eb_simulation_selected'
-const BASELINE_KEY    = 'eb_simulation_baseline_mode'
-
 export const useGameStore = defineStore('game', () => {
-  const stored = localStorage.getItem(YEAR_KEY)
-  const currentYear    = ref<number>(stored !== null ? parseInt(stored, 10) : 2024)
+  const stored = localStorage.getItem(STORAGE_KEYS.GAME_YEAR)
+  const parsedYear = stored !== null ? parseInt(stored, 10) : NaN
+  const currentYear    = ref<number>(Number.isFinite(parsedYear) && parsedYear >= 2024 ? parsedYear : 2024)
   const sessionNumber  = ref<number>(1)
 
   function resetGame(): void {
-    localStorage.removeItem(YEAR_KEY)
-    localStorage.removeItem(POLICIES_KEY)
-    localStorage.removeItem(SIMULATION_KEY)
-    localStorage.removeItem(BASELINE_KEY)
+    localStorage.removeItem(STORAGE_KEYS.GAME_YEAR)
+    localStorage.removeItem(STORAGE_KEYS.POLICIES_STATE)
+    localStorage.removeItem(STORAGE_KEYS.SIMULATION_SELECTED)
+    localStorage.removeItem(STORAGE_KEYS.SIMULATION_BASELINE)
     window.location.reload()
   }
 
@@ -36,7 +33,7 @@ export const useGameStore = defineStore('game', () => {
 
     // 3. Avancer l'année de jeu
     currentYear.value += GAME_CONFIG.grain
-    localStorage.setItem(YEAR_KEY, String(currentYear.value))
+    localStorage.setItem(STORAGE_KEYS.GAME_YEAR, String(currentYear.value))
 
     // 4. Créer un nouveau scrutin — deadline au 31 déc. de la nouvelle année courante
     policiesStore.createNewBallot(currentYear.value)
