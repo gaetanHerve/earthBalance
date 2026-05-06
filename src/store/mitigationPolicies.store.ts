@@ -5,6 +5,7 @@ import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPo
 import { ballots as ballotData } from '@/data/ballots'
 import { condorcetWinner, bordaScores, resolveWinner, rankingToPairwiseDelta } from '@/utils/condorcet'
 import { useGameStore } from '@/store/game.store'
+import { STORAGE_KEYS } from '@/config/storageKeys'
 
 
 // ─── Types internes ───────────────────────────────────────────────────────────
@@ -23,7 +24,7 @@ export interface BallotResult {
 
 // ─── Persistence ──────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'eb_policies_state'
+const STORAGE_KEY = STORAGE_KEYS.POLICIES_STATE
 
 export interface ValidatedPolicyMeta { id: string; year: number }
 
@@ -227,6 +228,13 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     return policyIndex.value[id]
   }
 
+  function resetAll(): void {
+    validatedPolicyMeta.value = []
+    ballots.value = ballotData.map(b => ({ ...b, pairwise: { ...b.pairwise } }))
+    ranking.value = [null, null, null]
+    hasVoted.value = false
+  }
+
   return {
     ballots,
     validatedPolicyMeta,
@@ -244,5 +252,6 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     getMitigationPolicy,
     closeActiveBallot,
     createNewBallot,
+    resetAll,
   }
 })

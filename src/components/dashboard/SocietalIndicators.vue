@@ -130,6 +130,7 @@ import EbCard from '@/components/layout/EbCard.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
+import { blendedAtYear } from '@/utils/timeSeries'
 
 import type { SocietalIndicators } from '@/types/index'
 
@@ -153,44 +154,24 @@ const {
   cumulativeEducationAccess, cumulativeEducationAccessPessimist,
 } = storeToRefs(simStore)
 
-const BLEND = 0.5
-
-function interpolateAtYear(year: number, labels: number[], values: number[]): number {
-  if (year <= labels[0]) return values[0]
-  if (year >= labels[labels.length - 1]) return values[values.length - 1]
-  for (let i = 0; i < labels.length - 1; i++) {
-    if (year >= labels[i] && year <= labels[i + 1]) {
-      const t = (year - labels[i]) / (labels[i + 1] - labels[i])
-      return values[i] + t * (values[i + 1] - values[i])
-    }
-  }
-  return values[values.length - 1]
-}
-
-function blendedAtYear(year: number, decided: number[], pessimist: number[]): number {
-  const d = interpolateAtYear(year, SIM_LABELS, decided)
-  const p = interpolateAtYear(year, SIM_LABELS, pessimist)
-  return d * (1 - BLEND) + p * BLEND
-}
-
 const foodSecurityCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeFoodSecurity.value, cumulativeFoodSecurityPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeFoodSecurity.value, cumulativeFoodSecurityPessimist.value) * 10) / 10
 )
 
 const waterAccessCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWaterAccess.value, cumulativeWaterAccessPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeWaterAccess.value, cumulativeWaterAccessPessimist.value) * 10) / 10
 )
 
 const resourceConflictsCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeResourceConflicts.value, cumulativeResourceConflictsPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeResourceConflicts.value, cumulativeResourceConflictsPessimist.value) * 10) / 10
 )
 
 const waterTensionsCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWaterTensions.value, cumulativeWaterTensionsPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeWaterTensions.value, cumulativeWaterTensionsPessimist.value) * 10) / 10
 )
 
 const climateMigrationsCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeClimateMigrations.value, cumulativeClimateMigrationsPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeClimateMigrations.value, cumulativeClimateMigrationsPessimist.value) * 10) / 10
 )
 
 const geopoliticalIndicators = computed(() => [
@@ -200,15 +181,15 @@ const geopoliticalIndicators = computed(() => [
 ])
 
 const lifeExpectancyCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeLifeExpectancy.value, cumulativeLifeExpectancyPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeLifeExpectancy.value, cumulativeLifeExpectancyPessimist.value) * 10) / 10
 )
 
 const respiratoryDiseasesCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeRespiratoryDiseases.value, cumulativeRespiratoryDiseasesPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeRespiratoryDiseases.value, cumulativeRespiratoryDiseasesPessimist.value) * 10) / 10
 )
 
 const whoHealthIndexCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWhoHealthIndex.value, cumulativeWhoHealthIndexPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeWhoHealthIndex.value, cumulativeWhoHealthIndexPessimist.value) * 10) / 10
 )
 
 function formatRespiratoryDiseases(v: number): string {
@@ -224,15 +205,15 @@ const globalHealthStats = computed(() => [
 ])
 
 const giniCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeGiniCoefficient.value, cumulativeGiniCoefficientPessimist.value) * 1000) / 1000
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeGiniCoefficient.value, cumulativeGiniCoefficientPessimist.value) * 1000) / 1000
 )
 
 const wealthConcentrationCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeWealthConcentration.value, cumulativeWealthConcentrationPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeWealthConcentration.value, cumulativeWealthConcentrationPessimist.value) * 10) / 10
 )
 
 const educationAccessCurrent = computed(() =>
-  Math.round(blendedAtYear(gameStore.currentYear, cumulativeEducationAccess.value, cumulativeEducationAccessPessimist.value) * 10) / 10
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeEducationAccess.value, cumulativeEducationAccessPessimist.value) * 10) / 10
 )
 
 const inequalityStats = computed(() => [

@@ -17,6 +17,8 @@ import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPo
 import type { MitigationPolicy, MitigationPolicyProjections, EnergyMixKey, ResourceKey, SocietalKey } from '@/types/index'
 import { useMitigationPoliciesStore } from './mitigationPolicies.store'
 import { GAME_CONFIG } from '@/config/game.config'
+import { STORAGE_KEYS } from '@/config/storageKeys'
+import { interpolateAtYear } from '@/utils/timeSeries'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
 export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
@@ -36,7 +38,7 @@ export const BASELINE_FOREST = [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 
 // Total énergie primaire mondiale (TWh, hors biomasse traditionnelle) — IEA STEPS / SSP2-4.5
 // Utilisé pour convertir les parts % du mix en valeurs absolues TWh
 // 2024 : données réelles Energy Institute ; 2026-2100 : projection tendancielle
-export const BASELINE_ENERGY_TOTAL_TWH = [175272, 180000, 184000, 188000, 197000, 213000, 236000, 256000, 278000, 305000]
+const BASELINE_ENERGY_TOTAL_TWH = [175272, 180000, 184000, 188000, 197000, 213000, 236000, 256000, 278000, 305000]
 
 // Mix énergétique mondial (% du total énergie primaire) — IEA STEPS
 const ENERGY_MIX_KEYS: EnergyMixKey[] = ['coal', 'oil', 'gas', 'nuclear', 'solar', 'wind', 'hydro', 'autres']
@@ -85,8 +87,8 @@ export const BASELINE_GINI_COEFFICIENT     = [0.670, 0.671, 0.673, 0.675, 0.679,
 export const BASELINE_WEALTH_CONCENTRATION = [45, 45.3, 45.6, 46.0, 47.0, 48.5, 50.5, 52.5, 54.5, 56.0]    // % richesse du top 1%
 export const BASELINE_EDUCATION_ACCESS     = [61, 61.3, 61.5, 61.8, 62.3, 63.0, 63.5, 64.0, 64.3, 64.5]    // % population avec accès éducation secondaire+
 
-const SELECTED_KEY  = 'eb_simulation_selected'
-const BASELINE_KEY  = 'eb_simulation_baseline_mode'
+const SELECTED_KEY  = STORAGE_KEYS.SIMULATION_SELECTED
+const BASELINE_KEY  = STORAGE_KEYS.SIMULATION_BASELINE
 const SIM_BASE_YEAR = 2024
 
 // ─── Helpers projection ───────────────────────────────────────────────────────
@@ -98,19 +100,6 @@ function hasImpactModel(d: MitigationPolicy): boolean {
 function hasProjections(d: MitigationPolicy): d is MitigationPolicy & { projections: MitigationPolicyProjections } {
   const p = d.projections as Partial<MitigationPolicyProjections>
   return Array.isArray(p?.co2?.decided) && Array.isArray(p?.temperature?.decided)
-}
-
-// Interpolation linéaire dans une série temporelle (labels, values)
-function interpol(year: number, labels: number[], values: number[]): number {
-  if (year <= labels[0]) return values[0]
-  if (year >= labels[labels.length - 1]) return values[values.length - 1]
-  for (let i = 0; i < labels.length - 1; i++) {
-    if (year >= labels[i] && year <= labels[i + 1]) {
-      const t = (year - labels[i]) / (labels[i + 1] - labels[i])
-      return values[i] + t * (values[i + 1] - values[i])
-    }
-  }
-  return values[values.length - 1]
 }
 
 // Delta d'une politique avec décalage temporel (effectiveStart).
@@ -126,7 +115,7 @@ function shiftedDeltas(
   return SIM_LABELS.map(year => {
     if (year < effectiveStart) return 0
     const mappedYear = 2024 + (year - effectiveStart)
-    return interpol(mappedYear, projLabels, projValues) - interpol(mappedYear, projLabels, projBaseline)
+    return interpolateAtYear(mappedYear, projLabels, projValues) - interpolateAtYear(mappedYear, projLabels, projBaseline)
   })
 }
 
@@ -159,7 +148,7 @@ function shiftedDeltasDirect(projDeltas: number[], effectiveStart: number): numb
   return SIM_LABELS.map(year => {
     if (year < effectiveStart) return 0
     const mappedYear = 2024 + (year - effectiveStart)
-    return interpol(mappedYear, PROJ_LABELS, projDeltas)
+    return interpolateAtYear(mappedYear, PROJ_LABELS, projDeltas)
   })
 }
 
@@ -273,10 +262,17 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   // ─── Séquence ─────────────────────────────────────────────────────────────
 
-  const storedSelected = localStorage.getItem(SELECTED_KEY)
-  const selectedIds = ref<string[]>(
-    storedSelected ? (JSON.parse(storedSelected) as string[]) : []
-  )
+  function loadSelectedIds(): string[] {
+    try {
+      const raw = localStorage.getItem(SELECTED_KEY)
+      if (!raw) return []
+      const parsed = JSON.parse(raw)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+  const selectedIds = ref<string[]>(loadSelectedIds())
 
   watch(selectedIds, ids => localStorage.setItem(SELECTED_KEY, JSON.stringify(ids)), { deep: true })
 
@@ -380,7 +376,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     const result = {} as Record<EnergyMixKey, number[]>
     for (const cat of ENERGY_MIX_KEYS) {
       result[cat] = SIM_LABELS.map((year, i) => {
-        const base = interpol(year, PROJ_LABELS, BASELINE_ENERGY_MIX[cat])
+        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_ENERGY_MIX[cat])
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + energyMixDeltaArr(dec, effectiveStartOf(dec.id), cat, 'decided')[i], 0)
         return base + delta
@@ -393,7 +389,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     const result = {} as Record<EnergyMixKey, number[]>
     for (const cat of ENERGY_MIX_KEYS) {
       result[cat] = SIM_LABELS.map((year, i) => {
-        const base = interpol(year, PROJ_LABELS, BASELINE_ENERGY_MIX[cat])
+        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_ENERGY_MIX[cat])
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + energyMixDeltaArr(dec, effectiveStartOf(dec.id), cat, 'pessimist')[i], 0)
         return base + delta
@@ -406,7 +402,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     const result = {} as Record<ResourceKey, number[]>
     for (const res of RESOURCE_KEYS) {
       result[res] = SIM_LABELS.map((year, i) => {
-        const base = interpol(year, PROJ_LABELS, BASELINE_RESOURCES[res])
+        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_RESOURCES[res])
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + resourceDeltaArr(dec, effectiveStartOf(dec.id), res, 'decided')[i], 0)
         return Math.round((base + delta) * 10) / 10
@@ -419,7 +415,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     const result = {} as Record<ResourceKey, number[]>
     for (const res of RESOURCE_KEYS) {
       result[res] = SIM_LABELS.map((year, i) => {
-        const base = interpol(year, PROJ_LABELS, BASELINE_RESOURCES[res])
+        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_RESOURCES[res])
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + resourceDeltaArr(dec, effectiveStartOf(dec.id), res, 'pessimist')[i], 0)
         return Math.round((base + delta) * 10) / 10
@@ -714,6 +710,15 @@ export const useSimulationStore = defineStore('simulation', () => {
     includeGameBaseline.value = !includeGameBaseline.value
   }
 
+  function resetAll(): void {
+    selectedIds.value = []
+    includeGameBaseline.value = true
+  }
+
+  function totalEnergyTWhAt(year: number): number {
+    return interpolateAtYear(year, SIM_LABELS, BASELINE_ENERGY_TOTAL_TWH)
+  }
+
   return {
     selectedIds,
     lockedIds,
@@ -770,5 +775,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     moveDown,
     reset,
     toggleGameBaseline,
+    resetAll,
+    totalEnergyTWhAt,
   }
 })

@@ -89,7 +89,7 @@
           <button
             class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-red-400 outline-none border-red-800/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 cursor-pointer"
             :aria-label="t('header.reset_game_aria')"
-            @click="gameStore.resetGame()"
+            @click="handleReset()"
           >
             <i class="fa fa-rotate-left" aria-hidden="true"></i>
             {{ t('header.reset_game') }}
@@ -185,7 +185,7 @@
         <button
           class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-red-400 outline-none border-red-800/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 cursor-pointer"
           :aria-label="t('header.reset_game_aria')"
-          @click="gameStore.resetGame()"
+          @click="handleReset()"
         >
           <i class="fa fa-rotate-left" aria-hidden="true"></i>
           {{ t('header.reset_game') }}
@@ -199,7 +199,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import AppSearch from '@/components/layout/AppSearch.vue'
@@ -211,11 +211,18 @@ import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 interface NavLink { to: string; label: string; icon: string }
 
 const { t } = useI18n()
-const route = useRoute()
+const route  = useRoute()
+const router = useRouter()
 const gameStore = useGameStore()
 
 const { activeBallot } = storeToRefs(useMitigationPoliciesStore())
 const canEndRound = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
+
+function handleReset(): void {
+  gameStore.resetGame()
+  router.push('/')
+  menuOpen.value = false
+}
 
 const menuOpen    = ref(false)
 const playerCount = ref<number>(1)

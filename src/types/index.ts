@@ -97,61 +97,48 @@ export interface ResourceDataset {
   values: number[]
 }
 
+export interface ChartSeries {
+  label: string
+  unit: string
+  color: string
+  source: string
+  timeSeries: TimeSeries
+}
+
+export interface ForestChartSeries extends ChartSeries {
+  criticalThreshold: number
+  current: number
+}
+
+export interface EnergyMixTimeSeries {
+  years: number[]
+  byCategory: Record<EnergyMixKey, number[]>
+}
+
+export interface EnergyMixChartSeries {
+  label: string
+  unit: string
+  source: string
+  categories: EnergyCategory[]
+  timeSeries: EnergyMixTimeSeries
+}
+
+export interface ResourcesChartSeries {
+  label: string
+  unit: string
+  source: string
+  datasets: ResourceDataset[]
+  years: number[]
+}
+
 export interface EcologicalCharts {
-  co2: {
-    label: string
-    unit: string
-    color: string
-    source: string
-    timeSeries: TimeSeries
-  }
-  temperature: {
-    label: string
-    unit: string
-    color: string
-    source: string
-    timeSeries: TimeSeries
-  }
-  forest: {
-    label: string
-    unit: string
-    color: string
-    criticalThreshold: number
-    current: number
-    source: string
-    timeSeries: TimeSeries
-  }
-  seaLevel: {
-    label: string
-    unit: string
-    color: string
-    source: string
-    timeSeries: TimeSeries
-  }
-  extremes: {
-    label: string
-    unit: string
-    color: string
-    source: string
-    timeSeries: TimeSeries
-  }
-  energyMix: {
-    label: string
-    unit: string
-    source: string
-    categories: EnergyCategory[]
-    timeSeries: {
-      years: number[]
-      byCategory: Record<EnergyMixKey, number[]>
-    }
-  }
-  resources: {
-    label: string
-    unit: string
-    source: string
-    datasets: ResourceDataset[]
-    years: number[]
-  }
+  co2:         ChartSeries
+  temperature: ChartSeries
+  forest:      ForestChartSeries
+  seaLevel:    ChartSeries
+  extremes:    ChartSeries
+  energyMix:   EnergyMixChartSeries
+  resources:   ResourcesChartSeries
 }
 
 // ─── Décisions & Vote ─────────────────────────────────────────────────────────

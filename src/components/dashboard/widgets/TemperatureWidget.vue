@@ -1,0 +1,87 @@
+<template>
+  <EbCard :extra-class="summaryMode ? 'flex flex-col items-center justify-center' : 'col-span-1 md:col-span-2'">
+    <div class="flex items-center justify-between mb-3 w-full">
+      <div class="text-sm font-bold text-slate-200">
+        <i class="fa fa-thermometer-half text-orange-400 mr-2" aria-hidden="true"></i>
+        {{ t('dashboard.temp_title') }}
+      </div>
+      <span v-if="!summaryMode" class="text-xs bg-orange-900/40 text-orange-400 px-2 py-0.5 rounded-full">{{ t('dashboard.temp_tag') }}</span>
+    </div>
+
+    <template v-if="summaryMode">
+      <GaugeChart
+        canvas-id="tempGauge"
+        :value="tempCurrent"
+        :max="4"
+        track-color="#fb923c"
+        :size="140"
+        :font-size="26"
+        unit="°C"
+        :aria-label="`${t('dashboard.temp_title')} : ${tempCurrent}°C`"
+      >
+        <span class="text-2xl font-black text-orange-400">{{ tempCurrent }}</span>
+        <span class="text-xs text-slate-500 mt-0.5">°C</span>
+      </GaugeChart>
+      <div class="mt-3 text-xs text-slate-500 text-center">Seuil Paris : 1,5°C</div>
+    </template>
+
+    <LineChart
+      v-else
+      canvas-id="tempChart"
+      :labels="tempLabels"
+      :datasets="tempDatasets"
+      :height="180"
+      :current-year="gameStore.currentYear"
+      :aria-label="t('dashboard.temp_aria')"
+    />
+  </EbCard>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import EbCard from '@/components/layout/EbCard.vue'
+import LineChart from '@/components/charts/LineChart.vue'
+import GaugeChart from '@/components/charts/GaugeChart.vue'
+import { useGameStore } from '@/store/game.store'
+import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
+import { blendedAtYear } from '@/utils/timeSeries'
+import type { ChartSeries, ChartDataset } from '@/types/index'
+
+const { t } = useI18n()
+
+const props = defineProps<{
+  series: ChartSeries
+  summaryMode: boolean
+}>()
+
+const gameStore = useGameStore()
+const simStore = useSimulationStore()
+const { cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simStore)
+
+const PROJECTION_YEARS = SIM_LABELS.filter(y => y > 2024)
+
+const tempCurrent = computed<number>(() =>
+  Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeTemp.value, cumulativeTempPessimist.value) * 100) / 100
+)
+
+const tempLabels = computed<number[]>(() => [
+  ...props.series.timeSeries.years,
+  ...PROJECTION_YEARS,
+])
+
+const tempDatasets = computed<ChartDataset[]>(() => {
+  const round2 = (v: number) => Math.round(v * 100) / 100
+  const projValues = PROJECTION_YEARS.map(y =>
+    round2(blendedAtYear(y, SIM_LABELS, cumulativeTemp.value, cumulativeTempPessimist.value))
+  )
+  return [{
+    label:           t('dashboard.temp_dataset'),
+    data:            [...props.series.timeSeries.values, ...projValues],
+    borderColor:     '#fb923c',
+    backgroundColor: 'rgba(251,146,60,0.2)',
+    fill:            true,
+  }]
+})
+</script>
