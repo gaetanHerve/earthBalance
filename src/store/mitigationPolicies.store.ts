@@ -228,6 +228,13 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     return policyIndex.value[id]
   }
 
+  function resetAll(): void {
+    validatedPolicyMeta.value = []
+    ballots.value = ballotData.map(b => ({ ...b, pairwise: { ...b.pairwise } }))
+    ranking.value = [null, null, null]
+    hasVoted.value = false
+  }
+
   return {
     ballots,
     validatedPolicyMeta,
@@ -245,5 +252,6 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     getMitigationPolicy,
     closeActiveBallot,
     createNewBallot,
+    resetAll,
   }
 })

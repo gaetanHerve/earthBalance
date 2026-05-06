@@ -7,6 +7,13 @@ import { planetaryLimits, radarData } from '@/data/planetaryLimits'
 import { societalIndicators, ecologicalCharts, tickerItems, populationTimeSeries } from '@/data/societalIndicators'
 import { mitigationPolicies, globalStats, blockchainState } from '@/data/mitigationPolicies'
 
+/**
+ * DataService — façade statique vers les fichiers de données locaux.
+ *
+ * Toutes les méthodes sont intentionnellement async : quand les données
+ * seront servies par de vraies API (ODD, OWID, GHO…), les call sites
+ * (stores) n'auront pas besoin d'être modifiés — seule cette couche change.
+ */
 export const DataService = {
   async getPlanetaryLimits(): Promise<PlanetaryLimit[]> {
     // TODO: GET https://owid-api.example.com/planetary-boundaries

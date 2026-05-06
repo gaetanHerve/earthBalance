@@ -41,12 +41,12 @@ import BarChart from '@/components/charts/BarChart.vue'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
 import { blendedAtYear } from '@/utils/timeSeries'
-import type { EcologicalCharts, ChartDataset, EnergyMixKey } from '@/types/index'
+import type { EnergyMixChartSeries, ChartDataset, EnergyMixKey } from '@/types/index'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  series: EcologicalCharts['energyMix']
+  series: EnergyMixChartSeries
   summaryMode: boolean
 }>()
 

@@ -7,7 +7,7 @@ import { useSimulationStore } from './simulation.store'
 
 export const useGameStore = defineStore('game', () => {
   const stored = localStorage.getItem(STORAGE_KEYS.GAME_YEAR)
-  const parsedYear = stored !== null ? parseInt(stored, 10) : NaN
+  const parsedYear = stored === null ? Number.NaN : Number.parseInt(stored, 10)
   const currentYear    = ref<number>(Number.isFinite(parsedYear) && parsedYear >= 2024 ? parsedYear : 2024)
   const sessionNumber  = ref<number>(1)
 
@@ -16,7 +16,10 @@ export const useGameStore = defineStore('game', () => {
     localStorage.removeItem(STORAGE_KEYS.POLICIES_STATE)
     localStorage.removeItem(STORAGE_KEYS.SIMULATION_SELECTED)
     localStorage.removeItem(STORAGE_KEYS.SIMULATION_BASELINE)
-    window.location.reload()
+    currentYear.value = 2024
+    sessionNumber.value = 1
+    useMitigationPoliciesStore().resetAll()
+    useSimulationStore().resetAll()
   }
 
   function endRound(): void {

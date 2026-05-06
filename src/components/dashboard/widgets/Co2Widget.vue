@@ -46,12 +46,12 @@ import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
 import { blendedAtYear } from '@/utils/timeSeries'
-import type { EcologicalCharts, ChartDataset } from '@/types/index'
+import type { ChartSeries, ChartDataset } from '@/types/index'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  series: EcologicalCharts['co2']
+  series: ChartSeries
   summaryMode: boolean
 }>()
 

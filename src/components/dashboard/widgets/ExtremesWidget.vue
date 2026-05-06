@@ -52,12 +52,12 @@ import { useI18n } from 'vue-i18n'
 import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import { useGameStore } from '@/store/game.store'
-import type { EcologicalCharts, ChartDataset } from '@/types/index'
+import type { ChartSeries, ChartDataset } from '@/types/index'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  series: EcologicalCharts['extremes']
+  series: ChartSeries
   summaryMode: boolean
 }>()
 
