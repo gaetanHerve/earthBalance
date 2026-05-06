@@ -48,6 +48,7 @@
           :values="dynamicRadarValues"
           :statuses="limitStatuses"
           :height="420"
+          :show-earth="true"
           :aria-label="t('limits.radar_aria')"
         />
         <ChartSkeleton v-else :height="420" :label="t('limits.loading_radar')" />
