@@ -175,7 +175,7 @@ export const systemicNodes: SysNode[] = [
     data: {
       id: 'permafrost', label: 'Pergélisol arctique', labelEn: 'Arctic Permafrost',
       category: 'physical',
-      description:   "⚠ Point de basculement critique — Sols gelés stockant d'immenses réservoirs de méthane et CO₂. Leur dégel libère ces GES de façon irréversible.",
+      description:   "⚠ Point de bascule critique — Sols gelés stockant d'immenses réservoirs de méthane et CO₂. Leur dégel libère ces GES de façon irréversible.",
       descriptionEn:   '⚠ Critical tipping point — Frozen soils storing immense reservoirs of methane and CO₂. Their thaw releases these GHGs irreversibly.',
       ipccRef: 'AR6 WGI Ch.5',
     },

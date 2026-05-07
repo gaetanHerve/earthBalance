@@ -16,12 +16,14 @@ import { ref, computed, watch } from 'vue'
 import { mitigationPolicies as allMitigationPolicies } from '@/data/mitigationPolicies'
 import type { MitigationPolicy, MitigationPolicyProjections, EnergyMixKey, ResourceKey, SocietalKey } from '@/types/index'
 import { useMitigationPoliciesStore } from './mitigationPolicies.store'
+import { useTippingPointsStore } from './tippingPoints.store'
 import { GAME_CONFIG } from '@/config/game.config'
 import { STORAGE_KEYS } from '@/config/storageKeys'
+import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
-export const SIM_LABELS    = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
+export { SIM_LABELS } from '@/config/simulation.config'
 export const BASELINE_CO2  = [37.4, 39, 40.5, 42, 45.1, 49.2, 54, 58, 63, 70]
 export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
 
@@ -222,6 +224,7 @@ function simEffectiveStart(index: number, lag: number): number {
 export const useSimulationStore = defineStore('simulation', () => {
 
   const policiesStore = useMitigationPoliciesStore()
+  const tpStore       = useTippingPointsStore()
 
   // Catalogue : politiques avec modèle d'impact, statuts à jour depuis le store de politiques
   const catalogue = computed<MitigationPolicy[]>(() => {
@@ -337,14 +340,20 @@ export const useSimulationStore = defineStore('simulation', () => {
     })
   )
 
-  const cumulativeCo2Ppm          = computed<number[]>(() => ppmFromEmissionSavings(cumulativeCo2.value))
-  const cumulativeCo2PpmPessimist = computed<number[]>(() => ppmFromEmissionSavings(cumulativeCo2Pessimist.value))
+  const cumulativeCo2Ppm = computed<number[]>(() =>
+    ppmFromEmissionSavings(cumulativeCo2.value)
+      .map((v, i) => Math.round((v + tpStore.co2PpmOffset[i]) * 10) / 10)
+  )
+  const cumulativeCo2PpmPessimist = computed<number[]>(() =>
+    ppmFromEmissionSavings(cumulativeCo2Pessimist.value)
+      .map((v, i) => Math.round((v + tpStore.co2PpmOffset[i]) * 10) / 10)
+  )
 
   const cumulativeTemp = computed<number[]>(() =>
     BASELINE_TEMP.map((base, i) => {
       const delta = selectedMitigationPolicies.value.reduce(
         (s, dec) => s + tempDeltas(dec, effectiveStartOf(dec.id))[i], 0)
-      return Math.round((base + delta) * 100) / 100
+      return Math.round((base + delta + tpStore.tempOffset[i]) * 100) / 100
     })
   )
 
@@ -352,7 +361,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     BASELINE_TEMP.map((base, i) => {
       const delta = selectedMitigationPolicies.value.reduce(
         (s, dec) => s + tempDeltasPessimist(dec, effectiveStartOf(dec.id))[i], 0)
-      return Math.round((base + delta) * 100) / 100
+      return Math.round((base + delta + tpStore.tempOffset[i]) * 100) / 100
     })
   )
 
@@ -360,7 +369,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     BASELINE_FOREST.map((base, i) => {
       const delta = selectedMitigationPolicies.value.reduce(
         (s, dec) => s + forestDeltas(dec, effectiveStartOf(dec.id))[i], 0)
-      return Math.round((base + delta) * 10) / 10
+      return Math.round((base + delta + tpStore.forestOffset[i]) * 10) / 10
     })
   )
 
@@ -368,7 +377,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     BASELINE_FOREST.map((base, i) => {
       const delta = selectedMitigationPolicies.value.reduce(
         (s, dec) => s + forestDeltasPessimist(dec, effectiveStartOf(dec.id))[i], 0)
-      return Math.round((base + delta) * 10) / 10
+      return Math.round((base + delta + tpStore.forestOffset[i]) * 10) / 10
     })
   )
 

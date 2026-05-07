@@ -32,6 +32,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Corrélations — EarthBalance' },
   },
   {
+    path: '/bascules',
+    name: 'tippingPoints',
+    component: () => import('@/views/TippingPointsView.vue'),
+    meta: { title: 'Points de bascule — EarthBalance' },
+  },
+  {
     path: '/simulateur',
     name: 'simulateur',
     component: () => import('@/views/SimulateurView.vue'),

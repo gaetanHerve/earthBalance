@@ -43,22 +43,13 @@
           ×{{ limit.ratio.toFixed(2) }}
         </span>
       </div>
-      <div
-        class="bg-eb-border rounded-full h-2 overflow-hidden"
-        role="progressbar"
+      <progress
+        class="limit-progress block w-full h-2 rounded-full"
         :aria-label="t('limits.ratio_label') + ' : ' + limit.ratio.toFixed(2)"
-        :aria-valuenow="Math.min(limit.ratio, 2)"
-        aria-valuemin="0"
-        aria-valuemax="2"
-      >
-        <div
-          class="h-full rounded-full transition-all duration-1000"
-          :style="{
-            width: Math.min((limit.ratio / 2) * 100, 100) + '%',
-            backgroundColor: limit.color,
-          }"
-        ></div>
-      </div>
+        :value="Math.min(limit.ratio, 1)"
+        max="1"
+        :style="{ '--progress-color': limit.color }"
+      ></progress>
     </div>
 
     <!-- Graphique d'évolution temporelle -->
@@ -67,7 +58,6 @@
       :labels="chartLabels"
       :datasets="chartDatasets"
       :height="120"
-      :current-year="projDecided ? gameStore.currentYear : undefined"
       :aria-label="t('limits.chart_evolution', { name: displayName })"
     />
 
@@ -96,6 +86,7 @@ const gameStore = useGameStore()
 
 const props = defineProps<{
   limit:          PlanetaryLimit
+  status?:        LimitStatus
   projDecided?:   number[]
   projPessimist?: number[]
 }>()
@@ -119,9 +110,10 @@ const STATUS_KEY: Record<LimitStatus, string> = {
   safe:             'limits.safe',
 }
 
-const statusClass  = computed(() => STATUS_CLASS[props.limit.status])
-const statusLabel  = computed(() => t(STATUS_KEY[props.limit.status]))
-const statusIcon   = computed(() => STATUS_ICON[props.limit.status as LimitStatus])
+const effectiveStatus = computed<LimitStatus>(() => props.status ?? (props.limit.status as LimitStatus))
+const statusClass  = computed(() => STATUS_CLASS[effectiveStatus.value])
+const statusLabel  = computed(() => t(STATUS_KEY[effectiveStatus.value]))
+const statusIcon   = computed(() => STATUS_ICON[effectiveStatus.value])
 
 function hexToRgba(hex: string, alpha: number): string {
   const r = Number.parseInt(hex.slice(1, 3), 16)
@@ -190,3 +182,13 @@ const chartDatasets = computed<ChartDataset[]>(() => {
   }]
 })
 </script>
+
+<style scoped>
+.limit-progress {
+  appearance: none;
+  background: #1f2d3d; /* eb-border */
+}
+.limit-progress::-webkit-progress-bar   { background: #1f2d3d; border-radius: 9999px; }
+.limit-progress::-webkit-progress-value { background: var(--progress-color); border-radius: 9999px; transition: width 1s; }
+.limit-progress::-moz-progress-bar      { background: var(--progress-color); border-radius: 9999px; transition: width 1s; }
+</style>
