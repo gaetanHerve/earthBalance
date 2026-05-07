@@ -45,7 +45,8 @@
         <AppContrastToggle />
         <AppLangToggle />
 
-        <div class="flex items-center gap-3 text-sm flex-wrap">
+        <!-- Stats -->
+        <div class="flex items-center gap-3 text-sm">
 
           <!-- Session -->
           <div class="flex items-center gap-2 text-xs text-slate-400">
@@ -69,6 +70,26 @@
             <span class="font-bold text-eb-cyan" aria-live="polite">{{ playerCount.toLocaleString('fr-FR') }}</span>
             <span>{{ t('header.players') }}</span>
           </div>
+
+        </div>
+
+        <!-- Admin -->
+        <div class="flex items-center gap-2 pl-3 border-l border-eb-border/60" :aria-label="t('header.admin_section')">
+          <span class="text-[9px] text-slate-600 uppercase tracking-widest font-semibold" aria-hidden="true">Admin</span>
+
+          <!-- Tipping Points toggle -->
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+            :class="tpStore.enabled
+              ? 'border-red-700/50 text-red-400 hover:bg-red-500/10 hover:border-red-600 cursor-pointer'
+              : 'border-slate-700 text-slate-500 hover:border-slate-600 cursor-pointer'"
+            :aria-pressed="tpStore.enabled"
+            :aria-label="t('tipping.toggle_aria')"
+            @click="tpStore.toggleEnabled()"
+          >
+            <i class="fas text-[11px]" :class="tpStore.enabled ? 'fa-toggle-on' : 'fa-toggle-off'" aria-hidden="true"></i>
+            {{ t('nav.tipping_points') }}
+          </button>
 
           <!-- Fin de tour -->
           <button
@@ -167,8 +188,25 @@
         </div>
       </div>
 
-      <!-- Fin de tour + Réinitialiser -->
-      <div class="pt-1 border-t border-eb-border space-y-2">
+      <!-- Admin -->
+      <div class="pt-1 border-t border-eb-border space-y-2" :aria-label="t('header.admin_section')">
+        <p class="text-[9px] text-slate-600 uppercase tracking-widest font-semibold px-1" aria-hidden="true">Admin</p>
+
+        <!-- Basculements toggle -->
+        <button
+          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :class="tpStore.enabled
+            ? 'border-red-700/50 text-red-400 hover:bg-red-500/10 hover:border-red-600 cursor-pointer'
+            : 'border-slate-700 text-slate-500 hover:border-slate-600 cursor-pointer'"
+          :aria-pressed="tpStore.enabled"
+          :aria-label="t('tipping.toggle_aria')"
+          @click="tpStore.toggleEnabled()"
+        >
+          <i class="fas" :class="tpStore.enabled ? 'fa-toggle-on' : 'fa-toggle-off'" aria-hidden="true"></i>
+          {{ t('nav.tipping_points') }}
+          <span class="text-xs opacity-60">({{ tpStore.enabled ? t('tipping.toggle_enabled') : t('tipping.toggle_disabled') }})</span>
+        </button>
+
         <button
           class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
           :class="canEndRound
@@ -207,6 +245,7 @@ import AppContrastToggle from '@/components/layout/AppContrastToggle.vue'
 import AppLangToggle from '@/components/layout/AppLangToggle.vue'
 import { useGameStore } from '@/store/game.store'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
+import { useTippingPointsStore } from '@/store/tippingPoints.store'
 
 interface NavLink { to: string; label: string; icon: string }
 
@@ -214,6 +253,7 @@ const { t } = useI18n()
 const route  = useRoute()
 const router = useRouter()
 const gameStore = useGameStore()
+const tpStore   = useTippingPointsStore()
 
 const { activeBallot } = storeToRefs(useMitigationPoliciesStore())
 const canEndRound = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
@@ -231,7 +271,7 @@ const navLinks = computed<NavLink[]>(() => [
   { to: '/',                    label: t('nav.dashboard'),    icon: 'fa-gauge-high'      },
   { to: '/limites-planetaires', label: t('nav.limits'),       icon: 'fa-earth-europe'    },
   { to: '/mitigation-policies', label: t('nav.policies'),     icon: 'fa-vote-yea'        },
-  { to: '/correlations',        label: t('nav.correlations'), icon: 'fa-diagram-project' },
+  { to: '/bascules',            label: t('nav.tipping_points'), icon: 'fa-triangle-exclamation' },
   { to: '/simulateur',          label: t('nav.simulator'),    icon: 'fa-flask'           },
   { to: '/carte-systemique',    label: t('nav.systemic_map'), icon: 'fa-share-nodes'     },
 ])

@@ -93,6 +93,7 @@ import { storeToRefs } from 'pinia'
 import { usePlanetsStore } from '@/store/planets.store'
 import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
 import { useGameStore } from '@/store/game.store'
+import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { interpolateAtYear } from '@/utils/timeSeries'
 
 import SectionTitle       from '@/components/layout/SectionTitle.vue'
@@ -108,6 +109,7 @@ const { limits, radarData, loading, limitsByStatus } = storeToRefs(store)
 const gameStore = useGameStore()
 const { currentYear } = storeToRefs(gameStore)
 
+const tpStore  = useTippingPointsStore()
 const simStore = useSimulationStore()
 const {
   cumulativeCo2Ppm,     cumulativeCo2PpmPessimist,
@@ -332,6 +334,19 @@ function computeDynamicRatio(id: string, value: number, threshold: number, stati
   }
 }
 
+function tpRatioOffset(limitId: string): number {
+  switch (limitId) {
+    case 'biodiversite':
+      return interpolateAtYear(currentYear.value, SIM_LABELS, tpStore.biodiversityRatioOffset)
+    case 'acidification-oceans':
+      return interpolateAtYear(currentYear.value, SIM_LABELS, tpStore.acidificationRatioOffset)
+    case 'eau-douce':
+      return interpolateAtYear(currentYear.value, SIM_LABELS, tpStore.waterRatioOffset)
+    default:
+      return 0
+  }
+}
+
 const dynamicRadarValues = computed<number[]>(() =>
   limits.value.map(limit => {
     const decided   = projDecided(limit.id)
@@ -340,7 +355,8 @@ const dynamicRadarValues = computed<number[]>(() =>
     const d       = interpolateAtYear(currentYear.value, SIM_LABELS, decided)
     const p       = interpolateAtYear(currentYear.value, SIM_LABELS, pessimist)
     const blended = d * (1 - BLEND) + p * BLEND
-    return Math.min(computeDynamicRatio(limit.id, blended, limit.threshold, limit.ratio), 2)
+    const base    = computeDynamicRatio(limit.id, blended, limit.threshold, limit.ratio)
+    return Math.min(base + tpRatioOffset(limit.id), 2)
   })
 )
 
