@@ -31,7 +31,7 @@ export const useTippingPointsStore = defineStore('tippingPoints', () => {
 
   const triggered       = ref<TriggerRecord>(loadTriggered())
   const pendingModalIds = ref<string[]>([])
-  const enabled         = ref<boolean>(true)
+  const enabled         = ref<boolean>(false)
 
   watch(triggered, val => {
     localStorage.setItem(STORAGE_KEYS.TIPPING_STATE, JSON.stringify(val))

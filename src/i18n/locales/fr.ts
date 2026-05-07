@@ -87,6 +87,7 @@ export default {
     see_full_page:     'Voir la page complète',
     eco_title:         'Indicateurs Écologiques',
     co2_title:         'Émissions CO₂ mondiales',
+    baseline_label: 'Référence SSP2-4.5',
     co2_dataset:       'Émissions CO₂',
     co2_aria:          'Évolution des émissions mondiales de CO₂ de 1990 à 2024',
     global_toggle_label:   'Vue :',

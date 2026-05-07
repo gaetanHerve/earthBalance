@@ -87,6 +87,7 @@ export default {
     see_full_page:     'View full page',
     eco_title:         'Ecological Indicators',
     co2_title:         'Global CO₂ emissions',
+    baseline_label:    'SSP2-4.5 baseline',
     co2_dataset:       'CO₂ emissions',
     co2_aria:          'Global CO₂ emissions from 1990 to 2024',
     global_toggle_label:   'View:',

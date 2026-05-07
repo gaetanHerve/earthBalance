@@ -48,7 +48,7 @@ import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useGameStore } from '@/store/game.store'
-import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
+import { useSimulationStore, SIM_LABELS, BASELINE_FOREST } from '@/store/simulation.store'
 import { blendedAtYear } from '@/utils/timeSeries'
 import type { ForestChartSeries, ChartDataset } from '@/types/index'
 
@@ -75,16 +75,28 @@ const forestLabels = computed<number[]>(() => [
 ])
 
 const forestDatasets = computed<ChartDataset[]>(() => {
-  const round1 = (v: number) => Math.round(v * 10) / 10
+  const round1     = (v: number) => Math.round(v * 10) / 10
+  const hist       = props.series.timeSeries.values
   const projValues = PROJECTION_YEARS.map(y =>
     round1(blendedAtYear(y, SIM_LABELS, cumulativeForest.value, cumulativeForestPessimist.value))
   )
-  return [{
-    label:           t('dashboard.forest_title'),
-    data:            [...props.series.timeSeries.values, ...projValues],
-    borderColor:     '#00ff88',
-    backgroundColor: 'rgba(0,255,136,0.08)',
-    fill:            true,
-  }]
+  return [
+    {
+      label:           t('dashboard.forest_title'),
+      data:            [...hist, ...projValues],
+      borderColor:     '#00ff88',
+      backgroundColor: 'rgba(0,255,136,0.08)',
+      fill:            true,
+    },
+    {
+      label:           t('dashboard.baseline_label'),
+      data:            [...new Array(hist.length - 1).fill(null), hist.at(-1)!, ...BASELINE_FOREST.slice(1)],
+      borderColor:     'rgba(148,163,184,0.55)',
+      backgroundColor: 'transparent',
+      borderDash:      [6, 4],
+      fill:            false,
+      pointRadius:     0,
+    },
+  ]
 })
 </script>

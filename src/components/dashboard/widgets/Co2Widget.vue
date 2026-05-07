@@ -44,7 +44,7 @@ import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useGameStore } from '@/store/game.store'
-import { useSimulationStore, SIM_LABELS } from '@/store/simulation.store'
+import { useSimulationStore, SIM_LABELS, BASELINE_CO2 } from '@/store/simulation.store'
 import { blendedAtYear } from '@/utils/timeSeries'
 import type { ChartSeries, ChartDataset } from '@/types/index'
 
@@ -71,16 +71,28 @@ const co2Labels = computed<number[]>(() => [
 ])
 
 const co2Datasets = computed<ChartDataset[]>(() => {
-  const round1 = (v: number) => Math.round(v * 10) / 10
+  const round1     = (v: number) => Math.round(v * 10) / 10
+  const hist       = props.series.timeSeries.values
   const projValues = PROJECTION_YEARS.map(y =>
     round1(blendedAtYear(y, SIM_LABELS, cumulativeCo2.value, cumulativeCo2Pessimist.value))
   )
-  return [{
-    label:           t('dashboard.co2_dataset'),
-    data:            [...props.series.timeSeries.values, ...projValues],
-    borderColor:     '#ff5050',
-    backgroundColor: 'rgba(255,80,80,0.08)',
-    fill:            true,
-  }]
+  return [
+    {
+      label:           t('dashboard.co2_dataset'),
+      data:            [...hist, ...projValues],
+      borderColor:     '#ff5050',
+      backgroundColor: 'rgba(255,80,80,0.08)',
+      fill:            true,
+    },
+    {
+      label:           t('dashboard.baseline_label'),
+      data:            [...new Array(hist.length - 1).fill(null), hist.at(-1)!, ...BASELINE_CO2.slice(1)],
+      borderColor:     'rgba(148,163,184,0.55)',
+      backgroundColor: 'transparent',
+      borderDash:      [6, 4],
+      fill:            false,
+      pointRadius:     0,
+    },
+  ]
 })
 </script>

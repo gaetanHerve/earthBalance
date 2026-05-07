@@ -14,7 +14,12 @@
         class="flex items-center gap-1.5 text-xs text-slate-400"
       >
         <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-          <line x1="0" y1="4" x2="20" y2="4" :stroke="item.color" stroke-width="2"/>
+          <line
+            x1="0" y1="4" x2="20" y2="4"
+            :stroke="item.color"
+            stroke-width="2"
+            :stroke-dasharray="item.borderDash ? item.borderDash.join(' ') : undefined"
+          />
           <circle
             v-if="item.pointStyle === 'circle'"
             cx="10" cy="4" r="3"
@@ -59,8 +64,8 @@
             x1="6" y1="4" x2="14" y2="4"
             :stroke="item.color" stroke-width="3"
           />
-          <!-- fallback -->
-          <circle v-else cx="10" cy="4" r="3" :fill="item.color"/>
+          <!-- fallback circle uniquement si un pointStyle est attendu -->
+          <circle v-else-if="item.pointStyle" cx="10" cy="4" r="3" :fill="item.color"/>
         </svg>
         {{ item.label }}
       </span>
@@ -200,7 +205,8 @@ const resolvedLegendItems = computed(() =>
   props.datasets.map((ds, i) => ({
     label:      ds.label,
     color:      ds.borderColor as string,
-    pointStyle: ds.pointStyle ?? POINT_STYLES[i % POINT_STYLES.length],
+    pointStyle: ds.pointRadius === 0 ? null : (ds.pointStyle ?? POINT_STYLES[i % POINT_STYLES.length]),
+    borderDash: ds.borderDash,
   }))
 )
 
