@@ -66,6 +66,8 @@ type RadialScale = {
 const LAND_THRESHOLD = 145
 
 let _earthCanvas: HTMLCanvasElement | null = null
+const _earthPendingUpdates: Array<() => void> = []
+
 ;(async () => {
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const el = new Image()
@@ -82,16 +84,18 @@ let _earthCanvas: HTMLCanvasElement | null = null
   for (let i = 0; i < d.length; i += 4) {
     const br = (d[i] + d[i + 1] + d[i + 2]) / 3
     if (br > LAND_THRESHOLD) {
-      d[i + 3] = 0                          // océan / fond → transparent
+      d[i + 3] = 0
     } else {
-      d[i]     = 28                          // vert forêt : R
-      d[i + 1] = 115                         //              G
-      d[i + 2] = 55                          //              B
+      d[i]     = 28
+      d[i + 1] = 115
+      d[i + 2] = 55
       d[i + 3] = Math.min(255, Math.round((LAND_THRESHOLD - br) / LAND_THRESHOLD * 510))
     }
   }
   offCtx.putImageData(id, 0, 0)
   _earthCanvas = off
+  // Déclenche le rendu des charts déjà créés mais en attente du canvas
+  _earthPendingUpdates.splice(0).forEach(fn => fn())
 })()
 
 const _earthCharts = new WeakSet<object>()
@@ -296,7 +300,13 @@ function initChart() {
       },
     },
   })
-  if (props.showEarth) _earthCharts.add(chart)
+  if (props.showEarth) {
+    _earthCharts.add(chart)
+    if (_earthCanvas === null) {
+      // Image pas encore prête — on demande un re-rendu dès qu'elle le sera
+      _earthPendingUpdates.push(() => chart?.update())
+    }
+  }
 }
 
 onMounted(initChart)

@@ -32,15 +32,6 @@
     <section aria-labelledby="radar-title">
       <SectionTitle id="radar-title" :title="t('limits.radar_title')" icon="fa-circle-nodes" color-class="text-eb-cyan" />
       <EbCard>
-        <div class="flex justify-end mb-2">
-          <output
-            class="inline-flex items-center gap-1.5 text-xs font-mono border border-eb-cyan/30 bg-eb-cyan/5 text-eb-cyan px-2.5 py-1 rounded-full"
-            :aria-label="t('limits.radar_year_aria', { year: currentYear })"
-          >
-            <i class="fa fa-circle-dot text-[9px] animate-pulse" aria-hidden="true"></i>
-            {{ currentYear }}
-          </output>
-        </div>
         <RadarChart
           v-if="radarData"
           canvas-id="globalRadar"
@@ -73,9 +64,10 @@
         </template>
         <template v-else>
           <PlanetaryLimitCard
-            v-for="limit in limits"
+            v-for="(limit, i) in limits"
             :key="limit.id"
             :limit="limit"
+            :status="limitStatuses[i]"
             :proj-decided="projDecided(limit.id)"
             :proj-pessimist="projPessimist(limit.id)"
           />
@@ -104,7 +96,7 @@ import PlanetaryLimitCard from '@/components/limits/PlanetaryLimitCard.vue'
 
 const { t, locale } = useI18n()
 const store = usePlanetsStore()
-const { limits, radarData, loading, limitsByStatus } = storeToRefs(store)
+const { limits, radarData, loading } = storeToRefs(store)
 
 const gameStore = useGameStore()
 const { currentYear } = storeToRefs(gameStore)
@@ -362,18 +354,41 @@ const dynamicRadarValues = computed<number[]>(() =>
 
 type LimitStatus = 'safe' | 'zone_incertitude' | 'depasse'
 
-const isLimitStatus = (status: string): status is LimitStatus =>
-  status === 'safe' || status === 'zone_incertitude' || status === 'depasse'
+// Limites pour lesquelles la simulation produit un driver — les autres restent statiques.
+const LIMITS_WITH_DRIVERS = new Set([
+  'changement-climatique', 'usage-terres', 'biodiversite',
+  'acidification-oceans', 'aerosols-atmospheriques', 'eau-douce',
+])
+
+function ratioToStatus(id: string, ratio: number, staticStatus: LimitStatus): LimitStatus {
+  if (!LIMITS_WITH_DRIVERS.has(id)) return staticStatus
+  // Acidification : ratio = Ω/seuil — convention inversée (ratio ↓ = pire)
+  if (id === 'acidification-oceans') {
+    if (ratio < 1)    return 'depasse'
+    if (ratio < 1.15) return 'zone_incertitude'
+    return 'safe'
+  }
+  // Tous les autres : ratio ↑ = pire
+  if (ratio > 1)    return 'depasse'
+  if (ratio > 0.85) return 'zone_incertitude'
+  return 'safe'
+}
 
 const localizedRadarLabels = computed<string[]>(() =>
   limits.value.map((l: { name: string; nameEn: string }) => locale.value === 'en' ? l.nameEn : l.name)
 )
 
 const limitStatuses = computed<LimitStatus[]>(() =>
-  limits.value
-    .map((l: { status: string }) => l.status)
-    .filter(isLimitStatus)
+  limits.value.map((l, i) =>
+    ratioToStatus(l.id, dynamicRadarValues.value[i], l.status as LimitStatus)
+  )
 )
+
+const limitsByStatus = computed(() => ({
+  depasse:          limits.value.filter((_, i) => limitStatuses.value[i] === 'depasse'),
+  zone_incertitude: limits.value.filter((_, i) => limitStatuses.value[i] === 'zone_incertitude'),
+  safe:             limits.value.filter((_, i) => limitStatuses.value[i] === 'safe'),
+}))
 
 onMounted(() => store.fetchAll())
 </script>
