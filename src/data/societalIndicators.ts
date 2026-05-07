@@ -123,13 +123,14 @@ export const ecologicalCharts: EcologicalCharts = {
 
   seaLevel: {
     label: 'Élévation du niveau des mers',
-    unit: 'mm (Δ 1990)',
+    unit: 'mm (Δ 1995-2014)',
     color: '#60a5fa',
     source: 'IPCC AR6 WGI Ch.9 — Church & White (2011) ; altimétrie satellite NASA/CNES ; projection médiane SSP2-4.5',
     timeSeries: {
       // Observé 1990-2024, puis projection médiane SSP2-4.5 (AR6 Table 9.9, données éducatives)
+      // Référence : moyenne 1995-2014 ≈ 0 mm (convention AR6 WGI Ch.9)
       years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
-      values: [   0,   14,   28,   42,   60,   78,   98,  118,  138,  178,  224,  281,  378,  455],
+      values: [ -40,  -26,  -12,    2,   20,   38,   58,   78,   98,  138,  184,  241,  338,  415],
     },
   },
 

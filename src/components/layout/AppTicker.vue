@@ -68,8 +68,6 @@ const co2PpmSeries = {
   values: [ 354,  369,  389,  413,  421,  434,  454,  471,  486,  503,  538],
 }
 
-// Élévation pré-industrielle → 1990 (~100 mm) pour ramener la série Δ1990 à une référence pré-industrielle
-const SEA_LEVEL_PRE1990_MM = 102
 
 const items = computed(() => {
   const y = gameStore.currentYear
@@ -78,7 +76,7 @@ const items = computed(() => {
   const co2Val   = Math.round(interpolateAtYear(y, co2PpmSeries.years, co2PpmSeries.values))
   const seaLevelTs = dashEco.value?.seaLevel.timeSeries
   const seaMm    = seaLevelTs ? interpolateAtYear(y, seaLevelTs.years, seaLevelTs.values) : 0
-  const seaCm    = Math.round((seaMm + SEA_LEVEL_PRE1990_MM) / 10)
+  const seaCm    = Math.round(seaMm / 10)
   const forest   = Math.round(blendedAtYear(y, SIM_LABELS, cumulativeForest.value,  cumulativeForestPessimist.value)  * 10) / 10
   const solar    = blendedAtYear(y, SIM_LABELS, cumulativeEnergyMix.value.solar, cumulativeEnergyMixPessimist.value.solar)
   const wind     = blendedAtYear(y, SIM_LABELS, cumulativeEnergyMix.value.wind,  cumulativeEnergyMixPessimist.value.wind)

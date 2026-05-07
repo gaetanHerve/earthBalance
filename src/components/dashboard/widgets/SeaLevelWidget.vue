@@ -4,19 +4,19 @@
       <div class="text-sm font-bold text-slate-200">
         <i class="fa fa-water text-blue-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.sea_level_title') }}
       </div>
-      <span v-if="!summaryMode" class="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full">mm</span>
+      <span v-if="!summaryMode" class="text-xs bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded-full">{{ t('dashboard.sea_level_tag') }}</span>
     </div>
 
     <template v-if="summaryMode">
       <GaugeChart
         canvas-id="seaLevelGauge"
         :value="seaLevelCurrent"
-        :max="1000"
+        :max="500"
         track-color="#60a5fa"
         :size="140"
         :font-size="20"
         unit="mm"
-        :aria-label="`${t('dashboard.sea_level_title')} : +${seaLevelCurrent} mm`"
+        :aria-label="`${t('dashboard.sea_level_title')} : +${seaLevelCurrent} mm ${t('dashboard.sea_level_tag')}`"
       >
         <span class="text-2xl font-black text-blue-400">+{{ seaLevelCurrent }}</span>
         <span class="text-xs text-slate-500 mt-0.5">mm</span>
@@ -31,7 +31,6 @@
         :datasets="seaLevelDatasets"
         :height="180"
         :current-year="gameStore.currentYear"
-        :y-min="0"
         :aria-label="t('dashboard.sea_level_aria')"
       />
       <div class="mt-1 text-[10px] text-slate-600 text-right">
@@ -72,7 +71,7 @@ const seaLevelLabels = computed<number[]>(() => props.series.timeSeries.years)
 
 const seaLevelDatasets = computed<ChartDataset[]>(() => [{
   label:           t('dashboard.sea_level_title'),
-  data:            props.series.timeSeries.values,
+  data:            props.series.timeSeries.values.map(v => Math.round(v)),
   borderColor:     '#60a5fa',
   backgroundColor: 'rgba(96,165,250,0.08)',
   fill:            true,
