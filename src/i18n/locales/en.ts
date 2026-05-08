@@ -286,8 +286,8 @@ export default {
     mode_game:       'Active game',
     upstream_label:  'Prerequisites (required policies)',
     downstream_label:'Dependants (policies that need this one)',
-    click_hint:      'Click a policy card to reveal its links',
-    deselect_hint:   'Deselect',
+    click_hint:      'Click or press Enter to reveal a policy\'s links',
+    deselect_hint:   'Deselect · Esc',
   },
   policy_detail: {
     back:            'Policies',
@@ -456,5 +456,14 @@ export default {
     narrative_3_body:       'At 2–3 °C of warming, impacts are severe and unevenly distributed. Massive migrations have reshaped certain regions. The most vulnerable ecosystems have suffered irreversible damage. Humanity has adapted, at the cost of immense collective effort.',
     narrative_4_title:      'A Future to Rebuild',
     narrative_4_body:       'Beyond 3 °C, consequences are profound and lasting. Tipping points have amplified disruptions. Entire swathes of societies and ecosystems have been irreversibly transformed. Decisions made — or not made — in these decades will weigh on multiple generations.',
+  },
+
+  phase: {
+    discussion:  'Discussion',
+    vote:        'Vote',
+    results:     'Results',
+    start_vote:  'Start vote',
+    close_vote:  'Close vote',
+    next_round:  'Next round',
   },
 }

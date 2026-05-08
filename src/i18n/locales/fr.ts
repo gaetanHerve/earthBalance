@@ -286,8 +286,8 @@ export default {
     mode_game:       'Partie en cours',
     upstream_label:  'Prérequis (politiques requises)',
     downstream_label:'Dépendants (politiques qui en ont besoin)',
-    click_hint:      'Cliquez sur une politique pour afficher ses liens',
-    deselect_hint:   'Désélectionner',
+    click_hint:      'Cliquez ou appuyez sur Entrée pour afficher les liens d\'une politique',
+    deselect_hint:   'Désélectionner · Échap',
   },
   policy_detail: {
     back:            'Politiques',
@@ -456,5 +456,14 @@ export default {
     narrative_3_body:       'Avec un réchauffement de 2 à 3 °C, les impacts sont sévères et inégalement répartis. Des migrations massives ont reconfiguré certaines régions. Les écosystèmes les plus vulnérables ont subi des dommages irréversibles. L\'humanité s\'est adaptée, au prix d\'immenses efforts collectifs.',
     narrative_4_title:      'Un futur à reconstruire',
     narrative_4_body:       'Au-delà de 3 °C, les conséquences sont profondes et durables. Des points de bascule ont amplifié les dérèglements. Des pans entiers des sociétés et des écosystèmes ont été transformés de façon irréversible. Les décisions prises — ou non prises — dans ces décennies pèseront sur plusieurs générations.',
+  },
+
+  phase: {
+    discussion:  'Discussion',
+    vote:        'Vote',
+    results:     'Résultats',
+    start_vote:  'Lancer le vote',
+    close_vote:  'Clôturer le vote',
+    next_round:  'Nouveau tour',
   },
 }

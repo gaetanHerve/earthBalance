@@ -6,4 +6,5 @@ export const STORAGE_KEYS = {
   VISIBLE_WIDGETS:     'eb_visible_widgets',
   TIPPING_STATE:       'eb_tipping_state',
   INTRO_SEEN:          'eb_intro_seen',
+  GAME_PHASE:          'eb_game_phase',
 } as const

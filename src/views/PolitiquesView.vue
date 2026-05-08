@@ -84,9 +84,12 @@
               v-for="(label, pos) in rankButtons"
               :key="pos"
               class="flex-1 text-xs py-1.5 rounded-lg border font-bold transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="getRankOf(decision.id) === pos
-                ? 'bg-eb-cyan text-eb-dark border-eb-cyan'
-                : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50 hover:text-slate-200'"
+              :class="!canVote
+                ? 'bg-transparent text-slate-600 border-slate-800 cursor-not-allowed opacity-40'
+                : getRankOf(decision.id) === pos
+                  ? 'bg-eb-cyan text-eb-dark border-eb-cyan'
+                  : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50 hover:text-slate-200'"
+              :disabled="!canVote"
               :aria-pressed="getRankOf(decision.id) === pos"
               @click="onRankClick(decision.id, pos)"
             >
@@ -121,10 +124,10 @@
         </div>
         <button
           class="ml-auto px-5 py-2 rounded-lg font-bold text-sm transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-          :class="isRankingComplete
+          :class="isRankingComplete && canVote
             ? 'bg-eb-cyan text-eb-dark hover:bg-cyan-300'
             : 'bg-eb-dark text-slate-600 border border-eb-border cursor-not-allowed'"
-          :disabled="!isRankingComplete"
+          :disabled="!isRankingComplete || !canVote"
           @click="submitRanking"
         >
           <i class="fa fa-paper-plane mr-1.5" aria-hidden="true"></i>
@@ -424,6 +427,7 @@ const activeResult = computed(() =>
 
 // ─── Constantes UI ───────────────────────────────────────────────────────────
 
+const canVote = computed(() => gameStore.phase === 'vote')
 const rankButtons = computed(() => [t('policies.r1'), t('policies.r2'), t('policies.r3')] as const)
 
 // ─── Helpers template (évitent ! et as TypeName dans le template) ─────────────

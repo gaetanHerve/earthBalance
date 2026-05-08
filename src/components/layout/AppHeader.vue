@@ -91,19 +91,57 @@
             {{ t('nav.tipping_points') }}
           </button>
 
-          <!-- Fin de tour -->
+          <!-- Badge phase courante -->
+          <span
+            class="text-[10px] px-2 py-0.5 rounded-full border font-semibold uppercase tracking-wide"
+            :class="{
+              'border-slate-600 text-slate-400 bg-slate-800/40':        gameStore.phase === 'discussion',
+              'border-eb-cyan/50 text-eb-cyan bg-eb-cyan/10':           gameStore.phase === 'vote',
+              'border-eb-green/50 text-eb-green bg-eb-green/10':        gameStore.phase === 'results',
+            }"
+          >
+            <i class="fa mr-1 text-[9px]" :class="{
+              'fa-comments':       gameStore.phase === 'discussion',
+              'fa-check-to-slot':  gameStore.phase === 'vote',
+              'fa-chart-bar':      gameStore.phase === 'results',
+            }" aria-hidden="true"></i>
+            {{ t(`phase.${gameStore.phase}`) }}
+          </span>
+
+          <!-- Bouton d'avancement de phase -->
           <button
+            v-if="gameStore.phase === 'discussion'"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none border-eb-cyan/40 text-eb-cyan hover:bg-eb-cyan/10 hover:border-eb-cyan cursor-pointer"
+            :aria-label="t('phase.start_vote')"
+            @click="gameStore.startVote()"
+          >
+            <i class="fa fa-check-to-slot" aria-hidden="true"></i>
+            {{ t('phase.start_vote') }}
+          </button>
+
+          <button
+            v-else-if="gameStore.phase === 'vote'"
             class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
-            :class="canEndRound
+            :class="canCloseVote
               ? 'border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400 cursor-pointer'
               : 'border-slate-700 text-slate-600 cursor-not-allowed opacity-50'"
-            :disabled="!canEndRound"
-            :aria-label="t('header.end_round_aria')"
-            :aria-disabled="!canEndRound"
-            @click="canEndRound && gameStore.endRound()"
+            :disabled="!canCloseVote"
+            :aria-label="t('phase.close_vote')"
+            :aria-disabled="!canCloseVote"
+            @click="canCloseVote && gameStore.closeVote()"
           >
             <i class="fa fa-forward-step" aria-hidden="true"></i>
-            {{ t('header.end_round') }}
+            {{ t('phase.close_vote') }}
+          </button>
+
+          <button
+            v-else-if="gameStore.phase === 'results'"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-eb-green outline-none border-eb-green/40 text-eb-green hover:bg-eb-green/10 hover:border-eb-green cursor-pointer"
+            :aria-label="t('phase.next_round')"
+            @click="gameStore.endRound()"
+          >
+            <i class="fa fa-rotate-right" aria-hidden="true"></i>
+            {{ t('phase.next_round') }}
           </button>
 
           <!-- Réinitialiser -->
@@ -208,17 +246,38 @@
         </button>
 
         <button
+          v-if="gameStore.phase === 'discussion'"
+          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none border-eb-cyan/40 text-eb-cyan hover:bg-eb-cyan/10 cursor-pointer"
+          :aria-label="t('phase.start_vote')"
+          @click="gameStore.startVote(); menuOpen = false"
+        >
+          <i class="fa fa-check-to-slot" aria-hidden="true"></i>
+          {{ t('phase.start_vote') }}
+        </button>
+
+        <button
+          v-else-if="gameStore.phase === 'vote'"
           class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-amber-400 outline-none"
-          :class="canEndRound
-            ? 'border-amber-500/50 text-amber-400 hover:bg-amber-500/10 hover:border-amber-400 cursor-pointer'
+          :class="canCloseVote
+            ? 'border-amber-500/50 text-amber-400 hover:bg-amber-500/10 border-amber-400 cursor-pointer'
             : 'border-slate-700 text-slate-600 cursor-not-allowed opacity-50'"
-          :disabled="!canEndRound"
-          :aria-label="t('header.end_round_aria')"
-          :aria-disabled="!canEndRound"
-          @click="canEndRound && (gameStore.endRound(), menuOpen = false)"
+          :disabled="!canCloseVote"
+          :aria-label="t('phase.close_vote')"
+          :aria-disabled="!canCloseVote"
+          @click="canCloseVote && (gameStore.closeVote(), menuOpen = false)"
         >
           <i class="fa fa-forward-step" aria-hidden="true"></i>
-          {{ t('header.end_round') }}
+          {{ t('phase.close_vote') }}
+        </button>
+
+        <button
+          v-else-if="gameStore.phase === 'results'"
+          class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-eb-green outline-none border-eb-green/40 text-eb-green hover:bg-eb-green/10 cursor-pointer"
+          :aria-label="t('phase.next_round')"
+          @click="gameStore.endRound(); menuOpen = false"
+        >
+          <i class="fa fa-rotate-right" aria-hidden="true"></i>
+          {{ t('phase.next_round') }}
         </button>
         <button
           class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-red-400 outline-none border-red-800/50 text-red-500 hover:bg-red-500/10 hover:border-red-500 cursor-pointer"
@@ -256,7 +315,7 @@ const gameStore = useGameStore()
 const tpStore   = useTippingPointsStore()
 
 const { activeBallot } = storeToRefs(useMitigationPoliciesStore())
-const canEndRound = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
+const canCloseVote = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
 
 function handleReset(): void {
   gameStore.resetGame()

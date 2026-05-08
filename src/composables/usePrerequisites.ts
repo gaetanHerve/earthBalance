@@ -37,12 +37,15 @@ export function usePrerequisites() {
     if (!policy?.prerequisites) return { met: true, reasons: [] }
 
     const { policiesRequired, policiesExcluded, indicators } = policy.prerequisites
-    const validatedIds = new Set(policiesStore.validatedPolicyIds)
+    const metIds = new Set([
+      ...policiesStore.validatedPolicyIds,
+      ...simStore.selectedIds,
+    ])
     const reasons: string[] = []
 
     // Politiques requises
     for (const reqId of policiesRequired ?? []) {
-      if (!validatedIds.has(reqId)) {
+      if (!metIds.has(reqId)) {
         const reqPolicy = policyById.get(reqId)
         reasons.push(t('prerequisites.policy_required', {
           title: reqPolicy?.title ?? reqId,
@@ -52,7 +55,7 @@ export function usePrerequisites() {
 
     // Politiques incompatibles
     for (const exclId of policiesExcluded ?? []) {
-      if (validatedIds.has(exclId)) {
+      if (metIds.has(exclId)) {
         const exclPolicy = policyById.get(exclId)
         reasons.push(t('prerequisites.policy_excluded', {
           title: exclPolicy?.title ?? exclId,

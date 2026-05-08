@@ -27,7 +27,7 @@
         </span>
         <button
           class="text-slate-500 hover:text-slate-300 transition-colors underline underline-offset-2"
-          @click="selectedId = null"
+          @click="deselect()"
         >
           {{ t('network.deselect_hint') }}
         </button>
@@ -45,12 +45,14 @@
           class="rounded-xl border p-3 flex flex-col gap-2 cursor-pointer transition-all select-none focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
           :class="cardClass(policy.id)"
           role="button"
-          :tabindex="0"
+          tabindex="0"
+          :inert="isInert(policy.id)"
           :aria-pressed="selectedId === policy.id"
           :aria-label="policy.title"
           @click="toggleSelect(policy.id)"
           @keydown.enter.prevent="toggleSelect(policy.id)"
           @keydown.space.prevent="toggleSelect(policy.id)"
+          @keydown.escape.prevent="deselect()"
         >
           <!-- Top row: number + badges -->
           <div class="flex items-start justify-between gap-1">
@@ -96,6 +98,8 @@
                 :aria-label="isSelected(policy.id) ? t('simulator.remove_aria') : t('simulator.add_aria')"
                 :disabled="!prereqCheck(policy.id).met"
                 @click.stop="prereqCheck(policy.id).met && !isLocked(policy.id) && toggle(policy.id)"
+                @keydown.enter.stop
+                @keydown.space.stop
               >
                 <i :class="['fa', isSelected(policy.id) ? 'fa-minus' : 'fa-plus']" aria-hidden="true"></i>
               </button>
@@ -130,6 +134,7 @@
             :to="`/mitigation-policies/${policy.id}`"
             class="inline-flex items-center gap-1 text-[10px] text-slate-600 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
             @click.stop
+            @keydown.enter.stop
           >
             <i class="fa fa-circle-info" aria-hidden="true"></i>{{ t('simulator.detail_link') }}
           </RouterLink>
@@ -214,6 +219,18 @@ const selectedId = ref<string | null>(null)
 
 function toggleSelect(id: string): void {
   selectedId.value = selectedId.value === id ? null : id
+}
+
+function deselect(): void {
+  selectedId.value = null
+}
+
+function isInert(id: string): boolean {
+  if (selectedId.value === null) return false
+  if (id === selectedId.value) return false
+  const upIds   = catalogue.value.find(p => p.id === selectedId.value)?.prerequisites?.policiesRequired ?? []
+  const downIds = downstreamMap.value.get(selectedId.value) ?? []
+  return !upIds.includes(id) && !downIds.includes(id)
 }
 
 function isSelected(id: string): boolean {
@@ -312,7 +329,12 @@ onMounted(() => {
 
 onUnmounted(() => ro?.disconnect())
 
-watch(selectedId, () => {
-  nextTick(() => requestAnimationFrame(updateLinks))
+watch(selectedId, (id) => {
+  nextTick(() => requestAnimationFrame(() => {
+    updateLinks()
+    if (id !== null) {
+      containerRef.value?.querySelector<HTMLElement>(`[data-policy-id="${id}"]`)?.focus()
+    }
+  }))
 })
 </script>
