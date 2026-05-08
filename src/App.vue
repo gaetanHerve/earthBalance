@@ -18,20 +18,29 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from 'vue'
+import { watchEffect, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import AppHeader        from '@/components/layout/AppHeader.vue'
 import AppTicker        from '@/components/layout/AppTicker.vue'
 import AppFooter        from '@/components/layout/AppFooter.vue'
 import AppLoadingBar      from '@/components/layout/AppLoadingBar.vue'
 import GameIntroOverlay  from '@/components/layout/GameIntroOverlay.vue'
 import TippingPointModal from '@/components/TippingPointModal.vue'
+import { useGameStore } from '@/store/game.store'
 
 const { t, locale } = useI18n()
+const router    = useRouter()
+const gameStore = useGameStore()
 
 watchEffect(() => {
   document.documentElement.lang = locale.value
 })
+
+watch(
+  () => gameStore.gameOver,
+  (over) => { if (over) router.push('/bilan-2100') },
+)
 
 function skipToMain(): void {
   document.getElementById('main-content')?.focus()

@@ -12,15 +12,18 @@ export const useGameStore = defineStore('game', () => {
   const currentYear    = ref<number>(Number.isFinite(parsedYear) && parsedYear >= 2024 ? parsedYear : 2024)
   const sessionNumber  = ref<number>(1)
   const gameOver       = ref<boolean>(currentYear.value >= 2100)
+  const introVisible   = ref<boolean>(!localStorage.getItem(STORAGE_KEYS.INTRO_SEEN))
 
   function resetGame(): void {
     localStorage.removeItem(STORAGE_KEYS.GAME_YEAR)
     localStorage.removeItem(STORAGE_KEYS.POLICIES_STATE)
     localStorage.removeItem(STORAGE_KEYS.SIMULATION_SELECTED)
     localStorage.removeItem(STORAGE_KEYS.SIMULATION_BASELINE)
+    localStorage.removeItem(STORAGE_KEYS.INTRO_SEEN)
     currentYear.value = 2024
     sessionNumber.value = 1
     gameOver.value = false
+    introVisible.value = true
     useMitigationPoliciesStore().resetAll()
     useSimulationStore().resetAll()
     useTippingPointsStore().resetAll()
@@ -54,5 +57,5 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  return { currentYear, sessionNumber, gameOver, endRound, resetGame }
+  return { currentYear, sessionNumber, gameOver, introVisible, endRound, resetGame }
 })

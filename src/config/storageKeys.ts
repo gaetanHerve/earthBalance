@@ -5,4 +5,5 @@ export const STORAGE_KEYS = {
   SIMULATION_BASELINE: 'eb_simulation_baseline_mode',
   VISIBLE_WIDGETS:     'eb_visible_widgets',
   TIPPING_STATE:       'eb_tipping_state',
+  INTRO_SEEN:          'eb_intro_seen',
 } as const
