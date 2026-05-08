@@ -1,10 +1,48 @@
 <template>
-  <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-10" id="main-content" tabindex="-1">
+  <main class="max-w-screen-2xl mx-auto px-4 py-6 space-y-10" id="main-content" tabindex="-1">
 
     <!-- En-tête -->
     <div>
       <h1 class="text-2xl font-black text-white mb-1">{{ t('policies.title') }}</h1>
       <p class="text-sm text-slate-400 leading-relaxed max-w-3xl">{{ t('policies.intro') }}</p>
+    </div>
+
+    <!-- ─── Dernière politique adoptée ──────────────────────────────────── -->
+    <div
+      v-if="lastValidated"
+      class="flex flex-wrap items-center gap-3 px-4 py-3 rounded-xl border border-eb-green/30 bg-eb-green/5"
+    >
+      <div class="flex items-center gap-2 shrink-0">
+        <i class="fa fa-circle-check text-eb-green text-sm" aria-hidden="true"></i>
+        <span class="text-xs font-semibold text-eb-green uppercase tracking-wide">{{ t('policies.last_adopted_label') }}</span>
+        <span class="text-[10px] text-slate-500 font-mono">· {{ t('policies.last_adopted_year', { year: lastValidated.year }) }}</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 min-w-0">
+        <span class="text-xs text-slate-500 font-mono shrink-0">{{ lastValidated.policy.number }}</span>
+        <span class="text-sm font-bold text-white truncate">{{ lastValidated.policy.title }}</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 ml-auto">
+        <span
+          v-if="lastValidated.policy.projectedImpact?.['emissionsReductionGtCO2yr']"
+          class="text-[10px] bg-eb-dark border border-eb-border rounded px-2 py-0.5 text-eb-green font-bold"
+        >
+          −{{ lastValidated.policy.projectedImpact['emissionsReductionGtCO2yr'] }} Gt/an
+        </span>
+        <span
+          v-if="lastValidated.policy.projectedImpact?.['tempReductionC2100']"
+          class="text-[10px] bg-eb-dark border border-eb-border rounded px-2 py-0.5 text-eb-cyan font-bold"
+        >
+          −{{ lastValidated.policy.projectedImpact['tempReductionC2100'] }}°C {{ t('policies.in_2100') }}
+        </span>
+        <RouterLink
+          :to="`/mitigation-policies/${lastValidated.policy.id}`"
+          class="text-[10px] text-slate-500 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
+        >
+          <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>{{ t('policies.detail_link') }}
+        </RouterLink>
+      </div>
     </div>
 
     <!-- ─── Scrutin actif ──────────────────────────────────────────────────── -->
@@ -410,8 +448,16 @@ const gameStore = useGameStore()
 const {
   activeBallot, activeCandidates, closedBallots,
   ranking, hasVoted, isRankingComplete,
+  validatedPolicyMeta,
 } = storeToRefs(store)
 const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy } = store
+
+const lastValidated = computed(() => {
+  const meta = validatedPolicyMeta.value.at(-1)
+  if (!meta) return null
+  const policy = getMitigationPolicy(meta.id)
+  return policy ? { policy: localizedPolicy(policy), year: meta.year } : null
+})
 
 // ─── Candidats localisés ──────────────────────────────────────────────────────
 

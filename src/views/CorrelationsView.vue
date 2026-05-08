@@ -1,5 +1,5 @@
 <template>
-  <main class="max-w-screen-xl mx-auto px-4 py-6" id="main-content" tabindex="-1">
+  <main class="max-w-screen-2xl mx-auto px-4 py-6" id="main-content" tabindex="-1">
     <div class="mb-8">
       <h1 class="text-2xl font-black text-white mb-1">{{ t('correlations.title') }}</h1>
       <p class="text-sm text-slate-400 leading-relaxed">

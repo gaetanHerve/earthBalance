@@ -1,5 +1,5 @@
 <template>
-  <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
+  <main class="max-w-screen-2xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
 
     <!-- Hero -->
     <div
@@ -146,39 +146,23 @@
       </ol>
     </EbCard>
 
-    <!-- Reset -->
-    <div class="flex justify-center pb-8">
-      <button
-        class="flex items-center gap-2 px-8 py-3 rounded-full border border-eb-cyan/50 text-eb-cyan hover:bg-eb-cyan/10 hover:border-eb-cyan transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none font-semibold"
-        :aria-label="t('bilan.reset_aria')"
-        @click="handleReset"
-      >
-        <i class="fa fa-rotate-left" aria-hidden="true"></i>
-        {{ t('bilan.reset_button') }}
-      </button>
-    </div>
-
   </main>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import EbCard from '@/components/layout/EbCard.vue'
 import { useSimulationStore } from '@/store/simulation.store'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
-import { useGameStore } from '@/store/game.store'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 import { computeGameScore, narrativeKey, type ScoreCategory } from '@/utils/gameScore'
 
 const { t } = useI18n()
-const router = useRouter()
 const simStore    = useSimulationStore()
 const tpStore     = useTippingPointsStore()
 const polStore    = useMitigationPoliciesStore()
-const gameStore   = useGameStore()
 const { localizedPolicy } = useLocalizedPolicies()
 
 const score = computed(() =>
@@ -240,8 +224,4 @@ function categoryText(cat: ScoreCategory): string {
   return 'text-red-400'
 }
 
-function handleReset(): void {
-  gameStore.resetGame()
-  router.push('/')
-}
 </script>

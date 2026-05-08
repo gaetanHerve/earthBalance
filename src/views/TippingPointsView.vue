@@ -1,9 +1,19 @@
 <template>
-  <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
+  <main class="max-w-screen-2xl mx-auto px-4 py-6 space-y-8" id="main-content" tabindex="-1">
     <!-- En-tête -->
     <div>
       <h1 class="text-2xl font-black text-white mb-1">{{ t('tipping.page_title') }}</h1>
       <p class="text-sm text-slate-400 max-w-2xl leading-relaxed">{{ t('tipping.page_subtitle') }}</p>
+    </div>
+
+    <!-- Avertissement bascules désactivées -->
+    <div
+      v-if="!tpStore.enabled"
+      class="flex items-start gap-3 px-4 py-3 rounded-xl border border-amber-600/40 bg-amber-900/15"
+      role="status"
+    >
+      <i class="fa fa-toggle-off text-amber-400 mt-0.5 shrink-0" aria-hidden="true"></i>
+      <p class="text-sm text-amber-300">{{ t('tipping.disabled_notice') }}</p>
     </div>
 
     <!-- Compteur de déclenchés -->
