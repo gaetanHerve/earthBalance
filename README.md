@@ -1,5 +1,7 @@
 # EarthBalance — Jeu Participatif Écologique
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+
 > 🇬🇧 [English version below](#earthbalance--participatory-ecological-game)
 
 Serious Game web collaboratif permettant à une communauté de prendre des décisions collectives pour maintenir les **9 limites planétaires** en-dessous de leurs seuils critiques, sans compromettre les indicateurs sociétaux (sécurité alimentaire, accès à l'eau, santé, inégalités, etc.).
