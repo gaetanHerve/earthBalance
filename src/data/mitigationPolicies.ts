@@ -190,6 +190,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.0, 0.1, 0.2, 0.5, 0.7, 1.0, 1.0, 1.0],          pessimist: [0, 0.0, 0.0, 0.1, 0.2, 0.3, 0.5, 0.5, 0.5] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-07'],
+    },
   },
 
   // ─── Décision 04 — Modèle : POL_METHANE_REDUCTION_2030 ────────────────
@@ -469,6 +472,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5],          pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-14'],
+    },
   },
 
   // ─── Décision 01 — Modèle : POL_TRANSPORT_ELECTRIFICATION ────────────
@@ -566,6 +572,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         wealthConcentration:   { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, 0.0, -0.1, -0.1, -0.2, -0.2, -0.2, -0.2] },
         educationAccess:       { decided: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3, 0.3],          pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-08', 'dec-19'],
     },
   },
 
@@ -736,6 +745,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.94, 2.18, 2.55, 2.95, 3.44],
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
   },
 
   // ─── Décision 10 — Économie circulaire dans l'industrie ───────────────
@@ -898,6 +910,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.95, 2.19, 2.56, 2.94, 3.43],
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-07'],
+    },
   },
 
   // ─── Décision 12 — Expansion du nucléaire ─────────────────────────────
@@ -985,6 +1000,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         minerals:    { decided: [0, 0, +0.1, +0.3, +0.6, +1.0, +1.5, +1.8, +2.0], pessimist: [0, 0, +0.1, +0.2, +0.4, +0.7, +1.0, +1.2, +1.5] },
         fossilFuels: { decided: [0, 0, -0.1, -0.2, -0.4, -0.7, -1.0, -1.2, -1.5], pessimist: [0, 0, -0.1, -0.1, -0.2, -0.4, -0.6, -0.8, -1.0] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-05'],
     },
   },
 
@@ -1254,6 +1272,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.0, 0.1, 0.3, 0.5, 0.6, 0.8, 0.8, 0.8],           pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.4, 0.4] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-03'],
+    },
   },
 
   // ─── Décision 16 — Restauration des écosystèmes ───────────────────────
@@ -1337,6 +1358,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         decided:   [58.0, 57.5, 57.2, 57.0, 56.7, 56.2, 55.4, 54.2, 51.4],
         pessimist: [58.0, 57.5, 57.0, 56.7, 56.0, 54.6, 52.1, 49.6, 45.2],
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-03'],
     },
   },
 
@@ -1438,6 +1462,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, -0.2, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-11', 'dec-15'],
+    },
   },
 
   // ─── dec-18 — Hydrogène vert ──────────────────────────────────────────────
@@ -1521,7 +1548,7 @@ export const mitigationPolicies: MitigationPolicy[] = [
       },
     },
     prerequisites: {
-      policiesRequired: ['dec-19'],
+      policiesRequired: ['dec-08'],
     },
   },
 
@@ -1606,6 +1633,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         gas:   { decided: [0, -0.2,-0.5,-0.8,-1.5,-2.0,-2.5,-2.5,-2.5], pessimist: [0, -0.1,-0.3,-0.5,-1.0,-1.3,-1.5,-1.5,-1.5] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
   },
 
   // ─── dec-20 — Géothermie et hydroélectricité ──────────────────────────────
@@ -1687,6 +1717,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         hydro:   { decided: [0, 0, 0, 0.3, 1.0, 2.0, 3.0, 3.5, 4.0], pessimist: [0, 0, 0, 0.1, 0.5, 1.0, 1.8, 2.0, 2.2] },
         autres:  { decided: [0, 0, 0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.5], pessimist: [0, 0, 0, 0.1, 0.2, 0.5, 0.8, 1.0, 1.2] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-05'],
     },
   },
 
@@ -2010,6 +2043,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         oil:    { decided: [0, 0, 0, 0, -0.3,-0.8,-1.5,-2.0,-2.5], pessimist: [0, 0, 0, 0, -0.1,-0.4,-0.8,-1.0,-1.2] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-18'],
+    },
   },
 
   // ─── dec-25 — Électrification chaleur industrielle ────────────────────────
@@ -2092,6 +2128,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         gas:   { decided: [0, 0, 0,-0.2,-0.5,-0.9,-1.3,-1.5,-1.6], pessimist: [0, 0, 0,-0.1,-0.3,-0.5,-0.8,-1.0,-1.1] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
   },
 
   // ─── dec-26 — Capture et utilisation du carbone (CCU) ────────────────────
@@ -2169,6 +2208,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         decided:   [1.4, 1.5,  1.6,  1.72, 1.95, 2.20, 2.58, 2.97, 3.46],
         pessimist: [1.4, 1.5,  1.6,  1.72, 1.95, 2.20, 2.59, 2.98, 3.47],
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-11'],
     },
   },
 
@@ -2428,6 +2470,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         climateMigrations:{ decided: [0,-0.1,-0.2,-0.3,-0.5,-0.8,-1.0,-1.0,-1.0], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.7,-0.7,-0.7] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-03'],
+    },
   },
 
   // ─── dec-30 — Réduction N₂O agricole et méthane bétail ────────────────────
@@ -2510,6 +2555,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         waterTensions: { decided: [0,-0.1,-0.2,-0.3,-0.5,-0.7,-0.9,-0.9,-0.9], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.6,-0.6,-0.6] },
         whoHealthIndex:{ decided: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 0.9, 0.9], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-02'],
     },
   },
 
@@ -2594,6 +2642,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         lifeExpectancy:    { decided: [0, 0.03,0.07,0.12,0.18,0.25,0.30,0.30,0.30], pessimist: [0, 0.01,0.03,0.06,0.10,0.15,0.20,0.20,0.20] },
         respiratoryDiseases:{ decided: [0,-0.1,-0.3,-0.5,-0.8,-1.2,-1.5,-1.5,-1.5], pessimist: [0,-0.05,-0.1,-0.2,-0.4,-0.6,-0.8,-0.8,-0.8] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-04'],
     },
   },
 ]

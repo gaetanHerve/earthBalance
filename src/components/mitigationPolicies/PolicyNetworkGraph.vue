@@ -67,7 +67,7 @@
                 v-else-if="(policy.implementationLag ?? 0) > 0"
                 class="text-[9px] px-1.5 py-0.5 rounded font-mono shrink-0 bg-eb-cyan/10 border border-eb-cyan/25 text-eb-cyan"
               >
-                → {{ t('simulator.effect_from', { year: gameStore.currentYear + (policy.implementationLag ?? 0) }) }}
+                → {{ t('simulator.effect_from', { year: (policyAdoptionYearMap.get(policy.id) ?? nextAdoptionYear) + (policy.implementationLag ?? 0) }) }}
               </span>
               <span
                 v-else
@@ -121,7 +121,7 @@
               −{{ policy.projectedImpact['emissionsReductionGtCO2yr'] }} Gt/an
             </span>
             <span class="text-[9px] bg-eb-dark border border-eb-border rounded px-1.5 py-0.5 text-eb-cyan font-bold">
-              −{{ policyTempReductionAt2100(policy, policyAdoptionYearMap.get(policy.id) ?? gameStore.currentYear).toFixed(2) }}°C en 2100
+              −{{ policyTempReductionAt2100(policy, policyAdoptionYearMap.get(policy.id) ?? nextAdoptionYear).toFixed(2) }}°C en 2100
             </span>
           </div>
 
@@ -175,8 +175,7 @@ import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useSimulationStore, policyTempReductionAt2100 } from '@/store/simulation.store'
-import { useGameStore } from '@/store/game.store'
+import { useSimulationStore, policyTempReductionAt2100, simulatorAdoptionYearAt } from '@/store/simulation.store'
 import { usePrerequisites } from '@/composables/usePrerequisites'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 
@@ -187,8 +186,10 @@ const props = defineProps<{
 const { t } = useI18n()
 const { check: prereqCheck } = usePrerequisites()
 const simStore = useSimulationStore()
-const gameStore = useGameStore()
-const { catalogue, selectedIds, effectiveLockedIds, policyAdoptionYearMap } = storeToRefs(simStore)
+const { catalogue, selectedIds, effectiveLockedIds, policyAdoptionYearMap, selectedMitigationPolicies } = storeToRefs(simStore)
+
+// Prochain slot disponible dans la séquence : année d'adoption si on ajoutait cette politique maintenant
+const nextAdoptionYear = computed(() => simulatorAdoptionYearAt(selectedMitigationPolicies.value.length))
 const { addMitigationPolicy, removeMitigationPolicy } = simStore
 const { localizedPolicy } = useLocalizedPolicies()
 
