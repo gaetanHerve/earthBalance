@@ -78,91 +78,13 @@
 
     </div>
 
-    <!-- ─── Corps principal : 3 colonnes ───────────────────────────────────── -->
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+    <!-- ─── Réseau de politiques ────────────────────────────────────────────── -->
+    <CollapsibleSection :title="t('simulator.catalogue_title')" icon="fa-list-check" color-class="text-slate-300">
+      <PolicyNetworkGraph mode="simulation" />
+    </CollapsibleSection>
 
-      <!-- ── Catalogue ────────────────────────────────────────────────────── -->
-      <CollapsibleSection class="xl:col-span-4" :title="t('simulator.catalogue_title')" icon="fa-list-check" color-class="text-slate-300">
-
-        <div class="space-y-2">
-          <div
-            v-for="dec in catalogue"
-            :key="dec.id"
-            class="rounded-card border p-3 transition-all select-none"
-            :class="[
-              isLocked(dec.id)
-                ? 'bg-eb-green/5 border-eb-green/30 cursor-default'
-                : isSelected(dec.id)
-                  ? 'bg-eb-cyan/10 border-eb-cyan/40 cursor-pointer'
-                  : 'bg-eb-card border-eb-border hover:border-eb-cyan/30 hover:bg-eb-card/80 cursor-pointer',
-            ]"
-            :role="isLocked(dec.id) ? 'listitem' : 'button'"
-            :aria-pressed="isLocked(dec.id) ? undefined : isSelected(dec.id)"
-            :tabindex="isLocked(dec.id) ? -1 : 0"
-            @click="toggle(dec.id)"
-            @keydown.enter.prevent="toggle(dec.id)"
-            @keydown.space.prevent="toggle(dec.id)"
-          >
-            <div class="flex items-start justify-between gap-2">
-              <!-- Info décision -->
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 mb-1 flex-wrap">
-                  <span
-                    class="text-xs px-1.5 py-0.5 rounded font-bold uppercase tracking-wide"
-                    :class="dec.status === 'validated'
-                      ? 'bg-green-900/40 text-eb-green border border-green-700/30'
-                      : 'bg-cyan-900/30 text-eb-cyan border border-cyan-700/30'"
-                  >
-                    {{ dec.status === 'validated' ? t('simulator.retained_badge') : t('simulator.active_badge') }}
-                  </span>
-                  <span class="text-xs text-slate-500">#{{ dec.number }}</span>
-                </div>
-                <p class="text-xs font-semibold text-slate-200 leading-snug line-clamp-2">
-                  {{ dec.title }}
-                </p>
-                <div class="flex gap-3 mt-1.5 text-xs text-slate-400">
-                  <span class="text-eb-green font-bold">
-                    −{{ dec.projectedImpact['emissionsReductionGtCO2yr'] }} GtCO₂/an
-                  </span>
-                  <span class="text-eb-cyan font-bold">
-                    −{{ dec.projectedImpact['tempReductionC2100'] }}°C (2100)
-                  </span>
-                  <span :class="uncertaintyColor(dec.projectedImpact['uncertaintyScore'])">
-                    {{ uncertaintyLabel(dec.projectedImpact['uncertaintyScore']) }}
-                  </span>
-                </div>
-                <RouterLink
-                  :to="`/mitigation-policies/${dec.id}`"
-                  class="inline-flex items-center gap-1 mt-1.5 text-xs text-slate-600 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
-                  @click.stop
-                >
-                  <i class="fa fa-circle-info" aria-hidden="true"></i>{{ t('simulator.detail_link') }}
-                </RouterLink>
-              </div>
-
-              <!-- Toggle / verrou -->
-              <div
-                class="shrink-0 w-7 h-7 rounded-full border flex items-center justify-center text-xs"
-                :class="isLocked(dec.id)
-                  ? 'border-eb-green/40 bg-eb-green/10 text-eb-green'
-                  : isSelected(dec.id)
-                    ? 'border-eb-cyan bg-eb-cyan/20 text-eb-cyan'
-                    : 'border-slate-600 text-slate-400'"
-                :aria-label="isLocked(dec.id) ? t('simulator.lock_aria') : isSelected(dec.id) ? t('simulator.remove_aria') : t('simulator.add_aria')"
-              >
-                <i
-                  :class="['fa', isLocked(dec.id) ? 'fa-lock' : isSelected(dec.id) ? 'fa-minus' : 'fa-plus']"
-                  aria-hidden="true"
-                ></i>
-              </div>
-            </div>
-          </div>
-
-          <p v-if="catalogue.length === 0" class="text-xs text-slate-500 text-center py-4">
-            {{ t('simulator.empty_catalogue') }}
-          </p>
-        </div>
-      </CollapsibleSection>
+    <!-- ─── Corps principal : 2 colonnes ───────────────────────────────────── -->
+    <div class="grid grid-cols-1 xl:grid-cols-8 gap-4">
 
       <!-- ── Séquence ─────────────────────────────────────────────────────── -->
       <CollapsibleSection class="xl:col-span-3" :title="t('simulator.sequence_title')" icon="fa-arrow-down-1-9" color-class="text-slate-300">
@@ -279,7 +201,7 @@
       </CollapsibleSection>
 
       <!-- ── Projections ───────────────────────────────────────────────────── -->
-      <CollapsibleSection class="xl:col-span-5 space-y-4s" :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-slate-300">
+      <CollapsibleSection class="xl:col-span-5" :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-slate-300">
 
         <!-- Graphique CO₂ -->
         <EbCard>
@@ -433,19 +355,17 @@ import { storeToRefs } from 'pinia'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 import { usePlanetsStore } from '@/store/planets.store'
 import { useGameStore } from '@/store/game.store'
-
-import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
-import EbCard             from '@/components/layout/EbCard.vue'
-import LineChart    from '@/components/charts/LineChart.vue'
+import CollapsibleSection   from '@/components/layout/CollapsibleSection.vue'
+import EbCard               from '@/components/layout/EbCard.vue'
+import LineChart             from '@/components/charts/LineChart.vue'
+import PolicyNetworkGraph    from '@/components/mitigationPolicies/PolicyNetworkGraph.vue'
 
 import type { ChartDataset } from '@/types/index'
 
 const { t } = useI18n()
 const store = useSimulationStore()
 const {
-  catalogue,
   selectedMitigationPolicies,
-  selectedIds,
   effectiveLockedIds,
   includeGameBaseline,
   simulatorAdoptionYears,
@@ -504,21 +424,12 @@ const horizons = computed<Horizon[]>(() => [
   { value: 2100, label: t('simulator.horizon_2100') },
 ])
 
-const { addMitigationPolicy, removeMitigationPolicy, moveUp, moveDown, reset, toggleGameBaseline } = store
+const { removeMitigationPolicy, moveUp, moveDown, reset, toggleGameBaseline } = store
 
 // ─── Helpers UI ──────────────────────────────────────────────────────────────
 
-function isSelected(id: string): boolean {
-  return selectedIds.value.includes(id)
-}
-
 function isLocked(id: string): boolean {
   return effectiveLockedIds.value.includes(id)
-}
-
-function toggle(id: string): void {
-  if (isLocked(id)) return
-  isSelected(id) ? removeMitigationPolicy(id) : addMitigationPolicy(id)
 }
 
 function uncertaintyColor(score: unknown): string {
@@ -526,13 +437,6 @@ function uncertaintyColor(score: unknown): string {
   if (n === 1) return 'text-eb-green'
   if (n === 2) return 'text-yellow-400'
   return 'text-orange-400'
-}
-
-function uncertaintyLabel(score: unknown): string {
-  const n = Number(score)
-  if (n === 1) return t('simulator.unc_low')
-  if (n === 2) return t('simulator.unc_medium')
-  return t('simulator.unc_high')
 }
 
 function uncertaintyShort(score: unknown): string {

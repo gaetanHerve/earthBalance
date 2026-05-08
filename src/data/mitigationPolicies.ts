@@ -1520,6 +1520,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         wind:  { decided: [0, 0, 0, 0.2, 0.6, 1.2, 2.0, 2.5, 3.0], pessimist: [0, 0, 0, 0.1, 0.3, 0.5, 1.0, 1.2, 1.5] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-19'],
+    },
   },
 
   // ─── dec-19 — Réseaux intelligents et stockage ────────────────────────────

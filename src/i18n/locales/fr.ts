@@ -271,6 +271,23 @@ export default {
     horizon_2050:        '2050',
     horizon_2100:        '2100',
   },
+  prerequisites: {
+    policy_required:  'Nécessite que « {title} » soit validée',
+    policy_excluded:  'Incompatible avec « {title} » (déjà validée)',
+    temp_max:         'Requiert une température ≤ {max}°C (actuellement {current}°C)',
+    temp_min:         'Requiert une température ≥ {min}°C (actuellement {current}°C)',
+    forest_min:       'Requiert une couverture forestière ≥ {min} % (actuellement {current} %)',
+    forest_max:       'Requiert une couverture forestière ≤ {max} % (actuellement {current} %)',
+    locked_tooltip:   'Prérequis non remplis',
+  },
+  network: {
+    mode_simulation: 'Simulateur libre',
+    mode_game:       'Partie en cours',
+    upstream_label:  'Prérequis (politiques requises)',
+    downstream_label:'Dépendants (politiques qui en ont besoin)',
+    click_hint:      'Cliquez sur une politique pour afficher ses liens',
+    deselect_hint:   'Désélectionner',
+  },
   policy_detail: {
     back:            'Politiques',
     not_found:       'Politique introuvable',

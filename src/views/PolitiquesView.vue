@@ -190,8 +190,13 @@
       </div>
     </CollapsibleSection>
 
+    <!-- ─── Réseau de politiques ─────────────────────────────────────────── -->
+    <CollapsibleSection :title="t('network.mode_game')" icon="fa-diagram-project" color-class="text-eb-cyan">
+      <PolicyNetworkGraph mode="game" />
+    </CollapsibleSection>
+
     <!-- ─── Projections climatiques ─────────────────────────────────────── -->
-    <CollapsibleSection :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-eb-cyan">
+    <CollapsibleSection :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-eb-cyan" :default-open="false">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         <!-- Graphique CO₂ -->
@@ -382,9 +387,10 @@ import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 import { useGameStore } from '@/store/game.store'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
-import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
-import LineChart from '@/components/charts/LineChart.vue'
-import EbCard from '@/components/layout/EbCard.vue'
+import CollapsibleSection  from '@/components/layout/CollapsibleSection.vue'
+import LineChart            from '@/components/charts/LineChart.vue'
+import EbCard               from '@/components/layout/EbCard.vue'
+import PolicyNetworkGraph   from '@/components/mitigationPolicies/PolicyNetworkGraph.vue'
 import type { RankPosition } from '@/store/mitigationPolicies.store'
 import type { MitigationPolicy, DecisionBallot, ChartDataset } from '@/types/index'
 

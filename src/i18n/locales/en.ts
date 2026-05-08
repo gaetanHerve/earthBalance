@@ -271,6 +271,23 @@ export default {
     horizon_2050:       '2050',
     horizon_2100:       '2100',
   },
+  prerequisites: {
+    policy_required:  'Requires "{title}" to be validated first',
+    policy_excluded:  'Incompatible with "{title}" (already validated)',
+    temp_max:         'Requires temperature ≤ {max}°C (currently {current}°C)',
+    temp_min:         'Requires temperature ≥ {min}°C (currently {current}°C)',
+    forest_min:       'Requires forest cover ≥ {min}% (currently {current}%)',
+    forest_max:       'Requires forest cover ≤ {max}% (currently {current}%)',
+    locked_tooltip:   'Prerequisites not met',
+  },
+  network: {
+    mode_simulation: 'Free simulator',
+    mode_game:       'Active game',
+    upstream_label:  'Prerequisites (required policies)',
+    downstream_label:'Dependants (policies that need this one)',
+    click_hint:      'Click a policy card to reveal its links',
+    deselect_hint:   'Deselect',
+  },
   policy_detail: {
     back:            'Policies',
     not_found:       'Policy not found',
