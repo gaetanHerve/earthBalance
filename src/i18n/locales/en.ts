@@ -260,6 +260,7 @@ export default {
     full_effect:        'full effect',
     adoption_label:     'Adoption',
     effect_from:        'Effect from {year}',
+    effect_immediate:   'Immediate effect',
     mode_game:          'Game mode',
     mode_free:          'Free mode',
     aria_co2:           'Cumulative CO₂ emissions projections',

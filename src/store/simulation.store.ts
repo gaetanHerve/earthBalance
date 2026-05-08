@@ -121,6 +121,15 @@ function shiftedDeltas(
   })
 }
 
+// Réduction de température en 2100 pour une politique adoptée à adoptionYear (index 9 = année 2100)
+export function policyTempReductionAt2100(policy: MitigationPolicy, adoptionYear: number): number {
+  if (!hasProjections(policy)) return 0
+  const proj = policy.projections as MitigationPolicyProjections
+  const effectiveStart = adoptionYear + (policy.implementationLag ?? 0)
+  const deltas = shiftedDeltas(proj.labels, proj.temperature.decided, proj.temperature.baseline, effectiveStart)
+  return -deltas[9]
+}
+
 function co2Deltas(dec: MitigationPolicy, effectiveStart: number): number[] {
   if (!hasProjections(dec)) return SIM_LABELS.map(() => 0)
   const proj = dec.projections as MitigationPolicyProjections
@@ -306,6 +315,11 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   const simulatorAdoptionYears = computed<number[]>(() =>
     selectedMitigationPolicies.value.map((_, index) => simulatorAdoptionYearAt(index))
+  )
+
+  // Année d'adoption par ID — couvre les politiques verrouillées et sélectionnées
+  const policyAdoptionYearMap = computed<Map<string, number>>(() =>
+    new Map(selectedMitigationPolicies.value.map((p, i) => [p.id, simulatorAdoptionYearAt(i)]))
   )
 
   const simulatorEffectYears = computed<number[]>(() =>
@@ -736,6 +750,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     catalogue,
     selectedMitigationPolicies,
     simulatorAdoptionYears,
+    policyAdoptionYearMap,
     simulatorEffectYears,
     cumulativeCo2,
     cumulativeCo2Pessimist,

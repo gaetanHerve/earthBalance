@@ -56,14 +56,24 @@
           <div class="flex items-start justify-between gap-1">
             <span class="text-[10px] text-slate-500 font-mono shrink-0">{{ policy.number }}</span>
             <div class="flex items-center gap-1 flex-wrap justify-end">
-              <!-- Status badge -->
+              <!-- Badge retenue ou effet différé -->
               <span
-                class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide shrink-0"
-                :class="policy.status === 'validated'
-                  ? 'bg-green-900/40 text-eb-green border border-green-700/30'
-                  : 'bg-cyan-900/30 text-eb-cyan border border-cyan-700/30'"
+                v-if="policy.status === 'validated'"
+                class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wide shrink-0 bg-green-900/40 text-eb-green border border-green-700/30"
               >
-                {{ policy.status === 'validated' ? t('simulator.retained_badge') : t('simulator.active_badge') }}
+                {{ t('simulator.retained_badge') }}
+              </span>
+              <span
+                v-else-if="(policy.implementationLag ?? 0) > 0"
+                class="text-[9px] px-1.5 py-0.5 rounded font-mono shrink-0 bg-eb-cyan/10 border border-eb-cyan/25 text-eb-cyan"
+              >
+                → {{ t('simulator.effect_from', { year: gameStore.currentYear + (policy.implementationLag ?? 0) }) }}
+              </span>
+              <span
+                v-else
+                class="text-[9px] px-1.5 py-0.5 rounded font-mono shrink-0 bg-eb-cyan/10 border border-eb-cyan/25 text-eb-cyan"
+              >
+                → {{ t('simulator.effect_immediate') }}
               </span>
               <!-- Prereq lock indicator -->
               <span
@@ -108,12 +118,21 @@
           <!-- Impact chips -->
           <div class="flex flex-wrap gap-1">
             <span class="text-[9px] bg-eb-dark border border-eb-border rounded px-1.5 py-0.5 text-eb-green font-bold">
-              −{{ policy.projectedImpact['emissionsReductionGtCO2yr'] }} Gt
+              −{{ policy.projectedImpact['emissionsReductionGtCO2yr'] }} Gt/an
             </span>
             <span class="text-[9px] bg-eb-dark border border-eb-border rounded px-1.5 py-0.5 text-eb-cyan font-bold">
-              −{{ policy.projectedImpact['tempReductionC2100'] }}°C
+              −{{ policyTempReductionAt2100(policy, policyAdoptionYearMap.get(policy.id) ?? gameStore.currentYear).toFixed(2) }}°C en 2100
             </span>
           </div>
+
+          <!-- Lien détail -->
+          <RouterLink
+            :to="`/mitigation-policies/${policy.id}`"
+            class="inline-flex items-center gap-1 text-[10px] text-slate-600 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
+            @click.stop
+          >
+            <i class="fa fa-circle-info" aria-hidden="true"></i>{{ t('simulator.detail_link') }}
+          </RouterLink>
         </div>
       </div>
 
@@ -154,8 +173,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { useSimulationStore } from '@/store/simulation.store'
+import { useSimulationStore, policyTempReductionAt2100 } from '@/store/simulation.store'
+import { useGameStore } from '@/store/game.store'
 import { usePrerequisites } from '@/composables/usePrerequisites'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 
@@ -166,7 +187,8 @@ const props = defineProps<{
 const { t } = useI18n()
 const { check: prereqCheck } = usePrerequisites()
 const simStore = useSimulationStore()
-const { catalogue, selectedIds, effectiveLockedIds } = storeToRefs(simStore)
+const gameStore = useGameStore()
+const { catalogue, selectedIds, effectiveLockedIds, policyAdoptionYearMap } = storeToRefs(simStore)
 const { addMitigationPolicy, removeMitigationPolicy } = simStore
 const { localizedPolicy } = useLocalizedPolicies()
 
