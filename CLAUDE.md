@@ -169,3 +169,56 @@ L'application doit être conforme au RGAA 4.1.2. Le référentiel complet est di
 - **Ajouter une politique** : créer l'entrée dans `mitigationPolicies.ts` (id `dec-XX` unique), puis les traductions anglaises dans `src/i18n/policies/en.ts`.
 - **Modifier le graphe systémique** : rappel — `positive` = aggravant (empire du point de vue humain), `negative` = bénéfique (améliore). Ne pas inverser cette convention.
 - **Ajouter un point de bascule** : créer une entrée dans `tippingPoints.ts` avec `trigger.variable` (`'temp'` ou `'forest'`) et `trigger.threshold`, puis ajouter les clés i18n correspondantes dans `fr.ts` / `en.ts` sous le namespace `tipping.<id>.*`.
+
+## Gamification — Feuille de route
+
+### Philosophie de design
+
+- **Pas de victoire/défaite binaire** : la partie se conclut par un *portrait multidimensionnel du monde en 2100*, présenté comme un bilan narratif par piliers (Climat, Écosystèmes, Énergie, Sociétal).
+- Les **indicateurs sociétaux** (`foodSecurity`, `waterAccess`, `lifeExpectancy`, etc.) ont le même statut que les indicateurs écologiques : ils participent au bilan final, pourront déclencher des événements narratifs, et constitueront des prérequis dans l'arbre des politiques.
+- Les **points de bascule** et des **événements climatiques aléatoires** (dont la probabilité dépend des indicateurs) déclencheront des moments narratifs à implémenter dans un second temps.
+
+### Roadmap POC (frontend, sans backend)
+
+| # | Feature | Fichiers clés | Statut |
+|---|---|---|---|
+| 1 | **Bilan 2100** — portrait multidimensionnel de fin de partie | `GameEndView.vue`, `gameScore.ts`, route `/bilan-2100` | En cours |
+| 2 | **Arbre de politiques** — prérequis par indicateur/politique, suppression du tirage aléatoire, visualisation | `mitigationPolicies.ts` (champ `prerequisites`), `PolicyTreeView.vue` | À faire |
+| 3 | **Phases de tour** — machine à états `discussion → vote → résultats` dans `game.store` | `game.store.ts`, `game.config.ts` | À faire |
+| 4 | **Résultats de scrutin** — écran Condorcet détaillé post-tour | `PolitiquesView.vue` ou composant dédié | À faire |
+
+### Arbre de politiques — structure des prérequis (décision de design)
+
+Chaque politique aura un champ `prerequisites` optionnel :
+```typescript
+prerequisites?: {
+  policiesRequired?: string[]        // IDs de politiques déjà validées
+  policiesExcluded?: string[]        // IDs de politiques incompatibles
+  indicators?: {
+    key: SocietalKey | 'temp' | 'forest' | 'renewables'
+    min?: number
+    max?: number
+  }[]
+}
+```
+
+### Bilan 2100 — piliers et indicateurs
+
+Trois piliers (pondération indicative) :
+- **Climat & Écosystèmes** (40 %) : température atteinte, points de bascule déclenchés, couverture forestière, limites planétaires franchies
+- **Sociétal** (40 %) : sécurité alimentaire, accès à l'eau, santé (WHO index, espérance de vie), inégalités (Gini), migrations climatiques
+- **Énergie & Ressources** (20 %) : part des renouvelables, ressources fossiles restantes
+
+Catégorisation par indicateur : `'critical'` / `'warning'` / `'good'` (couleurs eb-red / orange / eb-green).
+
+### Rôles joueurs (design validé)
+
+- **Facilitateurs thématiques** : joueurs chargés d'étudier des politiques spécifiques en profondeur (s'appuient sur `policyDetails.ts` + références GIEC). Rôle implémentable en présentiel sans code supplémentaire.
+- Rôles différenciés (scientifiques/politiques/citoyens) envisagés mais différés — trop complexes pour le POC.
+
+### Phases de tour (design validé)
+
+```
+discussion (pas de vote possible) → vote → résultats → nouveau tour
+```
+Compatible présentiel (discussion en salle) et distanciel (canal externe, hors app).

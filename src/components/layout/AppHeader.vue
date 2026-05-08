@@ -267,14 +267,20 @@ function handleReset(): void {
 const menuOpen    = ref(false)
 const playerCount = ref<number>(1)
 
-const navLinks = computed<NavLink[]>(() => [
-  { to: '/',                    label: t('nav.dashboard'),    icon: 'fa-gauge-high'      },
-  { to: '/limites-planetaires', label: t('nav.limits'),       icon: 'fa-earth-europe'    },
-  { to: '/mitigation-policies', label: t('nav.policies'),     icon: 'fa-vote-yea'        },
-  { to: '/bascules',            label: t('nav.tipping_points'), icon: 'fa-triangle-exclamation' },
-  { to: '/simulateur',          label: t('nav.simulator'),    icon: 'fa-flask'           },
-  { to: '/carte-systemique',    label: t('nav.systemic_map'), icon: 'fa-share-nodes'     },
-])
+const navLinks = computed<NavLink[]>(() => {
+  const links: NavLink[] = [
+    { to: '/',                    label: t('nav.dashboard'),      icon: 'fa-gauge-high'           },
+    { to: '/limites-planetaires', label: t('nav.limits'),         icon: 'fa-earth-europe'         },
+    { to: '/mitigation-policies', label: t('nav.policies'),       icon: 'fa-vote-yea'             },
+    { to: '/bascules',            label: t('nav.tipping_points'), icon: 'fa-triangle-exclamation' },
+    { to: '/simulateur',          label: t('nav.simulator'),      icon: 'fa-flask'                },
+    { to: '/carte-systemique',    label: t('nav.systemic_map'),   icon: 'fa-share-nodes'          },
+  ]
+  if (gameStore.gameOver) {
+    links.push({ to: '/bilan-2100', label: t('nav.bilan'), icon: 'fa-flag-checkered' })
+  }
+  return links
+})
 
 watch(() => route.path, () => { menuOpen.value = false })
 </script>

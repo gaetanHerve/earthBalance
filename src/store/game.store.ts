@@ -11,6 +11,7 @@ export const useGameStore = defineStore('game', () => {
   const parsedYear = stored === null ? Number.NaN : Number.parseInt(stored, 10)
   const currentYear    = ref<number>(Number.isFinite(parsedYear) && parsedYear >= 2024 ? parsedYear : 2024)
   const sessionNumber  = ref<number>(1)
+  const gameOver       = ref<boolean>(currentYear.value >= 2100)
 
   function resetGame(): void {
     localStorage.removeItem(STORAGE_KEYS.GAME_YEAR)
@@ -19,6 +20,7 @@ export const useGameStore = defineStore('game', () => {
     localStorage.removeItem(STORAGE_KEYS.SIMULATION_BASELINE)
     currentYear.value = 2024
     sessionNumber.value = 1
+    gameOver.value = false
     useMitigationPoliciesStore().resetAll()
     useSimulationStore().resetAll()
     useTippingPointsStore().resetAll()
@@ -45,7 +47,12 @@ export const useGameStore = defineStore('game', () => {
 
     // 5. Créer un nouveau scrutin — deadline au 31 déc. de la nouvelle année courante
     policiesStore.createNewBallot(currentYear.value)
+
+    // 6. Détecter la fin de partie : 2100 atteint ou plus assez de politiques disponibles
+    if (currentYear.value >= 2100 || !policiesStore.activeBallot) {
+      gameOver.value = true
+    }
   }
 
-  return { currentYear, sessionNumber, endRound, resetGame }
+  return { currentYear, sessionNumber, gameOver, endRound, resetGame }
 })
