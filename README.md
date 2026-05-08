@@ -15,6 +15,7 @@ Serious Game web collaboratif permettant à une communauté de prendre des déci
 | État global | Pinia |
 | Routing | Vue Router 4 (hash history) |
 | Graphiques | Chart.js 4 (line, bar, radar, doughnut) |
+| Graphe systémique | Cytoscape.js (nœuds / arêtes / boucles de rétroaction) |
 | Styles | Tailwind CSS 3 |
 | Internationalisation | vue-i18n 9 (FR / EN) |
 | Build | Vite 5 |
@@ -43,12 +44,19 @@ src/
 ├── types/
 │   ├── index.ts               # Interfaces TypeScript centralisées
 │   └── impactModel.ts         # Types pour les modèles d'impact GIEC
+├── config/
+│   ├── game.config.ts         # GAME_CONFIG (grain = 5 ans/tour)
+│   ├── simulation.config.ts   # SIM_LABELS, PROJ_LABELS — partagés entre stores
+│   └── storageKeys.ts         # Clés localStorage centralisées
 ├── data/                      # Données de démonstration (à remplacer par APIs)
 │   ├── planetaryLimits.ts     # 9 limites planétaires — séries 1950–2024
 │   ├── societalIndicators.ts  # Indicateurs FAO, OMS, PNUD
 │   ├── mitigationPolicies.ts  # Politiques climatiques, votes, projections
 │   ├── ballots.ts             # Scrutins et résultats de vote
 │   ├── policyDetails.ts       # Descriptions étendues et références GIEC
+│   ├── systemicGraph.ts       # 19 nœuds, 61 arêtes, 5 boucles (Cytoscape)
+│   ├── tippingPoints.ts       # 5 points de bascule avec seuils de déclenchement
+│   ├── ipccQuotes.ts          # Citations GIEC AR6
 │   └── models/                # Modèles d'impact JSON (SSP2-4.5)
 │       ├── POL_COAL_EXIT_2030_DEV.json
 │       ├── POL_DEFORESTATION_HALT_2030.json
@@ -70,17 +78,19 @@ src/
 │   ├── planets.store.ts       # Limites planétaires + horizon temporel
 │   ├── mitigationPolicies.store.ts  # Vote, consensus, validation
 │   ├── simulation.store.ts    # Moteur de simulation (projections CO₂ + T°)
+│   ├── tippingPoints.store.ts # Détection et persistance des bascules déclenchées
 │   └── dashboard.store.ts     # Graphiques éco/soc, widgets personnalisables
 ├── composables/
 │   ├── useContrastMode.ts     # Mode fort contraste (localStorage)
 │   └── useLocalizedPolicies.ts  # Titres/descriptions localisés des politiques
 ├── utils/
-│   └── condorcet.ts           # Algorithme Condorcet + départage Borda
+│   ├── condorcet.ts           # Algorithme Condorcet + départage Borda
+│   └── timeSeries.ts          # interpolateAtYear, blendedAtYear, shiftedDeltas
 ├── components/
 │   ├── charts/                # Graphiques réutilisables
 │   │   ├── LineChart.vue      # Courbes multi-datasets (légende SVG ligne+forme)
 │   │   ├── BarChart.vue
-│   │   ├── RadarChart.vue     # Radar 9 limites (formes par statut)
+│   │   ├── RadarChart.vue     # Radar 9 limites (formes par statut, globe terrestre)
 │   │   ├── GaugeChart.vue
 │   │   ├── VotePieChart.vue
 │   │   └── ChartSkeleton.vue
@@ -98,9 +108,11 @@ src/
 │   ├── dashboard/
 │   │   ├── EcologicalIndicators.vue
 │   │   ├── SocietalIndicators.vue
-│   │   └── WidgetCustomizer.vue
+│   │   ├── WidgetCustomizer.vue
+│   │   └── widgets/           # Widgets individuels (Co2, Temperature, SeaLevel…)
 │   ├── limits/
 │   │   └── PlanetaryLimitCard.vue
+│   ├── TippingPointModal.vue  # Modal de détail d'un point de bascule
 │   └── mitigationPolicies/
 │       ├── VoteCard.vue
 │       ├── BlockchainPanel.vue
@@ -111,6 +123,8 @@ src/
 │   ├── PolitiquesView.vue     # Vote Condorcet + historique des scrutins
 │   ├── PolicyDetailView.vue   # Fiche détaillée d'une politique (références GIEC)
 │   ├── SimulateurView.vue     # Simulateur de politiques climatiques GIEC AR6
+│   ├── TippingPointsView.vue  # 5 points de bascule climatiques et leurs seuils
+│   ├── SystemicMapView.vue    # Carte systémique interactive (Cytoscape.js)
 │   └── CorrelationsView.vue   # Placeholder (fonctionnalité à venir)
 └── router/index.ts
 ```
@@ -148,6 +162,14 @@ Simulateur de politiques climatiques basé sur les **modèles d'impact GIEC AR6*
   - *Scénario décidé {année}* : température projetée à l'horizon (label trajectoire évalué sur 2100)
   - *CO₂ évité 2024→{année}* : cumul par intégrale trapèze (GtCO₂)
   - *Réduction annuelle en {année}* : delta annuel vs. baseline à l'horizon (GtCO₂/an)
+
+### Points de bascule (`/bascules`)
+
+Cinq points de bascule climatiques critiques (fonte du pergélisol, blanchiment des coraux, dégradation de l'Amazonie, fonte de la banquise arctique, affaiblissement de l'AMOC). Chaque point de bascule possède un **seuil de déclenchement** basé sur la température ou la couverture forestière projetée. Le `tippingPoints.store` observe les projections du simulateur en temps réel et enregistre l'année de franchissement.
+
+### Carte systémique (`/carte-systemique`)
+
+Graphe causal interactif (Cytoscape.js) représentant **19 nœuds** (physiques, écosystémiques, sociétaux) et **61 relations** de cause à effet. Chaque arête indique si l'influence est aggravante (`positive`) ou bénéfique (`negative`) du point de vue humain — convention propre à l'application. **5 boucles de rétroaction** nommées sont surlignables (pergélisol-carbone, forêt-carbone, extrêmes-forêts, santé-inégalités, géopolitique-migration). Les références GIEC AR6 associées aux nœuds et aux arêtes sont cliquables et ouvrent le PDF correspondant à la bonne page.
 
 ### Corrélations (`/correlations`)
 
@@ -249,6 +271,7 @@ A collaborative web Serious Game enabling a community to make collective decisio
 | Global state | Pinia |
 | Routing | Vue Router 4 (hash history) |
 | Charts | Chart.js 4 (line, bar, radar, doughnut) |
+| Systemic graph | Cytoscape.js (nodes / edges / feedback loops) |
 | Styles | Tailwind CSS 3 |
 | Internationalisation | vue-i18n 9 (FR / EN) |
 | Build | Vite 5 |
@@ -277,12 +300,19 @@ src/
 ├── types/
 │   ├── index.ts               # Centralised TypeScript interfaces
 │   └── impactModel.ts         # Types for IPCC impact models
+├── config/
+│   ├── game.config.ts         # GAME_CONFIG (grain = 5 years/turn)
+│   ├── simulation.config.ts   # SIM_LABELS, PROJ_LABELS — shared across stores
+│   └── storageKeys.ts         # Centralised localStorage keys
 ├── data/                      # Demo data (to be replaced by live APIs)
 │   ├── planetaryLimits.ts     # 9 planetary limits — time series 1950–2024
 │   ├── societalIndicators.ts  # FAO, WHO, UNDP indicators
 │   ├── mitigationPolicies.ts  # Climate policies, votes, projections
 │   ├── ballots.ts             # Ballots and voting results
 │   ├── policyDetails.ts       # Extended descriptions and IPCC references
+│   ├── systemicGraph.ts       # 19 nodes, 61 edges, 5 feedback loops (Cytoscape)
+│   ├── tippingPoints.ts       # 5 climate tipping points with trigger thresholds
+│   ├── ipccQuotes.ts          # IPCC AR6 quotes
 │   └── models/                # JSON impact models (SSP2-4.5)
 │       ├── POL_COAL_EXIT_2030_DEV.json
 │       ├── POL_DEFORESTATION_HALT_2030.json
@@ -304,17 +334,19 @@ src/
 │   ├── planets.store.ts       # Planetary limits + time horizon
 │   ├── mitigationPolicies.store.ts  # Voting, consensus, validation
 │   ├── simulation.store.ts    # Simulation engine (CO₂ + temp projections)
+│   ├── tippingPoints.store.ts # Tipping point detection and persistence
 │   └── dashboard.store.ts     # Eco/societal charts, customisable widgets
 ├── composables/
 │   ├── useContrastMode.ts     # High contrast mode (localStorage)
 │   └── useLocalizedPolicies.ts  # Localised policy titles/descriptions
 ├── utils/
-│   └── condorcet.ts           # Condorcet algorithm + Borda tiebreaker
+│   ├── condorcet.ts           # Condorcet algorithm + Borda tiebreaker
+│   └── timeSeries.ts          # interpolateAtYear, blendedAtYear, shiftedDeltas
 ├── components/
 │   ├── charts/                # Reusable chart components
 │   │   ├── LineChart.vue      # Multi-dataset lines (SVG line+shape legend)
 │   │   ├── BarChart.vue
-│   │   ├── RadarChart.vue     # 9-limit radar (shapes per status)
+│   │   ├── RadarChart.vue     # 9-limit radar (shapes per status, Earth globe)
 │   │   ├── GaugeChart.vue
 │   │   ├── VotePieChart.vue
 │   │   └── ChartSkeleton.vue
@@ -332,9 +364,11 @@ src/
 │   ├── dashboard/
 │   │   ├── EcologicalIndicators.vue
 │   │   ├── SocietalIndicators.vue
-│   │   └── WidgetCustomizer.vue
+│   │   ├── WidgetCustomizer.vue
+│   │   └── widgets/           # Individual widgets (Co2, Temperature, SeaLevel…)
 │   ├── limits/
 │   │   └── PlanetaryLimitCard.vue
+│   ├── TippingPointModal.vue  # Tipping point detail modal
 │   └── mitigationPolicies/
 │       ├── VoteCard.vue
 │       ├── BlockchainPanel.vue
@@ -345,6 +379,8 @@ src/
 │   ├── PolitiquesView.vue     # Condorcet voting + ballot history
 │   ├── PolicyDetailView.vue   # Individual policy detail (IPCC references)
 │   ├── SimulateurView.vue     # IPCC AR6 climate policy simulator
+│   ├── TippingPointsView.vue  # 5 climate tipping points and their thresholds
+│   ├── SystemicMapView.vue    # Interactive systemic map (Cytoscape.js)
 │   └── CorrelationsView.vue   # Placeholder (upcoming feature)
 └── router/index.ts
 ```
@@ -382,6 +418,14 @@ Climate policy simulator based on **IPCC AR6 impact models** (SSP2-4.5 baseline 
   - *Decided scenario {year}*: projected temperature at the horizon (trajectory label always assessed against 2100)
   - *CO₂ saved 2024→{year}*: cumulative via trapezoidal integration (GtCO₂)
   - *Annual reduction in {year}*: annual delta vs. baseline at the horizon (GtCO₂/yr)
+
+### Tipping Points (`/bascules`)
+
+Five critical climate tipping points (permafrost thaw, coral bleaching, Amazon dieback, Arctic sea-ice loss, AMOC weakening). Each tipping point has a **trigger threshold** based on projected temperature or forest cover. The `tippingPoints.store` watches simulator projections in real time and records the year each threshold is crossed.
+
+### Systemic Map (`/carte-systemique`)
+
+Interactive causal graph (Cytoscape.js) with **19 nodes** (physical, ecosystem, societal) and **61 cause-and-effect relationships**. Each edge indicates whether the influence is aggravating (`positive`) or beneficial (`negative`) from a human perspective — an app-specific convention, not standard graph notation. **5 named feedback loops** are highlightable (permafrost-carbon, forest-carbon, extremes-forests, health-inequality, geopolitics-migration). IPCC AR6 references attached to nodes and edges are clickable and open the corresponding PDF at the correct page.
 
 ### Correlations (`/correlations`)
 
