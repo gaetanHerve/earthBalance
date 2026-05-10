@@ -142,6 +142,22 @@
           </span>
         </AppTooltip>
 
+        <!-- Bouton Voter -->
+        <AppTooltip :text="t('phase.vote_action_desc')" position="bottom">
+          <button
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+            :class="canVote
+              ? 'border-eb-cyan/60 text-eb-cyan bg-eb-cyan/10 hover:bg-eb-cyan/20 hover:border-eb-cyan cursor-pointer'
+              : 'border-slate-700/60 text-slate-600 cursor-not-allowed'"
+            :aria-label="t('phase.vote_action_desc')"
+            :aria-disabled="!canVote"
+            @click="canVote && router.push('/mitigation-policies')"
+          >
+            <i class="fa fa-check-to-slot text-[10px]" aria-hidden="true"></i>
+            {{ t('phase.vote_action') }}
+          </button>
+        </AppTooltip>
+
         <!-- Admin -->
         <div class="flex items-center gap-2 pl-3 border-l border-eb-border/60" :aria-label="t('header.admin_section')">
 
@@ -331,6 +347,22 @@
         </div>
       </div>
 
+      <!-- Bouton Voter (mobile) -->
+      <div class="pt-1 border-t border-eb-border">
+        <button
+          class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-semibold transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :class="canVote
+            ? 'border-eb-cyan/50 text-eb-cyan bg-eb-cyan/10 hover:bg-eb-cyan/20 cursor-pointer'
+            : 'border-slate-700/60 text-slate-600 cursor-not-allowed'"
+          :aria-label="t('phase.vote_action_desc')"
+          :aria-disabled="!canVote"
+          @click="canVote && (router.push('/mitigation-policies'), menuOpen = false)"
+        >
+          <i class="fa fa-check-to-slot" aria-hidden="true"></i>
+          {{ t('phase.vote_action') }}
+        </button>
+      </div>
+
       <!-- Admin (collapsible) -->
       <div class="pt-1 border-t border-eb-border" :aria-label="t('header.admin_section')">
         <button
@@ -432,8 +464,9 @@ const router = useRouter()
 const gameStore = useGameStore()
 const tpStore   = useTippingPointsStore()
 
-const { activeBallot } = storeToRefs(useMitigationPoliciesStore())
+const { activeBallot, hasVoted } = storeToRefs(useMitigationPoliciesStore())
 const canCloseVote = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
+const canVote = computed(() => gameStore.phase === 'vote' && !hasVoted.value)
 
 function handleReset(): void {
   gameStore.resetGame()

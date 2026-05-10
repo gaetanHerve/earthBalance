@@ -203,108 +203,7 @@
       <!-- ── Projections ───────────────────────────────────────────────────── -->
       <CollapsibleSection class="xl:col-span-5" :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-slate-300">
 
-        <!-- Graphique CO₂ -->
-        <EbCard>
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.co2_chart_title') }}</h3>
-              <p class="text-xs text-slate-500">{{ t('simulator.co2_chart_sub') }}</p>
-            </div>
-            <div class="flex gap-3 text-xs text-slate-400">
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
-                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
-                </svg>
-                {{ t('simulator.legend_baseline') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
-                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
-                </svg>
-                {{ t('simulator.legend_decided') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
-                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
-                </svg>
-                {{ t('simulator.legend_pessimist') }}
-              </span>
-            </div>
-          </div>
-          <LineChart
-            canvas-id="sim-co2-chart"
-            :labels="displayLabels"
-            :datasets="co2Datasets"
-            :show-legend="false"
-            :current-year="gameStore.currentYear"
-            :height="180"
-            :y-min="15"
-            :y-max="75"
-            :aria-label="t('simulator.aria_co2')"
-          />
-        </EbCard>
-
-        <!-- Graphique Température -->
-        <EbCard>
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.temp_chart_title') }}</h3>
-              <p class="text-xs text-slate-500">{{ t('simulator.temp_chart_sub') }}</p>
-            </div>
-            <div class="flex gap-3 text-xs text-slate-400">
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
-                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
-                </svg>
-                {{ t('simulator.legend_baseline') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
-                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
-                </svg>
-                {{ t('simulator.legend_decided') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
-                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
-                </svg>
-                {{ t('simulator.legend_pessimist') }}
-              </span>
-            </div>
-          </div>
-          <LineChart
-            canvas-id="sim-temp-chart"
-            :labels="displayLabels"
-            :datasets="tempDatasets"
-            :show-legend="false"
-            :current-year="gameStore.currentYear"
-            :height="180"
-            :y-min="1.2"
-            :y-max="4.5"
-            :aria-label="t('simulator.aria_temp')"
-          />
-          <!-- Légende seuils -->
-          <div class="flex gap-4 mt-2 text-xs text-slate-500">
-            <span class="flex items-center gap-1.5">
-              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
-                <line x1="0" y1="2" x2="20" y2="2" stroke="#facc15" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>
-              </svg>
-              {{ t('simulator.threshold_paris') }}
-            </span>
-            <span class="flex items-center gap-1.5">
-              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
-                <line x1="0" y1="2" x2="20" y2="2" stroke="#f97316" stroke-width="2" stroke-dasharray="8 4" stroke-linecap="round"/>
-              </svg>
-              {{ t('simulator.threshold_2c') }}
-            </span>
-          </div>
-        </EbCard>
+        <SimProjectionCharts />
 
         <!-- Résumé par décision sélectionnée -->
         <EbCard v-if="selectedMitigationPolicies.length > 0">
@@ -354,13 +253,10 @@ import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 import { usePlanetsStore } from '@/store/planets.store'
-import { useGameStore } from '@/store/game.store'
-import CollapsibleSection   from '@/components/layout/CollapsibleSection.vue'
-import EbCard               from '@/components/layout/EbCard.vue'
-import LineChart             from '@/components/charts/LineChart.vue'
+import CollapsibleSection    from '@/components/layout/CollapsibleSection.vue'
+import EbCard                from '@/components/layout/EbCard.vue'
 import PolicyNetworkGraph    from '@/components/mitigationPolicies/PolicyNetworkGraph.vue'
-
-import type { ChartDataset } from '@/types/index'
+import SimProjectionCharts   from '@/components/simulator/SimProjectionCharts.vue'
 
 const { t } = useI18n()
 const store = useSimulationStore()
@@ -371,13 +267,10 @@ const {
   simulatorAdoptionYears,
   simulatorEffectYears,
   simCumulativeCo2,
-  simCumulativeCo2Pessimist,
   simCumulativeTemp,
-  simCumulativeTempPessimist,
 } = storeToRefs(store)
 
 const planetsStore = usePlanetsStore()
-const gameStore = useGameStore()
 const { selectedHorizon } = storeToRefs(planetsStore)
 
 const horizonIndex = computed<number>(() => {
@@ -387,13 +280,6 @@ const horizonIndex = computed<number>(() => {
   }
   return last
 })
-
-// Quand "Aujourd'hui" est sélectionné (index 0), les graphiques affichent tout de même jusqu'en 2100
-const chartHorizonIndex = computed<number>(() =>
-  horizonIndex.value === 0 ? SIM_LABELS.length - 1 : horizonIndex.value
-)
-
-const displayLabels = computed<number[]>(() => SIM_LABELS.slice(0, chartHorizonIndex.value + 1))
 
 // Température baseline et scénario décidé à l'année de l'horizon
 const baselineAtHorizon     = computed<number>(() => BASELINE_TEMP[horizonIndex.value])
@@ -467,97 +353,6 @@ const tempDecidedLabel = computed<string>(() => {
   return t('simulator.temp_critical')
 })
 
-// ─── Datasets graphiques ─────────────────────────────────────────────────────
-
-function flatLine(val: number): number[] {
-  return displayLabels.value.map(() => val)
-}
-
-const co2Datasets = computed<ChartDataset[]>(() => {
-  const n = chartHorizonIndex.value + 1
-  return [
-    {
-      label: t('simulator.dataset_baseline'),
-      data: BASELINE_CO2.slice(0, n),
-      borderColor: '#64748b',
-      backgroundColor: 'rgba(100,116,139,0.05)',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 2,
-    },
-    {
-      label: t('simulator.dataset_decided'),
-      data: simCumulativeCo2.value.slice(0, n),
-      borderColor: '#00ff88',
-      backgroundColor: 'rgba(0,255,136,0.08)',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 3,
-    },
-    {
-      label: t('simulator.dataset_pessimist'),
-      data: simCumulativeCo2Pessimist.value.slice(0, n),
-      borderColor: '#f87171',
-      backgroundColor: 'rgba(248,113,113,0.05)',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 2,
-    },
-  ]
-})
-
-const tempDatasets = computed<ChartDataset[]>(() => {
-  const n = chartHorizonIndex.value + 1
-  return [
-    {
-      label: t('simulator.dataset_baseline'),
-      data: BASELINE_TEMP.slice(0, n),
-      borderColor: '#64748b',
-      backgroundColor: 'transparent',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 2,
-    },
-    {
-      label: t('simulator.dataset_decided'),
-      data: simCumulativeTemp.value.slice(0, n),
-      borderColor: '#00ff88',
-      backgroundColor: 'rgba(0,255,136,0.08)',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 3,
-    },
-    {
-      label: t('simulator.dataset_pessimist'),
-      data: simCumulativeTempPessimist.value.slice(0, n),
-      borderColor: '#f87171',
-      backgroundColor: 'transparent',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 2,
-    },
-    {
-      label: t('simulator.threshold_paris'),
-      data: flatLine(1.5),
-      borderColor: '#facc15',
-      backgroundColor: 'transparent',
-      fill: false,
-      tension: 0,
-      borderDash: [2, 4],
-      pointRadius: 0,
-    },
-    {
-      label: t('simulator.threshold_2c'),
-      data: flatLine(2),
-      borderColor: '#f97316',
-      backgroundColor: 'transparent',
-      fill: false,
-      tension: 0,
-      borderDash: [8, 4],
-      pointRadius: 0,
-    },
-  ]
-})
 </script>
 
 <style scoped>

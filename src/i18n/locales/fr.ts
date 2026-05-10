@@ -280,6 +280,9 @@ export default {
     horizon_2040:        '2040',
     horizon_2050:        '2050',
     horizon_2100:        '2100',
+    proj_renewables:     'Énergies renouvelables',
+    proj_toggle_aria:    'Afficher ou masquer les graphiques de projection',
+    proj_all_hidden:     'Tous les graphiques sont masqués. Utilisez les filtres ci-dessus pour en afficher un.',
   },
   prerequisites: {
     policy_required:  'Nécessite que « {title} » soit validée',
@@ -420,6 +423,11 @@ export default {
       effects:     '+0,3 °C de réchauffement additionnel · Modification des courants atmosphériques de l\'hémisphère nord',
       quote:       '« L\'Arctique se réchauffe quatre fois plus vite que la moyenne mondiale, avec des conséquences irréversibles à l\'échelle humaine. » — d\'après AR6 GIEC, 2021',
     },
+    trigger_label:       'Seuil de déclenchement',
+    trigger_not_reached: 'Seuil non atteint',
+    trigger_unit_temp:   'de réchauffement mondial',
+    trigger_unit_forest: 'de couverture forestière',
+    tp_group_1_5c:       'Permafrost · Coraux · Banquise arctique (> +1,5°C)',
     'tp-amoc': {
       name:        'Effondrement de l\'AMOC',
       description: 'L\'afflux d\'eau douce issu de la fonte des glaces dilue la salinité de l\'Atlantique Nord, ralentissant voire stoppant la circulation thermohaline. Les régimes de précipitations européens et africains se trouvent profondément perturbés.',
@@ -478,6 +486,8 @@ export default {
     discussion_desc: 'Phase de délibération — le vote n\'est pas encore ouvert',
     vote_desc:       'Vote en cours — soumettez vos préférences',
     results_desc:    'Résultats publiés — attendez le nouveau tour',
+    vote_action:     'Voter',
+    vote_action_desc:'Décider de la prochaine politique à appliquer',
   },
   lang: {
     switch_to_en: 'Switch to English',

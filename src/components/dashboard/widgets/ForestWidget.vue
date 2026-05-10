@@ -33,6 +33,7 @@
       :datasets="forestDatasets"
       :height="180"
       :current-year="gameStore.currentYear"
+      :events="forestEvents"
       :y-min="20"
       :y-max="80"
       :aria-label="t('dashboard.forest_aria')"
@@ -49,6 +50,7 @@ import LineChart from '@/components/charts/LineChart.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS, BASELINE_FOREST } from '@/store/simulation.store'
+import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { blendedAtYear } from '@/utils/timeSeries'
 import type { ForestChartSeries, ChartDataset } from '@/types/index'
 
@@ -62,8 +64,12 @@ const props = defineProps<{
 const gameStore = useGameStore()
 const simStore = useSimulationStore()
 const { cumulativeForest, cumulativeForestPessimist } = storeToRefs(simStore)
+const tippingStore = useTippingPointsStore()
+const { triggeredList } = storeToRefs(tippingStore)
 
 const PROJECTION_YEARS = SIM_LABELS.filter(y => y > 2024)
+
+const triggeredMap = computed(() => new Map(triggeredList.value.map(tp => [tp.id, tp.year])))
 
 const forestCurrent = computed<number>(() =>
   Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeForest.value, cumulativeForestPessimist.value) * 10) / 10
@@ -74,12 +80,22 @@ const forestLabels = computed<number[]>(() => [
   ...PROJECTION_YEARS,
 ])
 
+// Années de déclenchement des TPs liés à la forêt (pour traits verticaux)
+const forestEvents = computed(() =>
+  (['tp-amazon'] as const).flatMap(id => {
+    const year = triggeredMap.value.get(id)
+    return year !== undefined ? [{ year, color: '#ff5050' }] : []
+  })
+)
+
 const forestDatasets = computed<ChartDataset[]>(() => {
-  const round1     = (v: number) => Math.round(v * 10) / 10
-  const hist       = props.series.timeSeries.values
-  const projValues = PROJECTION_YEARS.map(y =>
+  const round1       = (v: number) => Math.round(v * 10) / 10
+  const hist         = props.series.timeSeries.values
+  const allLabels    = forestLabels.value
+  const projValues   = PROJECTION_YEARS.map(y =>
     round1(blendedAtYear(y, SIM_LABELS, cumulativeForest.value, cumulativeForestPessimist.value))
   )
+  const amazonTriggered = triggeredMap.value.has('tp-amazon')
   return [
     {
       label:           t('dashboard.forest_title'),
@@ -96,6 +112,16 @@ const forestDatasets = computed<ChartDataset[]>(() => {
       borderDash:      [6, 4],
       fill:            false,
       pointRadius:     0,
+    },
+    {
+      label:       `${t('tipping.tp-amazon.name')} (45 %)`,
+      data:        allLabels.map(() => 45),
+      borderColor: amazonTriggered ? '#ff5050' : '#a78bfa',
+      backgroundColor: 'transparent',
+      borderDash:  [3, 4],
+      fill:        false,
+      tension:     0,
+      pointRadius: 0,
     },
   ]
 })

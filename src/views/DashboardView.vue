@@ -64,12 +64,6 @@
       <ChartSkeleton v-for="i in 4" :key="i" :height="180" />
     </div>
 
-    <!-- Scrutin collectif en cours -->
-    <section v-if="activeBallot" aria-labelledby="ballot-summary-title">
-      <SectionTitle id="ballot-summary-title" :title="t('dashboard.ballot_section')" icon="fa-vote-yea" color-class="text-eb-cyan" />
-      <BallotWidget />
-    </section>
-
   </main>
 </template>
 
@@ -83,11 +77,9 @@ import { useDashboardStore }          from '@/store/dashboard.store'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import { useLocalizedPolicies }       from '@/composables/useLocalizedPolicies'
 
-import SectionTitle         from '@/components/layout/SectionTitle.vue'
 import WidgetCustomizer     from '@/components/dashboard/WidgetCustomizer.vue'
 import EcologicalIndicators from '@/components/dashboard/EcologicalIndicators.vue'
 import SocietalIndicators   from '@/components/dashboard/SocietalIndicators.vue'
-import BallotWidget           from '@/components/dashboard/BallotWidget.vue'
 import ChartSkeleton        from '@/components/charts/ChartSkeleton.vue'
 
 const { t } = useI18n()
@@ -96,7 +88,7 @@ const dashStore               = useDashboardStore()
 const mitigationPoliciesStore = useMitigationPoliciesStore()
 
 const { ecologicalCharts, societalIndicators, visibleWidgets } = storeToRefs(dashStore)
-const { activeBallot, validatedPolicyMeta } = storeToRefs(mitigationPoliciesStore)
+const { validatedPolicyMeta } = storeToRefs(mitigationPoliciesStore)
 const { getMitigationPolicy } = mitigationPoliciesStore
 
 const lastValidated = computed(() => {

@@ -280,6 +280,9 @@ export default {
     horizon_2040:       '2040',
     horizon_2050:       '2050',
     horizon_2100:       '2100',
+    proj_renewables:    'Renewable Energy',
+    proj_toggle_aria:   'Show or hide projection charts',
+    proj_all_hidden:    'All charts are hidden. Use the filters above to display one.',
   },
   prerequisites: {
     policy_required:  'Requires "{title}" to be validated first',
@@ -420,6 +423,11 @@ export default {
       effects:     '+0.3 °C additional warming · Disruption of Northern Hemisphere atmospheric currents',
       quote:       '"The Arctic is warming four times faster than the global average, with irreversible consequences on human timescales." — after IPCC AR6, 2021',
     },
+    trigger_label:       'Trigger threshold',
+    trigger_not_reached: 'Threshold not reached',
+    trigger_unit_temp:   'of global warming',
+    trigger_unit_forest: 'of forest cover',
+    tp_group_1_5c:       'Permafrost · Coral reefs · Arctic sea ice (> +1.5°C)',
     'tp-amoc': {
       name:        'AMOC Collapse',
       description: 'Freshwater influx from melting ice dilutes North Atlantic salinity, slowing or halting thermohaline circulation and deeply disrupting European and West African precipitation patterns.',
@@ -478,6 +486,8 @@ export default {
     discussion_desc: 'Deliberation phase — voting is not yet open',
     vote_desc:       'Vote in progress — submit your preferences',
     results_desc:    'Results published — waiting for next round',
+    vote_action:     'Vote',
+    vote_action_desc:'Decide on the next policy to apply',
   },
   lang: {
     switch_to_en: 'Switch to English',

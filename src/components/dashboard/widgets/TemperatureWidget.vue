@@ -32,6 +32,7 @@
       :datasets="tempDatasets"
       :height="180"
       :current-year="gameStore.currentYear"
+      :events="tempEvents"
       :aria-label="t('dashboard.temp_aria')"
     />
   </EbCard>
@@ -46,6 +47,7 @@ import LineChart from '@/components/charts/LineChart.vue'
 import GaugeChart from '@/components/charts/GaugeChart.vue'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore, SIM_LABELS, BASELINE_TEMP } from '@/store/simulation.store'
+import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { blendedAtYear } from '@/utils/timeSeries'
 import type { ChartSeries, ChartDataset } from '@/types/index'
 
@@ -59,8 +61,12 @@ const props = defineProps<{
 const gameStore = useGameStore()
 const simStore = useSimulationStore()
 const { cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simStore)
+const tippingStore = useTippingPointsStore()
+const { triggeredList } = storeToRefs(tippingStore)
 
 const PROJECTION_YEARS = SIM_LABELS.filter(y => y > 2024)
+
+const triggeredMap = computed(() => new Map(triggeredList.value.map(tp => [tp.id, tp.year])))
 
 const tempCurrent = computed<number>(() =>
   Math.round(blendedAtYear(gameStore.currentYear, SIM_LABELS, cumulativeTemp.value, cumulativeTempPessimist.value) * 100) / 100
@@ -71,12 +77,23 @@ const tempLabels = computed<number[]>(() => [
   ...PROJECTION_YEARS,
 ])
 
+// Années de déclenchement des TPs liés à la température (pour traits verticaux)
+const tempEvents = computed(() =>
+  (['tp-permafrost', 'tp-coral', 'tp-arctic', 'tp-amoc'] as const)
+    .flatMap(id => {
+      const year = triggeredMap.value.get(id)
+      return year !== undefined ? [{ year, color: '#ff5050' }] : []
+    })
+)
+
 const tempDatasets = computed<ChartDataset[]>(() => {
   const round2     = (v: number) => Math.round(v * 100) / 100
   const hist       = props.series.timeSeries.values
+  const allLabels  = tempLabels.value
   const projValues = PROJECTION_YEARS.map(y =>
     round2(blendedAtYear(y, SIM_LABELS, cumulativeTemp.value, cumulativeTempPessimist.value))
   )
+  const amocTriggered = triggeredMap.value.has('tp-amoc')
   return [
     {
       label:           t('dashboard.temp_dataset'),
@@ -93,6 +110,26 @@ const tempDatasets = computed<ChartDataset[]>(() => {
       borderDash:      [6, 4],
       fill:            false,
       pointRadius:     0,
+    },
+    {
+      label:       t('tipping.tp_group_1_5c'),
+      data:        allLabels.map(() => 1.5),
+      borderColor: triggeredMap.value.has('tp-arctic') ? '#ff5050' : '#a78bfa',
+      backgroundColor: 'transparent',
+      borderDash:  [3, 4],
+      fill:        false,
+      tension:     0,
+      pointRadius: 0,
+    },
+    {
+      label:       `${t('tipping.tp-amoc.name')} (3°C)`,
+      data:        allLabels.map(() => 3),
+      borderColor: amocTriggered ? '#ff5050' : '#a78bfa',
+      backgroundColor: 'transparent',
+      borderDash:  [3, 4],
+      fill:        false,
+      tension:     0,
+      pointRadius: 0,
     },
   ]
 })

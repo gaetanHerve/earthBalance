@@ -6,12 +6,16 @@
     <div
       v-if="legendVisible"
       class="flex flex-wrap justify-center gap-x-4 gap-y-1.5 mt-2"
-      aria-hidden="true"
     >
-      <span
-        v-for="(item, i) in resolvedLegendItems"
-        :key="i"
-        class="flex items-center gap-1.5 text-xs text-slate-400"
+      <button
+        v-for="item in resolvedLegendItems"
+        :key="item.datasetIndex"
+        type="button"
+        class="flex items-center gap-1.5 text-xs transition-opacity cursor-pointer bg-transparent border-0 p-0 focus-visible:ring-1 focus-visible:ring-eb-cyan rounded outline-none"
+        :class="hiddenIndices.has(item.datasetIndex) ? 'opacity-35' : ''"
+        :aria-pressed="hiddenIndices.has(item.datasetIndex)"
+        :aria-label="`${item.label} — afficher/masquer`"
+        @click="toggleDataset(item.datasetIndex)"
       >
         <svg width="20" height="8" aria-hidden="true" class="shrink-0">
           <line
@@ -64,17 +68,18 @@
             x1="6" y1="4" x2="14" y2="4"
             :stroke="item.color" stroke-width="3"
           />
-          <!-- fallback circle uniquement si un pointStyle est attendu -->
           <circle v-else-if="item.pointStyle" cx="10" cy="4" r="3" :fill="item.color"/>
         </svg>
-        {{ item.label }}
-      </span>
+        <span :class="hiddenIndices.has(item.datasetIndex) ? 'line-through text-slate-600' : 'text-slate-400'">
+          {{ item.label }}
+        </span>
+      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, watch, computed } from 'vue'
+import { onMounted, onBeforeUnmount, watch, computed, ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
@@ -96,6 +101,7 @@ const props = withDefaults(defineProps<{
   yMax?:       number
   showLegend?: boolean | 'auto'
   currentYear?: number
+  events?: { year: number; color: string }[]
 }>(), {
   height:     180,
   ariaLabel:  'Graphique linéaire',
@@ -142,12 +148,39 @@ function drawRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
 const currentYearPlugin = {
   id: 'currentYearLine',
   afterDraw(chartInstance: ChartType) {
+    const { top, bottom } = chartInstance.chartArea
+    const ctx = chartInstance.ctx
+
+    // Traits verticaux des événements (points de bascule déclenchés)
+    for (const ev of props.events ?? []) {
+      const x = getXForYear(chartInstance, ev.year)
+      if (x === null) continue
+      ctx.save()
+      ctx.beginPath()
+      ctx.setLineDash([3, 3])
+      ctx.strokeStyle = ev.color
+      ctx.lineWidth = 1.5
+      ctx.globalAlpha = 0.55
+      ctx.moveTo(x, top)
+      ctx.lineTo(x, bottom)
+      ctx.stroke()
+      // Petit losange en haut du trait
+      ctx.setLineDash([])
+      ctx.globalAlpha = 0.85
+      ctx.fillStyle = ev.color
+      ctx.beginPath()
+      ctx.moveTo(x, top)
+      ctx.lineTo(x + 4, top + 5)
+      ctx.lineTo(x, top + 10)
+      ctx.lineTo(x - 4, top + 5)
+      ctx.closePath()
+      ctx.fill()
+      ctx.restore()
+    }
+
     if (props.currentYear === undefined) return
     const x = getXForYear(chartInstance, props.currentYear)
     if (x === null) return
-
-    const { top, bottom } = chartInstance.chartArea
-    const ctx = chartInstance.ctx
 
     ctx.save()
 
@@ -191,24 +224,45 @@ const currentYearPlugin = {
   },
 }
 
+// ─── Visibilité des séries (toggle légende) ───────────────────────────────────
+
+const hiddenIndices = ref<Set<number>>(new Set())
+
+function toggleDataset(datasetIndex: number) {
+  if (!chart) return
+  const meta = chart.getDatasetMeta(datasetIndex)
+  meta.hidden = !meta.hidden
+  chart.update()
+  const next = new Set(hiddenIndices.value)
+  next.has(datasetIndex) ? next.delete(datasetIndex) : next.add(datasetIndex)
+  hiddenIndices.value = next
+}
+
+watch(() => props.datasets.length, (newLen, oldLen) => {
+  if (newLen !== oldLen) hiddenIndices.value = new Set()
+})
+
 let chart: ChartType | null = null
 
 const GRID_COLOR = '#1f2d3d'
 
+const resolvedLegendItems = computed(() =>
+  props.datasets
+    .map((ds, datasetIndex) => ({
+      datasetIndex,
+      label:      ds.label ?? '',
+      color:      ds.borderColor as string,
+      pointStyle: ds.pointRadius === 0 ? null : (ds.pointStyle ?? POINT_STYLES[datasetIndex % POINT_STYLES.length]),
+      borderDash: ds.borderDash,
+    }))
+    .filter(item => item.label !== '')
+)
+
 const legendVisible = computed<boolean>(() => {
   if (props.showLegend === true)  return true
   if (props.showLegend === false) return false
-  return props.datasets.length > 1
+  return resolvedLegendItems.value.length > 1
 })
-
-const resolvedLegendItems = computed(() =>
-  props.datasets.map((ds, i) => ({
-    label:      ds.label,
-    color:      ds.borderColor as string,
-    pointStyle: ds.pointRadius === 0 ? null : (ds.pointStyle ?? POINT_STYLES[i % POINT_STYLES.length]),
-    borderDash: ds.borderDash,
-  }))
-)
 
 function buildDatasets() {
   return props.datasets.map((ds, index: number) => ({
@@ -274,9 +328,18 @@ watch(() => [props.labels, props.datasets], () => {
   chart.data.labels   = props.labels
   chart.data.datasets = buildDatasets()
   chart.update('active')
+  // Réappliquer l'état masqué après reconstruction des datasets
+  if (hiddenIndices.value.size > 0) {
+    hiddenIndices.value.forEach(i => {
+      const meta = chart!.getDatasetMeta(i)
+      if (meta) meta.hidden = true
+    })
+    chart.update()
+  }
 }, { deep: true })
 
 watch(() => props.currentYear, () => { chart?.update('active') })
+watch(() => props.events, () => { chart?.update('active') }, { deep: true })
 
 onBeforeUnmount(() => { chart?.destroy() })
 </script>

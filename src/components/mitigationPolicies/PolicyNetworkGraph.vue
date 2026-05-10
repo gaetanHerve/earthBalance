@@ -56,7 +56,7 @@
         >
           <!-- Top row: number + badges -->
           <div class="flex items-start justify-between gap-1">
-            <span class="text-[10px] text-slate-500 font-mono shrink-0">{{ policy.number }}</span>
+            <span class="text-[10px] text-slate-500 font-mono shrink-0">dec-{{ policy.number }}</span>
             <div class="flex items-center gap-1 flex-wrap justify-end">
               <!-- Badge retenue ou effet différé -->
               <span
@@ -198,7 +198,17 @@ const nextAdoptionYear = computed(() => simulatorAdoptionYearAt(selectedMitigati
 const { addMitigationPolicy, removeMitigationPolicy } = simStore
 const { localizedPolicy } = useLocalizedPolicies()
 
-const localizedPolicies = computed(() => catalogue.value.map(p => localizedPolicy(p)))
+function cardPriority(id: string): number {
+  if (isLocked(id)) return 0
+  if (prereqCheck(id).met) return 1
+  return 2
+}
+
+const localizedPolicies = computed(() =>
+  [...catalogue.value]
+    .sort((a, b) => cardPriority(a.id) - cardPriority(b.id))
+    .map(p => localizedPolicy(p))
+)
 
 // ─── Dependency maps ──────────────────────────────────────────────────────────
 

@@ -263,6 +263,29 @@ export const useSimulationStore = defineStore('simulation', () => {
     localStorage.getItem(BASELINE_KEY) !== 'false'
   )
 
+  // ─── Graphiques de projection visibles dans le simulateur ─────────────────
+  const ALL_PROJ_IDS = ['co2', 'temperature', 'forest', 'energy'] as const
+  const PROJ_VIS_KEY = STORAGE_KEYS.SIM_PROJ_VISIBLE
+
+  const simProjVisible = ref<string[]>((() => {
+    try {
+      const raw = localStorage.getItem(PROJ_VIS_KEY)
+      if (raw === null) return [...ALL_PROJ_IDS]
+      const parsed = JSON.parse(raw) as unknown
+      if (!Array.isArray(parsed)) return [...ALL_PROJ_IDS]
+      return (parsed as string[]).filter(id => (ALL_PROJ_IDS as readonly string[]).includes(id))
+    } catch {
+      return [...ALL_PROJ_IDS]
+    }
+  })())
+
+  function toggleSimProjChart(id: string): void {
+    const set = new Set(simProjVisible.value)
+    set.has(id) ? set.delete(id) : set.add(id)
+    simProjVisible.value = [...set]
+    localStorage.setItem(PROJ_VIS_KEY, JSON.stringify(simProjVisible.value))
+  }
+
   watch(includeGameBaseline, (newVal) => {
     localStorage.setItem(BASELINE_KEY, String(newVal))
     // En mode jeu, épure selectedIds des éventuels IDs verrouillés
@@ -790,6 +813,8 @@ export const useSimulationStore = defineStore('simulation', () => {
     simCumulativeCo2Pessimist,
     simCumulativeTemp,
     simCumulativeTempPessimist,
+    simProjVisible,
+    toggleSimProjChart,
     tempIn2100Decided,
     tempIn2100Pessimist,
     totalAnnualReduction,
