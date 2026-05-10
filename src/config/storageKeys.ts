@@ -8,4 +8,5 @@ export const STORAGE_KEYS = {
   TIPPING_STATE:       'eb_tipping_state',
   INTRO_SEEN:          'eb_intro_seen',
   GAME_PHASE:          'eb_game_phase',
+  BALLOT_PROPOSALS:    'eb_ballot_proposals',
 } as const

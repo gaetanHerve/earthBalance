@@ -65,7 +65,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useGameStore } from '@/store/game.store'
-import { STORAGE_KEYS } from '@/config/storageKeys'
 
 const { t } = useI18n()
 const gameStore = useGameStore()
@@ -85,8 +84,8 @@ function dismiss(): void {
 }
 
 function onClose(): void {
-  localStorage.setItem(STORAGE_KEYS.INTRO_SEEN, '1')
   gameStore.introVisible = false
+  gameStore.rulesVisible = true
 }
 </script>
 

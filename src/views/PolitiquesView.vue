@@ -45,8 +45,70 @@
       </div>
     </div>
 
+    <!-- ─── Bulletin en formation (phase discussion, admin) ─────────────────── -->
+    <div
+      v-if="gameStore.phase === 'discussion' && !activeBallot && isAdmin"
+      class="rounded-xl border border-amber-600/30 bg-amber-950/10 p-4 space-y-3"
+    >
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <i class="fa fa-list-check text-amber-400 text-sm" aria-hidden="true"></i>
+          <h2 class="text-sm font-bold text-amber-300">{{ t('proposals.title') }}</h2>
+          <span
+            class="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+            :class="ballotProposals.length === 3
+              ? 'border-amber-500/60 text-amber-300 bg-amber-900/20'
+              : 'border-slate-700 text-slate-500'"
+            aria-live="polite"
+          >
+            {{ t('proposals.count', { n: ballotProposals.length }) }}
+          </span>
+        </div>
+        <span
+          v-if="ballotProposals.length === 3"
+          class="text-xs text-amber-300 font-semibold"
+        >
+          <i class="fa fa-circle-check mr-1" aria-hidden="true"></i>{{ t('proposals.full_notice') }}
+        </span>
+        <span v-else class="text-xs text-slate-500 italic">{{ t('proposals.fallback_warning') }}</span>
+      </div>
+
+      <p class="text-xs text-slate-400 leading-relaxed">{{ t('proposals.subtitle') }}</p>
+
+      <!-- 3 slots -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" role="group" :aria-label="t('proposals.title')">
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="rounded-lg border p-3 min-h-[64px] flex flex-col gap-1.5"
+          :class="ballotProposals[i - 1]
+            ? 'border-amber-500/40 bg-amber-900/10'
+            : 'border-eb-border bg-eb-dark/40 border-dashed'"
+        >
+          <template v-if="ballotProposals[i - 1]">
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-[10px] text-slate-500 font-mono">{{ getProposedPolicy(i - 1)?.number }}</span>
+              <button
+                class="text-[9px] text-slate-500 hover:text-red-400 transition-colors focus-visible:ring-1 focus-visible:ring-red-400 rounded outline-none"
+                :aria-label="t('proposals.remove_aria')"
+                @click="removeProposal(ballotProposals[i - 1])"
+              >
+                <i class="fa fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="text-xs font-semibold text-slate-200 leading-snug line-clamp-2">
+              {{ getProposedPolicy(i - 1)?.title }}
+            </p>
+          </template>
+          <template v-else>
+            <span class="text-xs text-slate-600 italic m-auto">{{ t('proposals.slot_empty') }}</span>
+          </template>
+        </div>
+      </div>
+    </div>
+
     <!-- ─── Scrutin actif ──────────────────────────────────────────────────── -->
-    <CollapsibleSection v-if="activeBallot" :title="t('policies.active_ballot_title')" icon="fa-vote-yea" color-class="text-eb-cyan">
+    <CollapsibleSection v-if="activeBallot && gameStore.phase !== 'discussion'" :title="t('policies.active_ballot_title')" icon="fa-vote-yea" color-class="text-eb-cyan">
       <template #header-extra>
         <span class="text-xs text-slate-500 mr-1">
           <i class="fa fa-clock mr-1" aria-hidden="true"></i>
@@ -335,9 +397,16 @@ const gameStore = useGameStore()
 const {
   activeBallot, activeCandidates, closedBallots,
   ranking, hasVoted, isRankingComplete,
-  validatedPolicyMeta,
+  validatedPolicyMeta, isAdmin, ballotProposals,
 } = storeToRefs(store)
-const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy } = store
+const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy, removeProposal } = store
+
+function getProposedPolicy(index: number): MitigationPolicy | undefined {
+  const id = ballotProposals.value[index]
+  if (!id) return undefined
+  const p = getMitigationPolicy(id)
+  return p ? localizedPolicy(p) : undefined
+}
 
 const lastValidated = computed(() => {
   const meta = validatedPolicyMeta.value.at(-1)

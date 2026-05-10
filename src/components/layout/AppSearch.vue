@@ -208,6 +208,14 @@ const allItems = computed<SearchItem[]>(() => [
     path: '/bilan-2100',
     keywords: ['bilan', '2100', 'fin', 'partie', 'résultats', 'portrait', 'end', 'game', 'results'],
   },
+  {
+    id: 'rules',
+    label: t('search.items.rules.label'),
+    description: t('search.items.rules.description'),
+    icon: 'fa-circle-question',
+    path: '/regles',
+    keywords: ['règles', 'jeu', 'mécaniques', 'condorcet', 'tour', 'phases', 'vote', 'discussion', 'rules', 'how', 'play', 'mechanics'],
+  },
 ])
 
 const results = computed<SearchItem[]>(() => {

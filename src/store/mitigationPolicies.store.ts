@@ -24,7 +24,8 @@ export interface BallotResult {
 
 // ─── Persistence ──────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = STORAGE_KEYS.POLICIES_STATE
+const STORAGE_KEY          = STORAGE_KEYS.POLICIES_STATE
+const PROPOSALS_STORAGE_KEY = STORAGE_KEYS.BALLOT_PROPOSALS
 
 export interface ValidatedPolicyMeta { id: string; year: number }
 
@@ -55,11 +56,31 @@ function saveState(meta: ValidatedPolicyMeta[], ballots: DecisionBallot[]): void
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ validatedPolicyMeta: meta, ballots }))
 }
 
+function loadProposals(): string[] {
+  try {
+    const raw = localStorage.getItem(PROPOSALS_STORAGE_KEY)
+    return raw ? (JSON.parse(raw) as string[]) : []
+  } catch {
+    return []
+  }
+}
+
+function saveProposals(proposals: string[]): void {
+  if (proposals.length === 0) {
+    localStorage.removeItem(PROPOSALS_STORAGE_KEY)
+  } else {
+    localStorage.setItem(PROPOSALS_STORAGE_KEY, JSON.stringify(proposals))
+  }
+}
+
 // ─── Store ────────────────────────────────────────────────────────────────────
 
 export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () => {
 
   const saved = loadPersistedState()
+
+  // Rôle admin : systématiquement true (pas d'identity provider pour le POC)
+  const isAdmin = ref(true)
 
   const validatedPolicyMeta = ref<ValidatedPolicyMeta[]>(saved?.validatedPolicyMeta ?? [])
 
@@ -106,6 +127,26 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     if (!da || !db || !dc) return null
     return [da, db, dc]
   })
+
+  // Propositions de scrutin (max 3, persistées)
+  const ballotProposals = ref<string[]>(loadProposals())
+
+  function proposePolicy(id: string): void {
+    if (ballotProposals.value.includes(id)) return
+    if (ballotProposals.value.length >= 3) return
+    ballotProposals.value = [...ballotProposals.value, id]
+    saveProposals(ballotProposals.value)
+  }
+
+  function removeProposal(id: string): void {
+    ballotProposals.value = ballotProposals.value.filter(p => p !== id)
+    saveProposals(ballotProposals.value)
+  }
+
+  function clearProposals(): void {
+    ballotProposals.value = []
+    saveProposals([])
+  }
 
   // Classement en cours de l'utilisateur
   const ranking = ref<RankingState>([null, null, null])
@@ -224,6 +265,38 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     saveState(validatedPolicyMeta.value, ballots.value)
   }
 
+  // Crée un scrutin depuis les propositions (Option C) ou par fallback aléatoire (Option B)
+  function createBallotFromProposals(gameYear: number): void {
+    const validatedSet = new Set(validatedPolicyIds.value)
+    let candidates: [string, string, string]
+
+    if (ballotProposals.value.length === 3) {
+      candidates = ballotProposals.value as [string, string, string]
+    } else {
+      const nonValidated = allMitigationPolicies.filter(p => !validatedSet.has(p.id))
+      if (nonValidated.length < 3) return
+      const shuffled = [...nonValidated].sort(() => Math.random() - 0.5)
+      candidates = [shuffled[0].id, shuffled[1].id, shuffled[2].id]
+    }
+
+    const nextNum = String(ballots.value.length + 1).padStart(2, '0')
+    const gameStore = useGameStore()
+    const newBallot: DecisionBallot = {
+      id: `ballot-${gameStore.sessionNumber}-${nextNum}`,
+      sessionId: gameStore.sessionNumber,
+      decisionIds: candidates,
+      pairwise: { ab: 0, ba: 0, ac: 0, ca: 0, bc: 0, cb: 0 },
+      totalVoters: 0,
+      deadline: `${gameYear}-12-31T23:59:59Z`,
+      status: 'active',
+    }
+
+    ballots.value = [...ballots.value, newBallot]
+    ranking.value = [null, null, null]
+    hasVoted.value = false
+    saveState(validatedPolicyMeta.value, ballots.value)
+  }
+
   function getMitigationPolicy(id: string): MitigationPolicy | undefined {
     return policyIndex.value[id]
   }
@@ -233,15 +306,18 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     ballots.value = ballotData.map(b => ({ ...b, pairwise: { ...b.pairwise } }))
     ranking.value = [null, null, null]
     hasVoted.value = false
+    clearProposals()
   }
 
   return {
+    isAdmin,
     ballots,
     validatedPolicyMeta,
     validatedPolicyIds,
     activeBallot,
     closedBallots,
     activeCandidates,
+    ballotProposals,
     ranking,
     hasVoted,
     isRankingComplete,
@@ -252,6 +328,10 @@ export const useMitigationPoliciesStore = defineStore('mitigationPolicies', () =
     getMitigationPolicy,
     closeActiveBallot,
     createNewBallot,
+    createBallotFromProposals,
+    proposePolicy,
+    removeProposal,
+    clearProposals,
     resetAll,
   }
 })

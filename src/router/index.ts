@@ -55,6 +55,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/GameEndView.vue'),
     meta: { title: 'Bilan 2100 — EarthBalance' },
   },
+  {
+    path: '/regles',
+    name: 'rules',
+    component: () => import('@/views/RulesView.vue'),
+    meta: { title: 'Règles du jeu — EarthBalance' },
+  },
 ]
 
 const router = createRouter({

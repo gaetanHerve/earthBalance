@@ -12,6 +12,19 @@
         {{ mode === 'simulation' ? t('network.mode_simulation') : t('network.mode_game') }}
       </span>
 
+      <!-- Compteur de propositions -->
+      <span
+        v-if="showProposals"
+        class="flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[11px] font-semibold"
+        :class="ballotProposals.length === 3
+          ? 'border-amber-500/60 text-amber-300 bg-amber-900/20'
+          : 'border-slate-700 text-slate-400'"
+        aria-live="polite"
+      >
+        <i class="fa fa-list-check text-[9px]" aria-hidden="true"></i>
+        {{ t('proposals.count', { n: ballotProposals.length }) }}
+      </span>
+
       <template v-if="selectedId">
         <span class="flex items-center gap-1.5 text-amber-400">
           <svg width="20" height="8" aria-hidden="true">
@@ -86,6 +99,23 @@
               >
                 <i class="fa fa-lock text-[9px]"></i>
               </span>
+              <!-- Proposal toggle button (game mode, discussion phase, admin) -->
+              <button
+                v-if="showProposals && !isLocked(policy.id)"
+                class="w-4 h-4 rounded-full border flex items-center justify-center text-[9px] shrink-0 transition-colors"
+                :class="isProposed(policy.id)
+                  ? 'border-amber-500/70 bg-amber-900/40 text-amber-400 hover:border-amber-400'
+                  : canPropose(policy.id)
+                    ? 'border-slate-600 text-slate-400 hover:border-amber-500/50 hover:text-amber-400'
+                    : 'border-slate-800 text-slate-700 cursor-not-allowed'"
+                :aria-label="isProposed(policy.id) ? t('proposals.remove_aria') : t('proposals.propose_aria')"
+                :disabled="!isProposed(policy.id) && !canPropose(policy.id)"
+                @click.stop="isProposed(policy.id) ? removeProposal(policy.id) : canPropose(policy.id) && proposePolicy(policy.id)"
+                @keydown.enter.stop
+                @keydown.space.stop
+              >
+                <i :class="['fa', isProposed(policy.id) ? 'fa-minus' : 'fa-plus']" aria-hidden="true"></i>
+              </button>
               <!-- Simulation toggle button -->
               <button
                 v-if="mode === 'simulation' && !isLocked(policy.id)"
@@ -181,6 +211,8 @@ import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useSimulationStore, policyTempReductionAt2100, simulatorAdoptionYearAt } from '@/store/simulation.store'
+import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
+import { useGameStore } from '@/store/game.store'
 import { usePrerequisites } from '@/composables/usePrerequisites'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
 
@@ -198,10 +230,31 @@ const nextAdoptionYear = computed(() => simulatorAdoptionYearAt(selectedMitigati
 const { addMitigationPolicy, removeMitigationPolicy } = simStore
 const { localizedPolicy } = useLocalizedPolicies()
 
+const policiesStore = useMitigationPoliciesStore()
+const gameStore     = useGameStore()
+const { isAdmin, ballotProposals } = storeToRefs(policiesStore)
+const { proposePolicy, removeProposal } = policiesStore
+
+const showProposals = computed(() =>
+  props.mode === 'game' && isAdmin.value && gameStore.phase === 'discussion'
+)
+
+function isProposed(id: string): boolean {
+  return ballotProposals.value.includes(id)
+}
+
+function canPropose(id: string): boolean {
+  return !isProposed(id)
+    && ballotProposals.value.length < 3
+    && prereqCheck(id).met
+    && !isLocked(id)
+}
+
 function cardPriority(id: string): number {
   if (isLocked(id)) return 0
-  if (prereqCheck(id).met) return 1
-  return 2
+  if (showProposals.value && isProposed(id)) return 1
+  if (prereqCheck(id).met) return 2
+  return 3
 }
 
 const localizedPolicies = computed(() =>
@@ -262,6 +315,7 @@ function cardClass(id: string): string[] {
   if (selectedId.value === null) {
     if (isLocked(id)) return ['border-eb-green/30 bg-eb-green/5']
     if (!prereqCheck(id).met) return ['border-eb-border bg-eb-card opacity-40 cursor-default']
+    if (showProposals.value && isProposed(id)) return ['border-amber-400/50 bg-amber-900/15 ring-1 ring-amber-500/20']
     if (props.mode === 'simulation' && isSelected(id)) return ['border-eb-cyan/40 bg-eb-cyan/10']
     return ['border-eb-border bg-eb-card hover:border-eb-cyan/30 hover:bg-eb-card/80']
   }

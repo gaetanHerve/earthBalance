@@ -21,14 +21,19 @@ export const useGameStore = defineStore('game', () => {
   const sessionNumber = ref<number>(1)
   const gameOver      = ref<boolean>(currentYear.value >= 2100)
   const introVisible  = ref<boolean>(!localStorage.getItem(STORAGE_KEYS.INTRO_SEEN))
+  const rulesVisible  = ref<boolean>(false)
   const phase         = ref<TurnPhase>(loadPhase())
 
   function savePhase(): void {
     localStorage.setItem(STORAGE_KEYS.GAME_PHASE, phase.value)
   }
 
-  // discussion → vote
+  // discussion → vote : crée le bulletin depuis les propositions si aucun scrutin actif
   function startVote(): void {
+    const policiesStore = useMitigationPoliciesStore()
+    if (!policiesStore.activeBallot) {
+      policiesStore.createBallotFromProposals(currentYear.value)
+    }
     phase.value = 'vote'
     savePhase()
   }
@@ -47,16 +52,16 @@ export const useGameStore = defineStore('game', () => {
     savePhase()
   }
 
-  // results → discussion : avance l'année, crée un nouveau scrutin
+  // results → discussion : avance l'année, efface les propositions
   function endRound(): void {
     const policiesStore = useMitigationPoliciesStore()
 
     currentYear.value += GAME_CONFIG.grain
     localStorage.setItem(STORAGE_KEYS.GAME_YEAR, String(currentYear.value))
 
-    policiesStore.createNewBallot(currentYear.value)
+    policiesStore.clearProposals()
 
-    if (currentYear.value >= 2100 || !policiesStore.activeBallot) {
+    if (currentYear.value >= 2100) {
       gameOver.value = true
     }
 
@@ -71,15 +76,17 @@ export const useGameStore = defineStore('game', () => {
     localStorage.removeItem(STORAGE_KEYS.SIMULATION_BASELINE)
     localStorage.removeItem(STORAGE_KEYS.INTRO_SEEN)
     localStorage.removeItem(STORAGE_KEYS.GAME_PHASE)
+    localStorage.removeItem(STORAGE_KEYS.BALLOT_PROPOSALS)
     currentYear.value  = 2024
     sessionNumber.value = 1
     gameOver.value     = false
     introVisible.value = true
+    rulesVisible.value = false
     phase.value        = 'discussion'
     useMitigationPoliciesStore().resetAll()
     useSimulationStore().resetAll()
     useTippingPointsStore().resetAll()
   }
 
-  return { currentYear, sessionNumber, gameOver, introVisible, phase, startVote, closeVote, endRound, resetGame }
+  return { currentYear, sessionNumber, gameOver, introVisible, rulesVisible, phase, startVote, closeVote, endRound, resetGame }
 })

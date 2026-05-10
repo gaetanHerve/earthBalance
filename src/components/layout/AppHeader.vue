@@ -159,7 +159,7 @@
         </AppTooltip>
 
         <!-- Admin -->
-        <div class="flex items-center gap-2 pl-3 border-l border-eb-border/60" :aria-label="t('header.admin_section')">
+        <div v-if="isAdmin" class="flex items-center gap-2 pl-3 border-l border-eb-border/60" :aria-label="t('header.admin_section')">
 
           <!-- Bouton toggle Admin -->
           <button
@@ -190,15 +190,23 @@
             </button>
 
             <!-- Bouton d'avancement de phase -->
-            <button
+            <AppTooltip
               v-if="gameStore.phase === 'discussion'"
-              class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none border-eb-cyan/40 text-eb-cyan hover:bg-eb-cyan/10 hover:border-eb-cyan cursor-pointer"
-              :aria-label="t('phase.start_vote')"
-              @click="gameStore.startVote()"
+              :text="activeBallot || ballotProposals.length === 3 ? t('phase.start_vote') : t('phase.start_vote_no_proposals_desc')"
+              position="bottom"
             >
-              <i class="fa fa-check-to-slot" aria-hidden="true"></i>
-              {{ t('phase.start_vote') }}
-            </button>
+              <button
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none cursor-pointer"
+                :class="activeBallot || ballotProposals.length === 3
+                  ? 'border-eb-cyan/40 text-eb-cyan hover:bg-eb-cyan/10 hover:border-eb-cyan'
+                  : 'border-amber-600/40 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500'"
+                :aria-label="activeBallot || ballotProposals.length === 3 ? t('phase.start_vote') : t('phase.start_vote_no_proposals')"
+                @click="gameStore.startVote()"
+              >
+                <i class="fa fa-check-to-slot" aria-hidden="true"></i>
+                {{ activeBallot || ballotProposals.length === 3 ? t('phase.start_vote') : t('phase.start_vote_no_proposals') }}
+              </button>
+            </AppTooltip>
 
             <button
               v-else-if="gameStore.phase === 'vote'"
@@ -364,7 +372,7 @@
       </div>
 
       <!-- Admin (collapsible) -->
-      <div class="pt-1 border-t border-eb-border" :aria-label="t('header.admin_section')">
+      <div v-if="isAdmin" class="pt-1 border-t border-eb-border" :aria-label="t('header.admin_section')">
         <button
           class="flex items-center gap-1.5 text-[9px] text-slate-600 uppercase tracking-widest font-semibold hover:text-slate-400 transition-colors focus-visible:ring-1 focus-visible:ring-slate-500 rounded outline-none cursor-pointer px-1 py-0.5"
           :aria-expanded="adminOpen"
@@ -394,12 +402,15 @@
 
           <button
             v-if="gameStore.phase === 'discussion'"
-            class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none border-eb-cyan/40 text-eb-cyan hover:bg-eb-cyan/10 cursor-pointer"
-            :aria-label="t('phase.start_vote')"
+            class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm transition-all focus-visible:ring-2 outline-none cursor-pointer"
+            :class="activeBallot || ballotProposals.length === 3
+              ? 'border-eb-cyan/40 text-eb-cyan hover:bg-eb-cyan/10 focus-visible:ring-eb-cyan'
+              : 'border-amber-600/40 text-amber-400 hover:bg-amber-500/10 focus-visible:ring-amber-400'"
+            :aria-label="activeBallot || ballotProposals.length === 3 ? t('phase.start_vote') : t('phase.start_vote_no_proposals')"
             @click="gameStore.startVote(); menuOpen = false"
           >
             <i class="fa fa-check-to-slot" aria-hidden="true"></i>
-            {{ t('phase.start_vote') }}
+            {{ activeBallot || ballotProposals.length === 3 ? t('phase.start_vote') : t('phase.start_vote_no_proposals') }}
           </button>
 
           <button
@@ -464,7 +475,7 @@ const router = useRouter()
 const gameStore = useGameStore()
 const tpStore   = useTippingPointsStore()
 
-const { activeBallot, hasVoted } = storeToRefs(useMitigationPoliciesStore())
+const { activeBallot, hasVoted, isAdmin, ballotProposals } = storeToRefs(useMitigationPoliciesStore())
 const canCloseVote = computed(() => (activeBallot.value?.totalVoters ?? 0) > 0)
 const canVote = computed(() => gameStore.phase === 'vote' && !hasVoted.value)
 
@@ -505,8 +516,9 @@ function onToolsFocusOut(e: FocusEvent): void {
 
 const navLinks = computed<NavLink[]>(() => {
   const links: NavLink[] = [
-    { to: '/',                    label: t('nav.dashboard'), icon: 'fa-gauge-high',    description: t('search.items.dashboard.description') },
-    { to: '/mitigation-policies', label: t('nav.policies'),  icon: 'fa-vote-yea',      description: t('search.items.policies.description')  },
+    { to: '/',                    label: t('nav.dashboard'), icon: 'fa-gauge-high',      description: t('search.items.dashboard.description') },
+    { to: '/mitigation-policies', label: t('nav.policies'),  icon: 'fa-vote-yea',        description: t('search.items.policies.description')  },
+    { to: '/regles',              label: t('nav.rules'),     icon: 'fa-circle-question', description: t('rules.nav_desc')                      },
   ]
   if (gameStore.gameOver) {
     links.push({ to: '/bilan-2100', label: t('nav.bilan'), icon: 'fa-flag-checkered', description: t('search.items.end_game.description') })

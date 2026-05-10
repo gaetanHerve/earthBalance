@@ -12,6 +12,7 @@ export default {
     simulator:    'Simulateur',
     systemic_map: 'Carte systémique',
     bilan:        'Bilan 2100',
+    rules:        'Règles du jeu',
   },
   header: {
     tagline:          'Planetary Simulation Engine v2.4',
@@ -53,6 +54,7 @@ export default {
       tipping_points:{ label: 'Points de bascule',    description: 'Seuils critiques du système climatique' },
       systemic_map:  { label: 'Carte systémique',     description: 'Graphe des interdépendances causales' },
       end_game:      { label: 'Bilan 2100',            description: 'Portrait multidimensionnel de fin de partie' },
+      rules:         { label: 'Règles du jeu',         description: 'Mécaniques de jeu, phases de tour, méthode de Condorcet' },
     },
     live_found:     '{n} résultat trouvé | {n} résultats trouvés',
     live_none:      'Aucun résultat',
@@ -488,9 +490,61 @@ export default {
     results_desc:    'Résultats publiés — attendez le nouveau tour',
     vote_action:     'Voter',
     vote_action_desc:'Décider de la prochaine politique à appliquer',
+    start_vote_no_proposals: 'Lancer le vote (sélection aléatoire)',
+    start_vote_no_proposals_desc: 'Moins de 3 politiques proposées — les candidates seront choisies aléatoirement',
+  },
+  proposals: {
+    title:            'Bulletin en formation',
+    subtitle:         'Sélectionnez 3 politiques à soumettre au vote. L\'admin peut lancer le vote dès que 3 sont choisies.',
+    slot_empty:       'Slot disponible',
+    count:            '{n}/3 politiques proposées',
+    propose:          'Proposer',
+    remove:           'Retirer',
+    propose_aria:     'Proposer cette politique au scrutin',
+    remove_aria:      'Retirer cette proposition du scrutin',
+    full_notice:      '3/3 — prêt pour le vote',
+    fallback_warning: 'Moins de 3 politiques proposées — le vote utilisera une sélection aléatoire',
+    slots_full:       'Bulletin complet',
+    not_eligible:     'Non proposable',
   },
   lang: {
     switch_to_en: 'Switch to English',
     switch_to_fr: 'Passer en Français',
+  },
+  rules: {
+    page_title:   'Règles du jeu',
+    page_subtitle: 'Comment jouer à EarthBalance — guide complet des mécaniques de jeu.',
+    nav_label:    'Règles du jeu',
+    nav_desc:     'Comprendre les mécaniques de jeu et les objectifs',
+
+    objective_title: 'Objectif',
+    objective_body:  'EarthBalance simule la gouvernance climatique mondiale de 2024 à 2100. Les joueurs délibèrent collectivement et votent sur des politiques d\'atténuation du changement climatique. L\'objectif n\'est pas de "gagner" ou "perdre" : à la fin de la partie, un bilan multidimensionnel dresse le portrait du monde en 2100 selon les décisions prises.',
+
+    turns_title:   'Déroulement d\'un tour',
+    turns_body:    'Chaque tour représente une période de 5 ans. Il se déroule en trois phases successives :',
+    phase_discussion_title: '1. Discussion',
+    phase_discussion_body:  'Les joueurs délibèrent librement sur les enjeux climatiques. Le facilitateur (rôle Admin) sélectionne 3 politiques éligibles à soumettre au vote. Une politique est éligible si ses prérequis sont satisfaits.',
+    phase_vote_title: '2. Vote',
+    phase_vote_body:  'Chaque joueur classe les 3 politiques candidates par ordre de préférence (1er, 2e, 3e choix). Le classement est soumis anonymement.',
+    phase_results_title: '3. Résultats',
+    phase_results_body:  'Le gagnant est déterminé par la méthode de Condorcet : la politique qui bat toutes les autres en comparaisons pairwise est adoptée. En cas de cycle (paradoxe de Condorcet), le score de Borda départage les candidats. La politique adoptée est intégrée au modèle de projection climatique.',
+
+    condorcet_title: 'Méthode de Condorcet',
+    condorcet_body:  'Pour chaque paire de politiques, on compte combien de joueurs préfèrent A à B, et combien préfèrent B à A. Le vainqueur de Condorcet est la politique qui bat toutes les autres en duel. Si aucun vainqueur clair n\'émerge (cycle A > B > C > A), le score de Borda — somme des points de position — sert de départage.',
+
+    prerequisites_title: 'Prérequis des politiques',
+    prerequisites_body:  'Certaines politiques ne sont disponibles qu\'une fois d\'autres adoptées. Le réseau de politiques visualise ces dépendances : une politique verrouillée (cadenas) ne peut être proposée ni incluse dans un scrutin tant que ses prérequis ne sont pas remplis.',
+
+    tipping_title: 'Points de bascule',
+    tipping_body:  'Des seuils climatiques critiques — hausse de température, recul forestier — peuvent être franchis selon l\'évolution des projections. Une fois déclenchés, ces points de bascule amplifient les effets du dérèglement de façon irréversible. L\'admin peut les activer ou désactiver pour adapter la session.',
+
+    end_title: 'Fin de partie',
+    end_body:  'La partie se termine en 2100. Le bilan évalue trois piliers : Climat & Écosystèmes, Sociétal, Énergie & Ressources. Aucune victoire ou défaite binaire — chaque indicateur raconte une partie du portrait du monde que les joueurs ont façonné ensemble.',
+
+    admin_title: 'Rôle facilitateur (Admin)',
+    admin_body:  'Le facilitateur anime la délibération, propose les 3 politiques candidates, lance le vote, le clôture et déclenche le tour suivant. Il peut activer ou désactiver les points de bascule pour adapter la difficulté de la session.',
+    overlay_aria: 'Règles du jeu — EarthBalance',
+    overlay_cta:  'C\'est parti !',
+    overlay_full_rules: 'Règles complètes disponibles dans la section',
   },
 }

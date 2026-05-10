@@ -12,6 +12,7 @@ export default {
     simulator:    'Simulator',
     systemic_map: 'Systemic Map',
     bilan:        'Report 2100',
+    rules:        'Game Rules',
   },
   header: {
     tagline:          'Planetary Simulation Engine v2.4',
@@ -53,6 +54,7 @@ export default {
       tipping_points:{ label: 'Tipping Points',  description: 'Critical thresholds of the climate system' },
       systemic_map:  { label: 'Systemic Map',    description: 'Causal interdependency graph' },
       end_game:      { label: 'End-game 2100',   description: 'Multidimensional end-of-game assessment' },
+      rules:         { label: 'Game Rules',      description: 'Game mechanics, turn phases, Condorcet method' },
     },
     live_found: '{n} result found | {n} results found',
     live_none:  'No results',
@@ -488,9 +490,61 @@ export default {
     results_desc:    'Results published — waiting for next round',
     vote_action:     'Vote',
     vote_action_desc:'Decide on the next policy to apply',
+    start_vote_no_proposals: 'Start vote (random selection)',
+    start_vote_no_proposals_desc: 'Fewer than 3 policies proposed — candidates will be chosen randomly',
+  },
+  proposals: {
+    title:            'Ballot in formation',
+    subtitle:         'Select 3 policies to submit for a vote. The admin can start the vote once 3 are chosen.',
+    slot_empty:       'Available slot',
+    count:            '{n}/3 policies proposed',
+    propose:          'Propose',
+    remove:           'Remove',
+    propose_aria:     'Propose this policy for the ballot',
+    remove_aria:      'Remove this proposal from the ballot',
+    full_notice:      '3/3 — ready to vote',
+    fallback_warning: 'Fewer than 3 policies proposed — voting will use a random selection',
+    slots_full:       'Ballot full',
+    not_eligible:     'Not eligible',
   },
   lang: {
     switch_to_en: 'Switch to English',
     switch_to_fr: 'Passer en Français',
+  },
+  rules: {
+    page_title:   'Game Rules',
+    page_subtitle: 'How to play EarthBalance — a complete guide to game mechanics.',
+    nav_label:    'Game Rules',
+    nav_desc:     'Understand the game mechanics and objectives',
+
+    objective_title: 'Objective',
+    objective_body:  'EarthBalance simulates global climate governance from 2024 to 2100. Players deliberate collectively and vote on climate mitigation policies. The goal is not to "win" or "lose": at the end of the game, a multidimensional report paints a portrait of the world in 2100 based on the decisions made.',
+
+    turns_title:   'Turn structure',
+    turns_body:    'Each turn represents a 5-year period and proceeds through three successive phases:',
+    phase_discussion_title: '1. Discussion',
+    phase_discussion_body:  'Players freely deliberate on climate issues. The facilitator (Admin role) selects 3 eligible policies to submit for a vote. A policy is eligible when its prerequisites are met.',
+    phase_vote_title: '2. Vote',
+    phase_vote_body:  'Each player ranks the 3 candidate policies in order of preference (1st, 2nd, 3rd choice). Rankings are submitted anonymously.',
+    phase_results_title: '3. Results',
+    phase_results_body:  'The winner is determined by the Condorcet method: the policy that beats all others in pairwise comparisons is adopted. In case of a cycle (Condorcet paradox), the Borda score breaks the tie. The adopted policy is integrated into the climate projection model.',
+
+    condorcet_title: 'Condorcet Method',
+    condorcet_body:  'For each pair of policies, we count how many players prefer A over B and how many prefer B over A. The Condorcet winner is the policy that beats all others in head-to-head matchups. If no clear winner emerges (cycle A > B > C > A), the Borda score — sum of position points — serves as a tiebreaker.',
+
+    prerequisites_title: 'Policy prerequisites',
+    prerequisites_body:  'Some policies are only available once others have been adopted. The policy network visualises these dependencies: a locked policy (padlock icon) cannot be proposed or included in a ballot until its prerequisites are met.',
+
+    tipping_title: 'Tipping points',
+    tipping_body:  'Critical climate thresholds — temperature rise, forest cover loss — may be crossed depending on projection trends. Once triggered, these tipping points irreversibly amplify the effects of climate disruption. The admin can enable or disable them to adjust session difficulty.',
+
+    end_title: 'End of game',
+    end_body:  'The game ends in 2100. The report evaluates three pillars: Climate & Ecosystems, Societal, Energy & Resources. No binary win or loss — each indicator tells part of the story of the world the players shaped together.',
+
+    admin_title: 'Facilitator role (Admin)',
+    admin_body:  'The facilitator guides deliberation, proposes the 3 candidate policies, starts and closes the vote, and triggers the next round. They can toggle tipping points on or off to adjust session difficulty.',
+    overlay_aria: 'Game Rules — EarthBalance',
+    overlay_cta:  'Let\'s go!',
+    overlay_full_rules: 'Full rules available in the',
   },
 }

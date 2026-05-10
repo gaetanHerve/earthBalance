@@ -2,6 +2,7 @@
   <div class="min-h-screen bg-eb-dark text-slate-200 font-sans">
     <AppLoadingBar />
     <GameIntroOverlay />
+    <GameRulesOverlay />
     <TippingPointModal />
     <a
       href="#"
@@ -26,6 +27,7 @@ import AppTicker        from '@/components/layout/AppTicker.vue'
 import AppFooter        from '@/components/layout/AppFooter.vue'
 import AppLoadingBar      from '@/components/layout/AppLoadingBar.vue'
 import GameIntroOverlay  from '@/components/layout/GameIntroOverlay.vue'
+import GameRulesOverlay  from '@/components/layout/GameRulesOverlay.vue'
 import TippingPointModal from '@/components/TippingPointModal.vue'
 import { useGameStore } from '@/store/game.store'
 
