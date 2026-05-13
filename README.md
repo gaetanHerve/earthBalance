@@ -1,5 +1,7 @@
 # EarthBalance — Jeu Participatif Écologique
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+
 > 🇬🇧 [English version below](#earthbalance--participatory-ecological-game)
 
 Serious Game web collaboratif permettant à une communauté de prendre des décisions collectives pour maintenir les **9 limites planétaires** en-dessous de leurs seuils critiques, sans compromettre les indicateurs sociétaux (sécurité alimentaire, accès à l'eau, santé, inégalités, etc.).
@@ -15,6 +17,7 @@ Serious Game web collaboratif permettant à une communauté de prendre des déci
 | État global | Pinia |
 | Routing | Vue Router 4 (hash history) |
 | Graphiques | Chart.js 4 (line, bar, radar, doughnut) |
+| Graphe systémique | Cytoscape.js (nœuds / arêtes / boucles de rétroaction) |
 | Styles | Tailwind CSS 3 |
 | Internationalisation | vue-i18n 9 (FR / EN) |
 | Build | Vite 5 |
@@ -43,22 +46,24 @@ src/
 ├── types/
 │   ├── index.ts               # Interfaces TypeScript centralisées
 │   └── impactModel.ts         # Types pour les modèles d'impact GIEC
+├── config/
+│   ├── game.config.ts         # GAME_CONFIG (grain = 5 ans/tour)
+│   ├── simulation.config.ts   # SIM_LABELS, PROJ_LABELS — partagés entre stores
+│   └── storageKeys.ts         # Clés localStorage centralisées
 ├── data/                      # Données de démonstration (à remplacer par APIs)
 │   ├── planetaryLimits.ts     # 9 limites planétaires — séries 1950–2024
 │   ├── societalIndicators.ts  # Indicateurs FAO, OMS, PNUD
-│   ├── mitigationPolicies.ts  # Politiques climatiques, votes, projections
-│   ├── ballots.ts             # Scrutins et résultats de vote
+│   ├── mitigationPolicies.ts  # Politiques climatiques, projections, prérequis
+│   ├── ballots.ts             # Scrutin initial pré-seedé
 │   ├── policyDetails.ts       # Descriptions étendues et références GIEC
+│   ├── systemicGraph.ts       # 19 nœuds, 61 arêtes, 5 boucles (Cytoscape)
+│   ├── tippingPoints.ts       # 5 points de bascule avec seuils de déclenchement
+│   ├── ipccQuotes.ts          # Citations GIEC AR6
 │   └── models/                # Modèles d'impact JSON (SSP2-4.5)
-│       ├── POL_COAL_EXIT_2030_DEV.json
-│       ├── POL_DEFORESTATION_HALT_2030.json
-│       ├── POL_DIET_SHIFT_PLANTBASED.json
-│       ├── POL_METHANE_REDUCTION_2030.json
-│       └── POL_TRANSPORT_ELECTRIFICATION.json
 ├── i18n/
 │   ├── index.ts               # Configuration vue-i18n (détection locale navigateur)
 │   ├── locales/
-│   │   ├── fr.ts              # Traductions françaises
+│   │   ├── fr.ts              # Traductions françaises (source de vérité)
 │   │   └── en.ts              # Traductions anglaises
 │   └── policies/
 │       └── en.ts              # Titres et descriptions des politiques en anglais
@@ -67,53 +72,111 @@ src/
 │   ├── blockchain.service.ts  # Abstraction Web3 (stub ethers.js)
 │   └── llm.service.ts         # Abstraction LLM prospectif (stub Claude)
 ├── store/
+│   ├── game.store.ts          # Année de jeu, phases de tour, intro/règles, reset
 │   ├── planets.store.ts       # Limites planétaires + horizon temporel
-│   ├── mitigationPolicies.store.ts  # Vote, consensus, validation
-│   ├── simulation.store.ts    # Moteur de simulation (projections CO₂ + T°)
-│   └── dashboard.store.ts     # Graphiques éco/soc, widgets personnalisables
+│   ├── mitigationPolicies.store.ts  # Vote Condorcet, propositions de bulletin, rôle admin
+│   ├── simulation.store.ts    # Moteur de projection (CO₂, température, forêt, énergie, sociétal)
+│   ├── tippingPoints.store.ts # Détection et persistance des bascules déclenchées
+│   └── dashboard.store.ts     # Widgets personnalisables
 ├── composables/
 │   ├── useContrastMode.ts     # Mode fort contraste (localStorage)
-│   └── useLocalizedPolicies.ts  # Titres/descriptions localisés des politiques
+│   ├── useLocalizedPolicies.ts  # Titres/descriptions localisés des politiques
+│   └── usePrerequisites.ts    # Vérification des prérequis de politiques
 ├── utils/
-│   └── condorcet.ts           # Algorithme Condorcet + départage Borda
+│   ├── condorcet.ts           # Algorithme Condorcet + départage Borda
+│   └── timeSeries.ts          # interpolateAtYear, blendedAtYear, shiftedDeltas
 ├── components/
-│   ├── charts/                # Graphiques réutilisables
-│   │   ├── LineChart.vue      # Courbes multi-datasets (légende SVG ligne+forme)
+│   ├── charts/
+│   │   ├── LineChart.vue      # Courbes multi-datasets — légende cliquable, marqueurs d'événements
 │   │   ├── BarChart.vue
 │   │   ├── RadarChart.vue     # Radar 9 limites (formes par statut)
 │   │   ├── GaugeChart.vue
 │   │   ├── VotePieChart.vue
 │   │   └── ChartSkeleton.vue
 │   ├── layout/
-│   │   ├── AppHeader.vue
+│   │   ├── AppHeader.vue      # Nav, phase de tour, bouton Voter, zone Admin conditionnelle
 │   │   ├── AppFooter.vue
 │   │   ├── AppTicker.vue
-│   │   ├── AppLoadingBar.vue  # Barre de progression de navigation
-│   │   ├── AppSearch.vue      # Recherche in-app
-│   │   ├── AppLangToggle.vue  # Sélecteur de langue FR/EN
-│   │   ├── AppContrastToggle.vue  # Mode fort contraste
+│   │   ├── AppLoadingBar.vue
+│   │   ├── AppSearch.vue
+│   │   ├── AppLangToggle.vue
+│   │   ├── AppContrastToggle.vue
+│   │   ├── AppTooltip.vue
 │   │   ├── CollapsibleSection.vue
 │   │   ├── EbCard.vue
+│   │   ├── GameIntroOverlay.vue   # Écran d'introduction (dialog plein écran)
+│   │   ├── GameRulesOverlay.vue   # Règles du jeu après intro (même format)
 │   │   └── SectionTitle.vue
 │   ├── dashboard/
 │   │   ├── EcologicalIndicators.vue
 │   │   ├── SocietalIndicators.vue
-│   │   └── WidgetCustomizer.vue
+│   │   ├── WidgetCustomizer.vue
+│   │   └── widgets/
+│   ├── simulator/
+│   │   └── SimProjectionCharts.vue  # Graphiques de projection (CO₂, T°, forêt, énergie)
 │   ├── limits/
 │   │   └── PlanetaryLimitCard.vue
+│   ├── TippingPointModal.vue
 │   └── mitigationPolicies/
+│       ├── PolicyNetworkGraph.vue  # Réseau de politiques (prérequis, propositions de bulletin)
 │       ├── VoteCard.vue
 │       ├── BlockchainPanel.vue
 │       └── ProspectivePanel.vue
 ├── views/
-│   ├── DashboardView.vue      # Vue synthétique (indicateurs + scrutin en cours)
+│   ├── DashboardView.vue      # Vue synthétique (indicateurs + scrutin)
 │   ├── LimitsView.vue         # Radar global + 9 fiches détaillées
-│   ├── PolitiquesView.vue     # Vote Condorcet + historique des scrutins
-│   ├── PolicyDetailView.vue   # Fiche détaillée d'une politique (références GIEC)
-│   ├── SimulateurView.vue     # Simulateur de politiques climatiques GIEC AR6
-│   └── CorrelationsView.vue   # Placeholder (fonctionnalité à venir)
+│   ├── PolitiquesView.vue     # Bulletin en formation, vote Condorcet, historique
+│   ├── PolicyDetailView.vue   # Fiche détaillée d'une politique
+│   ├── RulesView.vue          # Règles du jeu
+│   ├── SimulateurView.vue     # Simulateur de politiques climatiques
+│   ├── TippingPointsView.vue  # Cartes des 5 points de bascule
+│   ├── SystemicMapView.vue    # Carte systémique (Cytoscape.js)
+│   ├── GameEndView.vue        # Bilan multidimensionnel 2100
+│   └── CorrelationsView.vue   # Placeholder
 └── router/index.ts
 ```
+
+---
+
+## Mécanique de jeu
+
+### Phases de tour
+
+Chaque tour représente **5 ans** et suit une machine à états à trois phases :
+
+```
+discussion → vote → résultats → (nouveau tour)
+```
+
+| Phase | Qui peut agir | Ce qui se passe |
+|---|---|---|
+| `discussion` | Admin | Sélection des 3 politiques candidates, délibération libre |
+| `vote` | Tous | Classement par préférence (1er / 2e / 3e) soumis anonymement |
+| `résultats` | Admin | Clôture du vote, adoption du gagnant, avancement de l'année |
+
+### Propositions de bulletin (Option C + fallback B)
+
+En phase de discussion, le facilitateur (rôle Admin) choisit jusqu'à 3 politiques dans le réseau de politiques via un bouton **Proposer/Retirer**. Un plateau "Bulletin en formation" dans la page Politiques affiche les 3 slots en temps réel.
+
+Au lancement du vote, `startVote()` crée le bulletin :
+- Si 3 politiques ont été proposées → **Option C** : ces 3 politiques sont soumises au vote
+- Sinon → **Option B fallback** : 3 politiques éligibles sélectionnées aléatoirement
+
+### Vote Condorcet
+
+Le gagnant est la politique qui bat toutes les autres en **duels directs** (comparaisons pairwise). En cas de cycle (paradoxe de Condorcet), un **score de Borda** départage. Le résultat est intégré au modèle de projection climatique.
+
+### Rôle Admin
+
+Le rôle Admin conditionne l'affichage de la zone Admin dans le header **et** la capacité à proposer des politiques au bulletin. Pour le POC, le rôle est attribué systématiquement (pas d'identity provider). Le champ `isAdmin` dans `mitigationPolicies.store.ts` suffit à basculer le comportement.
+
+### Points de bascule
+
+Cinq seuils climatiques critiques (température ou couverture forestière) sont surveillés à chaque tour. Une fois franchis, ils sont irréversibles et apparaissent comme marqueurs rouges sur les graphiques de projection. L'admin peut les activer/désactiver.
+
+### Fin de partie
+
+La partie se termine en 2100. Le bilan (`/bilan-2100`) évalue trois piliers : **Climat & Écosystèmes** (40 %), **Sociétal** (40 %), **Énergie & Ressources** (20 %).
 
 ---
 
@@ -121,51 +184,62 @@ src/
 
 ### Dashboard (`/`)
 
-Vue synthétique : indicateurs écologiques (CO₂, température, forêt, énergie, ressources) et sociétaux (sécurité alimentaire, eau, conflits, santé, inégalités). Widgets personnalisables persistés en localStorage. Scrutin collectif en cours avec résultats en temps réel.
+Vue synthétique : indicateurs écologiques (CO₂, température, forêt, énergie, ressources) et sociétaux (sécurité alimentaire, eau, santé, inégalités). Widgets personnalisables persistés en localStorage.
 
 ### Limites Planétaires (`/limites-planetaires`)
 
-Graphique radar des 9 limites (toile d'araignée) + fiches individuelles avec évolution temporelle 1950–2024. Les points du radar utilisent **trois formes distinctes** selon le statut : triangle (dépassé), carré (zone de risque), cercle (sûr) — conformément aux règles RGAA (l'information ne repose pas uniquement sur la couleur).
+Graphique radar des 9 limites + fiches individuelles avec évolution 1950–2024. Trois formes distinctes par statut : triangle (dépassé), carré (zone de risque), cercle (sûr).
 
 ### Politiques (`/mitigation-policies`)
 
-Chaque scrutin soumet trois politiques climatiques au vote de la communauté via un **classement par préférence**. Le gagnant est déterminé par la méthode de **Condorcet** (la politique qui bat toutes les autres en duels directs). En cas de cycle, un score de **Borda** départage. Historique des scrutins clos consultable.
+- **Bulletin en formation** : 3 slots de proposition visibles en phase discussion (admin uniquement)
+- **Scrutin actif** : classement Condorcet visible en phase vote et résultats
+- **Réseau de politiques** : toutes les politiques avec leurs prérequis, bouton Proposer/Retirer en phase discussion
+- **Historique** : scrutins clôturés avec matrices pairwise
 
-### Détail politique (`/mitigation-policies/:id`)
+### Règles du jeu (`/regles`)
 
-Fiche complète d'une politique : description, impact projeté (réduction CO₂, température 2100), référence GIEC AR6, analyse prospective sur 3 scénarios.
+Présentation des mécaniques de jeu (objectif, phases de tour, Condorcet, prérequis, bascules, rôle facilitateur, fin de partie). Affichée également sous forme d'overlay animé après l'écran d'introduction lors d'une nouvelle partie.
 
 ### Simulateur (`/simulateur`)
 
-Simulateur de politiques climatiques basé sur les **modèles d'impact GIEC AR6** (baseline SSP2-4.5 — trajectoire sans action : +4°C en 2100).
+Simulateur de politiques climatiques basé sur les **modèles d'impact GIEC AR6** (baseline SSP2-4.5 — sans action : +4°C en 2100).
 
-- **Catalogue** : politiques sélectionnables et ordonnables par priorité
-- **Séquence choisie** : politiques sélectionnées avec boutons monter/descendre
-- **Projections cumulées** : courbes CO₂ et température (scénarios décidé / baseline / pessimiste)
-- **Seuils Paris** : +1,5°C (pointillés) et +2°C (tirets) sur le graphique température
-- **Horizon temporel** : Aujourd'hui / 2040 / 2050 / 2100 — met à jour les 4 indicateurs clés :
-  - *Baseline {année}* : température SSP2-4.5 à l'horizon
-  - *Scénario décidé {année}* : température projetée à l'horizon (label trajectoire évalué sur 2100)
-  - *CO₂ évité 2024→{année}* : cumul par intégrale trapèze (GtCO₂)
-  - *Réduction annuelle en {année}* : delta annuel vs. baseline à l'horizon (GtCO₂/an)
+- **Catalogue / réseau** : politiques sélectionnables avec prérequis visualisés
+- **Projections cumulées** : 4 graphiques (CO₂, T°, forêt, renouvelables) avec chips de visibilité
+- **Points de bascule** : marqueurs rouges sur les graphiques à l'année de franchissement
+- **Légende cliquable** : clic sur un dataset pour l'afficher/masquer
+- **Deux modes** : Game (politiques validées verrouillées) et Libre
+
+### Points de bascule (`/bascules`)
+
+Cartes descriptives des 5 points de bascule (Pergélisol, Coraux, Amazonie, Banquise arctique, AMOC) avec seuil, description, effets permanents et citation GIEC. Triés : déclenchés en premier (ordre chronologique).
+
+### Carte systémique (`/carte-systemique`)
+
+Graphe causal interactif (Cytoscape.js) — 19 nœuds, 61 relations, 5 boucles de rétroaction surlignables. Convention : `positive` = aggravant, `negative` = bénéfique (point de vue humain).
+
+### Bilan 2100 (`/bilan-2100`)
+
+Portrait multidimensionnel de fin de partie sur trois piliers. Accessible à partir du menu une fois la partie terminée.
 
 ### Corrélations (`/correlations`)
 
-Placeholder — sélection et superposition multi-indicateurs à venir.
+Placeholder — superposition multi-indicateurs à venir.
 
 ---
 
-## Accessibilité (RGAA)
+## Accessibilité (RGAA 4.1.2)
 
-- **Formes distinctes par dataset** sur tous les graphiques multi-courbes (cercle, triangle, carré, etc.) — l'information ne repose pas uniquement sur la couleur
-- **Légende HTML SVG** : chaque entrée de légende affiche la ligne colorée avec la forme correspondante centrée dessus
-- **Radar chart** : 3 formes par statut de limite planétaire (triangle/carré/cercle)
-- Attributs `aria-*` et `role` sur tous les éléments interactifs et graphiques
-- Contrastes conformes AA (fond `#0a0f1e` / texte `#e2e8f0`) + **mode fort contraste** activable
-- Navigation clavier complète avec `:focus-visible` personnalisé
-- Skip link "Aller au contenu principal" sur chaque vue
-- Barre de progression de navigation (`AppLoadingBar`)
+- Skip link "Aller au contenu principal" + `#main-content tabindex="-1"` sur chaque vue
+- `role="img"` + `aria-label` sur tous les canvas (Chart.js, Cytoscape)
+- Formes distinctes par dataset (cercle, triangle, carré) — l'information ne repose pas uniquement sur la couleur
+- `aria-pressed` sur les boutons bascule, `aria-live="polite"` sur les mises à jour dynamiques
+- Navigation clavier complète des composants interactifs (graphe de politiques, simulateur)
+- Mode fort contraste activable (`AppContrastToggle`)
 - `@media (prefers-reduced-motion)` : animations désactivées
+- `document.documentElement.lang` mis à jour au changement de langue
+- Titres de page (`document.title`) mis à jour via `router.afterEach`
 - Compatible à partir de **340 px** de largeur d'écran
 
 ---
@@ -176,16 +250,7 @@ Placeholder — sélection et superposition multi-indicateurs à venir.
 
 Voir [`src/services/blockchain.service.ts`](src/services/blockchain.service.ts).
 
-```bash
-npm install ethers@^6
-```
-
-Interface cible :
-
-- `castVote(decisionId, optionId)` — vote on-chain
-- `getVoteTally(decisionId)` — lecture du décompte
-- `validateDecision(decisionId)` — inscription du résultat
-- Connexion wallet MetaMask / WalletConnect
+Interface cible : `castVote`, `getVoteTally`, `validateDecision` + connexion MetaMask / WalletConnect.
 
 ### LLM prospectif — Claude API
 
@@ -197,10 +262,6 @@ Le service appelle un **endpoint backend proxy** (ne jamais exposer la clé API 
 POST /api/llm/prospective
 Body: { decision, currentIndicators }
 → { optimistic, moderate, pessimistic }
-```
-
-```bash
-npm install @anthropic-ai/sdk  # côté backend uniquement
 ```
 
 ### Sources de données
@@ -221,14 +282,12 @@ npm install @anthropic-ai/sdk  # côté backend uniquement
 
 Les données actuelles sont fictives mais cohérentes avec l'état scientifique 2024 :
 
-- Changement climatique : 421 ppm CO₂ (seuil : 350 ppm — dépassé ×1.20)
+- Changement climatique : 421 ppm CO₂ (seuil : 350 ppm — dépassé ×1,20)
 - Érosion biodiversité : 100 E/MSY (seuil : 10 — dépassé ×10)
-- Perturbation azote : 150 Tg N/an (seuil : 62 — dépassé ×2.42)
+- Perturbation azote : 150 Tg N/an (seuil : 62 — dépassé ×2,42)
 - Ozone stratosphérique : 284 UD (zone de risque — récupération en cours)
-- Acidification des océans : Ω 2.82 (zone de risque)
+- Acidification des océans : Ω 2,82 (zone de risque)
 - Utilisation eau douce : 2 600 km³/an (zone de risque — seuil : 4 000 km³/an)
-
-Chaque jeu de données inclut une série temporelle de 1950 à 2024 et une référence vers la source à brancher.
 
 ---
 
@@ -249,6 +308,7 @@ A collaborative web Serious Game enabling a community to make collective decisio
 | Global state | Pinia |
 | Routing | Vue Router 4 (hash history) |
 | Charts | Chart.js 4 (line, bar, radar, doughnut) |
+| Systemic graph | Cytoscape.js (nodes / edges / feedback loops) |
 | Styles | Tailwind CSS 3 |
 | Internationalisation | vue-i18n 9 (FR / EN) |
 | Build | Vite 5 |
@@ -270,84 +330,45 @@ npm run preview    # preview the production build
 
 ---
 
-## Project Structure
+## Game Mechanics
+
+### Turn phases
+
+Each turn represents **5 years** and follows a three-phase state machine:
 
 ```
-src/
-├── types/
-│   ├── index.ts               # Centralised TypeScript interfaces
-│   └── impactModel.ts         # Types for IPCC impact models
-├── data/                      # Demo data (to be replaced by live APIs)
-│   ├── planetaryLimits.ts     # 9 planetary limits — time series 1950–2024
-│   ├── societalIndicators.ts  # FAO, WHO, UNDP indicators
-│   ├── mitigationPolicies.ts  # Climate policies, votes, projections
-│   ├── ballots.ts             # Ballots and voting results
-│   ├── policyDetails.ts       # Extended descriptions and IPCC references
-│   └── models/                # JSON impact models (SSP2-4.5)
-│       ├── POL_COAL_EXIT_2030_DEV.json
-│       ├── POL_DEFORESTATION_HALT_2030.json
-│       ├── POL_DIET_SHIFT_PLANTBASED.json
-│       ├── POL_METHANE_REDUCTION_2030.json
-│       └── POL_TRANSPORT_ELECTRIFICATION.json
-├── i18n/
-│   ├── index.ts               # vue-i18n config (browser locale detection)
-│   ├── locales/
-│   │   ├── fr.ts              # French translations
-│   │   └── en.ts              # English translations
-│   └── policies/
-│       └── en.ts              # Policy titles and descriptions in English
-├── services/
-│   ├── data.service.ts        # Data facade (local → future APIs)
-│   ├── blockchain.service.ts  # Web3 abstraction (ethers.js stub)
-│   └── llm.service.ts         # Prospective LLM abstraction (Claude stub)
-├── store/
-│   ├── planets.store.ts       # Planetary limits + time horizon
-│   ├── mitigationPolicies.store.ts  # Voting, consensus, validation
-│   ├── simulation.store.ts    # Simulation engine (CO₂ + temp projections)
-│   └── dashboard.store.ts     # Eco/societal charts, customisable widgets
-├── composables/
-│   ├── useContrastMode.ts     # High contrast mode (localStorage)
-│   └── useLocalizedPolicies.ts  # Localised policy titles/descriptions
-├── utils/
-│   └── condorcet.ts           # Condorcet algorithm + Borda tiebreaker
-├── components/
-│   ├── charts/                # Reusable chart components
-│   │   ├── LineChart.vue      # Multi-dataset lines (SVG line+shape legend)
-│   │   ├── BarChart.vue
-│   │   ├── RadarChart.vue     # 9-limit radar (shapes per status)
-│   │   ├── GaugeChart.vue
-│   │   ├── VotePieChart.vue
-│   │   └── ChartSkeleton.vue
-│   ├── layout/
-│   │   ├── AppHeader.vue
-│   │   ├── AppFooter.vue
-│   │   ├── AppTicker.vue
-│   │   ├── AppLoadingBar.vue  # Navigation progress bar
-│   │   ├── AppSearch.vue      # In-app search
-│   │   ├── AppLangToggle.vue  # FR/EN language switcher
-│   │   ├── AppContrastToggle.vue  # High contrast toggle
-│   │   ├── CollapsibleSection.vue
-│   │   ├── EbCard.vue
-│   │   └── SectionTitle.vue
-│   ├── dashboard/
-│   │   ├── EcologicalIndicators.vue
-│   │   ├── SocietalIndicators.vue
-│   │   └── WidgetCustomizer.vue
-│   ├── limits/
-│   │   └── PlanetaryLimitCard.vue
-│   └── mitigationPolicies/
-│       ├── VoteCard.vue
-│       ├── BlockchainPanel.vue
-│       └── ProspectivePanel.vue
-├── views/
-│   ├── DashboardView.vue      # Overview (indicators + active ballot)
-│   ├── LimitsView.vue         # Global radar + 9 detailed fact sheets
-│   ├── PolitiquesView.vue     # Condorcet voting + ballot history
-│   ├── PolicyDetailView.vue   # Individual policy detail (IPCC references)
-│   ├── SimulateurView.vue     # IPCC AR6 climate policy simulator
-│   └── CorrelationsView.vue   # Placeholder (upcoming feature)
-└── router/index.ts
+discussion → vote → results → (next turn)
 ```
+
+| Phase | Who acts | What happens |
+|---|---|---|
+| `discussion` | Admin | Select 3 candidate policies, open deliberation |
+| `vote` | Everyone | Submit ranked preferences (1st / 2nd / 3rd) anonymously |
+| `results` | Admin | Close vote, adopt the winner, advance the year |
+
+### Ballot proposals (Option C + fallback B)
+
+During discussion, the facilitator (Admin role) selects up to 3 policies from the policy network via a **Propose/Remove** button. A "Ballot in formation" tray in the Policies page shows the 3 slots in real time.
+
+When the vote starts, `startVote()` builds the ballot:
+- If 3 policies have been proposed → **Option C**: those 3 policies go to the vote
+- Otherwise → **Option B fallback**: 3 eligible policies are chosen at random
+
+### Condorcet voting
+
+The winner is the policy that beats all others in **head-to-head matchups** (pairwise comparisons). In the event of a cycle (Condorcet paradox), a **Borda score** breaks the tie. The adopted policy is fed into the climate projection model.
+
+### Admin role
+
+The Admin role gates both the Admin zone display in the header **and** the ability to propose policies for the ballot. For the POC, the role is granted systematically (no identity provider). The `isAdmin` ref in `mitigationPolicies.store.ts` controls this behaviour.
+
+### Tipping points
+
+Five critical climate thresholds (temperature or forest cover) are checked each turn. Once crossed they are irreversible and appear as red markers on projection charts. The admin can toggle them on or off.
+
+### End of game
+
+The game ends in 2100. The report (`/bilan-2100`) evaluates three pillars: **Climate & Ecosystems** (40%), **Societal** (40%), **Energy & Resources** (20%).
 
 ---
 
@@ -355,51 +376,62 @@ src/
 
 ### Dashboard (`/`)
 
-Overview of ecological indicators (CO₂, temperature, forest, energy, resources) and societal indicators (food security, water, conflicts, health, inequality). Customisable widgets persisted in localStorage. Active community ballot with live results.
+Overview of ecological and societal indicators. Customisable widgets persisted in localStorage.
 
 ### Planetary Limits (`/limites-planetaires`)
 
-Radar chart of all 9 limits (spider web) + individual fact sheets with time series from 1950 to 2024. Radar points use **three distinct shapes** per status: triangle (exceeded), square (risk zone), circle (safe) — RGAA compliant (information is not conveyed by colour alone).
+Radar chart of all 9 limits + individual fact sheets (1950–2024). Three distinct shapes per status: triangle (exceeded), square (risk zone), circle (safe).
 
 ### Policies (`/mitigation-policies`)
 
-Each ballot submits three climate policies to a community **ranked-choice vote**. The winner is determined by the **Condorcet method** (the policy that beats all others in head-to-head comparisons). In the event of a cycle, a **Borda score** breaks the tie. Closed ballot history is browsable.
+- **Ballot in formation**: 3 proposal slots visible during discussion phase (admin only)
+- **Active ballot**: Condorcet ranked-choice voting during vote and results phases
+- **Policy network**: all policies with prerequisites, Propose/Remove button during discussion
+- **History**: closed ballots with pairwise matrices
 
-### Policy detail (`/mitigation-policies/:id`)
+### Game Rules (`/regles`)
 
-Full policy fact sheet: description, projected impact (CO₂ reduction, temperature 2100), IPCC AR6 reference, prospective analysis across 3 scenarios.
+Full breakdown of game mechanics (objective, turn phases, Condorcet method, prerequisites, tipping points, facilitator role, end of game). Also shown as an animated overlay after the intro screen on a new game.
 
 ### Simulator (`/simulateur`)
 
-Climate policy simulator based on **IPCC AR6 impact models** (SSP2-4.5 baseline — no-action trajectory: +4°C by 2100).
+Climate policy simulator based on **IPCC AR6 impact models** (SSP2-4.5 baseline — no action: +4°C by 2100).
 
-- **Catalogue**: selectable policies, orderable by priority
-- **Chosen sequence**: selected policies with move-up/move-down controls
-- **Cumulative projections**: CO₂ and temperature curves (decided / baseline / pessimistic)
-- **Paris thresholds**: +1.5°C (dotted) and +2°C (dashed) on the temperature chart
-- **Time horizon**: Today / 2040 / 2050 / 2100 — updates all four KPI cards:
-  - *Baseline {year}*: SSP2-4.5 temperature at the horizon
-  - *Decided scenario {year}*: projected temperature at the horizon (trajectory label always assessed against 2100)
-  - *CO₂ saved 2024→{year}*: cumulative via trapezoidal integration (GtCO₂)
-  - *Annual reduction in {year}*: annual delta vs. baseline at the horizon (GtCO₂/yr)
+- **Catalogue / network**: selectable policies with visualised prerequisites
+- **Cumulative projections**: 4 charts (CO₂, temperature, forest, renewables) with visibility chips
+- **Tipping points**: red markers on charts at the year each threshold is crossed
+- **Clickable legend**: click any dataset entry to show/hide it
+- **Two modes**: Game (validated policies locked) and Free
+
+### Tipping Points (`/bascules`)
+
+Descriptive cards for all 5 tipping points (Permafrost, Coral, Amazon, Arctic sea ice, AMOC) with trigger threshold, description, permanent effects and IPCC quote. Triggered points listed first (chronologically).
+
+### Systemic Map (`/carte-systemique`)
+
+Interactive causal graph (Cytoscape.js) — 19 nodes, 61 relationships, 5 highlightable feedback loops. Convention: `positive` = aggravating, `negative` = beneficial (human perspective).
+
+### Report 2100 (`/bilan-2100`)
+
+Multidimensional end-of-game portrait across three pillars. Accessible from the menu once the game is over.
 
 ### Correlations (`/correlations`)
 
-Placeholder — multi-indicator selection and overlay feature coming soon.
+Placeholder — multi-indicator overlay feature coming soon.
 
 ---
 
-## Accessibility (RGAA / WCAG AA)
+## Accessibility (RGAA 4.1.2 / WCAG AA)
 
-- **Distinct shapes per dataset** on all multi-line charts (circle, triangle, square, diamond, etc.) — information is not conveyed by colour alone
-- **HTML SVG legend**: each legend entry shows the coloured line with the corresponding shape centred on it
-- **Radar chart**: 3 shapes per planetary limit status (triangle / square / circle)
-- `aria-*` and `role` attributes on all interactive elements and charts
-- AA-compliant contrasts (background `#0a0f1e` / text `#e2e8f0`) + activatable **high contrast mode**
-- Full keyboard navigation with custom `:focus-visible`
-- "Skip to main content" link on every view
-- Navigation progress bar (`AppLoadingBar`)
+- Skip link + `#main-content tabindex="-1"` on every view
+- `role="img"` + `aria-label` on all canvas elements (Chart.js, Cytoscape)
+- Distinct shapes per dataset — information is not conveyed by colour alone
+- `aria-pressed` on toggle buttons, `aria-live="polite"` on dynamic updates
+- Full keyboard navigation of all interactive components
+- Activatable high contrast mode (`AppContrastToggle`)
 - `@media (prefers-reduced-motion)`: animations disabled
+- `document.documentElement.lang` updated on locale change
+- Page titles (`document.title`) updated via `router.afterEach`
 - Responsive down to **340 px** screen width
 
 ---
@@ -410,16 +442,7 @@ Placeholder — multi-indicator selection and overlay feature coming soon.
 
 See [`src/services/blockchain.service.ts`](src/services/blockchain.service.ts).
 
-```bash
-npm install ethers@^6
-```
-
-Target interface:
-
-- `castVote(decisionId, optionId)` — on-chain vote submission
-- `getVoteTally(decisionId)` — read vote counts from chain
-- `validateDecision(decisionId)` — record the outcome
-- Wallet connection: MetaMask / WalletConnect
+Target interface: `castVote`, `getVoteTally`, `validateDecision` + MetaMask / WalletConnect.
 
 ### Prospective LLM — Claude API
 
@@ -431,10 +454,6 @@ The service calls a **backend proxy endpoint** (never expose the API key client-
 POST /api/llm/prospective
 Body: { decision, currentIndicators }
 → { optimistic, moderate, pessimistic }
-```
-
-```bash
-npm install @anthropic-ai/sdk  # server-side only
 ```
 
 ### Data Sources
@@ -461,5 +480,3 @@ Current data is fictional but consistent with the 2024 scientific consensus:
 - Stratospheric ozone: 284 DU (risk zone — recovering)
 - Ocean acidification: Ω 2.82 (risk zone)
 - Freshwater use: 2,600 km³/yr (risk zone — threshold: 4,000 km³/yr)
-
-Each dataset includes a time series from 1950 to 2024 and a reference to its future live source.

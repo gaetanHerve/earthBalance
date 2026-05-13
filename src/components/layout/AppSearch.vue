@@ -184,6 +184,38 @@ const allItems = computed<SearchItem[]>(() => [
     path: '/simulateur',
     keywords: ['simulateur', 'politiques', 'climatiques', 'co2', 'température', 'giec', 'ssp', 'simulator', 'climate'],
   },
+  {
+    id: 'tipping-points',
+    label: t('search.items.tipping_points.label'),
+    description: t('search.items.tipping_points.description'),
+    icon: 'fa-triangle-exclamation',
+    path: '/bascules',
+    keywords: ['bascules', 'tipping', 'points', 'seuils', 'permafrost', 'banquise', 'amazonie', 'thresholds'],
+  },
+  {
+    id: 'systemic-map',
+    label: t('search.items.systemic_map.label'),
+    description: t('search.items.systemic_map.description'),
+    icon: 'fa-share-nodes',
+    path: '/carte-systemique',
+    keywords: ['carte', 'systémique', 'graphe', 'causal', 'nœuds', 'interdépendances', 'systemic', 'map', 'graph'],
+  },
+  {
+    id: 'end-game',
+    label: t('search.items.end_game.label'),
+    description: t('search.items.end_game.description'),
+    icon: 'fa-flag-checkered',
+    path: '/bilan-2100',
+    keywords: ['bilan', '2100', 'fin', 'partie', 'résultats', 'portrait', 'end', 'game', 'results'],
+  },
+  {
+    id: 'rules',
+    label: t('search.items.rules.label'),
+    description: t('search.items.rules.description'),
+    icon: 'fa-circle-question',
+    path: '/regles',
+    keywords: ['règles', 'jeu', 'mécaniques', 'condorcet', 'tour', 'phases', 'vote', 'discussion', 'rules', 'how', 'play', 'mechanics'],
+  },
 ])
 
 const results = computed<SearchItem[]>(() => {

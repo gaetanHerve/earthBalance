@@ -190,6 +190,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.0, 0.1, 0.2, 0.5, 0.7, 1.0, 1.0, 1.0],          pessimist: [0, 0.0, 0.0, 0.1, 0.2, 0.3, 0.5, 0.5, 0.5] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-07'],
+    },
   },
 
   // ─── Décision 04 — Modèle : POL_METHANE_REDUCTION_2030 ────────────────
@@ -469,6 +472,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5],          pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-14'],
+    },
   },
 
   // ─── Décision 01 — Modèle : POL_TRANSPORT_ELECTRIFICATION ────────────
@@ -566,6 +572,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         wealthConcentration:   { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, 0.0, -0.1, -0.1, -0.2, -0.2, -0.2, -0.2] },
         educationAccess:       { decided: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3, 0.3],          pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-08', 'dec-19'],
     },
   },
 
@@ -736,6 +745,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.94, 2.18, 2.55, 2.95, 3.44],
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
   },
 
   // ─── Décision 10 — Économie circulaire dans l'industrie ───────────────
@@ -898,6 +910,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         pessimist: [1.4, 1.5, 1.6, 1.72, 1.95, 2.19, 2.56, 2.94, 3.43],
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-07'],
+    },
   },
 
   // ─── Décision 12 — Expansion du nucléaire ─────────────────────────────
@@ -985,6 +1000,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         minerals:    { decided: [0, 0, +0.1, +0.3, +0.6, +1.0, +1.5, +1.8, +2.0], pessimist: [0, 0, +0.1, +0.2, +0.4, +0.7, +1.0, +1.2, +1.5] },
         fossilFuels: { decided: [0, 0, -0.1, -0.2, -0.4, -0.7, -1.0, -1.2, -1.5], pessimist: [0, 0, -0.1, -0.1, -0.2, -0.4, -0.6, -0.8, -1.0] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-05'],
     },
   },
 
@@ -1254,6 +1272,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         educationAccess:       { decided: [0, 0.0, 0.1, 0.3, 0.5, 0.6, 0.8, 0.8, 0.8],           pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.4, 0.4] },
       },
     },
+    prerequisites: {
+      policiesRequired: ['dec-03'],
+    },
   },
 
   // ─── Décision 16 — Restauration des écosystèmes ───────────────────────
@@ -1337,6 +1358,9 @@ export const mitigationPolicies: MitigationPolicy[] = [
         decided:   [58.0, 57.5, 57.2, 57.0, 56.7, 56.2, 55.4, 54.2, 51.4],
         pessimist: [58.0, 57.5, 57.0, 56.7, 56.0, 54.6, 52.1, 49.6, 45.2],
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-03'],
     },
   },
 
@@ -1437,6 +1461,1190 @@ export const mitigationPolicies: MitigationPolicy[] = [
         wealthConcentration:   { decided: [0, 0.0, 0.1, 0.3, 0.6, 0.8, 1.0, 1.0, 1.0],          pessimist: [0, 0.0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.0, 2.0] },
         educationAccess:       { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, -0.2, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0] },
       },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-11', 'dec-15'],
+    },
+  },
+
+  // ─── dec-18 — Hydrogène vert ──────────────────────────────────────────────
+  {
+    id: 'dec-18',
+    sessionId: 4,
+    number: '18',
+    status: 'active',
+    implementationLag: 4,
+    title: 'Hydrogène vert pour industrie lourde et transport',
+    description: `L'hydrogène produit par électrolyse à partir d'électricité renouvelable (**hydrogène vert**) offre une solution de décarbonation pour les secteurs difficilement électrifiables : sidérurgie, chimie, ciment, fret lourd longue distance. Le GIEC AR6 WGIII identifie l'hydrogène bas carbone comme une option à fort potentiel pour les secteurs "hard-to-abate", avec un potentiel de **1,5 à 2,5 GtCO₂/an** d'ici 2050. Cette décision propose de financer un programme mondial de déploiement de l'électrolyse renouvelable à hauteur de **150 Mds$/an** d'ici 2030.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 412, contre: 198, abst: 95 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 6 : Systèmes énergétiques',
+        excerpt: 'L\'hydrogène bas carbone représente un potentiel de réduction de 1,5 à 2,5 GtCO₂/an d\'ici 2050 dans les secteurs difficiles à électrifier.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'AIE — Global Hydrogen Review 2023',
+        excerpt: 'Les coûts de l\'électrolyse ont chuté de 60 % depuis 2015. L\'objectif de 90 Mt d\'hydrogène propre d\'ici 2030 est techniquement réalisable.',
+        url: 'https://www.iea.org/reports/global-hydrogen-review-2023',
+      },
+      {
+        title: 'Hydrogen Council — Hydrogen Insights 2023',
+        excerpt: 'Les projets d\'hydrogène renouvelable en développement dépassent 1 000 GW d\'électrolyse. La compétitivité dépend de l\'accès à des énergies renouvelables bon marché.',
+        url: 'https://hydrogencouncil.com/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.5,
+      tempReductionC2100: 0.06,
+      fullEffectYear: 2060,
+      uncertaintyScore: 3,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **45 GW** d\'électrolyseurs sont opérationnels dans le monde. Le coût de l\'hydrogène vert est tombé sous **2 $/kg**, atteignant la parité avec l\'hydrogène gris en Europe. Les premiers hauts-fourneaux à hydrogène sont opérationnels en Suède (HYBRIT) et en Allemagne. Le fret lourd représente 8 % de la consommation mondiale d\'hydrogène propre.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, l\'hydrogène vert couvre **12 %** des besoins en énergie de l\'industrie lourde mondiale. Les tensions géopolitiques autour des corridors d\'exportation ralentissent le déploiement. Les émissions industrielles baissent de **18 %** par rapport à 2024. Le transport maritime intègre progressivement l\'ammoniac vert.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, si les investissements ont été insuffisants, l\'hydrogène vert ne couvre que **5 %** des besoins industriels mondiaux. Le recours massif à l\'hydrogène bleu (CCS incomplète) a dilué les bénéfices climatiques. La contribution nette reste marginale : **–0,03°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 39,   40.5, 41.8, 44.5, 48.2, 52.5, 56.3, 61.2],
+        pessimist: [37.4, 39,   40.5, 41.9, 44.8, 48.6, 53.1, 57.0, 62.0],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.5,  1.6,  1.71, 1.93, 2.16, 2.54, 2.93, 3.42],
+        pessimist: [1.4, 1.5,  1.6,  1.72, 1.94, 2.18, 2.57, 2.96, 3.45],
+      },
+      energyMix: {
+        solar: { decided: [0, 0, 0, 0.3, 0.9, 1.8, 3.0, 3.5, 4.0], pessimist: [0, 0, 0, 0.1, 0.5, 1.0, 1.5, 1.8, 2.0] },
+        wind:  { decided: [0, 0, 0, 0.2, 0.6, 1.2, 2.0, 2.5, 3.0], pessimist: [0, 0, 0, 0.1, 0.3, 0.5, 1.0, 1.2, 1.5] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
+  },
+
+  // ─── dec-19 — Réseaux intelligents et stockage ────────────────────────────
+  {
+    id: 'dec-19',
+    sessionId: 4,
+    number: '19',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Réseaux électriques intelligents et stockage d\'énergie',
+    description: `Le déploiement massif des énergies renouvelables est freiné par l'intermittence solaire et éolienne et la rigidité des réseaux existants. Les **réseaux intelligents** (smart grids) couplés à des systèmes de stockage (batteries, STEP, hydrogène, gravité) permettent d'atteindre des taux de pénétration des renouvelables supérieurs à **80 %** dans le mix électrique. Le GIEC AR6 évalue le potentiel de réduction de ce pilier à **1 à 2 GtCO₂/an** d'ici 2050 en débridant l'intégration des renouvelables. Cette décision mandate un investissement mondial de **80 Mds$/an** dans la modernisation des réseaux et le stockage à l'échelle réseau.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 531, contre: 142, abst: 87 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 6 : Intégration des renouvelables',
+        excerpt: 'Les réseaux intelligents et le stockage sont des conditions nécessaires pour atteindre des taux de pénétration élevés des renouvelables sans déséquilibre réseau.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'AIE — Electricity Grids and Secure Energy Transitions 2023',
+        excerpt: 'Il faut ajouter ou rénover 80 millions de km de réseaux électriques d\'ici 2040. Les investissements actuels couvrent moins de la moitié des besoins.',
+        url: 'https://www.iea.org/reports/electricity-grids-and-secure-energy-transitions',
+      },
+      {
+        title: 'IRENA — Innovation Landscape for Smart Electrification 2023',
+        excerpt: 'Le coût des batteries lithium-ion a chuté de 97 % depuis 1991. Le stockage stationnaire représente un marché de 1 000 GWh/an d\'ici 2030.',
+        url: 'https://www.irena.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.0,
+      tempReductionC2100: 0.05,
+      fullEffectYear: 2050,
+      uncertaintyScore: 2,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **25 millions de km** de lignes de transport et distribution sont modernisées. Le taux de pénétration des renouvelables dépasse **65 %** du mix électrique mondial. Les systèmes de stockage stationnaire atteignent **3 000 GWh** de capacité installée. La flexibilité de la demande (véhicules électriques V2G, chauffe-eau intelligents) évite la construction de **200 GW** de centrales de pointe à gaz.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, les réseaux intelligents ont permis d\'atteindre **55 %** de renouvelables dans le mix électrique mondial. Des goulets d\'étranglement subsistent en Asie du Sud et en Afrique subsaharienne. Le stockage longue durée (saisonnier) reste coûteux et insuffisamment déployé. La réduction nette atteint **–0,8 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, le vieillissement des réseaux et la cybersécurité ont ralenti la modernisation dans les économies fragiles. Les pannes de réseau liées à une intégration mal gérée des renouvelables ont créé des résistances politiques. La réduction nette reste positive (**–0,04°C**) mais bien en deçà du potentiel théorique.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,    40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.9,  40.2, 41.5, 44.4, 48.3, 53.0, 57.0, 62.0],
+        pessimist: [37.4, 38.95, 40.35,41.75,44.7, 48.6, 53.3, 57.3, 62.3],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.49, 1.58, 1.70, 1.92, 2.16, 2.55, 2.95, 3.44],
+        pessimist: [1.4, 1.50, 1.59, 1.71, 1.94, 2.18, 2.57, 2.97, 3.46],
+      },
+      energyMix: {
+        solar: { decided: [0, 0.5, 1.5, 2.5, 4.0, 5.5, 7.0, 7.5, 8.0], pessimist: [0, 0.3, 0.8, 1.5, 2.5, 3.5, 4.5, 5.0, 5.5] },
+        wind:  { decided: [0, 0.3, 0.8, 1.5, 2.5, 3.5, 4.5, 5.0, 5.5], pessimist: [0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.0] },
+        gas:   { decided: [0, -0.2,-0.5,-0.8,-1.5,-2.0,-2.5,-2.5,-2.5], pessimist: [0, -0.1,-0.3,-0.5,-1.0,-1.3,-1.5,-1.5,-1.5] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
+  },
+
+  // ─── dec-20 — Géothermie et hydroélectricité ──────────────────────────────
+  {
+    id: 'dec-20',
+    sessionId: 4,
+    number: '20',
+    status: 'active',
+    implementationLag: 4,
+    title: 'Géothermie et hydroélectricité de nouvelle génération',
+    description: `La géothermie profonde (Enhanced Geothermal Systems, EGS) et les mini-centrales hydroélectriques au fil de l'eau représentent des sources d'électricité **pilotables et décarbonées** complémentaires au solaire et à l'éolien. L'EGS peut théoriquement alimenter la planète entière sans émissions, mais reste à démontrer à grande échelle. Le GIEC AR6 estime que l'hydroélectricité existante et nouvelle peut contribuer **0,5 à 1 GtCO₂/an** de réduction. Cette décision finance l'exploration géothermique dans 40 pays et la construction de **500 GW** de petite et moyenne hydraulique d'ici 2050, avec des normes environnementales strictes.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 378, contre: 221, abst: 110 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 6 : Hydroélectricité et géothermie',
+        excerpt: 'L\'hydroélectricité est la plus grande source d\'électricité renouvelable au monde. Son potentiel technique non exploité reste de 10 000 TWh/an.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'MIT — The Future of Geothermal Energy 2023',
+        excerpt: 'Les systèmes géothermiques améliorés (EGS) pourraient fournir plus de 100 GWe aux États-Unis seuls, avec des coûts compétitifs d\'ici 2035.',
+        url: 'https://energy.mit.edu/',
+      },
+      {
+        title: 'IHA — World Hydropower Outlook 2023',
+        excerpt: 'La modernisation des 1 300 GW de capacité hydroélectrique existante pourrait augmenter la production de 10 à 15 % sans nouveaux barrages.',
+        url: 'https://www.hydropower.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 0.8,
+      tempReductionC2100: 0.04,
+      fullEffectYear: 2060,
+      uncertaintyScore: 3,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **15 projets EGS** sont commercialement opérationnels dans le monde (Kenya, Islande, Indonésie, États-Unis). La géothermie fournit **500 TWh/an** d\'électricité pilotable 24h/24. 200 GW de petite hydraulique sont construits en Asie du Sud-Est et en Afrique avec des normes environnementales garantissant la continuité des débits écologiques.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, la géothermie EGS a tenu ses promesses techniques mais les coûts de forage profond restent élevés. L\'hydroélectricité est confrontée au **stress hydrique** dans plusieurs bassins versants, réduisant sa production effective. La contribution nette atteint **–0,6 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, la sécheresse persistante liée au changement climatique réduit la production hydroélectrique mondiale de **15 %**. Les grands barrages construits dans des zones à fort stress hydrique ont généré des conflits transfrontaliers. La géothermie a compensé partiellement, mais le bénéfice net sur les émissions reste limité à **–0,03°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,    45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 39,   40.5, 41.9,  44.8, 48.7, 53.2, 57.2, 62.2],
+        pessimist: [37.4, 39,   40.5, 41.95, 44.95,48.9, 53.5, 57.4, 62.4],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.5,  1.6,  1.72, 1.94, 2.18, 2.56, 2.96, 3.45],
+        pessimist: [1.4, 1.5,  1.6,  1.72, 1.95, 2.19, 2.58, 2.98, 3.47],
+      },
+      energyMix: {
+        hydro:   { decided: [0, 0, 0, 0.3, 1.0, 2.0, 3.0, 3.5, 4.0], pessimist: [0, 0, 0, 0.1, 0.5, 1.0, 1.8, 2.0, 2.2] },
+        autres:  { decided: [0, 0, 0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.5], pessimist: [0, 0, 0, 0.1, 0.2, 0.5, 0.8, 1.0, 1.2] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-05'],
+    },
+  },
+
+  // ─── dec-21 — Normes zéro-carbone construction neuve ─────────────────────
+  {
+    id: 'dec-21',
+    sessionId: 4,
+    number: '21',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Normes zéro-carbone obligatoires pour la construction neuve',
+    description: `Les bâtiments représentent **~21 % des émissions mondiales** de GES (chauffage, climatisation, eau chaude). Le GIEC AR6 WGIII évalue le potentiel de réduction du secteur du bâtiment à **3 à 5 GtCO₂/an** d'ici 2050. Cette décision impose que **toute construction neuve** respecte des normes zéro-émission nette (énergie et carbone intrinsèque) dès l'entrée en vigueur. Elle inclut des standards de performance énergétique, l'interdiction des chaudières fossiles dans le neuf, et un cadre de certification internationale "Climate-Ready Building" avec audit tiers.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 489, contre: 176, abst: 93 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 9 : Bâtiments',
+        excerpt: 'Des normes de construction ambitieuses pour les bâtiments neufs, combinées à l\'électrification du chauffage, permettent de réduire les émissions du secteur de 50 à 75 % d\'ici 2050.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'UNEP — 2023 Global Status Report for Buildings and Construction',
+        excerpt: 'Le secteur de la construction est responsable de 37 % des émissions mondiales de CO₂ liées à l\'énergie. Les bâtiments neufs doivent être zéro-carbone dès maintenant.',
+        url: 'https://globalabc.org/',
+      },
+      {
+        title: 'IEA — Buildings: A source of enormous untapped efficiency potential',
+        excerpt: 'L\'investissement dans l\'efficacité énergétique des bâtiments génère un retour sur investissement de 3 à 5 fois sur 20 ans via la réduction des factures énergétiques.',
+        url: 'https://www.iea.org/topics/buildings',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.0,
+      tempReductionC2100: 0.05,
+      fullEffectYear: 2060,
+      uncertaintyScore: 2,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **100 % des permis de construire** dans les pays de l\'OCDE exigent la conformité aux normes zéro-carbone. Les pompes à chaleur représentent 80 % des systèmes de chauffage dans le neuf. Les matériaux bas carbone (CLT, béton géopolymère, isolants biosourcés) se généralisent. La consommation énergétique des nouveaux bâtiments est **70 % inférieure** à la moyenne du parc existant.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, les normes zéro-carbone s\'appliquent dans **65 pays** représentant 70 % des nouvelles constructions mondiales. La réduction effective dépend du rythme de remplacement du parc existant (durée de vie 50–80 ans). La réduction nette atteint **–0,7 GtCO₂/an** mais le plein effet sur le parc global n\'interviendra qu\'en 2060–2070.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, l\'urbanisation rapide en Asie du Sud et en Afrique a conduit à la construction de centaines de millions de logements mal isolés, malgré les normes adoptées sur le papier. L\'inertie du bâtiment existant et le déficit de contrôle dans les pays émergents ont limité la réduction à **–0,04°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,    40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.95, 40.35,41.7, 44.6, 48.5, 53.0, 56.9, 61.8],
+        pessimist: [37.4, 38.98, 40.42,41.85,44.8, 48.7, 53.3, 57.2, 62.1],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.50, 1.59, 1.71, 1.93, 2.17, 2.55, 2.95, 3.44],
+        pessimist: [1.4, 1.50, 1.60, 1.72, 1.94, 2.19, 2.57, 2.97, 3.46],
+      },
+    },
+  },
+
+  // ─── dec-22 — Efficacité appareils et éclairage ───────────────────────────
+  {
+    id: 'dec-22',
+    sessionId: 4,
+    number: '22',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Normes d\'efficacité minimale pour appareils électriques et éclairage',
+    description: `Les appareils électriques inefficaces (réfrigérateurs, climatiseurs, moteurs industriels, éclairage) sont responsables d'environ **10 % des émissions mondiales** liées à l'énergie. Les normes de performance énergétique minimale (MEPS) figurent parmi les options les plus **coût-efficaces** du portefeuille de mitigation : l'AIE estime que l'élimination des appareils les moins efficaces permettrait d'éviter **1 400 TWh/an** de consommation électrique d'ici 2030. Cette décision établit des MEPS mondiales pour les 10 catégories d'appareils les plus énergivores, avec un mécanisme de convergence vers le meilleur niveau disponible.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 601, contre: 114, abst: 75 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 9 : Efficacité énergétique dans les bâtiments',
+        excerpt: 'Les normes d\'efficacité des appareils sont l\'une des options les plus rentables pour réduire la demande énergétique, avec des coûts négatifs (économies nettes) dans de nombreux cas.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'AIE — Appliances & Equipment Efficiency 2023',
+        excerpt: 'Si tous les appareils vendus aujourd\'hui respectaient les meilleures normes disponibles, la consommation électrique mondiale diminuerait de 10 %.',
+        url: 'https://www.iea.org/topics/appliances-and-equipment',
+      },
+      {
+        title: 'CLASP — Global Efficiency Standards and Labels',
+        excerpt: 'Les étiquettes énergie et les normes minimales de performance ont généré 1 100 Mds$ d\'économies pour les consommateurs dans 50 pays depuis 2000.',
+        url: 'https://www.clasponline.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 0.7,
+      tempReductionC2100: 0.03,
+      fullEffectYear: 2050,
+      uncertaintyScore: 1,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, les MEPS mondiales ont éliminé les **20 % d\'appareils les plus inefficaces** du marché mondial. L\'éclairage LED représente 95 % du marché. Les climatiseurs nouvelle génération consomment **45 %** de moins qu\'en 2024. Les économies sur les factures d\'électricité atteignent **450 Mds$/an** pour les ménages mondiaux.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, les MEPS ont réduit la consommation électrique des appareils de **18 %** par rapport à 2024, mais la croissance de la demande (climatisation dans les pays chauds, multiplication des appareils connectés) a partiellement compensé les gains. La réduction nette atteint **–0,5 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, la croissance du parc d\'appareils dans les économies émergentes (+3 milliards de ménages accédant à la classe moyenne) a compensé presque intégralement les gains d\'efficacité. Le "rebond" énergétique (les économies réalisées sont réinvesties en consommation supplémentaire) a réduit le bénéfice climatique net à **–0,02°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,    40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.9,  40.3, 41.7, 44.6, 48.6, 53.3, 57.3, 62.3],
+        pessimist: [37.4, 38.95, 40.4, 41.8, 44.8, 48.8, 53.5, 57.5, 62.5],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.50, 1.59, 1.71, 1.93, 2.17, 2.57, 2.96, 3.46],
+        pessimist: [1.4, 1.50, 1.60, 1.72, 1.94, 2.19, 2.58, 2.97, 3.47],
+      },
+    },
+  },
+
+  // ─── dec-23 — Transports en commun et mobilités actives ──────────────────
+  {
+    id: 'dec-23',
+    sessionId: 4,
+    number: '23',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Transports en commun, mobilités actives et aménagement urbain',
+    description: `Le transport routier représente **12 % des émissions mondiales** de GES. L'expansion des transports en commun (métro, BRT, trains de banlieue) et des infrastructures cyclables/piétonnes réduit la dépendance à la voiture individuelle tout en améliorant la santé publique et la qualité de l'air urbain. Le GIEC AR6 WGIII souligne que la **densification urbaine** couplée aux mobilités actives peut réduire les émissions de transport de **0,8 à 1,8 GtCO₂/an** d'ici 2050. Cette décision engage **120 Mds$/an** dans les infrastructures de transport bas carbone mondial.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 548, contre: 163, abst: 89 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 10 : Transport',
+        excerpt: 'La réduction de la demande de mobilité individuelle via l\'aménagement urbain mixte est l\'une des options à fort co-bénéfice santé/équité/climat du secteur transport.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'UITP — Public Transport and Climate Change 2023',
+        excerpt: 'Un passager-km en transport en commun émet en moyenne 10 fois moins de CO₂ qu\'en voiture individuelle. Le BRT coûte 4 à 20 fois moins qu\'un métro à impact équivalent.',
+        url: 'https://www.uitp.org/',
+      },
+      {
+        title: 'OMS — Health, Environment and Climate Action Framework 2023',
+        excerpt: 'La pollution atmosphérique causée par les transports tue 4 millions de personnes par an. Les mobilités actives réduisent simultanément les émissions et les maladies cardiovasculaires.',
+        url: 'https://www.who.int/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.0,
+      tempReductionC2100: 0.05,
+      fullEffectYear: 2050,
+      uncertaintyScore: 2,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **500 villes** ont adopté des plans de mobilité durable intégrant BRT, vélo en libre-service et zones à faibles émissions. La part modale des transports en commun dépasse **40 %** dans les agglomérations couvertes. La mortalité liée à la pollution atmosphérique urbaine a baissé de **22 %**. Les émissions du transport urbain reculent de **18 %** par rapport à 2024.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, la transition vers les mobilités durables est bien engagée dans les pays de l\'OCDE, mais l\'étalement urbain persistant dans les villes émergentes freine les résultats. Les émissions du secteur baissent de **0,7 GtCO₂/an**. La résistance politique à la réduction du stationnement et à la tarification de la congestion a ralenti les ambitions.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, l\'urbanisation dans les pays du Sud a produit des mégapoles à forte dépendance automobile. Les transports en commun construits ont été sous-utilisés faute d\'une densification urbaine suffisante. Le bénéfice climatique net est limité à **–0,03°C**, mais les co-bénéfices santé dans les zones couvertes demeurent significatifs.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.9, 40.3, 41.6, 44.5, 48.4, 53.0, 57.0, 62.0],
+        pessimist: [37.4, 38.95,40.4, 41.8, 44.7, 48.6, 53.3, 57.3, 62.3],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.49, 1.58, 1.70, 1.92, 2.16, 2.55, 2.95, 3.44],
+        pessimist: [1.4, 1.50, 1.59, 1.71, 1.94, 2.18, 2.57, 2.97, 3.46],
+      },
+      societal: {
+        respiratoryDiseases: { decided: [0, -0.2, -0.4, -0.8, -1.3, -2.0, -2.5, -2.5, -2.5], pessimist: [0, -0.1, -0.2, -0.5, -0.8, -1.2, -1.5, -1.5, -1.5] },
+        whoHealthIndex:      { decided: [0, 0.1,  0.2,  0.4,  0.7,  1.0,  1.3,  1.5,  1.5],  pessimist: [0, 0.1,  0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
+        lifeExpectancy:      { decided: [0, 0.02, 0.05, 0.10, 0.15, 0.20, 0.30, 0.30, 0.30], pessimist: [0, 0.01, 0.02, 0.05, 0.08, 0.10, 0.15, 0.15, 0.15] },
+        climateMigrations:   { decided: [0, -0.1,-0.2, -0.3, -0.5, -0.7, -0.8, -0.8, -0.8], pessimist: [0, 0,   -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5]  },
+      },
+    },
+  },
+
+  // ─── dec-24 — Décarbonation fret lourd, maritime et aérien ───────────────
+  {
+    id: 'dec-24',
+    sessionId: 4,
+    number: '24',
+    status: 'active',
+    implementationLag: 6,
+    title: 'Décarbonation du fret lourd, du transport maritime et de l\'aviation',
+    description: `Le transport maritime et l'aviation représentent ensemble **~2,5 % des émissions mondiales** mais leur décarbonation est techniquement difficile (longues distances, forte densité énergétique requise). Le GIEC AR6 WGIII identifie les carburants alternatifs — **ammoniac vert, méthanol vert, SAF (Sustainable Aviation Fuel)** — comme la voie principale. Cette décision établit des mandats de mélange progressifs (10 % de carburants bas carbone d'ici 2030, 50 % d'ici 2040, 100 % d'ici 2050) pour le maritime international et l'aviation, et finance la construction d'infrastructures de bunkering vert dans les 50 principaux ports mondiaux.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 341, contre: 267, abst: 142 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 10 : Fret longue distance',
+        excerpt: 'Les carburants à zéro émission (ammoniac, méthanol, hydrogène) sont techniquement matures pour le maritime. Le défi est la disponibilité et le coût, pas la technologie.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'OMI — Stratégie révisée de réduction des GES 2023',
+        excerpt: 'L\'Organisation Maritime Internationale vise des émissions zéro nettes pour le secteur maritime international d\'ici 2050 et une réduction de 20 % d\'ici 2030.',
+        url: 'https://www.imo.org/',
+      },
+      {
+        title: 'OACI — Long-Term Aspirational Goal — Net Zero 2050',
+        excerpt: 'L\'aviation civile internationale s\'est engagée à atteindre la neutralité carbone nette d\'ici 2050, avec les SAF comme principale solution à court terme.',
+        url: 'https://www.icao.int/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 0.8,
+      tempReductionC2100: 0.04,
+      fullEffectYear: 2060,
+      uncertaintyScore: 4,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **15 % de la flotte maritime mondiale** fonctionne à l\'ammoniac vert ou au méthanol vert. Les SAF représentent **8 %** du kérosène consommé dans l\'aviation civile. Vingt ports majeurs (Rotterdam, Singapour, Shanghai) disposent d\'infrastructures de ravitaillement en carburant vert. Les surcoûts sont partiellement absorbés par la taxe carbone maritime internationale.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, la transition progresse mais les coûts élevés des carburants alternatifs ont freiné l\'adoption au-delà des routes sous réglementation stricte. Le maritime atteint **35 %** de carburants verts, l\'aviation **18 %**. La demande mondiale de fret aérien a continué de croître, compensant partiellement les gains d\'efficacité. La réduction nette atteint **–0,5 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, la compétition entre l\'ammoniac vert pour le maritime et l\'hydrogène vert pour l\'industrie a créé des tensions d\'approvisionnement. L\'aviation a multiplié par 2,5 son trafic depuis 2024, annulant les gains de l\'efficacité et des SAF. Le bénéfice climatique net reste à **–0,03°C** malgré les mandats.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 39,   40.5, 42,   45.0, 48.9, 53.5, 57.3, 62.2],
+        pessimist: [37.4, 39,   40.5, 42,   45.05,49.05,53.7, 57.6, 62.5],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.5,  1.6,  1.72, 1.95, 2.19, 2.58, 2.97, 3.46],
+        pessimist: [1.4, 1.5,  1.6,  1.72, 1.95, 2.20, 2.59, 2.98, 3.47],
+      },
+      energyMix: {
+        autres: { decided: [0, 0, 0, 0, 0.5, 1.5, 3.0, 4.0, 5.0], pessimist: [0, 0, 0, 0, 0.2, 0.8, 1.5, 2.0, 2.5] },
+        oil:    { decided: [0, 0, 0, 0, -0.3,-0.8,-1.5,-2.0,-2.5], pessimist: [0, 0, 0, 0, -0.1,-0.4,-0.8,-1.0,-1.2] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-18'],
+    },
+  },
+
+  // ─── dec-25 — Électrification chaleur industrielle ────────────────────────
+  {
+    id: 'dec-25',
+    sessionId: 4,
+    number: '25',
+    status: 'active',
+    implementationLag: 4,
+    title: 'Électrification de la chaleur industrielle et pompes à chaleur haute température',
+    description: `La chaleur industrielle représente **~20 % des émissions mondiales** de GES. La majorité des procédés industriels nécessitant moins de **200°C** (chimie fine, agroalimentaire, blanchisseries, séchage) peuvent être électrifiés via des **pompes à chaleur haute température** (rendement 2 à 5 fois supérieur à la résistance électrique). Pour les procédés à haute température (acier, ciment, verre), l'arc électrique et le plasma sont des alternatives en développement. Cette décision finance la conversion électrique de **30 % des procédés thermiques industriels** d'ici 2040 via des subventions à la conversion et des prêts bonifiés.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 403, contre: 214, abst: 118 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 11 : Industrie',
+        excerpt: 'L\'électrification de la chaleur industrielle basse et moyenne température est économiquement viable dès aujourd\'hui pour de nombreux procédés, avec un coût de réduction inférieur à 50 $/tCO₂.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'AIE — Electrification of Heat in Industrial Processes 2022',
+        excerpt: 'Les pompes à chaleur haute température peuvent couvrir 20 % de la demande de chaleur industrielle mondiale, soit 1,5 GtCO₂/an de réduction potentielle.',
+        url: 'https://www.iea.org/',
+      },
+      {
+        title: 'Heat Pump Association — Industrial Heat Pump Technology 2023',
+        excerpt: 'Les pompes à chaleur industrielles atteignent désormais des températures de 160°C. Le marché croît de 25 % par an dans les pays pionniers (Danemark, Pays-Bas, Allemagne).',
+        url: 'https://www.heatpumps.org.uk/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.5,
+      tempReductionC2100: 0.06,
+      fullEffectYear: 2060,
+      uncertaintyScore: 3,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **8 000 pompes à chaleur industrielles haute température** sont opérationnelles dans l\'Union européenne, au Japon et en Corée du Sud. L\'industrie agroalimentaire européenne a réduit ses émissions thermiques de **38 %**. Les séchoirs à biomasse et papeteries fonctionnent à l\'électricité renouvelable. Le coût moyen de la chaleur électrique est inférieur à celui du gaz naturel dans les zones à forte pénétration renouvelable.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, l\'électrification couvre **20 %** de la chaleur industrielle mondiale. La transition est rapide pour les températures inférieures à 100°C mais lente pour les procédés haute température (verre, ciment, métallurgie). La dépendance résiduelle au gaz naturel persiste pour la chaleur process à haute température. Réduction nette : **–1,0 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, les procédés industriels haute température (>500°C) résistent toujours à l\'électrification par manque de solutions commerciales matures. La croissance industrielle dans les pays émergents compense les gains obtenus dans les pays de l\'OCDE. La réduction nette reste positive mais insuffisante : **–0,04°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 39,   40.5, 41.8, 44.6, 48.3, 52.7, 56.5, 61.4],
+        pessimist: [37.4, 39,   40.5, 41.9, 44.8, 48.7, 53.2, 57.0, 61.9],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.5,  1.6,  1.71, 1.93, 2.16, 2.54, 2.93, 3.42],
+        pessimist: [1.4, 1.5,  1.6,  1.72, 1.94, 2.18, 2.57, 2.96, 3.45],
+      },
+      energyMix: {
+        solar: { decided: [0, 0, 0, 0.3, 1.0, 2.5, 4.0, 5.0, 5.5], pessimist: [0, 0, 0, 0.1, 0.5, 1.2, 2.0, 2.5, 3.0] },
+        gas:   { decided: [0, 0, 0,-0.2,-0.5,-0.9,-1.3,-1.5,-1.6], pessimist: [0, 0, 0,-0.1,-0.3,-0.5,-0.8,-1.0,-1.1] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-08'],
+    },
+  },
+
+  // ─── dec-26 — Capture et utilisation du carbone (CCU) ────────────────────
+  {
+    id: 'dec-26',
+    sessionId: 4,
+    number: '26',
+    status: 'active',
+    implementationLag: 6,
+    title: 'Capture et utilisation du carbone (CCU) dans le ciment et la chimie',
+    description: `Les industries du **ciment** (~8 % des émissions mondiales) et de la **chimie** (~4 %) génèrent des émissions dites "incontournables" — liées à des réactions chimiques fondamentales, pas seulement à la combustion. La capture et utilisation du carbone (CCU) transforme le CO₂ capturé en matières premières (méthanol, e-fuels, agrégats minéraux). Le GIEC AR6 WGIII évalue le potentiel de la CCU industrielle à **0,3 à 1,3 GtCO₂/an** d'ici 2050. Cette décision finance la démonstration de 50 projets CCU industriels et établit un marché de crédits carbone certifiés pour le CO₂ utilisé.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 287, contre: 298, abst: 175 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 11 : Émissions industrielles incontournables',
+        excerpt: 'La CCU peut traiter une partie des émissions incontournables du ciment et de la chimie, mais son bilan carbone net dépend de l\'énergie utilisée pour la capture et la conversion.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'Global CCS Institute — Status of CCS 2023',
+        excerpt: '41 projets CCS/CCU sont en opération dans le monde, capturant 50 MtCO₂/an. Le potentiel technique est 100 fois supérieur aux capacités actuelles.',
+        url: 'https://www.globalccsinstitute.com/',
+      },
+      {
+        title: 'Cembureau — Carbon Neutrality Roadmap 2050',
+        excerpt: 'Le CCS/CCU est indispensable pour neutraliser les 60 % d\'émissions du ciment liées à la décarbonatation du calcaire, irréductibles par l\'efficacité ou le combustible.',
+        url: 'https://cembureau.eu/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 0.5,
+      tempReductionC2100: 0.03,
+      fullEffectYear: 2060,
+      uncertaintyScore: 4,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **25 cimenteries** opèrent avec capture de carbone intégrée en Europe, au Japon et en Amérique du Nord. Le CO₂ capturé est valorisé en béton minéralisé et en méthanol de synthèse. Le coût de production du ciment bas carbone n\'est supérieur que de **15 %** au ciment conventionnel. Un standard ISO de "ciment zéro-carbone certifié" est adopté.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, la CCU ciment/chimie capture **200 MtCO₂/an** — significatif mais en deçà du potentiel. Les contraintes d\'approvisionnement en électricité bas carbone pour la capture limitent le déploiement dans les pays à mix électrique encore carboné. La réduction nette atteint **–0,3 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, la CCU a peiné à sortir du stade de la démonstration à grande échelle dans les pays émergents, qui produisent 70 % du ciment mondial. Le marché des crédits CCU a souffert de problèmes de certification et de double comptage. Le bénéfice climatique net reste à **–0,02°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 39,   40.5, 42,   45.0, 49.0, 53.6, 57.5, 62.4],
+        pessimist: [37.4, 39,   40.5, 42,   45.05,49.1, 53.8, 57.7, 62.6],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.5,  1.6,  1.72, 1.95, 2.20, 2.58, 2.97, 3.46],
+        pessimist: [1.4, 1.5,  1.6,  1.72, 1.95, 2.20, 2.59, 2.98, 3.47],
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-11'],
+    },
+  },
+
+  // ─── dec-27 — Sobriété énergétique et modes de vie ────────────────────────
+  {
+    id: 'dec-27',
+    sessionId: 4,
+    number: '27',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Sobriété énergétique et changements de modes de vie',
+    description: `Le GIEC AR6 WGIII consacre pour la première fois un chapitre entier aux **changements de modes de vie et de comportements** comme option de mitigation. L'alimentation bas carbone, la réduction des voyages en avion, la diminution de la surface habitable, le partage de biens et la réduction du gaspillage alimentaire ont un potentiel cumulé de **1,5 à 2,5 GtCO₂/an** d'ici 2030. Cette décision propose des politiques incitant la sobriété : taxation des comportements carbonés, subvention aux mobilités douces, labels nutritionnels carbone, campagnes éducatives et réforme des normes sociales.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 467, contre: 312, abst: 201 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 5 : Demande, services et changements sociaux',
+        excerpt: 'Des changements de comportement dans les pays à hauts revenus pourraient réduire les émissions de 40 à 70 % d\'ici 2050, sans réduction de bien-être subjectif.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'Oxfam — Carbon Inequality Report 2023',
+        excerpt: 'Les 10 % les plus riches de la population mondiale sont responsables de 48 % des émissions mondiales. Des politiques de sobriété ciblées sur les hauts revenus ont un fort potentiel.',
+        url: 'https://www.oxfam.org/',
+      },
+      {
+        title: 'Shift Project — Décarboner la mobilité 2023',
+        excerpt: 'La réduction du trafic aérien dans les pays riches (notamment les vols court-courrier substituables au train) représente un des leviers les plus rapides et les moins coûteux.',
+        url: 'https://theshiftproject.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.5,
+      tempReductionC2100: 0.06,
+      fullEffectYear: 2050,
+      uncertaintyScore: 3,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, les régimes alimentaires ont évolué : la consommation de viande rouge a baissé de **28 %** dans les pays de l\'OCDE. Le nombre de passagers aériens court-courrier recule de **22 %** grâce à la taxation et au développement du train. Le label "empreinte carbone" est obligatoire sur tous les produits en Europe. Les émissions liées à la demande des ménages riches baissent de **18 %**.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, la sobriété progresse mais se heurte à des inégalités structurelles : les ménages modestes ont peu de marge de sobriété, tandis que les plus aisés compensent leurs efforts par d\'autres consommations. La réduction nette atteint **–1,0 GtCO₂/an** — moins que le potentiel théorique, mais avec d\'importants co-bénéfices santé.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, les campagnes de sobriété ont buté sur l\'effet rebond systémique : les économies réalisées ont été réinvesties en nouvelles consommations. La croissance de la classe moyenne mondiale a amplifié la consommation globale. Le bénéfice climatique net reste positif (**–0,04°C**) mais les co-bénéfices santé et qualité de vie dans les zones pionnières sont substantiels.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.9, 40.2, 41.4, 44.2, 48.0, 52.5, 56.5, 61.5],
+        pessimist: [37.4, 38.95,40.35,41.7, 44.6, 48.5, 53.1, 57.1, 62.1],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.49, 1.58, 1.69, 1.91, 2.14, 2.53, 2.92, 3.41],
+        pessimist: [1.4, 1.50, 1.59, 1.71, 1.94, 2.17, 2.56, 2.95, 3.44],
+      },
+      societal: {
+        foodSecurity:      { decided: [0, 0.1,  0.3,  0.5,  0.8,  1.2,  1.5,  1.5,  1.5],  pessimist: [0, 0,    0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
+        whoHealthIndex:    { decided: [0, 0.1,  0.2,  0.4,  0.7,  1.0,  1.3,  1.3,  1.3],  pessimist: [0, 0,    0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
+        giniCoefficient:   { decided: [0,-0.001,-0.002,-0.003,-0.004,-0.005,-0.006,-0.006,-0.006], pessimist: [0, 0,-0.001,-0.001,-0.002,-0.003,-0.004,-0.004,-0.004] },
+        wealthConcentration:{ decided: [0,-0.2,-0.4, -0.6, -0.9, -1.2, -1.5, -1.5, -1.5], pessimist: [0,-0.1,-0.2, -0.3, -0.5, -0.7, -0.9, -0.9, -0.9]  },
+        climateMigrations: { decided: [0,-0.1,-0.2,  -0.4, -0.6, -0.9, -1.2, -1.2, -1.2], pessimist: [0, 0,  -0.1, -0.2, -0.4, -0.5, -0.7, -0.7, -0.7]  },
+      },
+    },
+  },
+
+  // ─── dec-28 — Finance climatique internationale ───────────────────────────
+  {
+    id: 'dec-28',
+    sessionId: 4,
+    number: '28',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Finance climatique internationale : 100 Mds$/an vers les pays en développement',
+    description: `La promesse de **100 milliards de dollars par an** de financements climatiques faite par les pays développés en 2009 (Accord de Copenhague) n'a jamais été pleinement tenue. Le Nouveau Cadre de Finance Climatique Quantifié (NCQG) fixe désormais l'objectif à **300 Mds$/an** d'ici 2035. Le GIEC AR6 souligne que sans financement adéquat, les pays en développement — responsables de moins d'1 tonne de CO₂ par habitant — ne peuvent pas accélérer leur transition. Cette décision entérine et opérationnalise un mécanisme contraignant de transfert de capitaux bas carbone.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 523, contre: 241, abst: 136 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 13 : Finance internationale et coopération',
+        excerpt: 'Le flux de capitaux vers les pays en développement est 3 à 6 fois inférieur aux besoins estimés pour leurs trajectoires de développement bas carbone.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'UNFCCC — NCQG New Collective Quantified Goal on Climate Finance',
+        excerpt: 'COP29 (Bakou, 2024) a adopté un objectif de 300 Mds$/an de financements publics et de 1 300 Mds$/an de financements totaux d\'ici 2035.',
+        url: 'https://unfccc.int/',
+      },
+      {
+        title: 'Overseas Development Institute — Climate Finance Tracker 2023',
+        excerpt: 'Chaque dollar de finance climatique publique mobilise 2 à 5 dollars de capitaux privés. Le levier est crucial pour l\'ampleur de la transition.',
+        url: 'https://odi.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.0,
+      tempReductionC2100: 0.05,
+      fullEffectYear: 2050,
+      uncertaintyScore: 3,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **280 Mds$** de financements climatiques sont acheminés annuellement vers les pays en développement via des mécanismes transparents et contraignants. L\'Afrique subsaharienne installe **150 GW** de solaire décentralisé, sautant l\'étape des réseaux centralisés fossiles. Trente pays à faibles revenus ont atteint **50 %** de renouvelables dans leur mix électrique.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, les financements climatiques ont permis des transitions accélérées dans **40 pays** à revenus intermédiaires. Mais les pays les plus pauvres (PMA) restent sous-financés, faute de capacité d\'absorption institutionnelle. La réduction nette atteint **–0,7 GtCO₂/an**. Les co-bénéfices développement (accès à l\'énergie, emploi) sont considérables.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, une partie des financements a été détournée ou mal allouée. La conditionnalité excessive imposée par les pays donateurs a freiné les décaissements. Les pays en développement, dont les émissions représentent la majorité de la croissance mondiale des émissions, ont suivi des trajectoires partiellement fossiles. Réduction nette : **–0,03°C** malgré les montants engagés.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,    40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.95, 40.3, 41.6, 44.4, 48.2, 53.0, 57.0, 62.0],
+        pessimist: [37.4, 38.98, 40.4, 41.8, 44.7, 48.6, 53.3, 57.3, 62.3],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.50, 1.59, 1.70, 1.92, 2.15, 2.54, 2.94, 3.43],
+        pessimist: [1.4, 1.50, 1.60, 1.71, 1.94, 2.18, 2.57, 2.96, 3.46],
+      },
+      societal: {
+        foodSecurity:    { decided: [0, 0.1, 0.3, 0.6,  1.0,  1.5,  2.0,  2.0,  2.0],  pessimist: [0, 0,    0.1,  0.3,  0.5,  0.8,  1.0,  1.0,  1.0]  },
+        waterAccess:     { decided: [0, 0.1, 0.3, 0.5,  0.9,  1.3,  1.5,  1.5,  1.5],  pessimist: [0, 0,    0.1,  0.3,  0.5,  0.7,  1.0,  1.0,  1.0]  },
+        educationAccess: { decided: [0, 0.1, 0.2, 0.4,  0.7,  1.0,  1.3,  1.3,  1.3],  pessimist: [0, 0,    0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
+        lifeExpectancy:  { decided: [0, 0.05,0.1, 0.2,  0.35, 0.5,  0.7,  0.7,  0.7],  pessimist: [0, 0.02, 0.05, 0.1,  0.2,  0.3,  0.4,  0.4,  0.4]  },
+        climateMigrations:{ decided: [0,-0.1,-0.3,-0.5,-0.8, -1.2, -1.5, -1.5, -1.5], pessimist: [0, 0,   -0.1, -0.3, -0.5, -0.7, -0.9, -0.9, -0.9]  },
+      },
+    },
+  },
+
+  // ─── dec-29 — Écosystèmes côtiers ────────────────────────────────────────
+  {
+    id: 'dec-29',
+    sessionId: 4,
+    number: '29',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Protection et restauration des écosystèmes côtiers (mangroves, herbiers, zones humides)',
+    description: `Les écosystèmes côtiers — **mangroves, herbiers marins (seagrasses), marais salants** — séquestrent du carbone à des taux jusqu'à **5 fois supérieurs** aux forêts terrestres et le stockent dans les sédiments pour des millénaires. On parle de **carbone bleu**. Ces écosystèmes sont également des remparts contre les tempêtes, des nurseries pour la pêche et des refuges de biodiversité. Pourtant, 50 % des mangroves mondiales ont disparu depuis 1950. Cette décision finance la protection de **100 % des mangroves restantes** et la restauration de **5 millions d'hectares** d'ici 2040.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 612, contre: 98, abst: 64 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGII — Chapitre 3 : Océans et zones côtières',
+        excerpt: 'Les écosystèmes côtiers (carbone bleu) séquestrent 0,4 à 1,4 GtCO₂/an à l\'échelle mondiale. Leur destruction libère du carbone stocké depuis des siècles.',
+        url: 'https://www.ipcc.ch/report/ar6/wg2/',
+      },
+      {
+        title: 'IUCN — Blue Carbon Initiative 2023',
+        excerpt: 'Les mangroves, herbiers et marais côtiers couvrent moins de 1 % de la superficie océanique mais représentent 14 % du carbone organique séquestré dans les océans.',
+        url: 'https://www.iucn.org/resources/issues-brief/blue-carbon',
+      },
+      {
+        title: 'Nature Conservancy — Mangrove Restoration Potential Map',
+        excerpt: '68 % des côtes mondiales dégradées ont un potentiel de restauration des mangroves. Le coût de restauration est de 1 500 à 8 000 $/ha — très inférieur au coût des dommages climatiques évités.',
+        url: 'https://www.nature.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 0.5,
+      tempReductionC2100: 0.03,
+      fullEffectYear: 2050,
+      uncertaintyScore: 2,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **100 % des mangroves existantes** sont sous protection légale internationale. 2 millions d\'hectares sont restaurés en Asie du Sud-Est, en Afrique de l\'Ouest et en Amérique centrale. Les herbiers marins dans les zones marines protégées ont augmenté de **35 %**. Les récifs coralliens adjacents bénéficient de la réduction de l\'eutrophisation. Les communautés côtières constatent une résilience accrue aux tempêtes.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, la restauration couvre **3,5 millions d\'hectares** mais la pression de l\'aquaculture intensive et du développement côtier continue de menacer les mangroves dans plusieurs pays. L\'élévation du niveau de la mer compromet la restauration dans les zones les plus exposées. La séquestration nette atteint **–0,35 GtCO₂/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, l\'élévation du niveau de la mer de 60 à 100 cm a submergé une partie des zones restaurées. La pression démographique côtière dans les pays tropicaux a repris son grignotage des mangroves malgré les protections. Le carbone bleu ne représente qu\'une fraction du potentiel initial : **–0,02°C**.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,    40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.95, 40.4, 41.8, 44.8, 48.8, 53.5, 57.5, 62.5],
+        pessimist: [37.4, 38.98, 40.45,41.9, 44.9, 48.9, 53.65,57.65,62.65],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.50, 1.60, 1.72, 1.94, 2.19, 2.58, 2.98, 3.47],
+        pessimist: [1.4, 1.50, 1.60, 1.72, 1.94, 2.20, 2.59, 2.99, 3.48],
+      },
+      forest: {
+        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
+        decided:   [58.0, 57.6, 57.2, 56.8, 55.8, 54.1, 51.2, 48.2, 44.2],
+        pessimist: [58.0, 57.5, 57.1, 56.6, 55.5, 53.8, 50.8, 47.8, 43.8],
+      },
+      societal: {
+        foodSecurity:    { decided: [0, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.5, 0.7, 0.7, 0.7] },
+        waterTensions:   { decided: [0,-0.1,-0.2,-0.3,-0.5,-0.7,-0.9,-0.9,-0.9], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.6,-0.6,-0.6] },
+        climateMigrations:{ decided: [0,-0.1,-0.2,-0.3,-0.5,-0.8,-1.0,-1.0,-1.0], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.7,-0.7,-0.7] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-03'],
+    },
+  },
+
+  // ─── dec-30 — Réduction N₂O agricole et méthane bétail ────────────────────
+  {
+    id: 'dec-30',
+    sessionId: 4,
+    number: '30',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Réduction du N₂O agricole et des émissions entériques du bétail',
+    description: `L'agriculture est responsable de **~10 % des émissions mondiales** de GES, dont une grande part provient des **émissions entériques** (méthane produit par la fermentation digestive des ruminants) et du **protoxyde d'azote (N₂O)** issu des engrais azotés. Ces gaz ont un pouvoir de réchauffement 28 à 265 fois supérieur au CO₂. Le GIEC AR6 évalue le potentiel de réduction à **1,0 à 1,5 GtCO₂e/an** d'ici 2050 grâce aux **additifs alimentaires** (Bovaer, algues rouges), aux nouvelles formulations d'engrais et aux pratiques agricoles de précision.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-slate-600/30'},
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 456, contre: 187, abst: 122 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 7 : Agriculture, forêts et utilisation des terres',
+        excerpt: 'Les pratiques agricoles améliorées, les additifs alimentaires pour bovins et la gestion optimisée des engrais peuvent réduire les émissions agricoles de 30 à 40 % d\'ici 2050.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'FAO — Reducing enteric methane for improving food security and livelihoods',
+        excerpt: 'Le méthane entérique représente 14,5 % des émissions mondiales de GES. L\'additif Bovaer réduit les émissions de méthane bovines de 30 % avec des effets positifs sur la productivité.',
+        url: 'https://www.fao.org/',
+      },
+      {
+        title: 'Science — 3-NOP additive reduces methane emissions 26-30% (2021)',
+        excerpt: 'L\'additif alimentaire 3-nitrooxypropanol, approuvé en Europe en 2022, réduit les émissions entériques des bovins laitiers de 26 à 30 % sans impact sur la production laitière.',
+        url: 'https://www.science.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 1.0,
+      tempReductionC2100: 0.04,
+      fullEffectYear: 2050,
+      uncertaintyScore: 2,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **60 %** du bétail bovin dans les pays de l\'OCDE reçoit des additifs alimentaires réducteurs de méthane. Les engrais à inhibiteurs de nitrification sont obligatoires pour les grandes exploitations en Europe et en Amérique du Nord. Les émissions agricoles de GES ont baissé de **18 %** par rapport à 2024. Le méthane atmosphérique commence à se stabiliser.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, les additifs se généralisent dans les pays développés mais restent peu accessibles aux éleveurs des pays à faibles revenus. La demande mondiale de viande bovine continue de croître dans les pays émergents. La réduction nette atteint **–0,7 GtCO₂e/an** — significative, mais compensée partiellement par la croissance du cheptel mondial.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, la résistance des filières agricoles et le lobbying des producteurs d\'engrais ont ralenti l\'adoption des nouvelles pratiques dans les économies émergentes. La croissance du cheptel mondial (+40 %) a annulé une grande partie des gains de rendement. La réduction nette reste positive (**–0,03°C**) mais l\'agriculture demeure un secteur d\'émissions net.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,   40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.9, 40.3, 41.6, 44.5, 48.4, 53.0, 57.0, 62.0],
+        pessimist: [37.4, 38.95,40.4, 41.8, 44.8, 48.7, 53.3, 57.3, 62.3],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.49, 1.58, 1.70, 1.92, 2.16, 2.55, 2.95, 3.44],
+        pessimist: [1.4, 1.50, 1.59, 1.71, 1.94, 2.18, 2.57, 2.97, 3.46],
+      },
+      societal: {
+        foodSecurity:  { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.9, 1.2, 1.2, 1.2], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.5, 0.7, 0.7, 0.7] },
+        waterTensions: { decided: [0,-0.1,-0.2,-0.3,-0.5,-0.7,-0.9,-0.9,-0.9], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.6,-0.6,-0.6] },
+        whoHealthIndex:{ decided: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 0.9, 0.9], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-02'],
+    },
+  },
+
+  // ─── dec-31 — Méthane déchets solides et eaux usées ──────────────────────
+  {
+    id: 'dec-31',
+    sessionId: 4,
+    number: '31',
+    status: 'active',
+    implementationLag: 2,
+    title: 'Captage du méthane des décharges et traitement des eaux usées',
+    description: `Les déchets solides et les eaux usées sont responsables de **~3,2 % des émissions mondiales** de GES, principalement sous forme de méthane produit par décomposition anaérobie en décharge et en lagune. Ces émissions sont parmi les **moins coûteuses à réduire** : le biogaz capturé peut valoriser les décharges en sources d'énergie renouvelable. Le GIEC AR6 évalue le potentiel à **0,3 à 0,8 GtCO₂e/an** d'ici 2050. Cette décision mandate la mise en torchère ou la valorisation du méthane des 500 plus grandes décharges mondiales et le traitement aérobie des eaux usées industrielles dans les pays signataires.`,
+    options: [
+      { id: 'pour',   label: 'Pour',       color: '#00ff88', bgClass: 'bg-eb-green/10',  borderClass: 'border-eb-green/20' },
+      { id: 'contre', label: 'Contre',     color: '#ff5050', bgClass: 'bg-red-500/10',   borderClass: 'border-red-500/20'  },
+      { id: 'abst',   label: 'Abstention', color: '#475569', bgClass: 'bg-slate-700/30', borderClass: 'border-slate-600/30'},
+    ],
+    votes: { pour: 578, contre: 87, abst: 55 },
+    consensusThreshold: 67,
+    deadline: '2026-03-15T18:00:00Z',
+    resources: [
+      {
+        title: 'GIEC AR6 WGIII — Chapitre 12 : Déchets',
+        excerpt: 'Le captage du biogaz des décharges est une des options les moins coûteuses du portefeuille de mitigation, avec un coût souvent négatif quand le gaz est valorisé en énergie.',
+        url: 'https://www.ipcc.ch/report/ar6/wg3/',
+      },
+      {
+        title: 'PNUE — Global Methane Assessment 2021',
+        excerpt: 'Réduire les émissions de méthane de 45 % d\'ici 2030 permettrait d\'éviter 0,3°C de réchauffement d\'ici 2045. Les décharges et eaux usées représentent 20 % des émissions anthropiques de méthane.',
+        url: 'https://www.unep.org/resources/report/global-methane-assessment',
+      },
+      {
+        title: 'Global Methane Initiative — Landfill Gas to Energy',
+        excerpt: 'Un projet de valorisation biogaz en décharge génère en moyenne 1 à 5 MWe et réduit les émissions de 50 000 à 200 000 tCO₂e/an avec un retour sur investissement de 5 à 8 ans.',
+        url: 'https://www.globalmethane.org/',
+      },
+    ],
+    projectedImpact: {
+      emissionsReductionGtCO2yr: 0.5,
+      tempReductionC2100: 0.03,
+      fullEffectYear: 2050,
+      uncertaintyScore: 2,
+    },
+    prospectiveNarratives: {
+      optimistic: {
+        horizon: '+10 ans',
+        label: 'Scénario Optimiste',
+        colorClass: 'text-eb-green',
+        borderClass: 'border-eb-green/30',
+        text: 'Dans 10 ans, **350 des 500 plus grandes décharges mondiales** disposent d\'un système de captage et valorisation du biogaz, produisant **25 TWh/an** d\'électricité renouvelable. Le méthane atmosphérique d\'origine déchet recule de **12 %**. Les nouvelles décharges (où elles sont encore autorisées) intègrent le captage dès la conception. Les eaux usées industrielles traitées en aérobie dans 30 pays évitent **200 MtCO₂e/an**.',
+      },
+      moderate: {
+        horizon: '+20 ans',
+        label: 'Scénario Modéré',
+        colorClass: 'text-yellow-400',
+        borderClass: 'border-yellow-500/30',
+        text: 'Dans 20 ans, le captage biogaz est généralisé dans les pays à revenus élevés et intermédiaires, mais les pays les moins avancés peinent à financer les infrastructures. La croissance des volumes de déchets dans les villes des pays émergents a créé de nouvelles décharges non équipées. La réduction nette atteint **–0,35 GtCO₂e/an**.',
+      },
+      pessimistic: {
+        horizon: '+50 ans',
+        label: 'Scénario Pessimiste',
+        colorClass: 'text-red-400',
+        borderClass: 'border-red-500/30',
+        text: 'Dans 50 ans, l\'urbanisation rapide en Afrique et en Asie du Sud a multiplié les dépôts sauvages et les décharges informelles hors de tout système de captage. Le recyclage a progressé mais le volume total de déchets a doublé. La réduction nette reste positive (**–0,02°C**) grâce aux améliorations dans les pays développés, mais le potentiel global a été sous-exploité.',
+      },
+    },
+    projections: {
+      labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
+      co2: {
+        baseline:  [37.4, 39,    40.5, 42,   45.1, 49.2, 54,   58,   63],
+        decided:   [37.4, 38.95, 40.4, 41.8, 44.8, 48.8, 53.5, 57.5, 62.5],
+        pessimist: [37.4, 38.98, 40.45,41.9, 44.95,48.95,53.65,57.65,62.65],
+      },
+      temperature: {
+        baseline:  [1.4, 1.5,  1.6,  1.72, 1.95, 2.2,  2.6,  3.0,  3.5],
+        decided:   [1.4, 1.50, 1.60, 1.72, 1.94, 2.19, 2.58, 2.98, 3.47],
+        pessimist: [1.4, 1.50, 1.60, 1.72, 1.94, 2.20, 2.59, 2.99, 3.48],
+      },
+      societal: {
+        waterAccess:       { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.9, 1.2, 1.2, 1.2], pessimist: [0, 0,   0.1, 0.2, 0.4, 0.5, 0.7, 0.7, 0.7] },
+        whoHealthIndex:    { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.9, 1.2, 1.2, 1.2], pessimist: [0, 0,   0.1, 0.2, 0.4, 0.5, 0.7, 0.7, 0.7] },
+        lifeExpectancy:    { decided: [0, 0.03,0.07,0.12,0.18,0.25,0.30,0.30,0.30], pessimist: [0, 0.01,0.03,0.06,0.10,0.15,0.20,0.20,0.20] },
+        respiratoryDiseases:{ decided: [0,-0.1,-0.3,-0.5,-0.8,-1.2,-1.5,-1.5,-1.5], pessimist: [0,-0.05,-0.1,-0.2,-0.4,-0.6,-0.8,-0.8,-0.8] },
+      },
+    },
+    prerequisites: {
+      policiesRequired: ['dec-04'],
     },
   },
 ]

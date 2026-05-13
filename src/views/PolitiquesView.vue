@@ -1,5 +1,5 @@
 <template>
-  <main class="max-w-screen-xl mx-auto px-4 py-6 space-y-10" id="main-content" tabindex="-1">
+  <main class="max-w-screen-2xl mx-auto px-4 py-6 space-y-10" id="main-content" tabindex="-1">
 
     <!-- En-tête -->
     <div>
@@ -7,8 +7,108 @@
       <p class="text-sm text-slate-400 leading-relaxed max-w-3xl">{{ t('policies.intro') }}</p>
     </div>
 
+    <!-- ─── Dernière politique adoptée ──────────────────────────────────── -->
+    <div
+      v-if="lastValidated"
+      class="flex flex-wrap items-center gap-3 px-4 py-3 rounded-xl border border-eb-green/30 bg-eb-green/5"
+    >
+      <div class="flex items-center gap-2 shrink-0">
+        <i class="fa fa-circle-check text-eb-green text-sm" aria-hidden="true"></i>
+        <span class="text-xs font-semibold text-eb-green uppercase tracking-wide">{{ t('policies.last_adopted_label') }}</span>
+        <span class="text-[10px] text-slate-500 font-mono">· {{ t('policies.last_adopted_year', { year: lastValidated.year }) }}</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 min-w-0">
+        <span class="text-xs text-slate-500 font-mono shrink-0">{{ lastValidated.policy.number }}</span>
+        <span class="text-sm font-bold text-white truncate">{{ lastValidated.policy.title }}</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 ml-auto">
+        <span
+          v-if="lastValidated.policy.projectedImpact?.['emissionsReductionGtCO2yr']"
+          class="text-[10px] bg-eb-dark border border-eb-border rounded px-2 py-0.5 text-eb-green font-bold"
+        >
+          −{{ lastValidated.policy.projectedImpact['emissionsReductionGtCO2yr'] }} Gt/an
+        </span>
+        <span
+          v-if="lastValidated.policy.projectedImpact?.['tempReductionC2100']"
+          class="text-[10px] bg-eb-dark border border-eb-border rounded px-2 py-0.5 text-eb-cyan font-bold"
+        >
+          −{{ lastValidated.policy.projectedImpact['tempReductionC2100'] }}°C {{ t('policies.in_2100') }}
+        </span>
+        <RouterLink
+          :to="`/mitigation-policies/${lastValidated.policy.id}`"
+          class="text-[10px] text-slate-500 hover:text-eb-cyan transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan rounded outline-none"
+        >
+          <i class="fa fa-circle-info mr-1" aria-hidden="true"></i>{{ t('policies.detail_link') }}
+        </RouterLink>
+      </div>
+    </div>
+
+    <!-- ─── Bulletin en formation (phase discussion, admin) ─────────────────── -->
+    <div
+      v-if="gameStore.phase === 'discussion' && !activeBallot && isAdmin"
+      class="rounded-xl border border-amber-600/30 bg-amber-950/10 p-4 space-y-3"
+    >
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <i class="fa fa-list-check text-amber-400 text-sm" aria-hidden="true"></i>
+          <h2 class="text-sm font-bold text-amber-300">{{ t('proposals.title') }}</h2>
+          <span
+            class="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+            :class="ballotProposals.length === 3
+              ? 'border-amber-500/60 text-amber-300 bg-amber-900/20'
+              : 'border-slate-700 text-slate-500'"
+            aria-live="polite"
+          >
+            {{ t('proposals.count', { n: ballotProposals.length }) }}
+          </span>
+        </div>
+        <span
+          v-if="ballotProposals.length === 3"
+          class="text-xs text-amber-300 font-semibold"
+        >
+          <i class="fa fa-circle-check mr-1" aria-hidden="true"></i>{{ t('proposals.full_notice') }}
+        </span>
+        <span v-else class="text-xs text-slate-500 italic">{{ t('proposals.fallback_warning') }}</span>
+      </div>
+
+      <p class="text-xs text-slate-400 leading-relaxed">{{ t('proposals.subtitle') }}</p>
+
+      <!-- 3 slots -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" role="group" :aria-label="t('proposals.title')">
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="rounded-lg border p-3 min-h-[64px] flex flex-col gap-1.5"
+          :class="ballotProposals[i - 1]
+            ? 'border-amber-500/40 bg-amber-900/10'
+            : 'border-eb-border bg-eb-dark/40 border-dashed'"
+        >
+          <template v-if="ballotProposals[i - 1]">
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-[10px] text-slate-500 font-mono">{{ getProposedPolicy(i - 1)?.number }}</span>
+              <button
+                class="text-[9px] text-slate-500 hover:text-red-400 transition-colors focus-visible:ring-1 focus-visible:ring-red-400 rounded outline-none"
+                :aria-label="t('proposals.remove_aria')"
+                @click="removeProposal(ballotProposals[i - 1])"
+              >
+                <i class="fa fa-xmark" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="text-xs font-semibold text-slate-200 leading-snug line-clamp-2">
+              {{ getProposedPolicy(i - 1)?.title }}
+            </p>
+          </template>
+          <template v-else>
+            <span class="text-xs text-slate-600 italic m-auto">{{ t('proposals.slot_empty') }}</span>
+          </template>
+        </div>
+      </div>
+    </div>
+
     <!-- ─── Scrutin actif ──────────────────────────────────────────────────── -->
-    <CollapsibleSection v-if="activeBallot" :title="t('policies.active_ballot_title')" icon="fa-vote-yea" color-class="text-eb-cyan">
+    <CollapsibleSection v-if="activeBallot && gameStore.phase !== 'discussion'" :title="t('policies.active_ballot_title')" icon="fa-vote-yea" color-class="text-eb-cyan">
       <template #header-extra>
         <span class="text-xs text-slate-500 mr-1">
           <i class="fa fa-clock mr-1" aria-hidden="true"></i>
@@ -84,9 +184,12 @@
               v-for="(label, pos) in rankButtons"
               :key="pos"
               class="flex-1 text-xs py-1.5 rounded-lg border font-bold transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-              :class="getRankOf(decision.id) === pos
-                ? 'bg-eb-cyan text-eb-dark border-eb-cyan'
-                : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50 hover:text-slate-200'"
+              :class="!canVote
+                ? 'bg-transparent text-slate-600 border-slate-800 cursor-not-allowed opacity-40'
+                : getRankOf(decision.id) === pos
+                  ? 'bg-eb-cyan text-eb-dark border-eb-cyan'
+                  : 'bg-transparent text-slate-400 border-eb-border hover:border-eb-cyan/50 hover:text-slate-200'"
+              :disabled="!canVote"
               :aria-pressed="getRankOf(decision.id) === pos"
               @click="onRankClick(decision.id, pos)"
             >
@@ -121,10 +224,10 @@
         </div>
         <button
           class="ml-auto px-5 py-2 rounded-lg font-bold text-sm transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-          :class="isRankingComplete
+          :class="isRankingComplete && canVote
             ? 'bg-eb-cyan text-eb-dark hover:bg-cyan-300'
             : 'bg-eb-dark text-slate-600 border border-eb-border cursor-not-allowed'"
-          :disabled="!isRankingComplete"
+          :disabled="!isRankingComplete || !canVote"
           @click="submitRanking"
         >
           <i class="fa fa-paper-plane mr-1.5" aria-hidden="true"></i>
@@ -190,113 +293,9 @@
       </div>
     </CollapsibleSection>
 
-    <!-- ─── Projections climatiques ─────────────────────────────────────── -->
-    <CollapsibleSection :title="t('simulator.projections_title')" icon="fa-chart-line" color-class="text-eb-cyan">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-        <!-- Graphique CO₂ -->
-        <EbCard>
-          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <div>
-              <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.co2_chart_title') }}</h3>
-              <p class="text-xs text-slate-500">{{ t('simulator.co2_chart_sub') }}</p>
-            </div>
-            <div class="flex gap-3 text-xs text-slate-400">
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
-                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
-                </svg>
-                {{ t('simulator.legend_baseline') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
-                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
-                </svg>
-                {{ t('simulator.legend_decided') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
-                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
-                </svg>
-                {{ t('simulator.legend_pessimist') }}
-              </span>
-            </div>
-          </div>
-          <LineChart
-            canvas-id="policies-co2-chart"
-            :labels="SIM_LABELS"
-            :datasets="co2Datasets"
-            :show-legend="false"
-            :height="180"
-            :y-min="15"
-            :y-max="75"
-            :current-year="gameStore.currentYear"
-            :aria-label="t('simulator.aria_co2')"
-          />
-        </EbCard>
-
-        <!-- Graphique Température -->
-        <EbCard>
-          <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <div>
-              <h3 class="text-sm font-bold text-slate-200">{{ t('simulator.temp_chart_title') }}</h3>
-              <p class="text-xs text-slate-500">{{ t('simulator.temp_chart_sub') }}</p>
-            </div>
-            <div class="flex gap-3 text-xs text-slate-400">
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#64748b" stroke-width="2"/>
-                  <circle cx="10" cy="4" r="3" fill="#64748b"/>
-                </svg>
-                {{ t('simulator.legend_baseline') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#00ff88" stroke-width="2"/>
-                  <polygon points="10,1 13.5,7 6.5,7" fill="#00ff88"/>
-                </svg>
-                {{ t('simulator.legend_decided') }}
-              </span>
-              <span class="flex items-center gap-1.5">
-                <svg width="20" height="8" aria-hidden="true" class="shrink-0">
-                  <line x1="0" y1="4" x2="20" y2="4" stroke="#f87171" stroke-width="2"/>
-                  <rect x="7" y="1" width="6" height="6" fill="#f87171"/>
-                </svg>
-                {{ t('simulator.legend_pessimist') }}
-              </span>
-            </div>
-          </div>
-          <LineChart
-            canvas-id="policies-temp-chart"
-            :labels="SIM_LABELS"
-            :datasets="tempDatasets"
-            :show-legend="false"
-            :height="180"
-            :y-min="1.2"
-            :y-max="4.5"
-            :current-year="gameStore.currentYear"
-            :aria-label="t('simulator.aria_temp')"
-          />
-          <div class="flex gap-4 mt-2 text-xs text-slate-500">
-            <span class="flex items-center gap-1.5">
-              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
-                <line x1="0" y1="2" x2="20" y2="2" stroke="#facc15" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>
-              </svg>
-              {{ t('simulator.threshold_paris') }}
-            </span>
-            <span class="flex items-center gap-1.5">
-              <svg width="20" height="4" aria-hidden="true" class="shrink-0">
-                <line x1="0" y1="2" x2="20" y2="2" stroke="#f97316" stroke-width="2" stroke-dasharray="8 4" stroke-linecap="round"/>
-              </svg>
-              {{ t('simulator.threshold_2c') }}
-            </span>
-          </div>
-        </EbCard>
-
-      </div>
+    <!-- ─── Réseau de politiques ─────────────────────────────────────────── -->
+    <CollapsibleSection :title="t('network.mode_game')" icon="fa-diagram-project" color-class="text-eb-cyan">
+      <PolicyNetworkGraph mode="game" />
     </CollapsibleSection>
 
     <!-- ─── Historique des scrutins clôturés ──────────────────────────────── -->
@@ -379,14 +378,12 @@ import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
-import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP } from '@/store/simulation.store'
 import { useGameStore } from '@/store/game.store'
 import { useLocalizedPolicies } from '@/composables/useLocalizedPolicies'
-import CollapsibleSection from '@/components/layout/CollapsibleSection.vue'
-import LineChart from '@/components/charts/LineChart.vue'
-import EbCard from '@/components/layout/EbCard.vue'
+import CollapsibleSection  from '@/components/layout/CollapsibleSection.vue'
+import PolicyNetworkGraph   from '@/components/mitigationPolicies/PolicyNetworkGraph.vue'
 import type { RankPosition } from '@/store/mitigationPolicies.store'
-import type { MitigationPolicy, DecisionBallot, ChartDataset } from '@/types/index'
+import type { MitigationPolicy, DecisionBallot } from '@/types/index'
 
 // ─── i18n ─────────────────────────────────────────────────────────────────────
 
@@ -396,13 +393,27 @@ const { localizedPolicy } = useLocalizedPolicies()
 // ─── Stores ───────────────────────────────────────────────────────────────────
 
 const store = useMitigationPoliciesStore()
-const simulationStore = useSimulationStore()
 const gameStore = useGameStore()
 const {
   activeBallot, activeCandidates, closedBallots,
   ranking, hasVoted, isRankingComplete,
+  validatedPolicyMeta, isAdmin, ballotProposals,
 } = storeToRefs(store)
-const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy } = store
+const { getRankOf, setRank, submitRanking, getBallotResult, getMitigationPolicy, removeProposal } = store
+
+function getProposedPolicy(index: number): MitigationPolicy | undefined {
+  const id = ballotProposals.value[index]
+  if (!id) return undefined
+  const p = getMitigationPolicy(id)
+  return p ? localizedPolicy(p) : undefined
+}
+
+const lastValidated = computed(() => {
+  const meta = validatedPolicyMeta.value.at(-1)
+  if (!meta) return null
+  const policy = getMitigationPolicy(meta.id)
+  return policy ? { policy: localizedPolicy(policy), year: meta.year } : null
+})
 
 // ─── Candidats localisés ──────────────────────────────────────────────────────
 
@@ -418,6 +429,7 @@ const activeResult = computed(() =>
 
 // ─── Constantes UI ───────────────────────────────────────────────────────────
 
+const canVote = computed(() => gameStore.phase === 'vote')
 const rankButtons = computed(() => [t('policies.r1'), t('policies.r2'), t('policies.r3')] as const)
 
 // ─── Helpers template (évitent ! et as TypeName dans le template) ─────────────
@@ -484,90 +496,6 @@ function formatDeadline(iso: string): string {
 function truncate(s: string, max: number): string {
   return s.length > max ? s.slice(0, max) + '…' : s
 }
-
-// ─── Datasets graphiques projections ─────────────────────────────────────────
-
-const { cumulativeCo2, cumulativeCo2Pessimist, cumulativeTemp, cumulativeTempPessimist } = storeToRefs(simulationStore)
-
-const co2Datasets = computed<ChartDataset[]>(() => [
-  {
-    label: t('simulator.dataset_baseline'),
-    data: [...BASELINE_CO2],
-    borderColor: '#64748b',
-    backgroundColor: 'rgba(100,116,139,0.05)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-  {
-    label: t('simulator.dataset_decided'),
-    data: [...cumulativeCo2.value],
-    borderColor: '#00ff88',
-    backgroundColor: 'rgba(0,255,136,0.08)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 3,
-  },
-  {
-    label: t('simulator.dataset_pessimist'),
-    data: [...cumulativeCo2Pessimist.value],
-    borderColor: '#f87171',
-    backgroundColor: 'rgba(248,113,113,0.05)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-])
-
-const tempDatasets = computed<ChartDataset[]>(() => [
-  {
-    label: t('simulator.dataset_baseline'),
-    data: [...BASELINE_TEMP],
-    borderColor: '#64748b',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-  {
-    label: t('simulator.dataset_decided'),
-    data: [...cumulativeTemp.value],
-    borderColor: '#00ff88',
-    backgroundColor: 'rgba(0,255,136,0.08)',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 3,
-  },
-  {
-    label: t('simulator.dataset_pessimist'),
-    data: [...cumulativeTempPessimist.value],
-    borderColor: '#f87171',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0.4,
-    pointRadius: 2,
-  },
-  {
-    label: t('simulator.threshold_paris'),
-    data: SIM_LABELS.map(() => 1.5),
-    borderColor: '#facc15',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0,
-    borderDash: [2, 4],
-    pointRadius: 0,
-  },
-  {
-    label: t('simulator.threshold_2c'),
-    data: SIM_LABELS.map(() => 2),
-    borderColor: '#f97316',
-    backgroundColor: 'transparent',
-    fill: false,
-    tension: 0,
-    borderDash: [8, 4],
-    pointRadius: 0,
-  },
-])
 
 // ─── Composant inline : matrice pairwise ─────────────────────────────────────
 

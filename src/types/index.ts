@@ -213,6 +213,23 @@ export type EnergyMixKey = 'coal' | 'oil' | 'gas' | 'nuclear' | 'solar' | 'wind'
 export type ResourceKey  = 'minerals' | 'biomass' | 'fossilFuels'
 export type SocietalKey  = 'foodSecurity' | 'waterAccess' | 'resourceConflicts' | 'waterTensions' | 'climateMigrations' | 'lifeExpectancy' | 'respiratoryDiseases' | 'whoHealthIndex' | 'giniCoefficient' | 'wealthConcentration' | 'educationAccess'
 
+// ─── Prérequis des politiques ─────────────────────────────────────────────────
+
+// Clés d'indicateurs supportées pour les prérequis — extensible : ajouter | 'renewables' | SocietalKey
+export type PrerequisiteIndicatorKey = 'temp' | 'forest'
+
+export interface PrerequisiteIndicator {
+  key:   PrerequisiteIndicatorKey
+  min?:  number   // valeur courante doit être >= min
+  max?:  number   // valeur courante doit être <= max
+}
+
+export interface PolicyPrerequisites {
+  policiesRequired?: string[]           // tous ces IDs doivent être validés
+  policiesExcluded?: string[]           // aucun de ces IDs ne doit être validé
+  indicators?:       PrerequisiteIndicator[]
+}
+
 export interface MitigationPolicyProjections {
   labels: number[]
   co2: ProjectionSeries
@@ -249,6 +266,7 @@ export interface MitigationPolicy {
   projectedImpact: Record<string, number>
   prospectiveNarratives: Record<string, ProspectiveNarrative>
   projections: MitigationPolicyProjections | Record<string, never>
+  prerequisites?: PolicyPrerequisites
 }
 
 export interface VotePcts {

@@ -449,4 +449,326 @@ export const policyI18n: Record<string, PolicyI18n> = {
       },
     },
   },
+
+  // ─── dec-18 — Green hydrogen ──────────────────────────────────────────────
+  'dec-18': {
+    title: 'Green hydrogen for heavy industry and transport',
+    description: `Hydrogen produced by electrolysis using renewable electricity (**green hydrogen**) offers a decarbonisation pathway for sectors that are hard to electrify directly: steelmaking, chemicals, cement, long-distance heavy freight. IPCC AR6 WGIII identifies low-carbon hydrogen as a high-potential option for "hard-to-abate" sectors, with a reduction potential of **1.5 to 2.5 GtCO₂/year** by 2050 globally. This decision proposes funding a global programme for renewable electrolysis deployment at **$150 billion/year** by 2030.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **45 GW** of electrolysers are operational worldwide. Green hydrogen costs have fallen below **$2/kg**, reaching parity with grey hydrogen in Europe. The first hydrogen-based blast furnaces are operating in Sweden (HYBRIT) and Germany. Heavy freight accounts for 8% of global clean hydrogen consumption.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, green hydrogen covers **12%** of global heavy industry energy needs. Geopolitical tensions around hydrogen export corridors (North Africa → Europe, Australia → Japan) slow deployment. Industrial emissions fall **18%** from 2024. Long-distance shipping progressively integrates green ammonia.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, insufficient investment means green hydrogen covers only **5%** of global industrial needs. Widespread "hydrogen washing" — relying on blue hydrogen with incomplete CCS — has diluted climate benefits. The net climate contribution remains marginal: **–0.03°C**.',
+      },
+    },
+  },
+
+  // ─── dec-19 — Smart grids & storage ──────────────────────────────────────
+  'dec-19': {
+    title: 'Smart electricity grids and energy storage',
+    description: `The large-scale deployment of renewable energy is constrained by solar and wind intermittency and the rigidity of existing grid infrastructure. **Smart grids** coupled with storage systems (batteries, pumped hydro, hydrogen, gravity) enable renewable penetration rates above **80%** in the electricity mix. IPCC AR6 estimates the reduction potential of this pillar at **1 to 2 GtCO₂/year** by 2050 by unlocking renewable integration. This decision mandates a global investment of **$80 billion/year** in grid modernisation and utility-scale storage.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **25 million km** of transmission and distribution lines have been modernised. Renewable penetration exceeds **65%** of the global electricity mix. Stationary storage systems reach **3,000 GWh** of installed capacity. Demand flexibility (V2G electric vehicles, smart water heaters) avoids the construction of **200 GW** of gas peaker plants.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, smart grids have enabled **55%** renewables in the global electricity mix. Bottlenecks persist in South Asia and sub-Saharan Africa. Long-duration seasonal storage remains expensive and underdeployed. Net reduction reaches **–0.8 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, ageing infrastructure and cybersecurity concerns have slowed modernisation in fragile economies. Grid failures from poorly managed renewable integration have created political resistance. The net reduction remains positive (**–0.04°C**) but well below the theoretical potential.',
+      },
+    },
+  },
+
+  // ─── dec-20 — Geothermal & hydro ─────────────────────────────────────────
+  'dec-20': {
+    title: 'Next-generation geothermal and hydropower',
+    description: `Deep geothermal (Enhanced Geothermal Systems, EGS) and run-of-river micro-hydropower represent **dispatchable, zero-carbon** electricity sources complementary to solar and wind. EGS can theoretically power the entire planet without emissions, but remains to be demonstrated at scale. IPCC AR6 estimates that existing and new hydropower can contribute **0.5 to 1 GtCO₂/year** of reduction. This decision funds geothermal exploration in 40 countries and the construction of **500 GW** of small and medium hydropower by 2050, subject to strict environmental standards.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **15 EGS projects** are commercially operational worldwide (Kenya, Iceland, Indonesia, USA). Geothermal provides **500 TWh/year** of round-the-clock electricity. 200 GW of small hydro are built in South-East Asia and Africa with environmental standards ensuring ecological flow continuity.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, EGS geothermal has met its technical promise but deep-drilling costs remain high. Hydropower is facing **water stress** in several river basins, reducing effective output. Net contribution reaches **–0.6 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, climate-driven persistent drought has reduced global hydropower output by **15%**. Large dams built in high water-stress zones have generated transboundary conflicts. Geothermal has partially compensated, but the net emissions benefit remains limited to **–0.03°C**.',
+      },
+    },
+  },
+
+  // ─── dec-21 — Zero-carbon building codes ─────────────────────────────────
+  'dec-21': {
+    title: 'Mandatory zero-carbon standards for new construction',
+    description: `Buildings account for **~21% of global GHG emissions** (heating, cooling, hot water). IPCC AR6 WGIII estimates the building sector's mitigation potential at **3 to 5 GtCO₂/year** by 2050. This decision requires all new construction to meet net-zero-emission standards (operational and embodied carbon) from entry into force. It includes building energy performance standards, a ban on fossil fuel boilers in new buildings, and an international "Climate-Ready Building" certification framework with third-party auditing.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **100% of building permits** in OECD countries require zero-carbon compliance. Heat pumps represent 80% of heating systems in new builds. Low-carbon materials (CLT, geopolymer concrete, bio-based insulation) are mainstream. New buildings consume **70% less energy** than the average existing stock.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, zero-carbon standards apply in **65 countries** representing 70% of new global construction. Effective reductions depend on the turnover rate of existing stock (50–80-year building lifespans). Net reduction reaches **–0.7 GtCO₂/year**, but full impact on the total stock will not arrive until 2060–2070.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, rapid urbanisation in South Asia and Africa has led to hundreds of millions of poorly insulated dwellings being built, despite standards adopted on paper. Existing stock inertia and weak enforcement in emerging countries limited the reduction to **–0.04°C**.',
+      },
+    },
+  },
+
+  // ─── dec-22 — Appliance efficiency standards ─────────────────────────────
+  'dec-22': {
+    title: 'Minimum energy performance standards for electrical appliances and lighting',
+    description: `Inefficient electrical appliances (refrigerators, air conditioners, industrial motors, lighting) account for roughly **10% of global energy-related emissions**. Minimum Energy Performance Standards (MEPS) are among the most **cost-effective** options in the mitigation portfolio: the IEA estimates that eliminating the least efficient appliances would avoid **1,400 TWh/year** of electricity consumption by 2030. This decision establishes global MEPS for the 10 most energy-intensive appliance categories, with a convergence mechanism towards best-available technology.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, global MEPS have eliminated the **20% least efficient appliances** from world markets. LED lighting represents 95% of the market. Next-generation air conditioners consume **45% less** than in 2024. Electricity bill savings reach **$450 billion/year** for global households.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, MEPS have reduced appliance electricity consumption by **18%** from 2024, but demand growth (air conditioning in hot countries, proliferation of connected devices) has partially offset the gains. Net reduction reaches **–0.5 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, appliance stock growth in emerging economies (+3 billion households entering the middle class) has nearly fully offset efficiency gains. The "rebound effect" — energy savings reinvested in additional consumption — has reduced the net climate benefit to **–0.02°C**.',
+      },
+    },
+  },
+
+  // ─── dec-23 — Public transport & active mobility ─────────────────────────
+  'dec-23': {
+    title: 'Public transport, active mobility and urban planning',
+    description: `Road transport accounts for **12% of global GHG emissions**. Expanding public transport (metro, BRT, commuter rail) and cycling/pedestrian infrastructure reduces car dependency while improving public health and urban air quality. IPCC AR6 WGIII highlights that **urban densification** combined with active mobility can reduce transport emissions by **0.8 to 1.8 GtCO₂/year** by 2050. This decision commits **$120 billion/year** to global low-carbon transport infrastructure.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **500 cities** have adopted sustainable mobility plans integrating BRT, bike-sharing and low-emission zones. Public transport modal share exceeds **40%** in covered urban areas. Urban air pollution mortality has fallen **22%**. Urban transport emissions drop **18%** from 2024.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, the transition to sustainable mobility is well under way in OECD countries, but persistent urban sprawl in emerging cities limits results. Sector emissions fall **0.7 GtCO₂/year**. Political resistance to parking reduction and congestion pricing has slowed ambitions.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, urbanisation in the Global South has produced megacities with high car dependency. Public transport built has been underused due to insufficient urban densification. Net climate benefit is limited to **–0.03°C**, but health co-benefits in covered areas remain significant.',
+      },
+    },
+  },
+
+  // ─── dec-24 — Decarbonising freight, shipping & aviation ─────────────────
+  'dec-24': {
+    title: 'Decarbonising heavy freight, international shipping and aviation',
+    description: `International shipping and aviation together account for **~2.5% of global emissions**, but their decarbonisation is technically challenging (long distances, high energy density requirements). IPCC AR6 WGIII identifies alternative fuels — **green ammonia, green methanol, SAF (Sustainable Aviation Fuel)** — as the primary pathway. This decision establishes progressive blending mandates (10% low-carbon fuels by 2030, 50% by 2040, 100% by 2050) for international shipping and aviation, and funds green bunkering infrastructure at the 50 largest ports.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **15% of the global shipping fleet** runs on green ammonia or methanol. SAF represents **8%** of aviation fuel consumed. Twenty major ports (Rotterdam, Singapore, Shanghai) have green fuel bunkering infrastructure. Cost premiums are partially absorbed by the international maritime carbon tax.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, transition progresses but high alternative fuel costs have limited adoption beyond strictly regulated routes. Shipping reaches **35%** green fuels, aviation **18%**. Global air cargo demand has continued to grow, partially offsetting efficiency gains. Net reduction reaches **–0.5 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, competition between green ammonia for shipping and green hydrogen for industry has created supply tensions. Aviation has multiplied traffic 2.5× since 2024, erasing efficiency and SAF gains. Net climate benefit remains at **–0.03°C** despite mandates.',
+      },
+    },
+  },
+
+  // ─── dec-25 — Industrial heat electrification ─────────────────────────────
+  'dec-25': {
+    title: 'Electrification of industrial heat and high-temperature heat pumps',
+    description: `Industrial heat accounts for **~20% of global GHG emissions**. Most industrial processes requiring less than **200°C** (fine chemicals, food processing, laundries, drying) can be electrified via **high-temperature heat pumps** (2–5× more efficient than electric resistance heating). For high-temperature processes (steel, cement, glass), electric arc and plasma technologies are under development. This decision funds the electrification of **30% of industrial thermal processes** by 2040 through conversion subsidies and soft loans.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **8,000 high-temperature industrial heat pumps** are operational in the EU, Japan and South Korea. European food and beverage industry has cut thermal emissions by **38%**. Biomass dryers and paper mills run on renewable electricity. Average heat pump electricity cost is below gas in high-renewable regions.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, electrification covers **20%** of global industrial heat. Transition is rapid below 100°C but slow for high-temperature processes (glass, cement, metallurgy). Residual gas dependency persists for high-temperature process heat. Net reduction: **–1.0 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, high-temperature industrial processes (>500°C) still resist electrification due to lack of mature commercial solutions. Industrial growth in emerging countries offsets OECD gains. Net reduction remains positive but insufficient: **–0.04°C**.',
+      },
+    },
+  },
+
+  // ─── dec-26 — Carbon capture & utilisation ────────────────────────────────
+  'dec-26': {
+    title: 'Carbon capture and utilisation (CCU) in cement and chemicals',
+    description: `The **cement** (~8% of global emissions) and **chemicals** (~4%) industries generate so-called "process emissions" — linked to fundamental chemical reactions, not just combustion. Carbon Capture and Utilisation (CCU) transforms captured CO₂ into feedstocks (methanol, e-fuels, mineral aggregates). IPCC AR6 WGIII estimates the industrial CCU potential at **0.3 to 1.3 GtCO₂/year** by 2050. This decision funds demonstration of 50 industrial CCU projects and establishes a certified carbon credit market for utilised CO₂.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **25 cement plants** operate with integrated carbon capture in Europe, Japan and North America. Captured CO₂ is valorised as mineralised concrete and synthetic methanol. Low-carbon cement production cost is only **15% higher** than conventional. An ISO "certified zero-carbon cement" standard is adopted.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, cement/chemicals CCU captures **200 MtCO₂/year** — significant but below potential. Low-carbon electricity supply constraints limit deployment in countries with a still-carbonised grid. Net reduction reaches **–0.3 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, CCU has struggled to scale beyond demonstration level in emerging economies, which produce 70% of global cement. The CCU credit market has suffered from certification and double-counting problems. Net climate benefit remains at **–0.02°C**.',
+      },
+    },
+  },
+
+  // ─── dec-27 — Energy sufficiency & lifestyle change ───────────────────────
+  'dec-27': {
+    title: 'Energy sufficiency and lifestyle changes',
+    description: `IPCC AR6 WGIII dedicates a full chapter for the first time to **lifestyle and behavioural changes** as a mitigation option. Low-carbon diets, reduced air travel, smaller living spaces, product sharing and food waste reduction have a combined potential of **1.5 to 2.5 GtCO₂/year** by 2030. This decision proposes policies incentivising sufficiency: carbon taxation of high-emission behaviours, active mobility subsidies, carbon nutrition labels, public education campaigns and social norm reform.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, diets have shifted: red meat consumption has fallen **28%** in OECD countries. Short-haul air passenger numbers drop **22%** thanks to taxation and rail expansion. Carbon footprint labelling is mandatory on all products in Europe. Emissions from wealthy household consumption fall **18%**.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, sufficiency advances but runs into structural inequalities: lower-income households have little sufficiency margin, while wealthier ones compensate efforts with other consumption. Net reduction reaches **–1.0 GtCO₂/year** — less than theoretical potential, but with significant health co-benefits.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, sufficiency campaigns have hit systematic rebound effects: savings reinvested in new consumption. Growing global middle class has amplified overall consumption. Net climate benefit remains positive (**–0.04°C**) but health and quality-of-life co-benefits in pioneer areas are substantial.',
+      },
+    },
+  },
+
+  // ─── dec-28 — International climate finance ──────────────────────────────
+  'dec-28': {
+    title: 'International climate finance: $100 billion/year to developing countries',
+    description: `The pledge of **$100 billion per year** in climate finance made by developed countries in 2009 (Copenhagen Accord) was never fully met. The New Collective Quantified Goal (NCQG) now sets the target at **$300 billion/year** by 2035. IPCC AR6 emphasises that without adequate financing, developing countries — responsible for less than 1 tonne of CO₂ per capita — cannot accelerate their transition. This decision enshrines and operationalises a binding mechanism for low-carbon capital transfer.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **$280 billion** in climate finance flows annually to developing countries via transparent and binding mechanisms. Sub-Saharan Africa installs **150 GW** of decentralised solar, leapfrogging centralised fossil fuel grids. Thirty low-income countries have achieved **50%** renewables in their electricity mix.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, climate finance has enabled accelerated transitions in **40 middle-income countries**. Least-developed countries remain underfinanced due to limited institutional absorption capacity. Net reduction reaches **–0.7 GtCO₂/year**. Development co-benefits (energy access, employment) are considerable.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, part of the finance was diverted or poorly allocated. Excessive donor conditionality slowed disbursements. Developing countries, whose emissions represent the majority of global emissions growth, followed partly fossil trajectories. Net reduction: **–0.03°C** despite committed amounts.',
+      },
+    },
+  },
+
+  // ─── dec-29 — Coastal ecosystems ─────────────────────────────────────────
+  'dec-29': {
+    title: 'Protection and restoration of coastal ecosystems (mangroves, seagrasses, wetlands)',
+    description: `Coastal ecosystems — **mangroves, seagrasses, salt marshes** — sequester carbon at rates up to **5× higher** than terrestrial forests and store it in sediments for millennia. This is known as **blue carbon**. These ecosystems also serve as storm barriers, fish nurseries and biodiversity refuges. Yet 50% of the world's mangroves have disappeared since 1950. This decision funds the protection of **100% of remaining mangroves** and restoration of **5 million hectares** by 2040.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **100% of existing mangroves** are under international legal protection. 2 million hectares are restored in South-East Asia, West Africa and Central America. Seagrass cover in marine protected areas has increased by **35%**. Adjacent coral reefs benefit from reduced eutrophication. Coastal communities report enhanced resilience to storms.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, restoration covers **3.5 million hectares** but intensive aquaculture and coastal development continue to threaten mangroves in several countries. Sea-level rise compromises restoration in the most exposed areas. Net sequestration reaches **–0.35 GtCO₂/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, 60–100 cm sea-level rise has submerged part of the restored areas. Coastal population pressure in tropical countries has resumed encroachment on mangroves despite legal protections. Blue carbon delivers only a fraction of its initial potential: **–0.02°C**.',
+      },
+    },
+  },
+
+  // ─── dec-30 — Agricultural N₂O & enteric methane ─────────────────────────
+  'dec-30': {
+    title: 'Reducing agricultural N₂O and livestock enteric methane',
+    description: `Agriculture is responsible for **~10% of global GHG emissions**, a large share from **enteric methane** (produced by ruminant digestion) and **nitrous oxide (N₂O)** from nitrogen fertilisers. These gases have a warming potential 28 to 265× higher than CO₂. IPCC AR6 estimates the reduction potential at **1.0 to 1.5 GtCO₂e/year** by 2050 through **feed additives** (Bovaer, red algae), new fertiliser formulations and precision agriculture practices.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **60% of cattle livestock** in OECD countries receive methane-reducing feed additives. Nitrification-inhibitor fertilisers are mandatory for large farms in Europe and North America. Agricultural GHG emissions fall **18%** from 2024. Atmospheric methane begins to stabilise.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, additives are widespread in developed countries but remain inaccessible to farmers in low-income countries. Global beef demand continues to grow in emerging economies. Net reduction reaches **–0.7 GtCO₂e/year** — significant, but partially offset by global herd growth.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, resistance from agricultural sectors and fertiliser industry lobbying has slowed adoption in emerging economies. Global herd growth (+40%) has cancelled much of the efficiency gains. Net reduction remains positive (**–0.03°C**) but agriculture remains a net emissions sector.',
+      },
+    },
+  },
+
+  // ─── dec-31 — Landfill & wastewater methane ───────────────────────────────
+  'dec-31': {
+    title: 'Methane capture from landfills and wastewater treatment',
+    description: `Solid waste and wastewater are responsible for **~3.2% of global GHG emissions**, mainly as methane from anaerobic decomposition in landfills and lagoons. These emissions are among the **cheapest to reduce**: captured biogas can turn landfills into renewable energy sources. IPCC AR6 estimates the potential at **0.3 to 0.8 GtCO₂e/year** by 2050. This decision mandates flaring or valorisation of methane from the world's 500 largest landfills and aerobic treatment of industrial wastewater in signatory countries.`,
+    narratives: {
+      optimistic: {
+        label:   'Optimistic Scenario',
+        horizon: '+10 yrs',
+        text: 'By 2034, **350 of the 500 largest landfills** have biogas capture and valorisation systems, generating **25 TWh/year** of renewable electricity. Waste-origin atmospheric methane falls **12%**. New landfills (where still permitted) integrate capture by design. Industrial wastewater treated aerobically in 30 countries avoids **200 MtCO₂e/year**.',
+      },
+      moderate: {
+        label:   'Moderate Scenario',
+        horizon: '+20 yrs',
+        text: 'By 2044, biogas capture is widespread in high- and middle-income countries, but least-developed countries struggle to finance the infrastructure. Growing waste volumes in emerging cities have created new unequipped landfills. Net reduction reaches **–0.35 GtCO₂e/year**.',
+      },
+      pessimistic: {
+        label:   'Pessimistic Scenario',
+        horizon: '+50 yrs',
+        text: 'By 2074, rapid urbanisation in Africa and South Asia has multiplied informal dumpsites outside any capture system. Recycling has progressed but total waste volume has doubled. Net reduction remains positive (**–0.02°C**) thanks to improvements in developed countries, but the global potential has been underexploited.',
+      },
+    },
+  },
 }

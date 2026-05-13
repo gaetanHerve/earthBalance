@@ -49,6 +49,18 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/SystemicMapView.vue'),
     meta: { title: 'Carte systémique — EarthBalance' },
   },
+  {
+    path: '/bilan-2100',
+    name: 'bilan2100',
+    component: () => import('@/views/GameEndView.vue'),
+    meta: { title: 'Bilan 2100 — EarthBalance' },
+  },
+  {
+    path: '/regles',
+    name: 'rules',
+    component: () => import('@/views/RulesView.vue'),
+    meta: { title: 'Règles du jeu — EarthBalance' },
+  },
 ]
 
 const router = createRouter({

@@ -14,9 +14,9 @@
       <!-- Contenu optionnel à droite du titre (ex. deadline) -->
       <slot name="header-extra" />
 
-      <!-- Bouton collapse — visible uniquement sur mobile -->
+      <!-- Bouton collapse -->
       <button
-        class="md:hidden shrink-0 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-200 transition-colors rounded focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+        class="shrink-0 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-200 transition-colors rounded focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
         :aria-expanded="isOpen"
         :aria-controls="contentId"
         :aria-label="isOpen ? `Réduire ${title}` : `Développer ${title}`"
@@ -26,7 +26,7 @@
       </button>
     </div>
 
-    <div :id="contentId" v-show="isVisible">
+    <div :id="contentId" v-show="isOpen">
       <slot />
     </div>
 
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref } from 'vue'
 
 const props = withDefaults(defineProps<{
   title:        string
@@ -46,21 +46,7 @@ const props = withDefaults(defineProps<{
   defaultOpen: true,
 })
 
-const isOpen   = ref(props.defaultOpen)
-const isMobile = ref(false)
-
-function checkMobile(): void {
-  isMobile.value = window.innerWidth < 768
-}
-
-onMounted(() => {
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
-onBeforeUnmount(() => window.removeEventListener('resize', checkMobile))
-
-// Sur desktop, toujours visible ; sur mobile, contrôlé par isOpen
-const isVisible = computed(() => !isMobile.value || isOpen.value)
+const isOpen = ref(props.defaultOpen)
 
 const safeId    = props.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 const headingId = `cs-${safeId}`

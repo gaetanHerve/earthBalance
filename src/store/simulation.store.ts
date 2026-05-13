@@ -121,6 +121,15 @@ function shiftedDeltas(
   })
 }
 
+// Réduction de température en 2100 pour une politique adoptée à adoptionYear (index 9 = année 2100)
+export function policyTempReductionAt2100(policy: MitigationPolicy, adoptionYear: number): number {
+  if (!hasProjections(policy)) return 0
+  const proj = policy.projections as MitigationPolicyProjections
+  const effectiveStart = adoptionYear + (policy.implementationLag ?? 0)
+  const deltas = shiftedDeltas(proj.labels, proj.temperature.decided, proj.temperature.baseline, effectiveStart)
+  return -deltas[9]
+}
+
 function co2Deltas(dec: MitigationPolicy, effectiveStart: number): number[] {
   if (!hasProjections(dec)) return SIM_LABELS.map(() => 0)
   const proj = dec.projections as MitigationPolicyProjections
@@ -254,6 +263,29 @@ export const useSimulationStore = defineStore('simulation', () => {
     localStorage.getItem(BASELINE_KEY) !== 'false'
   )
 
+  // ─── Graphiques de projection visibles dans le simulateur ─────────────────
+  const ALL_PROJ_IDS = ['co2', 'temperature', 'forest', 'energy'] as const
+  const PROJ_VIS_KEY = STORAGE_KEYS.SIM_PROJ_VISIBLE
+
+  const simProjVisible = ref<string[]>((() => {
+    try {
+      const raw = localStorage.getItem(PROJ_VIS_KEY)
+      if (raw === null) return [...ALL_PROJ_IDS]
+      const parsed = JSON.parse(raw) as unknown
+      if (!Array.isArray(parsed)) return [...ALL_PROJ_IDS]
+      return (parsed as string[]).filter(id => (ALL_PROJ_IDS as readonly string[]).includes(id))
+    } catch {
+      return [...ALL_PROJ_IDS]
+    }
+  })())
+
+  function toggleSimProjChart(id: string): void {
+    const set = new Set(simProjVisible.value)
+    set.has(id) ? set.delete(id) : set.add(id)
+    simProjVisible.value = [...set]
+    localStorage.setItem(PROJ_VIS_KEY, JSON.stringify(simProjVisible.value))
+  }
+
   watch(includeGameBaseline, (newVal) => {
     localStorage.setItem(BASELINE_KEY, String(newVal))
     // En mode jeu, épure selectedIds des éventuels IDs verrouillés
@@ -306,6 +338,11 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   const simulatorAdoptionYears = computed<number[]>(() =>
     selectedMitigationPolicies.value.map((_, index) => simulatorAdoptionYearAt(index))
+  )
+
+  // Année d'adoption par ID — couvre les politiques verrouillées et sélectionnées
+  const policyAdoptionYearMap = computed<Map<string, number>>(() =>
+    new Map(selectedMitigationPolicies.value.map((p, i) => [p.id, simulatorAdoptionYearAt(i)]))
   )
 
   const simulatorEffectYears = computed<number[]>(() =>
@@ -736,6 +773,7 @@ export const useSimulationStore = defineStore('simulation', () => {
     catalogue,
     selectedMitigationPolicies,
     simulatorAdoptionYears,
+    policyAdoptionYearMap,
     simulatorEffectYears,
     cumulativeCo2,
     cumulativeCo2Pessimist,
@@ -775,6 +813,8 @@ export const useSimulationStore = defineStore('simulation', () => {
     simCumulativeCo2Pessimist,
     simCumulativeTemp,
     simCumulativeTempPessimist,
+    simProjVisible,
+    toggleSimProjChart,
     tempIn2100Decided,
     tempIn2100Pessimist,
     totalAnnualReduction,

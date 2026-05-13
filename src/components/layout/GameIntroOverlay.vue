@@ -62,26 +62,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-
-const STORAGE_KEY = 'eb_intro_seen'
+import { useGameStore } from '@/store/game.store'
 
 const { t } = useI18n()
-const dialogEl = ref<HTMLDialogElement | null>(null)
+const gameStore = useGameStore()
+const dialogEl  = ref<HTMLDialogElement | null>(null)
 
 onMounted(() => {
-  if (!localStorage.getItem(STORAGE_KEY)) {
-    dialogEl.value?.showModal()
-  }
+  if (gameStore.introVisible) dialogEl.value?.showModal()
 })
+
+watch(
+  () => gameStore.introVisible,
+  (visible) => { if (visible) dialogEl.value?.showModal() },
+)
 
 function dismiss(): void {
   dialogEl.value?.close()
 }
 
 function onClose(): void {
-  localStorage.setItem(STORAGE_KEY, '1')
+  gameStore.introVisible = false
+  gameStore.rulesVisible = true
 }
 </script>
 

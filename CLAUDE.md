@@ -19,20 +19,31 @@ No test suite exists. `npm run typecheck` is the only automated correctness chec
 
 **Entry point**: `src/main.ts` → mounts App, registers Pinia, Router, i18n.
 
+### Config layer (`src/config/`)
+
+Three small config files that are imported by multiple stores and components:
+
+| File | Content |
+|---|---|
+| `game.config.ts` | `GAME_CONFIG { grain: 5 }` — years per turn |
+| `simulation.config.ts` | `SIM_LABELS` (10 output points) and `PROJ_LABELS` (9 input points) — **import from here, not from `simulation.store`** |
+| `storageKeys.ts` | `STORAGE_KEYS` enum — all `localStorage` key strings in one place |
+
 ### Store layer (`src/store/`)
 
-Four Pinia stores with clear responsibilities:
+Five Pinia stores with clear responsibilities:
 
 | Store | Role |
 |---|---|
 | `game.store.ts` | Game year, `endRound()`, `resetGame()` — orchestrates the other stores |
 | `mitigationPolicies.store.ts` | Ballot lifecycle, Condorcet/Borda voting, validated policy list. Persists to `localStorage` (`eb_policies_state`) |
 | `simulation.store.ts` | Projection engine — computes cumulative CO₂/temperature/societal curves from validated + user-selected policies. Persists to `localStorage` (`eb_simulation_selected`, `eb_simulation_baseline_mode`) |
+| `tippingPoints.store.ts` | Watches `simulation.store` projections; triggers and persists tipping point crossings. Persists to `localStorage` (`eb_tipping_state`) |
 | `dashboard.store.ts` / `planets.store.ts` | Read-only wrappers over static data files |
 
 ### Projection engine (`simulation.store.ts`)
 
-**Critical constants** (shared across stores and components):
+**Critical constants** — defined in `src/config/simulation.config.ts`, imported everywhere:
 - `SIM_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]` — 10 points, all computed outputs
 - `PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]` — 9 points, policy delta inputs (no 2100)
 
@@ -53,7 +64,8 @@ Four Pinia stores with clear responsibilities:
 
 Static source-of-truth files (no API, all fictional/educational):
 - `mitigationPolicies.ts` — 8 policies (`dec-01` to `dec-17`, non-contiguous IDs). Each policy has `projections` with `{ co2, temperature, forest?, energyMix?, resources?, societal? }` — each sub-key is `{ baseline: number[], decided: number[], pessimist: number[] }` on `PROJ_LABELS` (9 points), except `societal` which stores pre-computed deltas as `{ decided: number[], pessimist: number[] }`.
-- `systemicGraph.ts` — 18 nodes + 50 edges for the Cytoscape causal graph. **Edge type semantics**: `positive` = "aggravant" (worsens from humanity's perspective), `negative` = "bénéfique" (improves). This is **not** standard graph sign convention.
+- `systemicGraph.ts` — 19 nodes + 61 edges + 5 feedback loops for the Cytoscape causal graph. **Edge type semantics**: `positive` = "aggravant" (worsens from humanity's perspective), `negative` = "bénéfique" (improves). This is **not** standard graph sign convention.
+- `tippingPoints.ts` — 5 tipping point definitions with trigger variable (`temp` | `forest`) and threshold value. Evaluated reactively by `tippingPoints.store`.
 - `planetaryLimits.ts`, `societalIndicators.ts`, `ballots.ts`, `ipccQuotes.ts`
 
 ### Voting system (`src/utils/condorcet.ts`)
@@ -114,7 +126,7 @@ L'application doit être conforme au RGAA 4.1.2. Le référentiel complet est di
 
 - **Graphe Cytoscape** : le canvas n'est pas navigable au clavier. Le `role="img"` avec `aria-label` est le minimum requis. Si on ajoute une interaction clavier, utiliser `cytoscape.on('keydown')` et gérer `tabindex` sur l'élément conteneur.
 - **Changement de langue** : quand la locale bascule en anglais, l'attribut `lang` de `<html>` reste `fr`. Mettre à jour `document.documentElement.lang` dans le composable de changement de langue (critère 8.3).
-- **Titres de page** : le meta `title` des routes est défini dans `router/index.ts` mais `document.title` n'est pas mis à jour automatiquement. Ajouter un `router.afterEach` dans `main.ts` si ce n'est pas fait.
+- **Titres de page** : `document.title` est mis à jour via un `router.afterEach` dans `router/index.ts` (résolu).
 - **Contrastes** : les textes sur fond `#111827` doivent avoir un ratio ≥ 4.5:1 (critère 3.2). `#00ff88` sur `#111827` passe (8.5:1), `#00e5ff` passe (8.1:1), mais les textes gris pâle (`text-slate-400` = `#94a3b8`) donnent ~3.7:1 — **en dessous du seuil** pour du texte de taille normale.
 - **Panneaux dynamiques** : quand un panneau s'ouvre (ex. panneau nœud dans `SystemicMapView.vue`), déplacer le focus vers le bouton de fermeture ou le titre du panneau (critère 7.3).
 - **Éléments interactifs** : tout `<button>` doit avoir un intitulé accessible — vérifier que les icônes seules ont un `aria-label` ou un `<span class="sr-only">`.
@@ -156,3 +168,57 @@ L'application doit être conforme au RGAA 4.1.2. Le référentiel complet est di
 - **Ajouter un indicateur sociétal** : étendre `SocietalKey` dans `src/types/index.ts`, ajouter la baseline dans `simulation.store.ts`, ajouter les deltas dans chaque politique de `mitigationPolicies.ts` (9 valeurs, alignées sur `PROJ_LABELS`).
 - **Ajouter une politique** : créer l'entrée dans `mitigationPolicies.ts` (id `dec-XX` unique), puis les traductions anglaises dans `src/i18n/policies/en.ts`.
 - **Modifier le graphe systémique** : rappel — `positive` = aggravant (empire du point de vue humain), `negative` = bénéfique (améliore). Ne pas inverser cette convention.
+- **Ajouter un point de bascule** : créer une entrée dans `tippingPoints.ts` avec `trigger.variable` (`'temp'` ou `'forest'`) et `trigger.threshold`, puis ajouter les clés i18n correspondantes dans `fr.ts` / `en.ts` sous le namespace `tipping.<id>.*`.
+
+## Gamification — Feuille de route
+
+### Philosophie de design
+
+- **Pas de victoire/défaite binaire** : la partie se conclut par un *portrait multidimensionnel du monde en 2100*, présenté comme un bilan narratif par piliers (Climat, Écosystèmes, Énergie, Sociétal).
+- Les **indicateurs sociétaux** (`foodSecurity`, `waterAccess`, `lifeExpectancy`, etc.) ont le même statut que les indicateurs écologiques : ils participent au bilan final, pourront déclencher des événements narratifs, et constitueront des prérequis dans l'arbre des politiques.
+- Les **points de bascule** et des **événements climatiques aléatoires** (dont la probabilité dépend des indicateurs) déclencheront des moments narratifs à implémenter dans un second temps.
+
+### Roadmap POC (frontend, sans backend)
+
+| # | Feature | Fichiers clés | Statut |
+|---|---|---|---|
+| 1 | **Bilan 2100** — portrait multidimensionnel de fin de partie | `GameEndView.vue`, `gameScore.ts`, route `/bilan-2100` | En cours |
+| 2 | **Arbre de politiques** — prérequis par indicateur/politique, suppression du tirage aléatoire, visualisation | `mitigationPolicies.ts` (champ `prerequisites`), `PolicyTreeView.vue` | À faire |
+| 3 | **Phases de tour** — machine à états `discussion → vote → résultats` dans `game.store` | `game.store.ts`, `game.config.ts` | À faire |
+| 4 | **Résultats de scrutin** — écran Condorcet détaillé post-tour | `PolitiquesView.vue` ou composant dédié | À faire |
+
+### Arbre de politiques — structure des prérequis (décision de design)
+
+Chaque politique aura un champ `prerequisites` optionnel :
+```typescript
+prerequisites?: {
+  policiesRequired?: string[]        // IDs de politiques déjà validées
+  policiesExcluded?: string[]        // IDs de politiques incompatibles
+  indicators?: {
+    key: SocietalKey | 'temp' | 'forest' | 'renewables'
+    min?: number
+    max?: number
+  }[]
+}
+```
+
+### Bilan 2100 — piliers et indicateurs
+
+Trois piliers (pondération indicative) :
+- **Climat & Écosystèmes** (40 %) : température atteinte, points de bascule déclenchés, couverture forestière, limites planétaires franchies
+- **Sociétal** (40 %) : sécurité alimentaire, accès à l'eau, santé (WHO index, espérance de vie), inégalités (Gini), migrations climatiques
+- **Énergie & Ressources** (20 %) : part des renouvelables, ressources fossiles restantes
+
+Catégorisation par indicateur : `'critical'` / `'warning'` / `'good'` (couleurs eb-red / orange / eb-green).
+
+### Rôles joueurs (design validé)
+
+- **Facilitateurs thématiques** : joueurs chargés d'étudier des politiques spécifiques en profondeur (s'appuient sur `policyDetails.ts` + références GIEC). Rôle implémentable en présentiel sans code supplémentaire.
+- Rôles différenciés (scientifiques/politiques/citoyens) envisagés mais différés — trop complexes pour le POC.
+
+### Phases de tour (design validé)
+
+```
+discussion (pas de vote possible) → vote → résultats → nouveau tour
+```
+Compatible présentiel (discussion en salle) et distanciel (canal externe, hors app).
