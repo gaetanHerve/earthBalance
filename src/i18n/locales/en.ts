@@ -379,6 +379,7 @@ export default {
     loop_severity_moderate: 'Moderate',
   },
   game_intro: {
+    p0: "Welcome to EarthBalance — an interactive simulation of global climate governance. You are about to participate in a unique experience of collective decision-making, where every choice matters for our future and that of the planet.",
     p1:  '2023. The sixth IPCC assessment report has just been published.',
     p2:  'Its conclusions are unequivocal: without coordinated and immediate action at a planetary scale, current climate trajectories will lead the world toward irreversible transformations before the end of the century.',
     p3:  'This time, popular pressure is such that governments can no longer delay. A historic agreement is signed: an international climate cooperation body is established, endowed with an unprecedented mandate.',

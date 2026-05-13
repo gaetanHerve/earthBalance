@@ -379,6 +379,7 @@ export default {
     loop_severity_moderate: 'Modéré',
   },
   game_intro: {
+    p0: "Bienvenue dans EarthBalance — une simulation interactive de gouvernance climatique mondiale. Vous êtes sur le point de participer à une expérience unique de prise de décision collective, où chaque choix compte pour notre avenir et celui de la planète.",
     p1:  "2023. Le sixième rapport du GIEC vient d'être publié.",
     p2:  "Ses conclusions sont sans appel : sans actions coordonnées et immédiates à l'échelle planétaire, les trajectoires climatiques actuelles mèneront le monde vers des transformations irréversibles avant la fin du siècle.",
     p3:  "Cette fois, la pression populaire est telle que les gouvernements ne peuvent plus différer. Un accord historique est signé : une instance de coopération climatique internationale est créée, dotée d'un mandat inédit.",

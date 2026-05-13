@@ -15,22 +15,27 @@
         </div>
       </div>
 
+      <!-- Paragraphe 0 — introduction -->
+      <p class="intro-item intro-p0" :style="{ animationDelay: '0.18s' }">
+        {{ t('game_intro.p0') }}
+      </p>
+
       <!-- Paragraphe 1 — grand / accrocheur -->
-      <p class="intro-item intro-p1" :style="{ animationDelay: '0.18s' }">
+      <p class="intro-item intro-p1" :style="{ animationDelay: '0.36s' }">
         {{ t('game_intro.p1') }}
       </p>
 
       <!-- Paragraphes 2–5 -->
-      <p class="intro-item intro-p2" :style="{ animationDelay: '0.36s' }">
+      <p class="intro-item intro-p2" :style="{ animationDelay: '0.54s' }">
         {{ t('game_intro.p2') }}
       </p>
-      <p class="intro-item intro-p2" :style="{ animationDelay: '0.54s' }">
+      <p class="intro-item intro-p2" :style="{ animationDelay: '0.72s' }">
         {{ t('game_intro.p3') }}
       </p>
-      <p class="intro-item intro-p2" :style="{ animationDelay: '0.72s' }">
+      <p class="intro-item intro-p2" :style="{ animationDelay: '0.90s' }">
         {{ t('game_intro.p4') }}
       </p>
-      <p class="intro-item intro-p2" :style="{ animationDelay: '0.90s' }">
+      <p class="intro-item intro-p2" :style="{ animationDelay: '1.08s' }">
         {{ t('game_intro.p5') }}
       </p>
 
@@ -133,6 +138,14 @@ function onClose(): void {
   opacity: 0;
   animation: introFadeIn 0.55s ease-out forwards;
   animation-fill-mode: both;
+}
+
+.intro-p0 {
+  font-size: 0.9375rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  font-style: italic;
 }
 
 .intro-p1 {
