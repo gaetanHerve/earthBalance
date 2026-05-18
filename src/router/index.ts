@@ -3,6 +3,12 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-rou
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    name: 'overview',
+    component: () => import('@/views/OverviewView.vue'),
+    meta: { title: 'Vue d\'ensemble — EarthBalance' },
+  },
+  {
+    path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/DashboardView.vue'),
     meta: { title: 'Dashboard — EarthBalance' },

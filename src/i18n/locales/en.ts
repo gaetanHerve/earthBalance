@@ -1,6 +1,7 @@
 export default {
   skip_to_content: 'Skip to main content',
   nav: {
+    overview:     'Overview',
     dashboard:    'Dashboard',
     limits:       'Planetary Limits',
     policies:     'Policies',
@@ -46,6 +47,7 @@ export default {
     pages:       'Pages',
     no_results:  'No results for',
     items: {
+      overview:     { label: 'Overview',            description: 'Interactive navigation graph — all data at a glance' },
       dashboard:    { label: 'Dashboard',        description: 'Ecological and societal indicators' },
       limits:       { label: 'Planetary Limits', description: 'The 9 planetary boundaries by Rockström' },
       policies:     { label: 'Policies',         description: 'Vote on community proposals' },
@@ -547,5 +549,26 @@ export default {
     overlay_aria: 'Game Rules — EarthBalance',
     overlay_cta:  'Let\'s go!',
     overlay_full_rules: 'Full rules available in the',
+  },
+  overview: {
+    aria_main:   'EarthBalance Overview',
+    aria_graph:  'Interactive navigation graph showing EarthBalance categories and indicators — Climate, Ecosystems, Energy, Societal, Policies',
+    legend:      'Categories',
+    legend_tipping: 'Tipping points',
+    zoom_hint:   'Zoom in to reveal tipping points',
+    panel_aria:  'Selected node details',
+    panel_close: 'Close panel',
+    value_at_year: 'Projected value in {year}',
+    go_to_page:  'View full page',
+    tp_triggered: 'Tipping point triggered',
+    tp_safe:     'Threshold not reached',
+    tp_triggered_year: 'Triggered in {year}',
+    validated_policies: 'Adopted policies',
+    no_validated_policies: 'No policies adopted yet',
+    cat_climat:     'Climate',
+    cat_ecosystemes:'Ecosystems',
+    cat_energie:    'Energy & Resources',
+    cat_societal:   'Societal',
+    cat_politiques: 'Policies',
   },
 }

@@ -1,6 +1,7 @@
 export default {
   skip_to_content: 'Aller au contenu principal',
   nav: {
+    overview:     'Vue d\'ensemble',
     dashboard:    'Dashboard',
     limits:       'Limites Planétaires',
     policies:     'Politiques',
@@ -46,6 +47,7 @@ export default {
     pages:      'Pages',
     no_results: 'Aucun résultat pour',
     items: {
+      overview:     { label: 'Vue d\'ensemble',       description: 'Graphe de navigation interactif — toutes les données' },
       dashboard:    { label: 'Dashboard',            description: 'Indicateurs écologiques et sociétaux' },
       limits:       { label: 'Limites Planétaires',  description: 'Les 9 limites planétaires de Rockström' },
       policies:     { label: 'Politiques',            description: 'Votez sur les propositions communautaires' },
@@ -547,5 +549,26 @@ export default {
     overlay_aria: 'Règles du jeu — EarthBalance',
     overlay_cta:  'C\'est parti !',
     overlay_full_rules: 'Règles complètes disponibles dans la section',
+  },
+  overview: {
+    aria_main:   'Vue d\'ensemble EarthBalance',
+    aria_graph:  'Graphe de navigation interactif représentant les catégories et indicateurs d\'EarthBalance — Climat, Écosystèmes, Énergie, Sociétal, Politiques',
+    legend:      'Catégories',
+    legend_tipping: 'Points de bascule',
+    zoom_hint:   'Zoomer pour révéler les points de bascule',
+    panel_aria:  'Détail du nœud sélectionné',
+    panel_close: 'Fermer le panneau',
+    value_at_year: 'Valeur projetée en {year}',
+    go_to_page:  'Voir la page complète',
+    tp_triggered: 'Point de bascule déclenché',
+    tp_safe:     'Seuil non atteint',
+    tp_triggered_year: 'Déclenché en {year}',
+    validated_policies: 'Politiques adoptées',
+    no_validated_policies: 'Aucune politique adoptée pour l\'instant',
+    cat_climat:     'Climat',
+    cat_ecosystemes:'Écosystèmes',
+    cat_energie:    'Énergie & Ressources',
+    cat_societal:   'Sociétal',
+    cat_politiques: 'Politiques',
   },
 }
