@@ -22,7 +22,7 @@
     <!-- Légende catégories (bas gauche) -->
     <div
       v-if="!loading"
-      class="absolute bottom-4 left-4 flex flex-col gap-1.5 bg-eb-dark/80 border border-eb-border rounded-xl p-3"
+      class="absolute top-4 left-4 flex flex-col gap-1.5 bg-eb-dark/80 border border-eb-border rounded-xl p-3"
       style="backdrop-filter: blur(6px);"
       aria-hidden="true"
     >
@@ -36,19 +36,6 @@
         <span class="text-red-400">{{ t('overview.legend_tipping') }}</span>
       </div>
     </div>
-
-    <!-- Hint zoom bascules (haut droite) -->
-    <transition name="fade">
-      <div
-        v-if="!loading && !tippingVisible"
-        class="absolute top-4 right-4 text-[11px] text-slate-500 bg-eb-dark/70 border border-eb-border rounded-full px-3 py-1.5 pointer-events-none"
-        style="backdrop-filter: blur(4px);"
-        aria-hidden="true"
-      >
-        <i class="fa fa-magnifying-glass-plus mr-1" aria-hidden="true" />
-        {{ t('overview.zoom_hint') }}
-      </div>
-    </transition>
 
     <!-- Panneau latéral -->
     <transition name="panel">
@@ -82,7 +69,7 @@
                 {{ categoryLabel(selectedNode.category) }}
               </p>
               <h2 class="text-sm font-bold text-white leading-snug">
-                {{ locale === 'fr' ? selectedNode.label : selectedNode.labelEn }}
+                {{ t('hub.nodes.' + selectedNode.id + '.label') }}
               </h2>
             </div>
           </div>
@@ -96,7 +83,7 @@
             <p class="text-xl font-black tabular-nums" :style="{ color: selectedNode.color }">
               {{ liveValue(selectedNode.liveKey) }}
               <span class="text-xs font-normal text-slate-400 ml-1">
-                {{ locale === 'fr' ? selectedNode.liveUnit : selectedNode.liveUnitEn }}
+                {{ t('hub.nodes.' + selectedNode.id + '.unit') }}
               </span>
             </p>
           </div>
@@ -109,7 +96,7 @@
           >
             <HubNodeChart
               :chart-type="ct"
-              :aria-label="locale === 'fr' ? selectedNode.label : selectedNode.labelEn"
+              :aria-label="t('hub.nodes.' + selectedNode.id + '.label')"
             />
           </div>
 
@@ -247,7 +234,6 @@ function categoryLabel(cat: HubCategory | null): string {
 const CY_STYLE: cytoscape.StylesheetStyle[] = [
   {
     selector: 'node[type="hub"]',
-    // shadow-* not in @types/cytoscape but supported at runtime
     style: {
       'width': 80, 'height': 80,
       'background-color': '#00ff88',
@@ -256,8 +242,6 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
       'background-clip': 'node',
       'border-width': 0,
       'label': '',
-      'shadow-blur': 28, 'shadow-color': '#00e5ff',
-      'shadow-offset-x': 0, 'shadow-offset-y': 0, 'shadow-opacity': 0.6,
     } as unknown as cytoscape.Css.Node,
   },
   {
@@ -272,9 +256,7 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
       'font-size': 10, 'font-weight': 700,
       'text-valign': 'bottom', 'text-margin-y': 8,
       'text-halign': 'center',
-      'shadow-blur': 16, 'shadow-color': 'data(color)',
-      'shadow-offset-x': 0, 'shadow-offset-y': 0, 'shadow-opacity': 0.45,
-    } as unknown as cytoscape.Css.Node,
+    },
   },
   {
     selector: 'node[type="indicator"]',
@@ -289,36 +271,38 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
       'text-valign': 'bottom', 'text-margin-y': 5,
       'text-halign': 'center',
       'text-wrap': 'wrap', 'text-max-width': '72px',
-      'shadow-blur': 10, 'shadow-color': 'data(color)',
-      'shadow-offset-x': 0, 'shadow-offset-y': 0, 'shadow-opacity': 0.28,
-    } as unknown as cytoscape.Css.Node,
+    },
   },
   {
     selector: 'node[type="tipping"]',
     style: {
-      'display': 'none',
       'shape': 'diamond',
-      'width': 22, 'height': 22,
+      'width': 18, 'height': 18,
+      'z-index': 10,
       'background-color': '#ff5050',
-      'background-opacity': 0.12,
-      'border-width': 1.5, 'border-color': '#ff5050',
+      'background-opacity': 0.06,
+      'border-width': 1, 'border-color': '#ff5050',
       'border-style': 'dashed',
       'label': 'data(label)',
       'color': '#ff5050',
-      'font-size': 8,
+      'font-size': 7,
       'text-valign': 'bottom', 'text-margin-y': 4,
       'text-halign': 'center',
       'text-wrap': 'wrap', 'text-max-width': '64px',
-      'shadow-blur': 6, 'shadow-color': '#ff5050',
-      'shadow-offset-x': 0, 'shadow-offset-y': 0, 'shadow-opacity': 0.2,
+      'text-background-color': '#070c16',
+      'text-background-opacity': 0.8,
+      'text-background-padding': '2px',
     } as unknown as cytoscape.Css.Node,
   },
   {
     selector: 'node[type="tipping"][triggered="1"]',
     style: {
-      'background-opacity': 0.35, 'border-style': 'solid', 'border-width': 2,
-      'shadow-blur': 20, 'shadow-opacity': 0.75,
-    } as unknown as cytoscape.Css.Node,
+      'background-opacity': 0.35,
+      'border-style': 'solid',
+      'border-width': 2,
+      'font-size': 8,
+      'color': '#ff5050',
+    },
   },
   {
     selector: 'edge[edgeType="hub-cat"]',
@@ -343,14 +327,14 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
   {
     selector: 'edge[edgeType="tipping-link"]',
     style: {
-      'display': 'none',
-      'width': 1.5,
-      'line-color': 'rgba(255,80,80,0.5)',
+      'width': 1,
+      'line-color': 'rgba(255,80,80,0.25)',
       'line-style': 'dashed',
+      'opacity': 0.18,
       'curve-style': 'bezier',
       'target-arrow-shape': 'triangle',
-      'target-arrow-color': 'rgba(255,80,80,0.5)',
-      'arrow-scale': 0.7,
+      'target-arrow-color': 'rgba(255,80,80,0.25)',
+      'arrow-scale': 0.6,
     },
   },
   {
@@ -375,7 +359,7 @@ function initCy(): void {
     ...HUB_NODES.map(n => ({
       data: {
         ...n,
-        label: locale.value === 'fr' ? n.label : n.labelEn,
+        label: t('hub.nodes.' + n.id + '.label'),
         triggered: tpStore.triggered[n.id] ? '1' : '0',
       },
     })),
@@ -408,36 +392,45 @@ function initCy(): void {
 
   loading.value = false
 
-  // Zoom → afficher/masquer niveau 3
+  // Disperser les tipping points autour de leur indicateur parent
+  // Les 4 nœuds connectés à "temp" seraient superposés sans dispersion angulaire
+  const hubPos = cy.nodes('[type="hub"]').first().position()
+  const tippingGroups = new Map<string, string[]>()
+  HUB_EDGES.filter(e => e.edgeType === 'tipping-link').forEach(e => {
+    if (!tippingGroups.has(e.source)) tippingGroups.set(e.source, [])
+    tippingGroups.get(e.source)!.push(e.target)
+  })
+  tippingGroups.forEach((ids, sourceId) => {
+    const sp = cy!.nodes(`[id="${sourceId}"]`).first().position()
+    const dx   = sp.x - hubPos.x
+    const dy   = sp.y - hubPos.y
+    const base = Math.atan2(dy, dx)
+    const n      = ids.length
+    const spread = n > 1 ? Math.PI / 3 : 0
+    ids.forEach((id, i) => {
+      const angle = n > 1 ? base + spread * (2 * i / (n - 1) - 1) : base
+      cy!.nodes(`[id="${id}"]`).first().position({ x: sp.x + Math.cos(angle) * 105, y: sp.y + Math.sin(angle) * 105 })
+    })
+  })
+  cy.fit(undefined, 50)
+
+  startPulseForTriggered()
+
+  // Zoom → rendre les arêtes tipping-link plus visibles au-delà du seuil
   cy.on('zoom', () => {
-    const z = cy!.zoom()
-    const show = z > 1.4
+    const show = cy!.zoom() > 1.4
     if (show !== tippingVisible.value) {
       tippingVisible.value = show
-      cy!.nodes('[type="tipping"]').style('display', show ? 'element' : 'none')
-      cy!.edges('[edgeType="tipping-link"]').style('display', show ? 'element' : 'none')
+      cy!.edges('[edgeType="tipping-link"]').style('opacity', show ? 0.55 : 0.18)
     }
   })
 
   // Clic nœud → panneau
   cy.on('tap', 'node', (evt) => {
     const node = evt.target as NodeSingular
-    const data = node.data() as HubNodeData & { policyId?: string }
+    const data = node.data() as HubNodeData
 
-    // Trouver le nœud dans HUB_NODES ou le reconstruire pour les politiques
-    if (data.type === ('policy' as string)) {
-      selectedNode.value = {
-        id:       data.id,
-        type:     'indicator',
-        category: 'politiques',
-        color:    '#fbbf24',
-        label:    data.label,
-        labelEn:  data.labelEn,
-        route:    data.route,
-      }
-    } else {
-      selectedNode.value = HUB_NODES.find(n => n.id === data.id) ?? null
-    }
+    selectedNode.value = HUB_NODES.find(n => n.id === data.id) ?? null
 
     // Highlight
     cy!.nodes().addClass('dimmed')
@@ -454,6 +447,45 @@ function initCy(): void {
   })
 }
 
+// ─── Animation pulse pour les tipping points déclenchés ───────────────────────
+
+function animateNodePulse(node: cytoscape.NodeSingular): void {
+  if (!cy || node.data('triggered') !== '1') return
+  node.animate(
+    { style: { 'border-width': 3, 'background-opacity': 0.55 } },
+    {
+      duration: 700,
+      easing: 'ease-in-out-sine',
+      complete: () => node.animate(
+        { style: { 'border-width': 1.5, 'background-opacity': 0.2 } },
+        {
+          duration: 700,
+          easing: 'ease-in-out-sine',
+          complete: () => animateNodePulse(node),
+        },
+      ),
+    },
+  )
+}
+
+function startPulseForTriggered(): void {
+  if (!cy) return
+  cy.nodes('[type="tipping"][triggered="1"]').forEach(node => {
+    if (!node.data('pulsing')) {
+      node.data('pulsing', '1')
+      animateNodePulse(node)
+    }
+  })
+}
+
+// ─── Sync labels au changement de locale ──────────────────────────────────────
+watch(locale, () => {
+  if (!cy) return
+  HUB_NODES.forEach(n => {
+    cy!.nodes(`[id="${n.id}"]`).first().data('label', t('hub.nodes.' + n.id + '.label'))
+  })
+})
+
 // ─── Sync triggered tipping nodes ─────────────────────────────────────────────
 watch(
   () => tpStore.triggered,
@@ -462,6 +494,7 @@ watch(
     for (const id of Object.keys(triggered)) {
       cy.nodes(`[id="${id}"]`).data('triggered', '1')
     }
+    startPulseForTriggered()
   },
   { deep: true },
 )
