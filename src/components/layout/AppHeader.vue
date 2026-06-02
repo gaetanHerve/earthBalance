@@ -517,7 +517,6 @@ function onToolsFocusOut(e: FocusEvent): void {
 const navLinks = computed<NavLink[]>(() => {
   const links: NavLink[] = [
     { to: '/',                    label: t('nav.overview'),  icon: 'fa-circle-nodes',    description: t('search.items.overview.description')  },
-    { to: '/dashboard',           label: t('nav.dashboard'), icon: 'fa-gauge-high',      description: t('search.items.dashboard.description') },
     { to: '/mitigation-policies', label: t('nav.policies'),  icon: 'fa-vote-yea',        description: t('search.items.policies.description')  },
     { to: '/regles',              label: t('nav.rules'),     icon: 'fa-circle-question', description: t('rules.nav_desc')                      },
   ]

@@ -1,11 +1,41 @@
 <template>
-  <main
-    id="main-content"
-    tabindex="-1"
-    class="relative overflow-hidden"
-    :style="{ height: 'calc(100svh - 64px)' }"
-    :aria-label="t('overview.aria_main')"
+  <div
+    class="flex flex-col"
+    :class="mode === 'graph' ? 'overflow-hidden' : ''"
+    :style="mode === 'graph' ? { height: 'calc(100svh - 64px)' } : {}"
   >
+
+    <!-- Sélecteur de vue -->
+    <fieldset class="flex justify-end items-center gap-1 px-3 py-1.5 shrink-0 border-b border-eb-border/40 bg-eb-dark">
+      <legend class="sr-only">{{ t('overview.view_toggle_aria') }}</legend>
+      <button
+        :aria-pressed="mode === 'graph'"
+        class="flex items-center gap-1.5 text-xs px-3 py-1 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+        :class="mode === 'graph' ? 'bg-eb-border text-white' : 'text-slate-500 hover:text-slate-300'"
+        @click="setMode('graph')"
+      >
+        <i class="fa fa-circle-nodes text-[10px]" aria-hidden="true" />
+        {{ t('overview.view_graph') }}
+      </button>
+      <button
+        :aria-pressed="mode === 'dashboard'"
+        class="flex items-center gap-1.5 text-xs px-3 py-1 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+        :class="mode === 'dashboard' ? 'bg-eb-border text-white' : 'text-slate-500 hover:text-slate-300'"
+        @click="setMode('dashboard')"
+      >
+        <i class="fa fa-gauge-high text-[10px]" aria-hidden="true" />
+        {{ t('overview.view_dashboard') }}
+      </button>
+    </fieldset>
+
+    <!-- Vue graphe -->
+    <main
+      v-if="mode === 'graph'"
+      id="main-content"
+      tabindex="-1"
+      class="relative flex-1 min-h-0 overflow-hidden"
+      :aria-label="t('overview.aria_main')"
+    >
 
     <!-- Cytoscape container -->
     <div ref="cyContainer" class="w-full h-full bg-[#070c16]" aria-hidden="true" />
@@ -134,7 +164,12 @@
       </aside>
     </transition>
 
-  </main>
+    </main>
+
+    <!-- Vue tableau de bord -->
+    <DashboardView v-else />
+
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -144,6 +179,8 @@ import cytoscape from 'cytoscape'
 import type { Core, NodeSingular } from 'cytoscape'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore } from '@/store/simulation.store'
+import { STORAGE_KEYS } from '@/config/storageKeys'
+import DashboardView from '@/views/DashboardView.vue'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
@@ -156,6 +193,28 @@ const { t, locale } = useI18n()
 const gameStore = useGameStore()
 const simStore  = useSimulationStore()
 const tpStore   = useTippingPointsStore()
+
+// ─── Mode graphe / tableau de bord ────────────────────────────────────────────
+
+type ViewMode = 'graph' | 'dashboard'
+const savedMode = localStorage.getItem(STORAGE_KEYS.OVERVIEW_MODE) as ViewMode | null
+const mode = ref<ViewMode>(savedMode === 'dashboard' ? 'dashboard' : 'graph')
+
+function setMode(m: ViewMode): void {
+  mode.value = m
+  localStorage.setItem(STORAGE_KEYS.OVERVIEW_MODE, m)
+}
+
+watch(mode, (newMode) => {
+  if (newMode === 'graph') {
+    loading.value = true
+    nextTick(initCy)
+  } else {
+    cy?.destroy()
+    cy = null
+    loading.value = true
+  }
+})
 
 // ─── Refs ──────────────────────────────────────────────────────────────────────
 const cyContainer  = ref<HTMLDivElement | null>(null)
@@ -500,7 +559,7 @@ watch(
 )
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
-onMounted(() => { nextTick(initCy) })
+onMounted(() => { if (mode.value === 'graph') nextTick(initCy) })
 onBeforeUnmount(() => { cy?.destroy(); cy = null })
 </script>
 
