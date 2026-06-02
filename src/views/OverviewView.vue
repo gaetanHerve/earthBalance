@@ -54,7 +54,7 @@
     <transition name="panel">
       <aside
         v-if="selectedNode"
-        class="absolute inset-x-0 bottom-0 max-h-[55%] sm:max-h-none sm:inset-x-auto sm:right-0 sm:top-0 sm:bottom-0 sm:w-72 overflow-y-auto"
+        class="absolute inset-x-0 bottom-0 max-h-[55%] sm:max-h-none sm:inset-x-auto sm:right-0 sm:top-0 sm:bottom-0 sm:w-1/4 overflow-y-auto"
         style="background: rgba(10,15,30,0.96); backdrop-filter: blur(8px); border-left: 1px solid #1f2d3d;"
         :aria-label="t('overview.panel_aria')"
       >
@@ -101,6 +101,18 @@
             </p>
           </div>
 
+          <!-- Graphes de projection -->
+          <div
+            v-for="ct in panelCharts"
+            :key="ct"
+            class="rounded-lg border border-eb-border bg-eb-mid p-3"
+          >
+            <HubNodeChart
+              :chart-type="ct"
+              :aria-label="locale === 'fr' ? selectedNode.label : selectedNode.labelEn"
+            />
+          </div>
+
           <!-- Statut point de bascule -->
           <div v-if="selectedNode.type === 'tipping'" class="rounded-lg border p-3"
             :class="isTippingTriggered(selectedNode.id)
@@ -114,21 +126,6 @@
             <p v-if="isTippingTriggered(selectedNode.id)" class="text-[11px] text-slate-500 mt-1">
               {{ t('overview.tp_triggered_year', { year: tpStore.triggered[selectedNode.id]?.year }) }}
             </p>
-          </div>
-
-          <!-- Politiques validées (catégorie Politiques) -->
-          <div v-if="selectedNode.id === 'cat-politiques'" class="space-y-1.5">
-            <p class="text-[10px] uppercase tracking-wider text-slate-500">{{ t('overview.validated_policies') }}</p>
-            <div v-if="validatedPolicies.length === 0" class="text-xs text-slate-600 italic">
-              {{ t('overview.no_validated_policies') }}
-            </div>
-            <div
-              v-for="p in validatedPolicies"
-              :key="p.id"
-              class="text-xs px-2 py-1 rounded border border-eb-green/30 bg-eb-green/5 text-eb-green truncate"
-            >
-              <i class="fa fa-check mr-1" aria-hidden="true" />{{ p.title }}
-            </div>
           </div>
 
           <!-- CTA naviguer -->
@@ -160,19 +157,18 @@ import cytoscape from 'cytoscape'
 import type { Core, NodeSingular } from 'cytoscape'
 import { useGameStore } from '@/store/game.store'
 import { useSimulationStore } from '@/store/simulation.store'
-import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
-import { HUB_NODES, HUB_EDGES, type HubNodeData, type HubCategory } from '@/data/hubGraph'
+import { HUB_NODES, HUB_EDGES, type HubNodeData, type HubCategory, type HubChartType } from '@/data/hubGraph'
 import earthGlobeUrl from '@/assets/earth-globe-2.png'
+import HubNodeChart from '@/components/charts/HubNodeChart.vue'
 
 const { t, locale } = useI18n()
 
-const gameStore      = useGameStore()
-const simStore       = useSimulationStore()
-const policiesStore  = useMitigationPoliciesStore()
-const tpStore        = useTippingPointsStore()
+const gameStore = useGameStore()
+const simStore  = useSimulationStore()
+const tpStore   = useTippingPointsStore()
 
 // ─── Refs ──────────────────────────────────────────────────────────────────────
 const cyContainer  = ref<HTMLDivElement | null>(null)
@@ -220,12 +216,18 @@ function isTippingTriggered(id: string): boolean {
   return !!tpStore.triggered[id]
 }
 
-// ─── Politiques validées ───────────────────────────────────────────────────────
-const validatedPolicies = computed(() =>
-  policiesStore.validatedPolicyIds
-    .map(id => policiesStore.getMitigationPolicy(id))
-    .filter((p): p is NonNullable<typeof p> => p !== undefined)
-)
+// ─── Graphes du panneau latéral ───────────────────────────────────────────────
+
+const PANEL_CHARTS: Partial<Record<string, HubChartType[]>> = {
+  'energy-mix': ['renewables', 'energyMixBreakdown'],
+}
+
+const panelCharts = computed<HubChartType[]>(() => {
+  if (!selectedNode.value) return []
+  const override = PANEL_CHARTS[selectedNode.value.id]
+  if (override) return override
+  return selectedNode.value.liveKey ? [selectedNode.value.liveKey] : []
+})
 
 // ─── Labels catégories ────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -233,44 +235,12 @@ const CATEGORIES = [
   { id: 'ecosystemes', color: '#00ff88', label: computed(() => t('overview.cat_ecosystemes')) },
   { id: 'energie',     color: '#fb923c', label: computed(() => t('overview.cat_energie'))    },
   { id: 'societal',    color: '#a78bfa', label: computed(() => t('overview.cat_societal'))   },
-  { id: 'politiques',  color: '#fbbf24', label: computed(() => t('overview.cat_politiques')) },
 ] as const
 
 function categoryLabel(cat: HubCategory | null): string {
   if (!cat) return ''
   const found = CATEGORIES.find(c => c.id === cat)
   return found ? found.label.value : cat
-}
-
-// ─── Nœuds politiques (dynamiques) ────────────────────────────────────────────
-function buildPolicyNodes(): cytoscape.ElementDefinition[] {
-  const ballotIds = policiesStore.activeBallot?.decisionIds ?? []
-  const validatedIds = new Set(policiesStore.validatedPolicyIds)
-  const shown = new Set<string>()
-
-  return [...policiesStore.validatedPolicyIds, ...ballotIds].flatMap((id) => {
-    if (shown.has(id)) return []
-    shown.add(id)
-    const policy = policiesStore.getMitigationPolicy(id)
-    if (!policy) return []
-    const truncated = policy.title.slice(0, 40) + (policy.title.length > 40 ? '…' : '')
-    return [
-      {
-        data: {
-          id:       `pol-${id}`,
-          type:     'policy',
-          category: 'politiques',
-          color:    '#fbbf24',
-          status:   validatedIds.has(id) ? 'validated' : 'candidate',
-          label:    truncated,
-          labelEn:  truncated,
-          route:    `/mitigation-policies/${id}`,
-          policyId: id,
-        },
-      },
-      { data: { id: `e-pol-${id}`, source: 'cat-politiques', target: `pol-${id}`, edgeType: 'hierarchy', color: '#fbbf24' } },
-    ]
-  })
 }
 
 // ─── Style Cytoscape ──────────────────────────────────────────────────────────
@@ -321,29 +291,6 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
       'text-wrap': 'wrap', 'text-max-width': '72px',
       'shadow-blur': 10, 'shadow-color': 'data(color)',
       'shadow-offset-x': 0, 'shadow-offset-y': 0, 'shadow-opacity': 0.28,
-    } as unknown as cytoscape.Css.Node,
-  },
-  {
-    selector: 'node[type="policy"]',
-    style: {
-      'width': 22, 'height': 22,
-      'background-color': '#fbbf24',
-      'background-opacity': 0.1,
-      'border-width': 1.5, 'border-color': '#fbbf24',
-      'label': 'data(label)',
-      'color': '#94a3b8',
-      'font-size': 8,
-      'text-valign': 'bottom', 'text-margin-y': 4,
-      'text-halign': 'center',
-      'text-wrap': 'wrap', 'text-max-width': '80px',
-    },
-  },
-  {
-    selector: 'node[type="policy"][status="validated"]',
-    style: {
-      'border-color': '#00ff88', 'border-width': 2, 'background-opacity': 0.15,
-      'shadow-blur': 10, 'shadow-color': '#00ff88',
-      'shadow-offset-x': 0, 'shadow-offset-y': 0, 'shadow-opacity': 0.35,
     } as unknown as cytoscape.Css.Node,
   },
   {
@@ -433,7 +380,6 @@ function initCy(): void {
       },
     })),
     ...HUB_EDGES.map(e => ({ data: { ...e } })),
-    ...buildPolicyNodes(),
   ]
 
   cy = cytoscape({

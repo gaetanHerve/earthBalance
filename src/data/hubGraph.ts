@@ -1,4 +1,5 @@
 export type HubNodeType = 'hub' | 'category' | 'indicator' | 'tipping'
+export type HubChartType = NonNullable<HubNodeData['liveKey']> | 'energyMixBreakdown'
 export type HubCategory = 'climat' | 'ecosystemes' | 'energie' | 'societal' | 'politiques'
 export type HubEdgeType = 'hub-cat' | 'hierarchy' | 'tipping-link'
 
@@ -48,9 +49,6 @@ export const HUB_NODES: HubNodeData[] = [
     label: 'Énergie',          labelEn: 'Energy',             route: '/dashboard' },
   { id: 'cat-societal',   type: 'category', category: 'societal',   color: '#a78bfa',
     label: 'Sociétal',         labelEn: 'Societal',           route: '/dashboard' },
-  { id: 'cat-politiques', type: 'category', category: 'politiques', color: '#fbbf24',
-    label: 'Politiques',       labelEn: 'Policies',           route: '/mitigation-policies' },
-
   // ── Indicateurs Climat ──
   { id: 'co2',      type: 'indicator', category: 'climat', color: '#00e5ff',
     label: 'CO₂ mondial',         labelEn: 'Global CO₂',
@@ -112,8 +110,6 @@ export const HUB_EDGES: HubEdgeData[] = [
   { id: 'e-hub-eco',         source: 'hub', target: 'cat-ecosystemes', edgeType: 'hub-cat', color: '#00ff88' },
   { id: 'e-hub-energie',     source: 'hub', target: 'cat-energie',     edgeType: 'hub-cat', color: '#fb923c' },
   { id: 'e-hub-societal',    source: 'hub', target: 'cat-societal',    edgeType: 'hub-cat', color: '#a78bfa' },
-  { id: 'e-hub-politiques',  source: 'hub', target: 'cat-politiques',  edgeType: 'hub-cat', color: '#fbbf24' },
-
   // Catégorie → Indicateurs Climat
   { id: 'e-cl-co2',       source: 'cat-climat', target: 'co2',       edgeType: 'hierarchy', color: '#00e5ff' },
   { id: 'e-cl-temp',      source: 'cat-climat', target: 'temp',      edgeType: 'hierarchy', color: '#00e5ff' },
