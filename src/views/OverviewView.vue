@@ -101,6 +101,18 @@
           {{ t('overview.reset_layout') }}
         </button>
       </div>
+      <!-- Toggle politiques validées -->
+      <div class="border-t border-eb-border/50 pt-2 mt-0.5">
+        <button
+          class="w-full flex items-center gap-2 text-xs px-1 py-0.5 rounded transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :class="showPolicies ? 'text-[#fbbf24]' : 'text-slate-400 hover:text-white'"
+          :aria-pressed="showPolicies"
+          @click="showPolicies = !showPolicies"
+        >
+          <i :class="showPolicies ? 'fa fa-toggle-on' : 'fa fa-toggle-off'" class="text-sm shrink-0" aria-hidden="true" />
+          {{ t('overview.toggle_policies') }}
+        </button>
+      </div>
     </div>
 
     <!-- Panneau latéral -->
@@ -135,7 +147,7 @@
                 {{ categoryLabel(selectedNode.category) }}
               </p>
               <h2 class="text-sm font-bold text-white leading-snug">
-                {{ t('hub.nodes.' + selectedNode.id + '.label') }}
+                {{ selectedNode.label ?? t('hub.nodes.' + selectedNode.id + '.label') }}
               </h2>
             </div>
           </div>
@@ -221,14 +233,19 @@ import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
 import { HUB_NODES, HUB_EDGES, type HubNodeData, type HubCategory, type HubChartType } from '@/data/hubGraph'
+import { mitigationPolicies as ALL_POLICIES } from '@/data/mitigationPolicies'
+import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import earthGlobeUrl from '@/assets/earth-globe-2.png'
 import HubNodeChart from '@/components/charts/HubNodeChart.vue'
 
 const { t, locale } = useI18n()
 
-const gameStore = useGameStore()
-const simStore  = useSimulationStore()
-const tpStore   = useTippingPointsStore()
+const gameStore      = useGameStore()
+const simStore       = useSimulationStore()
+const tpStore        = useTippingPointsStore()
+const policiesStore  = useMitigationPoliciesStore()
+
+const showPolicies = ref(false)
 
 // ─── Mode graphe / tableau de bord ────────────────────────────────────────────
 
@@ -265,6 +282,7 @@ const selectedNode = ref<HubNodeData | null>(null)
 function clearSelection(): void {
   selectedNode.value = null
   cy?.nodes().removeClass('dimmed highlighted')
+  cy?.edges().removeClass('dimmed highlighted')
 }
 
 function focusCloseBtn(): void {
@@ -272,6 +290,8 @@ function focusCloseBtn(): void {
 }
 
 function ctaLabel(route: string): string {
+  if (route.startsWith('/mitigation-policies/')) return t('overview.go_to_policy_detail')
+  if (route === '/mitigation-policies') return t('overview.go_to_policies')
   const map: Record<string, string> = {
     '/dashboard':           t('overview.go_to_dashboard'),
     '/limites-planetaires': t('overview.go_to_limits'),
@@ -333,6 +353,95 @@ function resetLayout(): void {
     if (cw < 640 && ch > cw * 1.3) cy.panBy({ x: 0, y: Math.round(ch * 0.12) })
   })
 }
+
+// ─── Politiques validées — nœuds et arêtes dynamiques ────────────────────────
+
+const PROJ_TO_HUB: Record<string, string> = {
+  co2:        'co2',
+  temperature: 'temp',
+  forest:     'forest',
+  energyMix:  'energy-mix',
+  resources:  'resources',
+}
+
+function buildPolicyElements(): cytoscape.ElementDefinition[] {
+  if (!cy) return []
+  const hubNode = cy.nodes('[id="hub"]').first()
+  if (!hubNode.length) return []
+  const hubPos = hubNode.position()
+
+  const catClimat = cy.nodes('[id="cat-climat"]').first()
+  const catR = catClimat.length
+    ? Math.hypot(catClimat.position().x - hubPos.x, catClimat.position().y - hubPos.y)
+    : 200
+  const tempNode = cy.nodes('[id="temp"]').first()
+  const catClimatPos = catClimat.length ? catClimat.position() : { x: hubPos.x, y: hubPos.y - catR }
+  const indR = tempNode.length
+    ? Math.hypot(tempNode.position().x - catClimatPos.x, tempNode.position().y - catClimatPos.y)
+    : 100
+
+  const polAngle  = Math.PI / 4  // bas-droite (45°)
+  const catPolPos = { x: hubPos.x + Math.cos(polAngle) * catR, y: hubPos.y + Math.sin(polAngle) * catR }
+
+  const validated = ALL_POLICIES.filter(p => policiesStore.validatedPolicyIds.includes(p.id))
+  const n      = validated.length
+  const spread = n > 1 ? Math.min(Math.PI * 0.7, (n - 1) * 0.5) : 0
+
+  const policyElements = validated.flatMap((policy, i) => {
+    const pAngle = n > 1 ? polAngle + spread * (2 * i / (n - 1) - 1) : polAngle
+    const pPos   = { x: catPolPos.x + Math.cos(pAngle) * indR, y: catPolPos.y + Math.sin(pAngle) * indR }
+    const proj   = policy.projections as Record<string, unknown>
+
+    const projEdges = Object.entries(PROJ_TO_HUB)
+      .filter(([projKey, hubId]) => proj[projKey] && cy?.nodes(`[id="${hubId}"]`).length)
+      .map(([, hubId]) => ({ data: { id: `e-pi-${policy.id}-${hubId}`, source: policy.id, target: hubId, edgeType: 'policy-indicator' } }))
+
+    const socEdges = proj['societal']
+      ? ['food', 'water']
+          .filter(hubId => cy?.nodes(`[id="${hubId}"]`).length)
+          .map(hubId => ({ data: { id: `e-pi-${policy.id}-${hubId}`, source: policy.id, target: hubId, edgeType: 'policy-indicator' } }))
+      : []
+
+    return [
+      { data: { id: policy.id, type: 'policy', color: '#fbbf24', label: policy.number, title: policy.title }, position: pPos },
+      { data: { id: `e-pc-${policy.id}`, source: 'cat-politiques', target: policy.id, edgeType: 'policy-cat' } },
+      ...projEdges,
+      ...socEdges,
+    ]
+  })
+
+  return [
+    { data: { id: 'cat-politiques', type: 'policy-cat', color: '#fbbf24', label: t('overview.cat_politiques') }, position: catPolPos },
+    { data: { id: 'e-hub-pol', source: 'hub', target: 'cat-politiques', edgeType: 'hub-cat', color: '#fbbf24' } },
+    ...policyElements,
+  ]
+}
+
+function removePolicyElements(): void {
+  cy?.remove('[type="policy-cat"], [type="policy"], [id="e-hub-pol"]')
+  cy?.remove('[edgeType="policy-cat"], [edgeType="policy-indicator"]')
+}
+
+watch(showPolicies, (show) => {
+  if (!cy) return
+  if (show) {
+    cy.add(buildPolicyElements())
+    cy.fit(undefined, 50)
+  } else {
+    removePolicyElements()
+    cy.fit(undefined, 50)
+  }
+})
+
+watch(
+  () => policiesStore.validatedPolicyIds,
+  () => {
+    if (!showPolicies.value || !cy) return
+    removePolicyElements()
+    cy.add(buildPolicyElements())
+  },
+  { deep: true },
+)
 
 // ─── Données live ──────────────────────────────────────────────────────────────
 
@@ -441,6 +550,7 @@ const CATEGORIES = [
 
 function categoryLabel(cat: HubCategory | null): string {
   if (!cat) return ''
+  if (cat === 'politiques') return t('overview.cat_politiques')
   const found = CATEGORIES.find(c => c.id === cat)
   return found ? found.label.value : cat
 }
@@ -578,9 +688,66 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
       'arrow-scale': 0.7,
     },
   },
+  // ── Politiques ──
+  {
+    selector: 'node[type="policy-cat"]',
+    style: {
+      'width': 48, 'height': 48,
+      'shape': 'roundrectangle',
+      'background-color': '#fbbf24',
+      'background-opacity': 0.2,
+      'border-width': 2.5, 'border-color': '#fbbf24',
+      'label': 'data(label)',
+      'color': '#fbbf24',
+      'font-size': 10, 'font-weight': 700,
+      'text-valign': 'bottom', 'text-margin-y': 8,
+      'text-halign': 'center',
+    },
+  },
+  {
+    selector: 'node[type="policy"]',
+    style: {
+      'width': 20, 'height': 20,
+      'background-color': '#fbbf24',
+      'background-opacity': 0.15,
+      'border-width': 2, 'border-color': '#fbbf24',
+      'label': 'data(label)',
+      'color': '#fbbf24',
+      'font-size': 8, 'font-weight': 700,
+      'text-valign': 'center', 'text-halign': 'center',
+    },
+  },
+  {
+    selector: 'edge[edgeType="policy-cat"]',
+    style: {
+      'width': 1.5,
+      'line-color': '#fbbf24',
+      'opacity': 0.35,
+      'curve-style': 'bezier',
+      'target-arrow-shape': 'none',
+    },
+  },
+  {
+    selector: 'edge[edgeType="policy-indicator"]',
+    style: {
+      'width': 1,
+      'line-color': '#fbbf24',
+      'line-style': 'dotted',
+      'opacity': 0.2,
+      'curve-style': 'bezier',
+      'target-arrow-shape': 'triangle',
+      'target-arrow-color': '#fbbf24',
+      'arrow-scale': 0.55,
+    },
+  },
+  // ── États d'interaction — déclarés en dernier pour avoir la priorité sur tous les sélecteurs de type ──
   {
     selector: 'node.dimmed',
     style: { 'opacity': 0.12 },
+  },
+  {
+    selector: 'edge.dimmed',
+    style: { 'opacity': 0.05 },
   },
   {
     selector: 'node.highlighted, edge.highlighted',
@@ -727,15 +894,27 @@ function initCy(): void {
   // Clic nœud → panneau
   cy.on('tap', 'node', (evt) => {
     const node = evt.target as NodeSingular
-    const data = node.data() as HubNodeData
+    const data = node.data() as Record<string, string>
 
-    selectedNode.value = HUB_NODES.find(n => n.id === data.id) ?? null
+    if (data['type'] === 'policy') {
+      const policy = ALL_POLICIES.find(p => p.id === data['id'])
+      selectedNode.value = policy
+        ? { id: policy.id, type: 'indicator', category: 'politiques', color: '#fbbf24', route: `/mitigation-policies/${policy.id}`, label: policy.title }
+        : null
+    } else if (data['type'] === 'policy-cat') {
+      selectedNode.value = { id: 'cat-politiques', type: 'category', category: 'politiques', color: '#fbbf24', route: '/mitigation-policies', label: t('overview.cat_politiques') }
+    } else {
+      selectedNode.value = HUB_NODES.find(n => n.id === data['id']) ?? null
+    }
 
-    // Highlight
+    // Highlight nœuds + arêtes
     cy!.nodes().addClass('dimmed')
+    cy!.edges().addClass('dimmed')
     cy!.nodes().removeClass('highlighted')
+    cy!.edges().removeClass('highlighted')
     node.removeClass('dimmed').addClass('highlighted')
     node.neighborhood('node').removeClass('dimmed').addClass('highlighted')
+    node.connectedEdges().removeClass('dimmed').addClass('highlighted')
   })
 
   // Clic fond → désélection

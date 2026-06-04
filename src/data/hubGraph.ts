@@ -10,6 +10,7 @@ export interface HubNodeData {
   color:    string
   route:    string
   liveKey?: 'co2' | 'temp' | 'forest' | 'renewables' | 'food' | 'water'
+  label?:   string
 }
 
 export interface HubEdgeData {
