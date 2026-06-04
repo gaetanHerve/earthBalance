@@ -49,29 +49,65 @@
       <span class="text-sm text-slate-500 animate-pulse">{{ t('common.loading_chart') }}</span>
     </div>
 
-    <!-- Légende catégories (bas gauche) -->
+    <!-- Légende catégories + contrôles (haut gauche) -->
     <div
       v-if="!loading"
-      class="absolute top-4 left-4 flex flex-col gap-1.5 bg-eb-dark/80 border border-eb-border rounded-xl p-3"
+      class="absolute top-4 left-4 right-4 sm:right-auto flex flex-col gap-1.5 bg-eb-dark/80 border border-eb-border rounded-xl p-3"
       style="backdrop-filter: blur(6px);"
-      aria-hidden="true"
     >
-      <span class="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-0.5">{{ t('overview.legend') }}</span>
-      <div v-for="cat in CATEGORIES" :key="cat.id" class="flex items-center gap-2 text-xs">
-        <span class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ background: cat.color }" />
-        <span class="text-slate-400">{{ cat.label }}</span>
+      <span class="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-0.5" aria-hidden="true">{{ t('overview.legend') }}</span>
+      <div class="grid grid-cols-2 sm:grid-cols-1 gap-x-3 gap-y-1">
+        <div v-for="cat in CATEGORIES" :key="cat.id" class="flex items-center gap-2 text-xs">
+          <span class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ background: cat.color }" aria-hidden="true" />
+          <span class="text-slate-400">{{ cat.label }}</span>
+        </div>
       </div>
       <div class="flex items-center gap-2 text-xs border-t border-eb-border/50 pt-1.5 mt-0.5">
-        <span class="w-2.5 h-2.5 rounded-full shrink-0 border-2 border-dashed border-red-500" style="background: transparent;" />
+        <span class="w-2.5 h-2.5 rounded-full shrink-0 border-2 border-dashed border-red-500" style="background: transparent;" aria-hidden="true" />
         <span class="text-red-400">{{ t('overview.legend_tipping') }}</span>
+      </div>
+      <div class="border-t border-eb-border/50 pt-1.5 mt-0.5 grid grid-cols-2 sm:grid-cols-1 gap-x-3 gap-y-1">
+        <div class="flex items-center gap-2 text-xs">
+          <span class="w-5 shrink-0" style="height: 2px; background: repeating-linear-gradient(90deg, #ff5050 0, #ff5050 4px, transparent 4px, transparent 7px);" aria-hidden="true" />
+          <span class="text-slate-400">{{ t('overview.legend_causal_positive') }}</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="w-5 shrink-0" style="background: #00ff88; height: 2px; border-radius: 1px;" aria-hidden="true" />
+          <span class="text-slate-400">{{ t('overview.legend_causal_negative') }}</span>
+        </div>
+      </div>
+      <!-- Contrôles zoom + recentrer -->
+      <div class="border-t border-eb-border/50 pt-2 mt-0.5 flex items-center gap-1">
+        <button
+          class="w-6 h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :aria-label="t('overview.zoom_out')"
+          @click="zoomOut"
+        >
+          <i class="fa fa-minus text-[9px]" aria-hidden="true" />
+        </button>
+        <button
+          class="w-6 h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :aria-label="t('overview.zoom_in')"
+          @click="zoomIn"
+        >
+          <i class="fa fa-plus text-[9px]" aria-hidden="true" />
+        </button>
+        <button
+          class="flex-1 flex items-center justify-center gap-1 h-6 rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none text-[10px]"
+          :aria-label="t('overview.reset_layout')"
+          @click="resetLayout"
+        >
+          <i class="fa fa-compress text-[9px]" aria-hidden="true" />
+          {{ t('overview.reset_layout') }}
+        </button>
       </div>
     </div>
 
     <!-- Panneau latéral -->
-    <transition name="panel">
+    <transition name="panel" @after-enter="focusCloseBtn">
       <aside
         v-if="selectedNode"
-        class="absolute inset-x-0 bottom-0 max-h-[55%] sm:max-h-none sm:inset-x-auto sm:right-0 sm:top-0 sm:bottom-0 sm:w-1/4 overflow-y-auto"
+        class="fixed inset-x-0 bottom-0 max-h-[55%] z-20 sm:absolute sm:max-h-none sm:inset-x-auto sm:right-0 sm:top-0 sm:bottom-0 sm:w-1/4 sm:z-auto overflow-y-auto"
         style="background: rgba(10,15,30,0.96); backdrop-filter: blur(8px); border-left: 1px solid #1f2d3d;"
         :aria-label="t('overview.panel_aria')"
       >
@@ -156,7 +192,7 @@
               background: selectedNode.color + '10',
             }"
           >
-            {{ t('overview.go_to_page') }}
+            {{ ctaLabel(selectedNode.route) }}
             <i class="fa fa-arrow-right text-[10px]" aria-hidden="true" />
           </router-link>
 
@@ -231,32 +267,152 @@ function clearSelection(): void {
   cy?.nodes().removeClass('dimmed highlighted')
 }
 
+function focusCloseBtn(): void {
+  closeBtn.value?.focus()
+}
+
+function ctaLabel(route: string): string {
+  const map: Record<string, string> = {
+    '/dashboard':           t('overview.go_to_dashboard'),
+    '/limites-planetaires': t('overview.go_to_limits'),
+    '/bascules':            t('overview.go_to_tipping'),
+  }
+  return map[route] ?? t('overview.go_to_page')
+}
+
+// ─── Contrôles zoom ───────────────────────────────────────────────────────────
+const ZOOM_FACTOR = 1.3
+
+function zoomIn(): void {
+  if (!cy) return
+  cy.zoom({ level: Math.min(cy.zoom() * ZOOM_FACTOR, cy.maxZoom()), renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } })
+}
+
+function zoomOut(): void {
+  if (!cy) return
+  cy.zoom({ level: Math.max(cy.zoom() / ZOOM_FACTOR, cy.minZoom()), renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } })
+}
+
+// ─── Reset layout ─────────────────────────────────────────────────────────────
+function resetLayout(): void {
+  if (!cy || !cyContainer.value) return
+  const positions = buildPositions(cyContainer.value.clientWidth, cyContainer.value.clientHeight)
+
+  // Calcul des positions finales des tipping nodes (même logique qu'initCy)
+  const hubPos = positions['hub']
+  const tippingGroups = new Map<string, string[]>()
+  HUB_EDGES.filter(e => e.edgeType === 'tipping-link').forEach(e => {
+    if (!tippingGroups.has(e.source)) tippingGroups.set(e.source, [])
+    tippingGroups.get(e.source)!.push(e.target)
+  })
+  tippingGroups.forEach((ids, sourceId) => {
+    const sp = positions[sourceId]
+    if (!sp) return
+    const base = Math.atan2(sp.y - hubPos.y, sp.x - hubPos.x)
+    const n      = ids.length
+    const spread = n > 1 ? Math.PI / 3 : 0
+    ids.forEach((id, i) => {
+      const angle = n > 1 ? base + spread * (2 * i / (n - 1) - 1) : base
+      positions[id] = { x: sp.x + Math.cos(angle) * 70, y: sp.y + Math.sin(angle) * 70 }
+    })
+  })
+
+  cy.layout({
+    name:              'preset',
+    positions:         (node: cytoscape.NodeSingular) => positions[node.id()] ?? node.position(),
+    animate:           true,
+    animationDuration: 400,
+    animationEasing:   'ease-in-out-sine',
+    fit:               true,
+    padding:           50,
+  } as cytoscape.LayoutOptions).run()
+
+  cy.one('layoutstop', () => {
+    if (!cy || !cyContainer.value) return
+    const { clientWidth: cw, clientHeight: ch } = cyContainer.value
+    if (cw < 640 && ch > cw * 1.3) cy.panBy({ x: 0, y: Math.round(ch * 0.12) })
+  })
+}
+
 // ─── Données live ──────────────────────────────────────────────────────────────
-function liveValue(key: HubNodeData['liveKey']): string | null {
+
+function rawLiveValue(key: NonNullable<HubNodeData['liveKey']>): number {
   const year = gameStore.currentYear
   switch (key) {
-    case 'co2':
-      return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeCo2).toFixed(1)
-    case 'temp':
-      return '+' + interpolateAtYear(year, SIM_LABELS, simStore.cumulativeTemp).toFixed(2)
-    case 'forest':
-      return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeForest).toFixed(1)
+    case 'co2':    return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeCo2)
+    case 'temp':   return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeTemp)
+    case 'forest': return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeForest)
     case 'renewables': {
       const mix = simStore.cumulativeEnergyMix
-      const r = interpolateAtYear(year, SIM_LABELS, mix['solar'])
-             + interpolateAtYear(year, SIM_LABELS, mix['wind'])
-             + interpolateAtYear(year, SIM_LABELS, mix['hydro'])
-             + interpolateAtYear(year, SIM_LABELS, mix['nuclear'])
-      return r.toFixed(1)
+      return interpolateAtYear(year, SIM_LABELS, mix['solar'])
+           + interpolateAtYear(year, SIM_LABELS, mix['wind'])
+           + interpolateAtYear(year, SIM_LABELS, mix['hydro'])
+           + interpolateAtYear(year, SIM_LABELS, mix['nuclear'])
     }
-    case 'food':
-      return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeFoodSecurity).toFixed(1)
-    case 'water':
-      return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeWaterAccess).toFixed(1)
-    default:
-      return null
+    case 'food':  return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeFoodSecurity)
+    case 'water': return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeWaterAccess)
   }
 }
+
+function liveValue(key: HubNodeData['liveKey']): string | null {
+  if (!key) return null
+  const v = rawLiveValue(key)
+  return key === 'temp' ? '+' + v.toFixed(2) : v.toFixed(1)
+}
+
+// ─── Encodage visuel data-driven ───────────────────────────────────────────────
+
+const SCORE_THRESHOLDS: Record<NonNullable<HubNodeData['liveKey']>, {
+  safe: number; critical: number; direction: 'up-bad' | 'down-bad'
+}> = {
+  co2:        { safe: 38,  critical: 58,  direction: 'up-bad'   },
+  temp:       { safe: 1.5, critical: 3,   direction: 'up-bad'   },
+  forest:     { safe: 55,  critical: 40,  direction: 'down-bad' },
+  renewables: { safe: 55,  critical: 15,  direction: 'down-bad' },
+  food:       { safe: 62,  critical: 48,  direction: 'down-bad' },
+  water:      { safe: 80,  critical: 62,  direction: 'down-bad' },
+}
+
+function nodeScore(key: NonNullable<HubNodeData['liveKey']>): number {
+  const v = rawLiveValue(key)
+  const { safe, critical, direction } = SCORE_THRESHOLDS[key]
+  const raw = direction === 'up-bad'
+    ? (v - safe)    / (critical - safe)
+    : (safe - v)    / (safe - critical)
+  return Math.max(0, Math.min(1, raw))
+}
+
+function categoryMaxScore(catNodeId: string): number {
+  const catName = catNodeId.replace('cat-', '') as HubCategory
+  const children = HUB_NODES.filter(n => n.category === catName && n.liveKey)
+  if (children.length === 0) return 0
+  return Math.max(...children.map(n => nodeScore(n.liveKey!)))
+}
+
+function applyNodeScores(): void {
+  if (!cy || mode.value !== 'graph') return
+  // Indicateurs — encodage direct
+  HUB_NODES.filter(n => n.liveKey).forEach(n => {
+    const score = nodeScore(n.liveKey!)
+    cy!.nodes(`[id="${n.id}"]`).first().style({
+      'border-width':       1.5 + score * 6.5,   // 1.5 → 8
+      'background-opacity': 0.08 + score * 0.27,  // 0.08 → 0.35
+    })
+  })
+  // Catégories — max score des enfants
+  HUB_NODES.filter(n => n.type === 'category').forEach(n => {
+    const score = categoryMaxScore(n.id)
+    cy!.nodes(`[id="${n.id}"]`).first().style({
+      'border-width':       2.5 + score * 4,     // 2.5 → 6.5
+      'background-opacity': 0.20 + score * 0.15,  // 0.20 → 0.35
+    })
+  })
+}
+
+watch(
+  [() => gameStore.currentYear, () => simStore.cumulativeCo2],
+  applyNodeScores,
+)
 
 function isTippingTriggered(id: string): boolean {
   return !!tpStore.triggered[id]
@@ -308,7 +464,7 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
     style: {
       'width': 52, 'height': 52,
       'background-color': 'data(color)',
-      'background-opacity': 0.12,
+      'background-opacity': 0.20,
       'border-width': 2.5, 'border-color': 'data(color)',
       'label': 'data(label)',
       'color': 'data(color)',
@@ -397,6 +553,32 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
     },
   },
   {
+    selector: 'edge[edgeType="causal"][causalType="positive"]',
+    style: {
+      'width': 1.8,
+      'line-color': 'data(color)',
+      'line-style': 'dashed',
+      'opacity': 0.35,
+      'curve-style': 'bezier',
+      'target-arrow-shape': 'triangle',
+      'target-arrow-color': 'data(color)',
+      'arrow-scale': 0.7,
+    },
+  },
+  {
+    selector: 'edge[edgeType="causal"][causalType="negative"]',
+    style: {
+      'width': 1.8,
+      'line-color': 'data(color)',
+      'line-style': 'solid',
+      'opacity': 0.35,
+      'curve-style': 'bezier',
+      'target-arrow-shape': 'triangle',
+      'target-arrow-color': 'data(color)',
+      'arrow-scale': 0.7,
+    },
+  },
+  {
     selector: 'node.dimmed',
     style: { 'opacity': 0.12 },
   },
@@ -410,9 +592,66 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
   },
 ]
 
+// ─── Positions manuelles ──────────────────────────────────────────────────────
+// Hub au centre, 4 catégories en croix, indicateurs en éventail autour de leur
+// catégorie. Les tipping nodes sont initialisés sur leur déclencheur puis
+// dispersés angulairement par le code post-layout.
+
+const CAT_INDICATORS: Record<string, string[]> = {
+  'cat-climat':      ['co2', 'temp', 'sea-level'],
+  'cat-ecosystemes': ['forest', 'biodiversity'],
+  'cat-energie':     ['energy-mix', 'resources'],
+  'cat-societal':    ['food', 'water', 'health', 'inequality', 'conflicts'],
+}
+
+const CAT_ANGLES: Record<string, number> = {
+  'cat-climat':      -Math.PI / 2,
+  'cat-ecosystemes':  0,
+  'cat-energie':      Math.PI / 2,
+  'cat-societal':     Math.PI,
+}
+
+const TIPPING_TRIGGER: Record<string, string> = {
+  'tp-permafrost': 'temp', 'tp-coral': 'temp', 'tp-arctic': 'temp',
+  'tp-amazon':     'forest', 'tp-amoc': 'temp',
+}
+
+function buildPositions(w: number, h: number): Record<string, { x: number; y: number }> {
+  // En portrait mobile, les rayons sont agrandis pour mieux exploiter la hauteur.
+  // Le centrage vertical est géré après cy.fit() via panBy (voir initCy / resetLayout).
+  const isMobilePortrait = w < 640 && h > w * 1.3
+  const cx    = w / 2
+  const cy    = h / 2
+  const base  = Math.min(isMobilePortrait ? w * 0.9 : w, h)
+  const CAT_R = base * (isMobilePortrait ? 0.38 : 0.20)
+  const IND_R = base * (isMobilePortrait ? 0.22 : 0.11)
+
+  const pos: Record<string, { x: number; y: number }> = {}
+  pos['hub'] = { x: cx, y: cy }
+
+  for (const [catId, angle] of Object.entries(CAT_ANGLES)) {
+    pos[catId] = { x: cx + Math.cos(angle) * CAT_R, y: cy + Math.sin(angle) * CAT_R }
+    const indicators = CAT_INDICATORS[catId] ?? []
+    const n      = indicators.length
+    const spread = n > 1 ? Math.min(Math.PI * 0.65, (n - 1) * 0.6) : 0
+    indicators.forEach((id, i) => {
+      const a = n > 1 ? angle + spread * (2 * i / (n - 1) - 1) : angle
+      pos[id] = { x: pos[catId].x + Math.cos(a) * IND_R, y: pos[catId].y + Math.sin(a) * IND_R }
+    })
+  }
+
+  for (const [tpId, triggerId] of Object.entries(TIPPING_TRIGGER)) {
+    if (pos[triggerId]) pos[tpId] = { ...pos[triggerId] }
+  }
+
+  return pos
+}
+
 // ─── Init Cytoscape ───────────────────────────────────────────────────────────
 function initCy(): void {
   if (!cyContainer.value) return
+
+  const positions = buildPositions(cyContainer.value.clientWidth, cyContainer.value.clientHeight)
 
   const staticElements: cytoscape.ElementDefinition[] = [
     ...HUB_NODES.map(n => ({
@@ -421,6 +660,7 @@ function initCy(): void {
         label: t('hub.nodes.' + n.id + '.label'),
         triggered: tpStore.triggered[n.id] ? '1' : '0',
       },
+      ...(positions[n.id] ? { position: positions[n.id] } : {}),
     })),
     ...HUB_EDGES.map(e => ({ data: { ...e } })),
   ]
@@ -430,19 +670,13 @@ function initCy(): void {
     elements:  staticElements,
     style:     CY_STYLE,
     layout: {
-      name: 'cose',
-      idealEdgeLength: 110,
-      nodeRepulsion:   9000,
-      gravity:         0.3,
-      numIter:         800,
-      animate:         false,
-      fit:             true,
-      padding:         50,
-      randomize:       false,
+      name:    'preset',
+      fit:     true,
+      padding: 50,
     },
     minZoom: 0.3,
     maxZoom: 4,
-    userZoomingEnabled: true,
+    userZoomingEnabled: false,
     userPanningEnabled: true,
     boxSelectionEnabled: false,
     selectionType: 'single',
@@ -468,12 +702,18 @@ function initCy(): void {
     const spread = n > 1 ? Math.PI / 3 : 0
     ids.forEach((id, i) => {
       const angle = n > 1 ? base + spread * (2 * i / (n - 1) - 1) : base
-      cy!.nodes(`[id="${id}"]`).first().position({ x: sp.x + Math.cos(angle) * 105, y: sp.y + Math.sin(angle) * 105 })
+      cy!.nodes(`[id="${id}"]`).first().position({ x: sp.x + Math.cos(angle) * 70, y: sp.y + Math.sin(angle) * 70 })
     })
   })
   cy.fit(undefined, 50)
 
+  // Sur mobile portrait, décaler le graphe vers le bas pour le centrer
+  // dans la zone visible sous la légende overlay (~26% de h).
+  const { clientWidth: cw, clientHeight: ch } = cyContainer.value
+  if (cw < 640 && ch > cw * 1.3) cy.panBy({ x: 0, y: Math.round(ch * 0.12) })
+
   startPulseForTriggered()
+  applyNodeScores()
 
   // Zoom → rendre les arêtes tipping-link plus visibles au-delà du seuil
   cy.on('zoom', () => {
@@ -496,8 +736,6 @@ function initCy(): void {
     cy!.nodes().removeClass('highlighted')
     node.removeClass('dimmed').addClass('highlighted')
     node.neighborhood('node').removeClass('dimmed').addClass('highlighted')
-
-    nextTick(() => closeBtn.value?.focus())
   })
 
   // Clic fond → désélection
