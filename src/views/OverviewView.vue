@@ -52,48 +52,61 @@
     <!-- Légende catégories + contrôles (haut gauche) -->
     <div
       v-if="!loading"
-      class="absolute top-4 left-4 right-4 sm:right-auto flex flex-col gap-1.5 bg-eb-dark/80 border border-eb-border rounded-xl p-3"
+      class="absolute top-4 left-4 right-4 sm:right-auto flex flex-col gap-1.5 bg-eb-dark/80 border border-eb-border rounded-xl p-2.5 sm:p-3 max-h-[calc(100%-1rem)] sm:max-h-none overflow-y-auto overscroll-contain"
       style="backdrop-filter: blur(6px);"
     >
-      <span class="text-[10px] uppercase tracking-widest text-slate-600 font-semibold mb-0.5" aria-hidden="true">{{ t('overview.legend') }}</span>
-      <div class="grid grid-cols-2 sm:grid-cols-1 gap-x-3 gap-y-1">
-        <div v-for="cat in CATEGORIES" :key="cat.id" class="flex items-center gap-2 text-xs">
+      <!-- En-tête légende + bouton déplier/replier -->
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-600 font-semibold">{{ t('overview.legend') }}</span>
+        <button
+          class="w-5 h-5 flex items-center justify-center rounded text-slate-500 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :aria-label="legendExpanded ? t('overview.legend_collapse') : t('overview.legend_expand')"
+          :aria-expanded="legendExpanded"
+          @click="legendExpanded = !legendExpanded"
+        >
+          <i :class="legendExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-down'" class="text-[9px]" aria-hidden="true" />
+        </button>
+      </div>
+      <!-- Corps de la légende -->
+      <div v-show="legendExpanded" class="flex flex-col gap-1.5">
+      <div class="grid grid-cols-1 sm:grid-cols-1 gap-x-3 gap-y-1">
+        <div v-for="cat in CATEGORIES" :key="cat.id" class="flex items-center gap-2 text-[11px] sm:text-xs leading-tight">
           <span class="w-2.5 h-2.5 rounded-full shrink-0" :style="{ background: cat.color }" aria-hidden="true" />
           <span class="text-slate-400">{{ cat.label }}</span>
         </div>
       </div>
-      <div class="flex items-center gap-2 text-xs border-t border-eb-border/50 pt-1.5 mt-0.5">
+      <div class="flex items-center gap-2 text-[11px] sm:text-xs border-t border-eb-border/50 pt-1.5 mt-0.5 leading-tight">
         <span class="w-2.5 h-2.5 rounded-full shrink-0 border-2 border-dashed border-red-500" style="background: transparent;" aria-hidden="true" />
         <span class="text-red-400">{{ t('overview.legend_tipping') }}</span>
       </div>
       <div class="border-t border-eb-border/50 pt-1.5 mt-0.5 grid grid-cols-2 sm:grid-cols-1 gap-x-3 gap-y-1">
-        <div class="flex items-center gap-2 text-xs">
+        <div class="flex items-center gap-2 text-[11px] sm:text-xs leading-tight">
           <span class="w-5 shrink-0" style="height: 2px; background: repeating-linear-gradient(90deg, #ff5050 0, #ff5050 4px, transparent 4px, transparent 7px);" aria-hidden="true" />
           <span class="text-slate-400">{{ t('overview.legend_causal_positive') }}</span>
         </div>
-        <div class="flex items-center gap-2 text-xs">
+        <div class="flex items-center gap-2 text-[11px] sm:text-xs leading-tight">
           <span class="w-5 shrink-0" style="background: #00ff88; height: 2px; border-radius: 1px;" aria-hidden="true" />
           <span class="text-slate-400">{{ t('overview.legend_causal_negative') }}</span>
         </div>
       </div>
       <!-- Contrôles zoom + recentrer -->
-      <div class="border-t border-eb-border/50 pt-2 mt-0.5 flex items-center gap-1">
+      <div class="border-t border-eb-border/50 pt-2 mt-0.5 flex flex-wrap items-center gap-1">
         <button
-          class="w-6 h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
           :aria-label="t('overview.zoom_out')"
           @click="zoomOut"
         >
           <i class="fa fa-minus text-[9px]" aria-hidden="true" />
         </button>
         <button
-          class="w-6 h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
           :aria-label="t('overview.zoom_in')"
           @click="zoomIn"
         >
           <i class="fa fa-plus text-[9px]" aria-hidden="true" />
         </button>
         <button
-          class="flex-1 flex items-center justify-center gap-1 h-6 rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none text-[10px]"
+          class="flex-1 min-w-0 flex items-center justify-center gap-1 h-7 sm:h-6 rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none text-[10px]"
           :aria-label="t('overview.reset_layout')"
           @click="resetLayout"
         >
@@ -104,15 +117,53 @@
       <!-- Toggle politiques validées -->
       <div class="border-t border-eb-border/50 pt-2 mt-0.5">
         <button
-          class="w-full flex items-center gap-2 text-xs px-1 py-0.5 rounded transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          class="w-full flex items-center gap-2 text-[11px] sm:text-xs px-1 py-0.5 rounded transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
           :class="showPolicies ? 'text-[#fbbf24]' : 'text-slate-400 hover:text-white'"
           :aria-pressed="showPolicies"
           @click="showPolicies = !showPolicies"
         >
-          <i :class="showPolicies ? 'fa fa-toggle-on' : 'fa fa-toggle-off'" class="text-sm shrink-0" aria-hidden="true" />
+          <i :class="showPolicies ? 'fa fa-toggle-on' : 'fa fa-toggle-off'" class="text-[13px] shrink-0" aria-hidden="true" />
           {{ t('overview.toggle_policies') }}
         </button>
       </div>
+
+      <!-- Boucles de rétroaction -->
+      <div class="border-t border-eb-border/50 pt-2 mt-0.5">
+        <div class="flex items-center justify-between gap-2 mb-1">
+          <span class="text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-600 font-semibold">
+            {{ t('overview.feedback_loops_label') }}
+          </span>
+          <!-- Bouton accordéon visible uniquement sur mobile -->
+          <button
+            class="sm:hidden w-5 h-5 flex items-center justify-center rounded text-slate-500 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+            :aria-label="loopsExpanded ? t('overview.feedback_loops_collapse') : t('overview.feedback_loops_expand')"
+            :aria-expanded="loopsExpanded"
+            @click="loopsExpanded = !loopsExpanded"
+          >
+            <i :class="loopsExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-down'" class="text-[9px]" aria-hidden="true" />
+          </button>
+        </div>
+        <div :class="loopsExpanded ? 'grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap' : 'hidden sm:flex sm:flex-wrap sm:gap-1.5'">
+          <button
+            v-for="loop in feedbackLoops"
+            :key="loop.id"
+            class="w-full sm:w-auto flex items-center justify-center gap-1 px-2 py-1 rounded-full text-[9px] sm:text-[10px] font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none leading-none"
+            :style="{
+              borderColor: loop.color,
+              color: activeLoopId === loop.id ? loop.color : '#64748b',
+              backgroundColor: activeLoopId === loop.id ? loop.color + '18' : 'transparent',
+              boxShadow: activeLoopId === loop.id ? `0 0 10px ${loop.color}40` : 'none',
+              opacity: activeLoopId && activeLoopId !== loop.id ? '0.5' : '1',
+            }"
+            :aria-pressed="activeLoopId === loop.id"
+            @click="toggleLoop(loop.id)"
+          >
+            <i class="fa fa-rotate text-[9px]" aria-hidden="true" />
+            {{ locale === 'fr' ? loop.label : loop.labelEn }}
+          </button>
+        </div>
+      </div>
+      </div><!-- fin corps légende -->
     </div>
 
     <!-- Panneau latéral -->
@@ -178,6 +229,85 @@
             />
           </div>
 
+          <!-- Description systémique -->
+          <template v-if="selectedNode.type === 'indicator' || selectedNode.type === 'tipping'">
+            <div
+              v-if="systemicNodeForHub(selectedNode.id)"
+              class="rounded-lg border border-eb-border bg-eb-mid p-3"
+            >
+              <p class="text-xs text-slate-400 leading-relaxed">
+                {{ locale === 'fr' ? systemicNodeForHub(selectedNode.id)!.data.description : systemicNodeForHub(selectedNode.id)!.data.descriptionEn }}
+              </p>
+              <p class="font-mono text-[10px] text-slate-600 mt-2">
+                {{ systemicNodeForHub(selectedNode.id)!.data.ipccRef }}
+              </p>
+            </div>
+
+            <!-- Boucles de rétroaction du nœud -->
+            <div
+              v-if="systemicLoopsForHub(selectedNode.id).length"
+              class="rounded-lg border border-eb-border bg-eb-mid p-3"
+            >
+              <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">
+                <i class="fa fa-rotate mr-1" aria-hidden="true" />
+                {{ t('overview.feedback_loops_label') }}
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <button
+                  v-for="loop in systemicLoopsForHub(selectedNode.id)"
+                  :key="loop.id"
+                  class="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+                  :style="{
+                    borderColor: loop.color,
+                    color: activeLoopId === loop.id ? loop.color : '#64748b',
+                    backgroundColor: activeLoopId === loop.id ? loop.color + '18' : 'transparent',
+                    boxShadow: activeLoopId === loop.id ? `0 0 8px ${loop.color}40` : 'none',
+                  }"
+                  :aria-pressed="activeLoopId === loop.id"
+                  @click="toggleLoop(loop.id)"
+                >
+                  <i class="fa fa-rotate text-[9px]" aria-hidden="true" />
+                  {{ locale === 'fr' ? loop.label : loop.labelEn }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Relations clés -->
+            <div
+              v-if="systemicEdgesForHub(selectedNode.id).length"
+              class="rounded-lg border border-eb-border bg-eb-mid p-3"
+            >
+              <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">
+                {{ t('systemic_map.conn_list_title') }}
+              </p>
+              <div class="space-y-1.5">
+                <details
+                  v-for="edge in systemicEdgesForHub(selectedNode.id)"
+                  :key="edge.id"
+                  class="conn-item text-xs border border-eb-border rounded-lg overflow-hidden"
+                >
+                  <summary class="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-white/5 transition-colors">
+                    <span class="font-mono text-slate-500 shrink-0 w-3 text-center">{{ edge.direction === 'out' ? '→' : '←' }}</span>
+                    <span
+                      class="shrink-0 font-bold w-3 text-center"
+                      :class="edge.edgeType === 'positive' ? 'text-red-400' : 'text-green-400'"
+                    >{{ edge.edgeType === 'positive' ? '↑' : '↓' }}</span>
+                    <span class="text-slate-300 leading-tight flex-1 min-w-0 truncate">
+                      {{ locale === 'fr' ? edge.otherLabel : edge.otherLabelEn }}
+                    </span>
+                    <i class="fa fa-chevron-down conn-chevron text-slate-600 text-[9px] shrink-0" aria-hidden="true" />
+                  </summary>
+                  <div class="px-3 pb-3 pt-2 border-t border-eb-border bg-eb-mid/40">
+                    <p class="text-slate-400 leading-relaxed mb-2">
+                      {{ locale === 'fr' ? edge.description : edge.descriptionEn }}
+                    </p>
+                    <p class="font-mono text-[10px] text-slate-600">{{ edge.ipccRef }}</p>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </template>
+
           <!-- Statut point de bascule -->
           <div v-if="selectedNode.type === 'tipping'" class="rounded-lg border p-3"
             :class="isTippingTriggered(selectedNode.id)
@@ -235,6 +365,7 @@ import { interpolateAtYear } from '@/utils/timeSeries'
 import { HUB_NODES, HUB_EDGES, type HubNodeData, type HubCategory, type HubChartType } from '@/data/hubGraph'
 import { mitigationPolicies as ALL_POLICIES } from '@/data/mitigationPolicies'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
+import { feedbackLoops, systemicNodes, systemicEdges, type FeedbackLoop } from '@/data/systemicGraph'
 import earthGlobeUrl from '@/assets/earth-globe-2.png'
 import HubNodeChart from '@/components/charts/HubNodeChart.vue'
 
@@ -246,6 +377,8 @@ const tpStore        = useTippingPointsStore()
 const policiesStore  = useMitigationPoliciesStore()
 
 const showPolicies = ref(false)
+const legendExpanded = ref(true)
+const loopsExpanded = ref(false)
 
 // ─── Mode graphe / tableau de bord ────────────────────────────────────────────
 
@@ -278,9 +411,13 @@ let cy: Core | null = null
 
 // ─── Sélection ─────────────────────────────────────────────────────────────────
 const selectedNode = ref<HubNodeData | null>(null)
+const activeLoopId = ref<string | null>(null)
 
 function clearSelection(): void {
   selectedNode.value = null
+  const previousLoop = activeLoopId.value ? feedbackLoops.find(loop => loop.id === activeLoopId.value) ?? null : null
+  activeLoopId.value = null
+  clearLoopHighlight(previousLoop)
   cy?.nodes().removeClass('dimmed highlighted')
   cy?.edges().removeClass('dimmed highlighted')
 }
@@ -298,6 +435,161 @@ function ctaLabel(route: string): string {
     '/bascules':            t('overview.go_to_tipping'),
   }
   return map[route] ?? t('overview.go_to_page')
+}
+
+// ─── Données systémiques pour le panel ──────────────────────────────────────
+// Mapping inverse : hub ID → systemic ID
+const HUB_TO_SYSTEMIC: Record<string, string> = {
+  co2:          'ghg',
+  temp:         'temperature',
+  'sea-level':  'sea_level',
+  forest:       'forest',
+  biodiversity: 'biodiversity',
+  'energy-mix': 'renewable',
+  resources:    'resources',
+  food:         'food_security',
+  water:        'water_access',
+  health:       'health',
+  inequality:   'inequality',
+  conflicts:    'geopolitical',
+  'tp-permafrost': 'permafrost',
+  'tp-coral':      'coral',
+  'tp-arctic':     'arctic',
+  'tp-amazon':     'amazon',
+  'tp-amoc':       'amoc',
+}
+
+function systemicNodeForHub(hubId: string) {
+  const sysId = HUB_TO_SYSTEMIC[hubId]
+  if (!sysId) return null
+  return systemicNodes.find(n => n.data.id === sysId) ?? null
+}
+
+function systemicLoopsForHub(hubId: string): FeedbackLoop[] {
+  const sysId = HUB_TO_SYSTEMIC[hubId]
+  if (!sysId) return []
+  return feedbackLoops.filter(l => l.nodeIds.includes(sysId))
+}
+
+interface SysEdgeItem {
+  id:            string
+  direction:     'out' | 'in'
+  edgeType:      'positive' | 'negative'
+  otherLabel:    string
+  otherLabelEn:  string
+  description:   string
+  descriptionEn: string
+  ipccRef:       string
+}
+
+function systemicEdgesForHub(hubId: string): SysEdgeItem[] {
+  const sysId = HUB_TO_SYSTEMIC[hubId]
+  if (!sysId) return []
+  const items: SysEdgeItem[] = []
+  systemicEdges.forEach(e => {
+    const isOut = e.data.source === sysId
+    const isIn  = e.data.target === sysId
+    if (!isOut && !isIn) return
+    const otherId = isOut ? e.data.target : e.data.source
+    const other   = systemicNodes.find(n => n.data.id === otherId)?.data
+    items.push({
+      id:            e.data.id,
+      direction:     isOut ? 'out' : 'in',
+      edgeType:      e.data.type,
+      otherLabel:    other?.label    ?? otherId,
+      otherLabelEn:  other?.labelEn  ?? otherId,
+      description:   e.data.description,
+      descriptionEn: e.data.descriptionEn,
+      ipccRef:       e.data.ipccRef,
+    })
+  })
+  items.sort((a, b) => {
+    if (a.direction !== b.direction) return a.direction === 'out' ? -1 : 1
+    if (a.edgeType  !== b.edgeType)  return a.edgeType  === 'positive' ? -1 : 1
+    return 0
+  })
+  return items
+}
+
+const SYSTEMIC_TO_HUB_NODE: Record<string, string> = {
+  ghg: 'co2',
+  temperature: 'temp',
+  permafrost: 'tp-permafrost',
+  coral: 'tp-coral',
+  arctic: 'tp-arctic',
+  amazon: 'tp-amazon',
+  amoc: 'tp-amoc',
+  forest: 'forest',
+  biodiversity: 'biodiversity',
+  health: 'health',
+  inequality: 'inequality',
+  geopolitical: 'conflicts',
+  sea_level: 'sea-level',
+  renewable: 'energy-mix',
+  resources: 'resources',
+  food_security: 'food',
+  water_access: 'water',
+}
+
+const SYSTEMIC_TO_HUB_EDGE: Record<string, string> = {
+  ghg_temp: 'c-co2-temp',
+  temp_forest: 'c-temp-forest',
+  forest_ghg: 'c-forest-co2',
+  ineq_health: 'c-ineq-health',
+  health_ineq: 'c-health-ineq',
+}
+
+function mappedLoopNodeIds(loop: FeedbackLoop): string[] {
+  return loop.nodeIds
+    .map(nodeId => SYSTEMIC_TO_HUB_NODE[nodeId])
+    .filter((nodeId): nodeId is string => !!nodeId && !!cy?.getElementById(nodeId).length)
+}
+
+function mappedLoopEdgeIds(loop: FeedbackLoop): string[] {
+  return loop.edgeIds
+    .map(edgeId => SYSTEMIC_TO_HUB_EDGE[edgeId])
+    .filter((edgeId): edgeId is string => !!edgeId && !!cy?.getElementById(edgeId).length)
+}
+
+function clearLoopHighlight(loop: FeedbackLoop | null): void {
+  if (!cy || !loop) return
+  mappedLoopNodeIds(loop).forEach(nodeId => {
+    cy!.getElementById(nodeId).removeStyle('overlay-opacity overlay-color overlay-padding')
+  })
+  mappedLoopEdgeIds(loop).forEach(edgeId => {
+    cy!.getElementById(edgeId).removeStyle('line-color target-arrow-color width opacity')
+  })
+}
+
+function applyLoopHighlight(): void {
+  if (!cy || !activeLoopId.value) return
+  const loop = feedbackLoops.find(item => item.id === activeLoopId.value)
+  if (!loop) return
+
+  mappedLoopNodeIds(loop).forEach(nodeId => {
+    cy!.getElementById(nodeId).style({
+      'overlay-opacity': 0.28,
+      'overlay-color': loop.color,
+      'overlay-padding': 6,
+    })
+  })
+
+  mappedLoopEdgeIds(loop).forEach(edgeId => {
+    cy!.getElementById(edgeId).style({
+      'line-color': loop.color,
+      'target-arrow-color': loop.color,
+      'width': 3.5,
+      'opacity': 1,
+    })
+  })
+}
+
+function toggleLoop(loopId: string): void {
+  if (!cy) return
+  const previousLoop = activeLoopId.value ? feedbackLoops.find(loop => loop.id === activeLoopId.value) ?? null : null
+  clearLoopHighlight(previousLoop)
+  activeLoopId.value = activeLoopId.value === loopId ? null : loopId
+  applyLoopHighlight()
 }
 
 // ─── Contrôles zoom ───────────────────────────────────────────────────────────
@@ -520,7 +812,10 @@ function applyNodeScores(): void {
 
 watch(
   [() => gameStore.currentYear, () => simStore.cumulativeCo2],
-  applyNodeScores,
+  () => {
+    applyNodeScores()
+    applyLoopHighlight()
+  },
 )
 
 function isTippingTriggered(id: string): boolean {
@@ -881,6 +1176,7 @@ function initCy(): void {
 
   startPulseForTriggered()
   applyNodeScores()
+  applyLoopHighlight()
 
   // Zoom → rendre les arêtes tipping-link plus visibles au-delà du seuil
   cy.on('zoom', () => {
@@ -988,4 +1284,10 @@ onBeforeUnmount(() => { cy?.destroy(); cy = null })
 }
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Relations systémiques repliables */
+.conn-item .conn-chevron { transition: transform 0.15s ease; }
+.conn-item[open] .conn-chevron { transform: rotate(180deg); }
+.conn-item summary { list-style: none; }
+.conn-item summary::-webkit-details-marker { display: none; }
 </style>

@@ -621,5 +621,10 @@ export default {
     cat_energie:    'Energy & Resources',
     cat_societal:   'Societal',
     cat_politiques: 'Policies',
+    legend_expand:           'Show legend',
+    legend_collapse:         'Hide legend',
+    feedback_loops_label:    'Feedback loops',
+    feedback_loops_expand:   'Show feedback loops',
+    feedback_loops_collapse: 'Hide feedback loops',
   },
 }

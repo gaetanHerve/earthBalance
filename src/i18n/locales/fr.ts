@@ -621,5 +621,10 @@ export default {
     cat_energie:    'Énergie & Ressources',
     cat_societal:   'Sociétal',
     cat_politiques: 'Politiques',
+    legend_expand:           'Afficher la légende',
+    legend_collapse:         'Masquer la légende',
+    feedback_loops_label:    'Boucles de rétroaction',
+    feedback_loops_expand:   'Afficher les boucles de rétroaction',
+    feedback_loops_collapse: 'Masquer les boucles de rétroaction',
   },
 }
