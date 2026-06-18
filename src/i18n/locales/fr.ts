@@ -590,7 +590,8 @@ export default {
   overview: {
     aria_main:   'Vue d\'ensemble EarthBalance',
     aria_graph:  'Graphe de navigation interactif représentant les catégories et indicateurs d\'EarthBalance — Climat, Écosystèmes, Énergie, Sociétal, Politiques',
-    legend:      'Catégories',
+    aria_nodes_group: 'Nœuds du graphe — navigation au clavier',
+    legend:      'Légende',
     legend_tipping:         'Points de bascule',
     legend_causal_positive: 'Effet aggravant',
     legend_causal_negative: 'Effet bénéfique',

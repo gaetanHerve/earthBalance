@@ -1,8 +1,6 @@
 <template>
   <div
     class="flex flex-col"
-    :class="mode === 'graph' ? 'overflow-hidden' : ''"
-    :style="mode === 'graph' ? { height: 'calc(100svh - 64px)' } : {}"
   >
 
     <!-- Sélecteur de vue -->
@@ -33,13 +31,32 @@
       v-if="mode === 'graph'"
       id="main-content"
       tabindex="-1"
-      class="relative flex-1 min-h-0 overflow-hidden"
+      class="relative"
+      :style="{ height: `${graphHeightPx}px` }"
       :aria-label="t('overview.aria_main')"
     >
 
     <!-- Cytoscape container -->
-    <div ref="cyContainer" class="w-full h-full bg-[#070c16]" aria-hidden="true" />
+    <div ref="cyContainer" class="w-full bg-[#070c16]" :style="{ height: `${graphHeightPx}px` }" aria-hidden="true" />
     <p class="sr-only">{{ t('overview.aria_graph') }}</p>
+
+    <!-- Nœuds accessibles au clavier — triés par ordre de lecture (Y prioritaire, puis X) -->
+    <div
+      v-if="!loading"
+      role="group"
+      :aria-label="t('overview.aria_nodes_group')"
+    >
+      <button
+        v-for="node in sortedAccessibleNodes"
+        :key="node.id"
+        class="graph-node-key-btn"
+        @focus="highlightAccessibleNode(node.id)"
+        @blur="unhighlightAccessibleNode(node.id)"
+        @click="activateAccessibleNode(node.id)"
+        @keydown.enter.prevent="activateAccessibleNode(node.id)"
+        @keydown.space.prevent="activateAccessibleNode(node.id)"
+      >{{ node.label }}</button>
+    </div>
 
     <!-- Loading -->
     <div
@@ -67,6 +84,8 @@
           <i :class="legendExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-down'" class="text-[9px]" aria-hidden="true" />
         </button>
       </div>
+      <!-- Marqueur invisible pour aligner la barre de contrôles avec ce header -->
+      <span ref="legendHeader" aria-hidden="true" class="sr-only"></span>
       <!-- Corps de la légende -->
       <div v-show="legendExpanded" class="flex flex-col gap-1.5">
       <div class="grid grid-cols-1 sm:grid-cols-1 gap-x-3 gap-y-1">
@@ -88,31 +107,6 @@
           <span class="w-5 shrink-0" style="background: #00ff88; height: 2px; border-radius: 1px;" aria-hidden="true" />
           <span class="text-slate-400">{{ t('overview.legend_causal_negative') }}</span>
         </div>
-      </div>
-      <!-- Contrôles zoom + recentrer -->
-      <div class="border-t border-eb-border/50 pt-2 mt-0.5 flex flex-wrap items-center gap-1">
-        <button
-          class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-          :aria-label="t('overview.zoom_out')"
-          @click="zoomOut"
-        >
-          <i class="fa fa-minus text-[9px]" aria-hidden="true" />
-        </button>
-        <button
-          class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
-          :aria-label="t('overview.zoom_in')"
-          @click="zoomIn"
-        >
-          <i class="fa fa-plus text-[9px]" aria-hidden="true" />
-        </button>
-        <button
-          class="flex-1 min-w-0 flex items-center justify-center gap-1 h-7 sm:h-6 rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none text-[10px]"
-          :aria-label="t('overview.reset_layout')"
-          @click="resetLayout"
-        >
-          <i class="fa fa-compress text-[9px]" aria-hidden="true" />
-          {{ t('overview.reset_layout') }}
-        </button>
       </div>
       <!-- Toggle politiques validées -->
       <div class="border-t border-eb-border/50 pt-2 mt-0.5">
@@ -166,11 +160,43 @@
       </div><!-- fin corps légende -->
     </div>
 
+    <!-- Barre de contrôles zoom – centrée en haut du graphe, alignée avec l'en-tête légende -->
+    <div
+      v-if="!loading"
+      class="absolute top-0 left-0 right-0 flex justify-center items-start z-10 pointer-events-none"
+      :style="{ paddingTop: legendHeaderTop }"
+    >
+      <div class="flex items-center gap-1 pointer-events-auto bg-eb-dark/80 border border-eb-border rounded-lg px-2 py-1" style="backdrop-filter: blur(6px);">
+        <button
+          class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :aria-label="t('overview.zoom_out')"
+          @click="zoomOut"
+        >
+          <i class="fa fa-minus text-[9px]" aria-hidden="true" />
+        </button>
+        <button
+          class="w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+          :aria-label="t('overview.zoom_in')"
+          @click="zoomIn"
+        >
+          <i class="fa fa-plus text-[9px]" aria-hidden="true" />
+        </button>
+        <button
+          class="flex items-center gap-1 h-7 sm:h-6 px-2 rounded border border-eb-border text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none text-[10px]"
+          :aria-label="t('overview.reset_layout')"
+          @click="resetLayout"
+        >
+          <i class="fa fa-compress text-[9px]" aria-hidden="true" />
+          {{ t('overview.reset_layout') }}
+        </button>
+      </div>
+    </div>
+
     <!-- Panneau latéral -->
     <transition name="panel" @after-enter="focusCloseBtn">
       <aside
         v-if="selectedNode"
-        class="fixed inset-x-0 bottom-0 max-h-[55%] z-20 sm:absolute sm:max-h-none sm:inset-x-auto sm:right-0 sm:top-0 sm:bottom-0 sm:w-1/4 sm:z-auto overflow-y-auto"
+        class="relative z-20 mt-2 border border-eb-border sm:mt-0 sm:absolute sm:right-0 sm:top-0 sm:bottom-0 sm:w-1/4 sm:border-t-0 sm:border-r-0"
         style="background: rgba(10,15,30,0.96); backdrop-filter: blur(8px); border-left: 1px solid #1f2d3d;"
         :aria-label="t('overview.panel_aria')"
       >
@@ -184,7 +210,7 @@
           <i class="fa fa-times text-sm" aria-hidden="true" />
         </button>
 
-        <div class="p-5 pr-10 space-y-4">
+        <div ref="panelContent" class="p-5 pr-10 space-y-4">
 
           <!-- En-tête nœud -->
           <div class="flex items-start gap-3">
@@ -286,7 +312,7 @@
                   :key="edge.id"
                   class="conn-item text-xs border border-eb-border rounded-lg overflow-hidden"
                 >
-                  <summary class="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-white/5 transition-colors">
+                  <summary class="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-eb-cyan rounded-lg">
                     <span class="font-mono text-slate-500 shrink-0 w-3 text-center">{{ edge.direction === 'out' ? '→' : '←' }}</span>
                     <span
                       class="shrink-0 font-bold w-3 text-center"
@@ -386,9 +412,14 @@ type ViewMode = 'graph' | 'dashboard'
 const savedMode = localStorage.getItem(STORAGE_KEYS.OVERVIEW_MODE) as ViewMode | null
 const mode = ref<ViewMode>(savedMode === 'dashboard' ? 'dashboard' : 'graph')
 
+function notifyOverviewModeChange(m: ViewMode): void {
+  window.dispatchEvent(new CustomEvent<ViewMode>('eb-overview-mode', { detail: m }))
+}
+
 function setMode(m: ViewMode): void {
   mode.value = m
   localStorage.setItem(STORAGE_KEYS.OVERVIEW_MODE, m)
+  notifyOverviewModeChange(m)
 }
 
 watch(mode, (newMode) => {
@@ -405,13 +436,236 @@ watch(mode, (newMode) => {
 // ─── Refs ──────────────────────────────────────────────────────────────────────
 const cyContainer  = ref<HTMLDivElement | null>(null)
 const closeBtn     = ref<HTMLButtonElement | null>(null)
+const panelContent = ref<HTMLDivElement | null>(null)
+const legendHeader = ref<HTMLSpanElement | null>(null)
 const loading      = ref(true)
+
+// ─── Nœuds accessibles (ordre de lecture) ─────────────────────────────────────
+interface AccessibleNode { id: string; label: string }
+const sortedAccessibleNodes = ref<AccessibleNode[]>([])
+
+function buildSortedNodes(): void {
+  if (!cy) return
+  const nodes = cy.nodes().filter((n: cytoscape.NodeSingular) => {
+    const type = n.data('type') as string
+    return type === 'hub' || type === 'category' || type === 'indicator' || type === 'tipping'
+  })
+  sortedAccessibleNodes.value = (nodes as cytoscape.NodeCollection)
+    .map((n: cytoscape.NodeSingular) => ({ id: n.id(), label: n.data('label') as string, pos: n.position() }))
+    .sort((a, b) => {
+      const dy = a.pos.y - b.pos.y
+      return Math.abs(dy) > 5 ? dy : a.pos.x - b.pos.x
+    })
+    .map(({ id, label }) => ({ id, label }))
+}
+
+function highlightAccessibleNode(id: string): void {
+  if (!cy) return
+  cy.nodes().addClass('dimmed')
+  cy.edges().addClass('dimmed')
+  const node = cy.nodes(`[id="${id}"]`).first()
+  node.removeClass('dimmed').addClass('highlighted')
+  node.neighborhood('node').removeClass('dimmed').addClass('highlighted')
+  node.connectedEdges().removeClass('dimmed').addClass('highlighted')
+  // Fit directly on this node's neighborhood (selectedNode not yet set for keyboard focus)
+  const neighborhood = node.closedNeighborhood()
+  if (neighborhood.length) fitCollection(neighborhood)
+  keepFocusInsideVisibleViewport()
+}
+
+function unhighlightAccessibleNode(_id: string): void {
+  if (!cy || selectedNode.value) return
+  cy.nodes().removeClass('dimmed highlighted')
+  cy.edges().removeClass('dimmed highlighted')
+}
+
+function activateAccessibleNode(id: string): void {
+  if (!cy) return
+  selectedNode.value = HUB_NODES.find(n => n.id === id) ?? null
+  if (!selectedNode.value) return
+  cy.nodes().addClass('dimmed')
+  cy.edges().addClass('dimmed')
+  cy.nodes().removeClass('highlighted')
+  cy.edges().removeClass('highlighted')
+  const node = cy.nodes(`[id="${id}"]`).first()
+  node.removeClass('dimmed').addClass('highlighted')
+  node.neighborhood('node').removeClass('dimmed').addClass('highlighted')
+  node.connectedEdges().removeClass('dimmed').addClass('highlighted')
+  nextTick(() => closeBtn.value?.focus())
+}
+
 const tippingVisible = ref(false)
+const graphHeightPx = ref(640)
 let cy: Core | null = null
+let panelResizeObserver: ResizeObserver | null = null
+
+// Top offset for the zoom control bar: aligned with the legend header row
+const legendHeaderTop = ref<string>('1rem')
+function updateLegendHeaderTop(): void {
+  if (!legendHeader.value || !cyContainer.value) return
+  const containerTop = cyContainer.value.getBoundingClientRect().top
+  const headerTop = legendHeader.value.getBoundingClientRect().top
+  legendHeaderTop.value = `${Math.max(0, Math.round(headerTop - containerTop))}px`
+}
+
+function defaultGraphHeight(): number {
+  const vh = window.innerHeight
+  const isMobile = window.innerWidth < 640
+  return isMobile ? Math.max(460, vh - 180) : Math.max(560, vh - 220)
+}
+
+// ─── Viewport dimensions (single read per paint pass) ────────────────────────
+interface ViewportDimensions {
+  visibleHeight: number
+  visibleWidth:  number
+  leftMargin:    number
+  rightMargin:   number
+  topMargin:     number
+  bottomMargin:  number
+}
+function visibleViewport(): ViewportDimensions {
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize)
+  const cw  = cyContainer.value?.clientWidth  ?? window.innerWidth
+  const ch  = cyContainer.value?.clientHeight ?? window.innerHeight
+  return {
+    visibleHeight: Math.min(ch, defaultGraphHeight()),
+    visibleWidth:  selectedNode.value && window.innerWidth >= 640 ? Math.round(cw * 0.75) : cw,
+    leftMargin:    Math.round(2.5 * rem),
+    rightMargin:   Math.round(3.5 * rem),
+    topMargin:     Math.round(5   * rem),
+    bottomMargin:  Math.round(2   * rem),
+  }
+}
+
+function updateGraphHeight(): void {
+  let target = defaultGraphHeight()
+  if (selectedNode.value && panelContent.value) {
+    // The panel includes sticky paddings, close button area and card spacing.
+    target = Math.max(target, panelContent.value.scrollHeight + 40)
+  }
+  if (target !== graphHeightPx.value) graphHeightPx.value = target
+}
+
+function focusElementsForSelection(): cytoscape.CollectionReturnValue | null {
+  if (!cy || !selectedNode.value) return null
+  const focusNode = cy.nodes(`[id="${selectedNode.value.id}"]`).first()
+  if (!focusNode.length) return null
+  return focusNode.closedNeighborhood()
+}
+
+function panelOverflowPx(): number {
+  if (!selectedNode.value || !panelContent.value) return 0
+  return Math.max(0, panelContent.value.scrollHeight + 40 - defaultGraphHeight())
+}
+
+function panelOverflowRatio(): number {
+  const baseHeight = defaultGraphHeight()
+  if (baseHeight <= 0) return 0
+  return Math.min(1.25, panelOverflowPx() / baseHeight)
+}
+
+function fitCollection(elements: cytoscape.CollectionReturnValue): void {
+  if (!cy) return
+  const bounds = elements.boundingBox()
+  const span = Math.max(bounds.x2 - bounds.x1, bounds.y2 - bounds.y1)
+  const basePadding = Math.max(120, Math.round(span * 0.28))
+  const overflowRatio = panelOverflowRatio()
+  const extraPadding = Math.round(Math.max(80, span * 0.22) * overflowRatio)
+  cy.fit(elements, basePadding + extraPadding)
+}
+
+function fitViewportToCurrentFocus(): void {
+  if (!cy) return
+  const focusElements = focusElementsForSelection()
+  if (focusElements && focusElements.length) {
+    fitCollection(focusElements)
+    return
+  }
+  cy.fit(undefined, 50)
+}
+
+function keepFocusInsideVisibleViewport(vp?: ViewportDimensions): void {
+  if (!cy || !cyContainer.value) return
+  const focusElements = focusElementsForSelection()
+  if (!focusElements || !focusElements.length) return
+
+  const { visibleHeight, visibleWidth, leftMargin, rightMargin, topMargin, bottomMargin } = vp ?? visibleViewport()
+  const box = focusElements.renderedBoundingBox()
+
+  // Horizontal corrections (independent, no conflict possible)
+  if (box.x2 > visibleWidth - rightMargin) {
+    cy.panBy({ x: -Math.ceil(box.x2 - (visibleWidth - rightMargin)), y: 0 })
+  }
+  if (box.x1 < leftMargin) {
+    cy.panBy({ x: Math.ceil(leftMargin - box.x1), y: 0 })
+  }
+
+  // Vertical corrections: handle the case where focus is taller than available space
+  const focusH = box.y2 - box.y1
+  const availableH = visibleHeight - topMargin - bottomMargin
+  if (focusH > availableH) {
+    // Focus taller than visible area: prioritize top alignment
+    if (box.y1 < topMargin) {
+      cy.panBy({ x: 0, y: Math.ceil(topMargin - box.y1) })
+    }
+  } else {
+    // Both ends can fit: fix bottom first, then top (top takes priority)
+    if (box.y2 > visibleHeight - bottomMargin) {
+      cy.panBy({ x: 0, y: -Math.ceil(box.y2 - (visibleHeight - bottomMargin)) })
+    }
+    const box2 = focusElements.renderedBoundingBox()
+    if (box2.y1 < topMargin) {
+      cy.panBy({ x: 0, y: Math.ceil(topMargin - box2.y1) })
+    }
+  }
+}
+
+function refreshCyAfterHeightChange(): void {
+  if (!cy || !cyContainer.value) return
+  const vp = visibleViewport()
+  cy.resize()
+  fitViewportToCurrentFocus()
+
+  const overflowRatio = panelOverflowRatio()
+  if (selectedNode.value && window.innerWidth >= 640 && overflowRatio > 0) {
+    const panRatio = Math.min(0.22, 0.08 + overflowRatio * 0.12)
+    cy.panBy({ x: -Math.round((cyContainer.value.clientWidth - vp.visibleWidth) / 2 + vp.visibleWidth * panRatio), y: 0 })
+  }
+  if (window.innerWidth < 640) {
+    const { clientWidth: cw, clientHeight: ch } = cyContainer.value
+    if (ch > cw * 1.3) cy.panBy({ x: 0, y: Math.round(ch * 0.12) })
+  }
+  keepFocusInsideVisibleViewport(vp)
+}
+
+watch(graphHeightPx, () => {
+  nextTick(() => refreshCyAfterHeightChange())
+})
+
+watch(panelContent, (el) => {
+  panelResizeObserver?.disconnect()
+  if (!el) return
+  panelResizeObserver = new ResizeObserver(() => {
+    updateGraphHeight()
+  })
+  panelResizeObserver.observe(el)
+  updateGraphHeight()
+})
 
 // ─── Sélection ─────────────────────────────────────────────────────────────────
 const selectedNode = ref<HubNodeData | null>(null)
 const activeLoopId = ref<string | null>(null)
+
+watch(selectedNode, () => {
+  nextTick(() => {
+    updateGraphHeight()
+    // watch(graphHeightPx) triggers refreshCyAfterHeightChange when height changes.
+    // Only call it directly here when height stays the same (panel fits, no overflow change).
+    if (!panelContent.value || panelContent.value.scrollHeight + 40 <= defaultGraphHeight()) {
+      refreshCyAfterHeightChange()
+    }
+  })
+})
 
 function clearSelection(): void {
   selectedNode.value = null
@@ -635,14 +889,30 @@ function resetLayout(): void {
     animate:           true,
     animationDuration: 400,
     animationEasing:   'ease-in-out-sine',
-    fit:               true,
-    padding:           50,
+    fit:               false,   // We handle fit manually against the visible viewport
+    padding:           0,
   } as cytoscape.LayoutOptions).run()
 
   cy.one('layoutstop', () => {
     if (!cy || !cyContainer.value) return
-    const { clientWidth: cw, clientHeight: ch } = cyContainer.value
-    if (cw < 640 && ch > cw * 1.3) cy.panBy({ x: 0, y: Math.round(ch * 0.12) })
+    const cw = cyContainer.value.clientWidth
+    const ch = cyContainer.value.clientHeight
+    // Visible area: clamp height to viewport-based height, exclude side panel on desktop
+    const visibleH = Math.min(ch, defaultGraphHeight())
+    const visibleW = selectedNode.value && window.innerWidth >= 640
+      ? Math.round(cw * 0.75)
+      : cw
+    const padding = Math.round(3 * parseFloat(getComputedStyle(document.documentElement).fontSize))
+    cy!.fit(cy!.elements(), padding)
+    // Shift pan so the graph is centred within the visible area, not the full canvas
+    const panelOffsetX = selectedNode.value && window.innerWidth >= 640
+      ? -Math.round((cw - visibleW) / 2)
+      : 0
+    const panelOffsetY = visibleH < ch
+      ? -Math.round((ch - visibleH) / 2)
+      : 0
+    if (panelOffsetX !== 0 || panelOffsetY !== 0) cy!.panBy({ x: panelOffsetX, y: panelOffsetY })
+    if (cw < 640 && ch > cw * 1.3) cy!.panBy({ x: 0, y: Math.round(ch * 0.12) })
   })
 }
 
@@ -718,10 +988,10 @@ watch(showPolicies, (show) => {
   if (!cy) return
   if (show) {
     cy.add(buildPolicyElements())
-    cy.fit(undefined, 50)
+    fitViewportToCurrentFocus()
   } else {
     removePolicyElements()
-    cy.fit(undefined, 50)
+    fitViewportToCurrentFocus()
   }
 })
 
@@ -1177,6 +1447,7 @@ function initCy(): void {
   startPulseForTriggered()
   applyNodeScores()
   applyLoopHighlight()
+  buildSortedNodes()
 
   // Zoom → rendre les arêtes tipping-link plus visibles au-delà du seuil
   cy.on('zoom', () => {
@@ -1272,8 +1543,19 @@ watch(
 )
 
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
-onMounted(() => { if (mode.value === 'graph') nextTick(initCy) })
-onBeforeUnmount(() => { cy?.destroy(); cy = null })
+onMounted(() => {
+  notifyOverviewModeChange(mode.value)
+  updateGraphHeight()
+  nextTick(updateLegendHeaderTop)
+  window.addEventListener('resize', updateGraphHeight)
+  if (mode.value === 'graph') nextTick(initCy)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateGraphHeight)
+  panelResizeObserver?.disconnect()
+  cy?.destroy()
+  cy = null
+})
 </script>
 
 <style scoped>
@@ -1290,4 +1572,38 @@ onBeforeUnmount(() => { cy?.destroy(); cy = null })
 .conn-item[open] .conn-chevron { transform: rotate(180deg); }
 .conn-item summary { list-style: none; }
 .conn-item summary::-webkit-details-marker { display: none; }
+
+/* Boutons accessibles des nœuds du graphe (skip-link pattern) */
+.graph-node-key-btn {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.graph-node-key-btn:focus {
+  position: absolute;
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: auto;
+  height: auto;
+  padding: 0.25rem 0.75rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: #0a0f1e;
+  border: 1px solid #00e5ff;
+  color: #00e5ff;
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  outline: none;
+  box-shadow: 0 0 0 2px #00e5ff;
+}
 </style>

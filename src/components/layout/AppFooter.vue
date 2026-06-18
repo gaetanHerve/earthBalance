@@ -1,5 +1,12 @@
 <template>
-  <footer class="mt-12 border-t border-slate-800 bg-slate-900/50">
+  <footer
+    :class="[
+      'border-t transition-colors',
+      isOverviewGraph
+        ? 'mt-0 border-eb-border/60 bg-slate-900/50'
+        : 'mt-12 border-slate-800 bg-slate-900/50',
+    ]"
+  >
     <div class="max-w-screen-2xl mx-auto px-4 py-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
 
@@ -67,7 +74,12 @@
         </div>
       </div>
 
-      <div class="border-t border-slate-800 pt-4 flex flex-wrap justify-between items-center gap-2 text-xs text-slate-600">
+      <div
+        :class="[
+          'border-t pt-4 flex flex-wrap justify-between items-center gap-2 text-xs text-slate-600',
+          isOverviewGraph ? 'border-eb-border/60' : 'border-slate-800',
+        ]"
+      >
         <span>🌍 {{ t('footer.tagline') }}</span>
         <span>
           Propulsé par EarthChain™ · {{ t('footer.nodes') }} : 312 {{ t('footer.active') }} · {{ t('footer.latency') }} : 42ms
@@ -78,14 +90,49 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '@/store/dashboard.store'
+import { STORAGE_KEYS } from '@/config/storageKeys'
+
+type OverviewMode = 'graph' | 'dashboard'
 
 const { t } = useI18n()
+const route = useRoute()
 const dashStore = useDashboardStore()
 
 const { globalStats: stats } = storeToRefs(dashStore)
 
 const partners: string[] = ['🌡️ GIEC / IPCC', '🌿 PNUE / UNEP', '🌐 ONU / UN', '🍃 WWF', '🌾 FAO']
+
+const overviewMode = ref<OverviewMode>((localStorage.getItem(STORAGE_KEYS.OVERVIEW_MODE) as OverviewMode | null) ?? 'graph')
+
+const isOverviewGraph = computed(() => route.name === 'overview' && overviewMode.value === 'graph')
+
+function syncOverviewModeFromStorage(): void {
+  const fromStorage = localStorage.getItem(STORAGE_KEYS.OVERVIEW_MODE) as OverviewMode | null
+  if (fromStorage === 'graph' || fromStorage === 'dashboard') overviewMode.value = fromStorage
+}
+
+function onOverviewModeChanged(evt: Event): void {
+  const custom = evt as CustomEvent<OverviewMode>
+  if (custom.detail === 'graph' || custom.detail === 'dashboard') {
+    overviewMode.value = custom.detail
+    return
+  }
+  syncOverviewModeFromStorage()
+}
+
+watch(() => route.name, syncOverviewModeFromStorage)
+
+onMounted(() => {
+  syncOverviewModeFromStorage()
+  window.addEventListener('eb-overview-mode', onOverviewModeChanged as EventListener)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('eb-overview-mode', onOverviewModeChanged as EventListener)
+})
 </script>
