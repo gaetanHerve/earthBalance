@@ -628,4 +628,9 @@ export default {
     feedback_loops_expand:   'Show feedback loops',
     feedback_loops_collapse: 'Hide feedback loops',
   },
+  beta_notice: {
+    title:   'Work in Progress',
+    body:    'EarthBalance is currently under development. The data, simulations and projections displayed are experimental and do not constitute validated scientific reference. They are subject to change.',
+    confirm: 'I understand, continue',
+  },
 }

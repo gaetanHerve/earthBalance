@@ -10,4 +10,5 @@ export const STORAGE_KEYS = {
   GAME_PHASE:          'eb_game_phase',
   BALLOT_PROPOSALS:    'eb_ballot_proposals',
   OVERVIEW_MODE:       'eb-overview-mode',
+  BETA_NOTICE_SEEN:    'eb-beta-notice-seen',
 } as const

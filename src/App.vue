@@ -1,6 +1,7 @@
 <template>
   <div class="min-h-screen bg-eb-dark text-slate-200 font-sans">
     <AppLoadingBar />
+    <WIPBetaNoticeModal />
     <GameIntroOverlay />
     <GameRulesOverlay />
     <TippingPointModal />
@@ -22,10 +23,11 @@
 import { watchEffect, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import AppHeader        from '@/components/layout/AppHeader.vue'
-import AppTicker        from '@/components/layout/AppTicker.vue'
-import AppFooter        from '@/components/layout/AppFooter.vue'
-import AppLoadingBar      from '@/components/layout/AppLoadingBar.vue'
+import AppHeader         from '@/components/layout/AppHeader.vue'
+import AppTicker         from '@/components/layout/AppTicker.vue'
+import AppFooter         from '@/components/layout/AppFooter.vue'
+import AppLoadingBar     from '@/components/layout/AppLoadingBar.vue'
+import WIPBetaNoticeModal from '@/components/WIPBetaNoticeModal.vue'
 import GameIntroOverlay  from '@/components/layout/GameIntroOverlay.vue'
 import GameRulesOverlay  from '@/components/layout/GameRulesOverlay.vue'
 import TippingPointModal from '@/components/TippingPointModal.vue'

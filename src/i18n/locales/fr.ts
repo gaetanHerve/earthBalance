@@ -1,5 +1,10 @@
 export default {
   skip_to_content: 'Aller au contenu principal',
+  beta_notice: {
+    title:   'Travail en cours',
+    body:    'EarthBalance est actuellement en cours de développement. Les données, simulations et projections affichées sont expérimentales et ne constituent pas une référence scientifique validée. Elles sont susceptibles de changer.',
+    confirm: 'J\'ai compris, continuer',
+  },
   nav: {
     overview:     'Vue d\'ensemble',
     dashboard:    'Dashboard',
