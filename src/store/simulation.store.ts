@@ -23,9 +23,11 @@ import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
 
 // ─── Baseline SSP2-4.5 (référence partagée) ───────────────────────────────────
+// Validée contre AR6_WG1_00174 (page 80) — Near-term 1.5°C, Mid-term 2.0°C, Long-term 2.7°C
+// SIM_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
 export { SIM_LABELS } from '@/config/simulation.config'
-export const BASELINE_CO2  = [37.4, 39, 40.5, 42, 45.1, 49.2, 54, 58, 63, 70]
-export const BASELINE_TEMP = [1.4, 1.5, 1.6, 1.72, 1.95, 2.2, 2.6, 3, 3.5, 4]
+export const BASELINE_CO2  = [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0, 59.5]
+export const BASELINE_TEMP = [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32, 2.70]
 
 // Labels des projections dans les données de politique (9 points, hors 2100)
 const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
