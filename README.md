@@ -35,7 +35,29 @@ npm run dev        # http://localhost:5173
 npm run build      # vue-tsc + vite build
 npm run typecheck  # vue-tsc uniquement
 npm run preview    # prévisualisation du build
+npm run rag:build-index         # construit l'index BM25 dev-only depuis tools/rag/chunks/ipcc_chunks.jsonl
+npm run rag:build-index:example # construit l'index depuis le fichier d'exemple
 ```
+
+---
+
+## RAG local IPCC (dev-only)
+
+Le pipeline RAG local est volontairement separe de l'application web:
+
+- les scripts sont dans `tools/rag/`
+- les chunks prives sont dans `tools/rag/chunks/` (ignore par git)
+- les artefacts generes sont dans `.rag/` (ignore par git)
+
+Aucun composant RAG n'est charge dans le runtime frontend, ce qui evite toute exposition sur GitHub Pages.
+
+### Usage rapide
+
+1. Mettre les chunks locaux dans `tools/rag/chunks/ipcc_chunks.jsonl`.
+2. Lancer `npm run rag:build-index`.
+3. Recuperer les sorties dans `.rag/`.
+
+Un exemple de format est disponible dans `tools/rag/examples/ipcc_chunks.example.jsonl`.
 
 ---
 

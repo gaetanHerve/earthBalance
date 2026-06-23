@@ -9,6 +9,9 @@
     "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "preview": "vite preview",
+    "rag:build-index": "node tools/rag/build-ipcc-index.mjs",
+    "rag:build-index:example": "node tools/rag/build-ipcc-index.mjs --input tools/rag/examples/ipcc_chunks.example.jsonl",
+    "rag:search": "node tools/rag/search.mjs",
     "test": "vitest",
     "test:run": "vitest run"
   },

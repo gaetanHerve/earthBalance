@@ -49,4 +49,5 @@ export const LLMService = {
     console.warn('[LLMService] summarizeMitigationPolicy — non implémenté (stub)')
     return mitigationPolicy.description.slice(0, 120) + '…'
   },
+
 }
