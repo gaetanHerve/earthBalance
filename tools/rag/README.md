@@ -17,7 +17,7 @@ Aucun fichier de ce dossier n'est charge par l'application frontend en productio
 npm run rag:build-index
 ```
 
-3. Les artefacts sont ecrits dans `.rag/` (ignore par git).
+3. Les artefacts sont ecrits dans `tools/rag/index/` (ignore par git).
 
 ## Schema chunk minimal
 

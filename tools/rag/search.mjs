@@ -12,8 +12,8 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-const DEFAULT_INDEX = '.rag/ipcc_index.json'
-const DEFAULT_CHUNKS = '.rag/ipcc_chunks.jsonl'
+const DEFAULT_INDEX = 'tools/rag/index/ipcc_index.json'
+const DEFAULT_CHUNKS = 'tools/rag/index/ipcc_chunks.jsonl'
 const DEFAULT_TOP = 5
 const TEXT_PREVIEW_LENGTH = 600
 

@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 const DEFAULT_INPUT = 'tools/rag/chunks/ipcc_chunks.jsonl'
-const DEFAULT_OUTPUT_DIR = '.rag'
+const DEFAULT_OUTPUT_DIR = 'tools/rag/index'
 const OUTPUT_INDEX = 'ipcc_index.json'
 const OUTPUT_CHUNKS = 'ipcc_chunks.jsonl'
 

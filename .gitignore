@@ -35,7 +35,7 @@ Thumbs.db
 documents_contexte/
 
 # RAG local (dev only)
-.rag/
+tools/rag/index/
 tools/rag/chunks/
 tools/rag/output/
 public/rag/

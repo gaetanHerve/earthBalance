@@ -52,7 +52,7 @@ Le pipeline RAG local est volontairement séparé de l'application web — aucun
 | `tools/rag/` | Committé | Scripts (`build-ipcc-index.mjs`, `search.mjs`), exemples |
 | `tools/rag/data_sources/` | Committé | Données CSV AR6 (CEDA), séries OWID, référentiel RGAA |
 | `tools/rag/chunks/` | Ignoré | Chunks IPCC privés (source du pipeline de build) |
-| `.rag/` | Ignoré | Artefacts générés (index BM25 + chunks de travail) |
+| `tools/rag/index/` | Ignoré | Artefacts générés (index BM25 + chunks de travail) |
 
 Les données de `data_sources/` servent uniquement à **calibrer et vérifier le modèle de simulation** (agents IA, scripts de génération). Elles ne sont jamais chargées en production.
 
@@ -60,7 +60,7 @@ Les données de `data_sources/` servent uniquement à **calibrer et vérifier le
 
 1. Placer les chunks locaux dans `tools/rag/chunks/ipcc_chunks.jsonl`.
 2. Lancer `npm run rag:build-index`.
-3. Les artefacts de recherche sont écrits dans `.rag/`.
+3. Les artefacts de recherche sont écrits dans `tools/rag/index/`.
 
 Pour régénérer les résumés CSV : `node scripts/generate-dataset-summaries.mjs`
 
