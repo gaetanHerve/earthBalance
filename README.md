@@ -23,7 +23,7 @@ Serious Game web collaboratif permettant à une communauté de prendre des déci
 | Build | Vite 5 |
 | Blockchain *(stub)* | À intégrer — ethers.js v6 + Polygon PoS |
 | LLM *(stub)* | À intégrer — Claude API via proxy backend |
-| Données *(stub)* | À brancher — Our World In Data, FAO, NOAA |
+| Données simulation | OWID + CEDA AR6 — calibration du modèle uniquement (non chargées en production) |
 
 ---
 
@@ -43,21 +43,36 @@ npm run rag:build-index:example # construit l'index depuis le fichier d'exemple
 
 ## RAG local IPCC (dev-only)
 
-Le pipeline RAG local est volontairement separe de l'application web:
+Le pipeline RAG local est volontairement séparé de l'application web — aucun composant n'est chargé dans le runtime frontend, ce qui évite toute exposition sur GitHub Pages.
 
-- les scripts sont dans `tools/rag/`
-- les chunks prives sont dans `tools/rag/chunks/` (ignore par git)
-- les artefacts generes sont dans `.rag/` (ignore par git)
+### Structure
 
-Aucun composant RAG n'est charge dans le runtime frontend, ce qui evite toute exposition sur GitHub Pages.
+| Dossier | Statut git | Contenu |
+|---|---|---|
+| `tools/rag/` | Committé | Scripts (`build-ipcc-index.mjs`, `search.mjs`), exemples |
+| `tools/rag/data_sources/` | Committé | Données CSV AR6 (CEDA), séries OWID, référentiel RGAA |
+| `tools/rag/chunks/` | Ignoré | Chunks IPCC privés (source du pipeline de build) |
+| `.rag/` | Ignoré | Artefacts générés (index BM25 + chunks de travail) |
+
+Les données de `data_sources/` servent uniquement à **calibrer et vérifier le modèle de simulation** (agents IA, scripts de génération). Elles ne sont jamais chargées en production.
 
 ### Usage rapide
 
-1. Mettre les chunks locaux dans `tools/rag/chunks/ipcc_chunks.jsonl`.
+1. Placer les chunks locaux dans `tools/rag/chunks/ipcc_chunks.jsonl`.
 2. Lancer `npm run rag:build-index`.
-3. Recuperer les sorties dans `.rag/`.
+3. Les artefacts de recherche sont écrits dans `.rag/`.
+
+Pour régénérer les résumés CSV : `node scripts/generate-dataset-summaries.mjs`
 
 Un exemple de format est disponible dans `tools/rag/examples/ipcc_chunks.example.jsonl`.
+
+### Windows — chemins longs
+
+Certains noms de fichiers dans `tools/rag/data_sources/` dépassent 260 caractères (limite Windows). Avant de faire `git add`, exécuter une fois par clone :
+
+```bash
+git config core.longpaths true
+```
 
 ---
 

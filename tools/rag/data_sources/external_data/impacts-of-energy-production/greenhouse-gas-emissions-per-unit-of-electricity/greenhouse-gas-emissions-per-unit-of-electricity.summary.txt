@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Greenhouse gas emissions per unit of electricity by source
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: greenhouse-gas-emissions-per-unit-of-electricity.csv
+Période couverte: N/A
+Thèmes: energy, emissions, mitigation
+Scénarios: N/A
+Variables: lifecycle_GHG_gCO2eq_per_kWh
+
+Description:
+Émissions GES en cycle de vie complet (gCO2eq/kWh) par source d'électricité : charbon, gaz, nucléaire, éolien onshore/offshore, hydroélectricité, solaire PV. Donnée clé pour évaluer l'impact de la sortie du charbon.
+
+Colonnes (3): Entity, Year, Greenhouse gas emissions
+Nombre de lignes de données: 14
+
+Statistiques par colonne:
+  Year: min=2021, max=2021, première valeur=2021, dernière valeur=2021, tendance=stable (0.0%)
+  Greenhouse gas emissions: min=5.6, max=2021, première valeur=970, dernière valeur=2021, tendance=hausse (108.4%)
+
+Citation: UNECE (2021) Life Cycle Assessment of Electricity Generation Options — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Greenhouse gas emissions per kilogram of food product
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: greenhouse-gas-emissions-per-kilogram-of-food-product.csv
+Période couverte: N/A
+Thèmes: food, emissions, agriculture
+Scénarios: N/A
+Variables: GHG_kgCO2eq_per_kg_food
+
+Description:
+Émissions GES en cycle de vie (kgCO2eq/kg) par produit alimentaire (viande, légumes, céréales, produits laitiers...). Données clés pour politiques alimentaires.
+
+Colonnes (3): Entity, Year, Greenhouse gas emissions per kilogram
+Nombre de lignes de données: 38
+
+Statistiques par colonne:
+  Year: min=2010, max=2010, première valeur=2010, dernière valeur=2010, tendance=stable (0.0%)
+  Greenhouse gas emissions per kilogram: min=0.39, max=99.48, première valeur=0.43, dernière valeur=1.79, tendance=hausse (316.3%)
+
+Citation: Poore and Nemecek (2018) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

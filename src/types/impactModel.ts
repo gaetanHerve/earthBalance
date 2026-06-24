@@ -17,7 +17,7 @@ export interface IpccSource {
   report: string        // "AR6 SYR" | "AR6 WGI" | "AR6 WGIII"
   section: string       // "Section 4.5" | "Chapter 6"
   figure_id?: string    // "Figure SPM.4" → cross-référence index.json
-  dataset_id?: string   // "WGI_SPM_Fig4" → fichier CSV dans data_sources/
+  dataset_id?: string   // "WGI_SPM_Fig4" → fichier CSV dans tools/rag/data_sources/
   excerpt?: string      // citation textuelle courte
 }
 

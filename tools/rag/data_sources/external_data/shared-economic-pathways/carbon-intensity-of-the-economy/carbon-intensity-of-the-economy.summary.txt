@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Carbon intensity of the economy — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: carbon-intensity-of-the-economy.csv
+Période couverte: 2005-2100
+Thèmes: emissions, economy, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: carbon_intensity_kgCO2_per_USD_GDP
+
+Description:
+Intensité carbone de l'économie (kg CO2 / $ PIB) par scénario SSP, projections 2005-2100. Indicateur de découplage croissance/émissions.
+
+Colonnes (4): Entity, Year, Carbon intensity of economy - Region: global, Carbon intensity of economy - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  Carbon intensity of economy - Region: global: min=-0.078225, max=0.66812, première valeur=0.57773, dernière valeur=0.12231, tendance=baisse (-78.8%)
+
+Valeurs aux années charnières:
+  2030: Carbon intensity of economy - Region: global=0.11529
+  2050: Carbon intensity of economy - Region: global=0.0033231
+  2100: Carbon intensity of economy - Region: global=-0.025364
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

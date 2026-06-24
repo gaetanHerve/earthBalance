@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Per capita CO₂ emissions — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: per-capita-carbon-dioxide-emissions.csv
+Période couverte: 2005-2100
+Thèmes: emissions, co2, per_capita, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: CO2_t_per_capita
+
+Description:
+Émissions de CO2 par habitant (tCO2/personne) par scénario SSP, projections 2005-2100.
+
+Colonnes (4): Entity, Year, CO2 emissions per capita - Region: global, CO2 emissions per capita - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  CO2 emissions per capita - Region: global: min=-2.9642, max=17.098, première valeur=5.0786, dernière valeur=17.098, tendance=hausse (236.7%)
+
+Valeurs aux années charnières:
+  2030: CO2 emissions per capita - Region: global=2.2287
+  2050: CO2 emissions per capita - Region: global=0.11348
+  2100: CO2 emissions per capita - Region: global=-2.061
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

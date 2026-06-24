@@ -1,0 +1,25 @@
+=== DATASET SUMMARY ===
+Titre: GHG emission scenarios and resulting warming ranges
+Figure(s) GIEC: Figure SPM.4, SPM.4
+Section du rapport: Summary for Policymakers
+Source: IPCC AR6 — CEDA Archive | Licence: CC-BY-4.0
+Fichier CSV: ts_warming_ranges_1850-1900_base_panel_b.csv
+Période couverte: 2015-2100
+Thèmes: emissions, scenarios, ghg
+Scénarios: SSP1-1.9, SSP1-2.6, SSP2-4.5, SSP3-7.0, SSP5-8.5
+Variables: CO2_GtCO2_yr, CH4_MtCO2eq_yr, N2O_MtN2O_yr, SO2_MtSO2_yr, warming_C
+
+Description:
+Émissions de CO2, CH4, N2O et SO2 par scénario SSP (SSP1-1.9 à SSP5-8.5), et fourchettes de réchauffement associées à horizon 2100.
+
+Colonnes (7): scenario, forcing, p50, p05, p95, , 
+Nombre de lignes de données: 21
+
+Statistiques par colonne:
+  p50: min=-0.51358, max=4.4, première valeur=1.0846, dernière valeur=1.06, tendance=baisse (-2.3%)
+  p05: min=-1.0399, max=3.3, première valeur=0.77227, dernière valeur=3.3, tendance=hausse (327.3%)
+  p95: min=-0.20993, max=5.7, première valeur=1.604, dernière valeur=5.7, tendance=hausse (255.4%)
+
+URL source CEDA: http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_04/v20210809/
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

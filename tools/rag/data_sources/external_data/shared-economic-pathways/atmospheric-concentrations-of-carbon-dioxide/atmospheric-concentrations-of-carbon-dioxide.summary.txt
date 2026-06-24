@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Atmospheric concentrations of CO₂ — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: atmospheric-concentrations-of-carbon-dioxide.csv
+Période couverte: 2005-2100
+Thèmes: co2, concentration, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: CO2_concentration_ppm
+
+Description:
+Concentrations atmosphériques de CO2 (ppm) par scénario SSP, projections 2005-2100. Indicateur direct du budget carbone utilisé.
+
+Colonnes (4): Entity, Year, CO2 concentration - Region: global, CO2 concentration - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  CO2 concentration - Region: global: min=370.15, max=1089, première valeur=379.85, dernière valeur=1089, tendance=hausse (186.7%)
+
+Valeurs aux années charnières:
+  2030: CO2 concentration - Region: global=424.68
+  2050: CO2 concentration - Region: global=420.48
+  2100: CO2 concentration - Region: global=377.9
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

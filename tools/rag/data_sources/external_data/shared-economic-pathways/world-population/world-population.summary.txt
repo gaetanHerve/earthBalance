@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: World population — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: world-population.csv
+Période couverte: 2005-2100
+Thèmes: population, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: population
+
+Description:
+Population mondiale projetée par scénario SSP, 2005-2100.
+
+Colonnes (4): Entity, Year, Population - Region: global, Population - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  Population - Region: global: min=6491000000, max=12620000000, première valeur=6530500000, dernière valeur=7375000000, tendance=hausse (12.9%)
+
+Valeurs aux années charnières:
+  2030: Population - Region: global=8061900000
+  2050: Population - Region: global=8530500000
+  2100: Population - Region: global=6958000000
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

@@ -1,0 +1,520 @@
+{
+  "_meta": {
+    "description": "Index unifié des datasets disponibles dans EarthBalance (IPCC AR6 + Our World in Data)",
+    "generated": "2026-04-13",
+    "usage": "Chaque entrée référence un dataset par thème. 'files' est relatif à tools/rag/data_sources/. Les datasets IPCC référencent les figures du rapport AR6 (ex: 'Figure SPM.4'). Les datasets OWID sont des séries temporelles observées ou projetées par scénario SSP."
+  },
+  "sources": {
+    "IPCC_CEDA": {
+      "label": "IPCC AR6 — CEDA Archive",
+      "license": "CC-BY-4.0",
+      "base_path": "datasets/WGI/",
+      "note": "Données numériques sous-jacentes aux figures du rapport AR6 WGI. Téléchargées depuis http://data.ceda.ac.uk/badc/ar6_wg1/"
+    },
+    "OWID": {
+      "label": "Our World in Data",
+      "license": "CC-BY-4.0",
+      "base_path": "external_data/",
+      "note": "Séries temporelles traitées par Our World in Data, issues de sources primaires (Global Carbon Project, Met Office, UNECE, FAO, etc.)"
+    }
+  },
+  "datasets": [
+    {
+      "id": "WGI_SPM_Fig1",
+      "source": "IPCC_CEDA",
+      "figure_id": ["Figure SPM.1", "SPM.1"],
+      "theme": ["temperature", "observations"],
+      "working_group": "WGI",
+      "report_section": "Summary for Policymakers",
+      "title": "Observed global surface temperature change (1850–2020)",
+      "description": "Reconstruction de la température de surface mondiale sur 2000 ans, observations 1850-2020, et changements du GMST observés vs modèles CMIP6.",
+      "variables": ["GMST", "temperature_anomaly_C", "uncertainty"],
+      "scenarios": ["historical", "paleo-reconstruction"],
+      "time_range": "1-2020",
+      "files": [
+        "datasets/WGI/spm_fig1/panel_a/SPM1_1-2000_recon.csv",
+        "datasets/WGI/spm_fig1/panel_a/SPM1_1850-2020_obs.csv",
+        "datasets/WGI/spm_fig1/panel_a/spm1_6500_recon.csv",
+        "datasets/WGI/spm_fig1/panel_b/gmst_changes_model_and_obs.csv"
+      ],
+      "ceda_url": "http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/"
+    },
+    {
+      "id": "WGI_SPM_Fig4",
+      "source": "IPCC_CEDA",
+      "figure_id": ["Figure SPM.4", "SPM.4"],
+      "theme": ["emissions", "scenarios", "ghg"],
+      "working_group": "WGI",
+      "report_section": "Summary for Policymakers",
+      "title": "GHG emission scenarios and resulting warming ranges",
+      "description": "Émissions de CO2, CH4, N2O et SO2 par scénario SSP (SSP1-1.9 à SSP5-8.5), et fourchettes de réchauffement associées à horizon 2100.",
+      "variables": ["CO2_GtCO2_yr", "CH4_MtCO2eq_yr", "N2O_MtN2O_yr", "SO2_MtSO2_yr", "warming_C"],
+      "scenarios": ["SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"],
+      "time_range": "2015-2100",
+      "files": [
+        "datasets/WGI/spm_fig4/panel_a/Carbon_dioxide_Gt_CO2_yr.csv",
+        "datasets/WGI/spm_fig4/panel_a/Methane_Mt_CO2_yr.csv",
+        "datasets/WGI/spm_fig4/panel_a/Nitrous_oxide_Mt_N2O_yr.csv",
+        "datasets/WGI/spm_fig4/panel_a/Sulfur_dioxide_Mt_SO2_yr.csv",
+        "datasets/WGI/spm_fig4/panel_b/ts_warming_ranges_1850-1900_base_panel_b.csv"
+      ],
+      "ceda_url": "http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_04/v20210809/"
+    },
+    {
+      "id": "WGI_SPM_Fig8",
+      "source": "IPCC_CEDA",
+      "figure_id": ["Figure SPM.8", "SPM.8"],
+      "theme": ["temperature", "sea_level", "ocean", "sea_ice", "scenarios"],
+      "working_group": "WGI",
+      "report_section": "Summary for Policymakers",
+      "title": "Long-term climate change projections by SSP scenario",
+      "description": "Projections à long terme (jusqu'à 2100 et 2300) de la température de surface, glace arctique de septembre, pH océanique et niveau marin mondial, par scénario SSP.",
+      "variables": ["tas_C_anomaly", "sea_ice_area_arctic_september_km2", "ocean_surface_pH", "global_sea_level_mm"],
+      "scenarios": ["historical", "SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"],
+      "time_range": "1950-2300",
+      "files": [
+        "datasets/WGI/spm_fig8/panel_a/tas_global_Historical.csv",
+        "datasets/WGI/spm_fig8/panel_a/tas_global_SSP1_1_9.csv",
+        "datasets/WGI/spm_fig8/panel_a/tas_global_SSP1_2_6.csv",
+        "datasets/WGI/spm_fig8/panel_a/tas_global_SSP2_4_5.csv",
+        "datasets/WGI/spm_fig8/panel_a/tas_global_SSP3_7_0.csv",
+        "datasets/WGI/spm_fig8/panel_a/tas_global_SSP5_8_5.csv",
+        "datasets/WGI/spm_fig8/panel_b/sia_arctic_september_Historical.csv",
+        "datasets/WGI/spm_fig8/panel_b/sia_arctic_september_SSP1_1_9.csv",
+        "datasets/WGI/spm_fig8/panel_b/sia_arctic_september_SSP1_2_6.csv",
+        "datasets/WGI/spm_fig8/panel_b/sia_arctic_september_SSP2_4_5.csv",
+        "datasets/WGI/spm_fig8/panel_b/sia_arctic_september_SSP3_7_0.csv",
+        "datasets/WGI/spm_fig8/panel_b/sia_arctic_september_SSP5_8_5.csv",
+        "datasets/WGI/spm_fig8/panel_c/phos_global_Historical.csv",
+        "datasets/WGI/spm_fig8/panel_c/phos_global_SSP1_1_9.csv",
+        "datasets/WGI/spm_fig8/panel_c/phos_global_SSP1_2_6.csv",
+        "datasets/WGI/spm_fig8/panel_c/phos_global_SSP2_4_5.csv",
+        "datasets/WGI/spm_fig8/panel_c/phos_global_SSP3_7_0.csv",
+        "datasets/WGI/spm_fig8/panel_c/phos_global_SSP5_8_5.csv",
+        "datasets/WGI/spm_fig8/panel_d/global_sea_level_observed.csv",
+        "datasets/WGI/spm_fig8/panel_d/global_sea_level_projected.csv",
+        "datasets/WGI/spm_fig8/panel_e/global_sea_level_2300_assessed.csv"
+      ],
+      "ceda_url": "http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_08/v20210809/",
+      "ipcc_browser_id": 3737
+    },
+    {
+      "id": "WGI_SPM_Fig9",
+      "source": "IPCC_CEDA",
+      "figure_id": ["Figure SPM.9", "SPM.9"],
+      "theme": ["extremes", "risks"],
+      "working_group": "WGI",
+      "report_section": "Summary for Policymakers",
+      "title": "Observed and projected changes in extremes",
+      "description": "Données consolidées sur les changements observés et projetés dans les événements extrêmes (chaleur, précipitations, sécheresse, cyclones) par niveau de réchauffement.",
+      "variables": ["extreme_events", "warming_level_C", "likelihood"],
+      "scenarios": ["1.5C", "2C", "4C"],
+      "time_range": "1950-2100",
+      "files": [
+        "datasets/WGI/spm_fig9/consolidated_data_figure_SPM.9.csv"
+      ],
+      "ceda_url": "http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_09/v20220105/"
+    },
+    {
+      "id": "WGI_Ch6_Fig12",
+      "source": "IPCC_CEDA",
+      "figure_id": ["Figure 6.12", "Ch6 Fig. 6.12"],
+      "theme": ["radiative_forcing", "emissions", "temperature"],
+      "working_group": "WGI",
+      "report_section": "Chapter 6 — Short-lived Climate Forcers",
+      "title": "Contribution to ERF and GSAT from component emissions (1750–2019)",
+      "description": "Contribution de chaque composant d'émission (CO2, CH4, aérosols, etc.) au forçage radiatif effectif (ERF) et au changement de température de surface mondiale (GSAT) entre 1750 et 2019.",
+      "variables": ["ERF_Wm2", "GSAT_C", "uncertainty"],
+      "scenarios": ["historical"],
+      "time_range": "1750-2019",
+      "files": [
+        "datasets/WGI/ch6_fig12/fig_em_based_ERF_GSAT_period_1750-2019_values_ERF.csv",
+        "datasets/WGI/ch6_fig12/fig_em_based_ERF_GSAT_period_1750-2019_values_ERF_uncertainty.csv",
+        "datasets/WGI/ch6_fig12/fig_em_based_ERF_GSAT_period_1750-2019_values_dT.csv",
+        "datasets/WGI/ch6_fig12/fig_em_based_ERF_GSAT_period_1750-2019_values_dT_uncertainty.csv"
+      ],
+      "ceda_url": "http://data.ceda.ac.uk/badc/ar6_wg1/data/ch_06/ch6_fig12/v20220815/",
+      "ipcc_browser_id": 5895
+    },
+    {
+      "id": "OWID_temperature_anomaly",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["temperature", "observations"],
+      "title": "Temperature change relative to the pre-industrial period",
+      "description": "Anomalie de température de surface mondiale (terre + océan) par rapport à la moyenne 1861-1890, en degrés Celsius. Source : Met Office HadCRUT5 (2026).",
+      "variables": ["temperature_anomaly_C_vs_1861-1890"],
+      "citation": "Met Office Hadley Centre — HadCRUT5 (2026)",
+      "time_range": "1850-2025",
+      "granularity": "global",
+      "files": [
+        "external_data/temperature-anomaly/temperature-anomaly.metadata.json"
+      ],
+      "note": "Fichier CSV absent du répertoire — seul le metadata.json est présent. Dataset à re-télécharger si besoin."
+    },
+    {
+      "id": "OWID_co2_per_capita",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["emissions", "co2", "per_capita"],
+      "title": "CO₂ emissions per capita",
+      "description": "Émissions territoriales de CO2 fossile par habitant (tCO2/personne), par pays et monde. N'inclut pas le changement d'usage des terres. Source : Global Carbon Budget (2025).",
+      "variables": ["CO2_t_per_capita"],
+      "citation": "Global Carbon Budget (2025) — processed by Our World in Data",
+      "time_range": "historique (pays clés)",
+      "granularity": "par pays + monde",
+      "files": [
+        "external_data/co2-emissions-per-capita/co2-emissions-per-capita.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_temperature",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["temperature", "scenarios", "ssp"],
+      "title": "Global average temperature increase relative to pre-industrial era — SSP scenarios",
+      "description": "Hausse de température mondiale moyenne par rapport à l'ère pré-industrielle, par scénario SSP (SSP1 à SSP5, baseline). Projections 2005-2100.",
+      "variables": ["temperature_increase_C"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/global-average-temperature-increase-relative-to-the-pre-industrial-era/global-average-temperature-increase-relative-to-the-pre-industrial-era.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_co2_concentration",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["co2", "concentration", "scenarios", "ssp"],
+      "title": "Atmospheric concentrations of CO₂ — SSP scenarios",
+      "description": "Concentrations atmosphériques de CO2 (ppm) par scénario SSP, projections 2005-2100. Indicateur direct du budget carbone utilisé.",
+      "variables": ["CO2_concentration_ppm"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/atmospheric-concentrations-of-carbon-dioxide/atmospheric-concentrations-of-carbon-dioxide.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_radiative_forcing",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["radiative_forcing", "scenarios", "ssp"],
+      "title": "Radiative forcing — SSP scenarios",
+      "description": "Forçage radiatif total (W/m²) par scénario SSP, projections 2005-2100. Mesure directe du déséquilibre énergétique de la Terre.",
+      "variables": ["radiative_forcing_Wm2"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/radiative-forcing/radiative-forcing.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_carbon_intensity",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["emissions", "economy", "scenarios", "ssp"],
+      "title": "Carbon intensity of the economy — SSP scenarios",
+      "description": "Intensité carbone de l'économie (kg CO2 / $ PIB) par scénario SSP, projections 2005-2100. Indicateur de découplage croissance/émissions.",
+      "variables": ["carbon_intensity_kgCO2_per_USD_GDP"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/carbon-intensity-of-the-economy/carbon-intensity-of-the-economy.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_co2_per_capita",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["emissions", "co2", "per_capita", "scenarios", "ssp"],
+      "title": "Per capita CO₂ emissions — SSP scenarios",
+      "description": "Émissions de CO2 par habitant (tCO2/personne) par scénario SSP, projections 2005-2100.",
+      "variables": ["CO2_t_per_capita"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/per-capita-carbon-dioxide-emissions/per-capita-carbon-dioxide-emissions.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_gdp_per_capita",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["economy", "scenarios", "ssp"],
+      "title": "Global GDP per capita — SSP scenarios",
+      "description": "PIB mondial par habitant (dollars internationaux 2005) par scénario SSP, projections 2005-2100.",
+      "variables": ["GDP_per_capita_2005_USD"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/global-gdp-per-capita/global-gdp-per-capita.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_consumption_per_capita",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["economy", "scenarios", "ssp"],
+      "title": "Global private economic consumption per capita — SSP scenarios",
+      "description": "Consommation privée par habitant (dollars 2005) par scénario SSP. Proxy du niveau de vie matériel mondial.",
+      "variables": ["consumption_per_capita_2005_USD"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/global-private-economic-consumption-per-capita/global-private-economic-consumption-per-capita.csv"
+      ]
+    },
+    {
+      "id": "OWID_SSP_population",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["population", "scenarios", "ssp"],
+      "title": "World population — SSP scenarios",
+      "description": "Population mondiale projetée par scénario SSP, 2005-2100.",
+      "variables": ["population"],
+      "citation": "Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data",
+      "scenarios": ["SSP1-Baseline", "SSP2-Baseline", "SSP3-Baseline", "SSP4-Baseline", "SSP5-Baseline"],
+      "time_range": "2005-2100",
+      "granularity": "global",
+      "files": [
+        "external_data/shared-economic-pathways/world-population/world-population.csv"
+      ]
+    },
+    {
+      "id": "OWID_energy_ghg_per_kwh",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "emissions", "mitigation"],
+      "title": "Greenhouse gas emissions per unit of electricity by source",
+      "description": "Émissions GES en cycle de vie complet (gCO2eq/kWh) par source d'électricité : charbon, gaz, nucléaire, éolien onshore/offshore, hydroélectricité, solaire PV. Donnée clé pour évaluer l'impact de la sortie du charbon.",
+      "variables": ["lifecycle_GHG_gCO2eq_per_kWh"],
+      "citation": "UNECE (2021) Life Cycle Assessment of Electricity Generation Options — processed by Our World in Data",
+      "granularity": "par technologie",
+      "files": [
+        "external_data/impacts-of-energy-production/greenhouse-gas-emissions-per-unit-of-electricity/greenhouse-gas-emissions-per-unit-of-electricity.csv"
+      ]
+    },
+    {
+      "id": "OWID_energy_land_use_per_kwh",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "land_use"],
+      "title": "Land use per unit of electricity by source",
+      "description": "Usage des terres (m²/MWh, direct + indirect) par source d'électricité. Utile pour évaluer les compromis entre ENR et autres usages du sol.",
+      "variables": ["land_use_m2_per_MWh"],
+      "citation": "UNECE (2021) — processed by Our World in Data",
+      "granularity": "par technologie",
+      "files": [
+        "external_data/impacts-of-energy-production/land-use-per-unit-of-electricity/land-use-per-unit-of-electricity.csv"
+      ]
+    },
+    {
+      "id": "OWID_energy_water_use_per_kwh",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "water"],
+      "title": "Dissipated water use per unit of electricity by source",
+      "description": "Consommation d'eau dissipée (L/MWh) par source d'électricité.",
+      "variables": ["water_use_L_per_MWh"],
+      "citation": "UNECE (2021) — processed by Our World in Data",
+      "granularity": "par technologie",
+      "files": [
+        "external_data/impacts-of-energy-production/dissipated-water-use-per-unit-of-electricity/dissipated-water-use-per-unit-of-electricity.csv"
+      ]
+    },
+    {
+      "id": "OWID_energy_metals_per_kwh",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "materials", "critical_minerals"],
+      "title": "Metal and mineral requirements per unit of electricity by source",
+      "description": "Besoins en métaux et minéraux critiques (kg/MWh) par source d'électricité. Crucial pour évaluer les tensions sur les ressources liées à la transition ENR.",
+      "variables": ["metals_kg_per_MWh"],
+      "citation": "UNECE (2021) — processed by Our World in Data",
+      "granularity": "par technologie",
+      "files": [
+        "external_data/impacts-of-energy-production/metal-and-mineral-requirements-per-unit-of-electricity/metal-and-mineral-requirements-per-unit-of-electricity.csv"
+      ]
+    },
+    {
+      "id": "OWID_energy_eutrophication_per_kwh",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "water", "biodiversity"],
+      "title": "Freshwater eutrophication per unit of electricity by source",
+      "description": "Eutrophisation des eaux douces (g PO4eq/MWh) par source d'électricité. Impact sur la biodiversité aquatique.",
+      "variables": ["eutrophication_gPO4eq_per_MWh"],
+      "citation": "UNECE (2021) — processed by Our World in Data",
+      "granularity": "par technologie",
+      "files": [
+        "external_data/impacts-of-energy-production/freshwater-eutrophication-per-unit-of-electricity/freshwater-eutrophication-per-unit-of-electricity.csv"
+      ]
+    },
+    {
+      "id": "OWID_energy_use_per_person",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "per_capita"],
+      "title": "Energy use per person",
+      "description": "Consommation d'énergie primaire par habitant (kWh/personne, méthode de substitution), par pays. Source : EIA + Energy Institute Statistical Review (2025).",
+      "variables": ["energy_kWh_per_capita"],
+      "citation": "U.S. Energy Information Administration (2025); Energy Institute (2025) — processed by Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/energy-use-per-person/energy-use-per-person.csv"
+      ]
+    },
+    {
+      "id": "OWID_crude_oil_production",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "fossil_fuels", "oil"],
+      "title": "Crude oil production",
+      "description": "Production de pétrole brut (incluant condensats) par pays. Source : U.S. Energy Information Administration.",
+      "variables": ["crude_oil_production"],
+      "citation": "US Energy Information Administration (EIA) — processed by Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/crude-oil-production/crude-oil-production.csv"
+      ]
+    },
+    {
+      "id": "OWID_crude_oil_reserves",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "fossil_fuels", "oil"],
+      "title": "Crude oil reserves",
+      "description": "Réserves prouvées de pétrole brut par pays.",
+      "variables": ["crude_oil_reserves"],
+      "citation": "Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/crude-oil-reserves/crude-oil-reserves.csv"
+      ]
+    },
+    {
+      "id": "OWID_oil_consumption",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["energy", "fossil_fuels", "oil"],
+      "title": "Oil consumption",
+      "description": "Consommation de pétrole par pays.",
+      "variables": ["oil_consumption"],
+      "citation": "Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/oil-consumption/oil-consumption.csv"
+      ]
+    },
+    {
+      "id": "OWID_food_ghg_per_kg",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["food", "emissions", "agriculture"],
+      "title": "Greenhouse gas emissions per kilogram of food product",
+      "description": "Émissions GES en cycle de vie (kgCO2eq/kg) par produit alimentaire (viande, légumes, céréales, produits laitiers...). Données clés pour politiques alimentaires.",
+      "variables": ["GHG_kgCO2eq_per_kg_food"],
+      "citation": "Poore and Nemecek (2018) — processed by Our World in Data",
+      "granularity": "par produit alimentaire",
+      "files": [
+        "external_data/greenhouse-gas-emissions-per-kilogram-of-food-product/greenhouse-gas-emissions-per-kilogram-of-food-product.csv"
+      ]
+    },
+    {
+      "id": "OWID_calories_per_person",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["food", "nutrition", "food_security"],
+      "title": "Total daily supply of calories per person",
+      "description": "Apport calorique journalier disponible par habitant (kcal/jour), par pays. Indicateur de sécurité alimentaire. Source : FAO (2025).",
+      "variables": ["calories_kcal_per_day_per_capita"],
+      "citation": "Food and Agriculture Organization of the United Nations (2025) — processed by Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/total-daily-supply-of-calories-per-person/total-daily-supply-of-calories-per-person.csv"
+      ]
+    },
+    {
+      "id": "OWID_gini_coefficient",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["inequality", "social"],
+      "title": "Gini coefficient (income inequality)",
+      "description": "Coefficient de Gini mesurant les inégalités de revenus avant impôts (0 = égalité parfaite, 1 = inégalité maximale). Source : World Inequality Database (2026).",
+      "variables": ["gini_pretax_0_to_1"],
+      "citation": "World Inequality Database (WID.world) (2026) — processed by Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/gini-coefficient/gini-coefficient.csv"
+      ]
+    },
+    {
+      "id": "OWID_life_expectancy",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["health", "social"],
+      "title": "Life expectancy at birth",
+      "description": "Espérance de vie à la naissance (années), par pays. Source : UN World Population Prospects (2024).",
+      "variables": ["life_expectancy_years"],
+      "citation": "UN, World Population Prospects (2024) — processed by Our World in Data",
+      "time_range": "1950-2023",
+      "granularity": "par pays",
+      "files": [
+        "external_data/life-expectancy/life-expectancy.csv"
+      ]
+    },
+    {
+      "id": "OWID_electoral_democracy",
+      "source": "OWID",
+      "figure_id": [],
+      "theme": ["governance", "democracy", "social"],
+      "title": "Electoral Democracy Index",
+      "description": "Indice de démocratie électorale (0 à 1) estimé par des experts : droits de vote, élections libres, libertés d'association et d'expression. Source : V-Dem (2026).",
+      "variables": ["electoral_democracy_index_0_to_1"],
+      "citation": "V-Dem (2026) — processed by Our World in Data",
+      "granularity": "par pays",
+      "files": [
+        "external_data/electoral-democracy-index/electoral-democracy-index.csv"
+      ]
+    }
+  ],
+  "coverage_summary": {
+    "themes_couverts": {
+      "climat_physique": ["temperature", "sea_level", "sea_ice", "ocean_pH", "extremes", "radiative_forcing"],
+      "emissions_ghg": ["CO2", "CH4", "N2O", "SO2", "par scénario SSP", "par pays", "par produit alimentaire"],
+      "energie": ["GHG par technologie", "eau", "terres", "métaux critiques", "pétrole (production/réserves/consommation)", "usage énergie par habitant"],
+      "scenarios_ssp": ["SSP1 à SSP5 baseline", "température", "CO2 atm.", "forçage radiatif", "intensité carbone", "PIB", "population"],
+      "alimentation": ["calories/habitant", "GHG par aliment"],
+      "social_economique": ["Gini", "espérance de vie", "démocratie", "PIB/habitant", "consommation/habitant"]
+    },
+    "scenarios_disponibles": ["SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5", "SSP1-5 Baseline"],
+    "horizons_temporels": [
+      "1 — 2020 (paléo + observations)",
+      "1850 — 2025 (observations modernes)",
+      "2005 — 2100 (projections SSP)",
+      "2100 — 2300 (long terme WGI SPM.8)"
+    ],
+    "gaps_restants": [
+      "Émissions par secteur économique détaillées (énergie, transport, industrie, bâtiments, agriculture)",
+      "Budget carbone restant explicite en GtCO2 (1.5°C / 2°C)",
+      "Déforestation et changement d'usage des terres",
+      "Impacts biodiversité quantifiés (WGII)",
+      "Données de mortalité liée au changement climatique (WGII)"
+    ]
+  }
+}

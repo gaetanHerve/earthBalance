@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Crude oil reserves
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: crude-oil-reserves.csv
+Période couverte: N/A
+Thèmes: energy, fossil_fuels, oil
+Scénarios: N/A
+Variables: crude_oil_reserves
+
+Description:
+Réserves prouvées de pétrole brut par pays.
+
+Colonnes (3): Entity, Year, Oil reserves
+Nombre de lignes de données: 8446
+
+Statistiques par colonne:
+  Year: min=1980, max=2021, première valeur=1980, dernière valeur=2021, tendance=hausse (2.1%)
+  Oil reserves: min=0, max=264400000000, première valeur=0, dernière valeur=0, tendance=stable (0.0%)
+
+Citation: Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

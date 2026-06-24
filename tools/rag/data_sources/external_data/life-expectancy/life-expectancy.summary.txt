@@ -1,0 +1,25 @@
+=== DATASET SUMMARY ===
+Titre: Life expectancy at birth
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: life-expectancy.csv
+Période couverte: 1950-2023
+Thèmes: health, social
+Scénarios: N/A
+Variables: life_expectancy_years
+
+Description:
+Espérance de vie à la naissance (années), par pays. Source : UN World Population Prospects (2024).
+
+Colonnes (5): Entity, Code, Year, Life Expectancy, age 0
+Nombre de lignes de données: 18722
+
+Statistiques par colonne:
+  Year: min=1950, max=2023, première valeur=1950, dernière valeur=2023, tendance=hausse (3.7%)
+  Life Expectancy: min=10.989, max=2023, première valeur=28.156, dernière valeur=62.775, tendance=hausse (123.0%)
+  age 0: min=40.092, max=72.937, première valeur=40.092, dernière valeur=72.937, tendance=hausse (81.9%)
+
+Citation: UN, World Population Prospects (2024) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

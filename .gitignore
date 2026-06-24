@@ -33,7 +33,6 @@ Thumbs.db
 
 # Autres
 documents_contexte/
-data_sources/
 
 # RAG local (dev only)
 .rag/

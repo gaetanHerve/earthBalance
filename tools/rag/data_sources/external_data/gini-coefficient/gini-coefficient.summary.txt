@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Gini coefficient (income inequality)
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: gini-coefficient.csv
+Période couverte: N/A
+Thèmes: inequality, social
+Scénarios: N/A
+Variables: gini_pretax_0_to_1
+
+Description:
+Coefficient de Gini mesurant les inégalités de revenus avant impôts (0 = égalité parfaite, 1 = inégalité maximale). Source : World Inequality Database (2026).
+
+Colonnes (3): Country, Year, Gini coefficient (before tax) (World Inequality Database)
+Nombre de lignes de données: 3798
+
+Statistiques par colonne:
+  Year: min=1820, max=2024, première valeur=2008, dernière valeur=2019, tendance=hausse (0.5%)
+  Gini coefficient (before tax) (World Inequality Database): min=0.2026, max=0.8414, première valeur=0.5245, dernière valeur=0.6851, tendance=hausse (30.6%)
+
+Citation: World Inequality Database (WID.world) (2026) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

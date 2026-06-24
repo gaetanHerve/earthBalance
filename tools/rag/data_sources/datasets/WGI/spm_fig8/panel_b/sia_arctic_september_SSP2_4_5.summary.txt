@@ -1,0 +1,31 @@
+=== DATASET SUMMARY ===
+Titre: Long-term climate change projections by SSP scenario
+Figure(s) GIEC: Figure SPM.8, SPM.8
+Section du rapport: Summary for Policymakers
+Source: IPCC AR6 — CEDA Archive | Licence: CC-BY-4.0
+Fichier CSV: sia_arctic_september_SSP2_4_5.csv
+Période couverte: 1950-2300
+Thèmes: temperature, sea_level, ocean, sea_ice, scenarios
+Scénarios: historical, SSP1-1.9, SSP1-2.6, SSP2-4.5, SSP3-7.0, SSP5-8.5
+Variables: tas_C_anomaly, sea_ice_area_arctic_september_km2, ocean_surface_pH, global_sea_level_mm
+
+Description:
+Projections à long terme (jusqu'à 2100 et 2300) de la température de surface, glace arctique de septembre, pH océanique et niveau marin mondial, par scénario SSP.
+
+Colonnes (4): Year, 5%, Mean, 95%
+Nombre de lignes de données: 85
+
+Statistiques par colonne:
+  Year: min=2015, max=2099, première valeur=2015, dernière valeur=2099, tendance=hausse (4.2%)
+  5%: min=0.000087326, max=1.6497, première valeur=1.354, dernière valeur=0.000087326, tendance=baisse (-100.0%)
+  Mean: min=0.62329, max=4.01, première valeur=3.9668, dernière valeur=0.74556, tendance=baisse (-81.2%)
+  95%: min=4.1108, max=7.1938, première valeur=6.6078, dernière valeur=4.776, tendance=baisse (-27.7%)
+
+Valeurs aux années charnières:
+  2030.00: 5%=0.48193, Mean=2.7586, 95%=6.6836
+  2050.00: 5%=0.034333, Mean=1.6166, 95%=5.8397
+  2075.00: 5%=0.0070467, Mean=1.2082, 95%=5.2048
+
+URL source CEDA: http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_08/v20210809/
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

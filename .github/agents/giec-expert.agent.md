@@ -58,6 +58,51 @@ Exemples :
 
 ---
 
+## Données numériques complémentaires
+
+Lorsque les chunks textuels ne couvrent pas suffisamment des **valeurs numériques précises** (séries temporelles, données de figures), des fichiers CSV sont disponibles localement.
+
+### Hiérarchie des sources
+
+1. **Chunks RAG** (primaire) — texte des rapports AR6 indexé → `npm run rag:search`
+2. **CSV CEDA** (secondaire) — données numériques des figures AR6 WGI → `tools/rag/data_sources/datasets/WGI/`
+3. **CSV OWID** (tertiaire) — séries temporelles externes → `tools/rag/data_sources/external_data/`
+
+N'utiliser les sources 2 et 3 **qu'en second recours**, quand le RAG ne fournit pas la valeur numérique précise recherchée.
+
+### Données CEDA disponibles (AR6 WGI)
+
+| Figure | Contenu |
+|---|---|
+| SPM.1 | Reconstructions GMST & observations 1850–2020 |
+| SPM.4 | Émissions GES par scénario SSP (CO₂, CH₄, N₂O, SO₂) |
+| SPM.8 | Projections long-terme : température, glace Arctique, pH, niveau marin |
+| SPM.9 | Événements extrêmes observés et projetés |
+| Ch6 Fig.12 | Forçage radiatif ERF/GSAT par composante (1750–2019) |
+
+Consulter les `.summary.txt` compagnons pour un aperçu rapide avant de lire le CSV brut :
+```bash
+cat tools/rag/data_sources/datasets/WGI/spm_fig8/panel_a/tas_global_SSP2_4_5.summary.txt
+```
+
+### Données OWID disponibles (second recours)
+
+CO₂ per capita, température anomaly, scénarios SSP (temp, CO₂, forçage radiatif, PIB, consommation), énergie, pétrole, alimentation, Gini, espérance de vie, démocratie.
+Chemin : `tools/rag/data_sources/external_data/`
+
+### Citation des données numériques
+
+Distinguer toujours la source textuelle de la source numérique :
+
+- Source textuelle (RAG) → `[AR6 WGI, SPM, p.X]`
+- Source numérique CEDA → `[IPCC AR6 WGI, Figure SPM.X — CEDA Archive, CC-BY-4.0]`
+- Source numérique OWID → `[Our World in Data — Titre — Organisation primaire]`
+
+**Règle** : ne jamais présenter une valeur d'un CSV comme « tirée du texte du rapport ». Formuler explicitement :
+> « Les données numériques publiées avec la Figure SPM.4 indiquent... » `[IPCC AR6 WGI, Figure SPM.4 — CEDA Archive]`
+
+---
+
 ## Analyse multi-Working Group
 
 Lorsqu'une question couvre plusieurs dimensions, croise les données entre WG :

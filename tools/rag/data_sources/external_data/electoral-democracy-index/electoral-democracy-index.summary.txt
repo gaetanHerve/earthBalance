@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Electoral Democracy Index
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: electoral-democracy-index.csv
+Période couverte: N/A
+Thèmes: governance, democracy, social
+Scénarios: N/A
+Variables: electoral_democracy_index_0_to_1
+
+Description:
+Indice de démocratie électorale (0 à 1) estimé par des experts : droits de vote, élections libres, libertés d'association et d'expression. Source : V-Dem (2026).
+
+Colonnes (5): Entity, Code, Year, Electoral Democracy Index, World region according to OWID
+Nombre de lignes de données: 34228
+
+Statistiques par colonne:
+  Year: min=1789, max=2025, première valeur=1789, dernière valeur=2025, tendance=hausse (13.2%)
+  Electoral Democracy Index: min=0.006, max=0.922, première valeur=0.019, dernière valeur=0.268, tendance=hausse (1310.5%)
+
+Citation: V-Dem (2026) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

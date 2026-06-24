@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Observed and projected changes in extremes
+Figure(s) GIEC: Figure SPM.9, SPM.9
+Section du rapport: Summary for Policymakers
+Source: IPCC AR6 — CEDA Archive | Licence: CC-BY-4.0
+Fichier CSV: consolidated_data_figure_SPM.9.csv
+Période couverte: 1950-2100
+Thèmes: extremes, risks
+Scénarios: 1.5C, 2C, 4C
+Variables: extreme_events, warming_level_C, likelihood
+
+Description:
+Données consolidées sur les changements observés et projetés dans les événements extrêmes (chaleur, précipitations, sécheresse, cyclones) par niveau de réchauffement.
+
+Colonnes (38): , Heat and Cold, , , , Wet and Dry, , , , , , , , Wind, , , , Snow and Ice, , , , , , Other, , , Coastal, , , , , Open Ocean, , , , , , 
+Nombre de lignes de données: 6
+
+Statistiques par colonne:
+  Heat and Cold: min=0, max=51, première valeur=51, dernière valeur=51, tendance=stable (0.0%)
+  Wet and Dry: min=1, max=51, première valeur=20, dernière valeur=51, tendance=hausse (155.0%)
+  Wind: min=3, max=51, première valeur=6, dernière valeur=51, tendance=hausse (750.0%)
+  Snow and Ice: min=4, max=32, première valeur=4, dernière valeur=32, tendance=hausse (700.0%)
+  Other: min=49, max=49, première valeur=49, dernière valeur=49, tendance=stable (0.0%)
+  Coastal: min=1, max=45, première valeur=41, dernière valeur=45, tendance=hausse (9.8%)
+  Open Ocean: min=12, max=12, première valeur=12, dernière valeur=12, tendance=stable (0.0%)
+
+URL source CEDA: http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_09/v20220105/
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Oil consumption
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: oil-consumption.csv
+Période couverte: N/A
+Thèmes: energy, fossil_fuels, oil
+Scénarios: N/A
+Variables: oil_consumption
+
+Description:
+Consommation de pétrole par pays.
+
+Colonnes (3): Entity, Year, Oil consumption
+Nombre de lignes de données: 8555
+
+Statistiques par colonne:
+  Year: min=1973, max=2020, première valeur=1980, dernière valeur=2019, tendance=hausse (2.0%)
+  Oil consumption: min=0, max=5820000000, première valeur=406500, dernière valeur=1583000, tendance=hausse (289.4%)
+
+Citation: Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]
