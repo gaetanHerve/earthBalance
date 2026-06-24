@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: CO₂ emissions per capita
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: co2-emissions-per-capita.csv
+Période couverte: historique (pays clés)
+Thèmes: emissions, co2, per_capita
+Scénarios: N/A
+Variables: CO2_t_per_capita
+
+Description:
+Émissions territoriales de CO2 fossile par habitant (tCO2/personne), par pays et monde. N'inclut pas le changement d'usage des terres. Source : Global Carbon Budget (2025).
+
+Colonnes (4): Entity, Code, Year, CO₂ emissions per capita
+Nombre de lignes de données: 26509
+
+Statistiques par colonne:
+  Year: min=1750, max=2024, première valeur=1949, dernière valeur=2024, tendance=hausse (3.8%)
+  CO₂ emissions per capita: min=0, max=782.74, première valeur=0.0019921, dernière valeur=0.82367, tendance=hausse (41245.6%)
+
+Citation: Global Carbon Budget (2025) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

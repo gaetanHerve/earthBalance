@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Total daily supply of calories per person
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: total-daily-supply-of-calories-per-person.csv
+Période couverte: N/A
+Thèmes: food, nutrition, food_security
+Scénarios: N/A
+Variables: calories_kcal_per_day_per_capita
+
+Description:
+Apport calorique journalier disponible par habitant (kcal/jour), par pays. Indicateur de sécurité alimentaire. Source : FAO (2025).
+
+Colonnes (4): Entity, Code, Year, All food - Food available for consumption (kilocalories per day per capita)
+Nombre de lignes de données: 13032
+
+Statistiques par colonne:
+  Year: min=1961, max=2023, première valeur=1961, dernière valeur=2023, tendance=hausse (3.2%)
+  All food - Food available for consumption (kilocalories per day per capita): min=1318.7, max=4793, première valeur=2914.3, dernière valeur=2393.4, tendance=baisse (-17.9%)
+
+Citation: Food and Agriculture Organization of the United Nations (2025) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

@@ -1,0 +1,24 @@
+=== DATASET SUMMARY ===
+Titre: Crude oil production
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: crude-oil-production.csv
+Période couverte: N/A
+Thèmes: energy, fossil_fuels, oil
+Scénarios: N/A
+Variables: crude_oil_production
+
+Description:
+Production de pétrole brut (incluant condensats) par pays. Source : U.S. Energy Information Administration.
+
+Colonnes (3): Entity, Year, Oil production
+Nombre de lignes de données: 8792
+
+Statistiques par colonne:
+  Year: min=1973, max=2020, première valeur=1980, dernière valeur=2020, tendance=hausse (2.0%)
+  Oil production: min=0, max=4817000000, première valeur=0, dernière valeur=0, tendance=stable (0.0%)
+
+Citation: US Energy Information Administration (EIA) — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

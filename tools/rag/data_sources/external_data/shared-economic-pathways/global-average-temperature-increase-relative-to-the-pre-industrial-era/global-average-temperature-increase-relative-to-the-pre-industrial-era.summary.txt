@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Global average temperature increase relative to pre-industrial era — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: global-average-temperature-increase-relative-to-the-pre-industrial-era.csv
+Période couverte: 2005-2100
+Thèmes: temperature, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: temperature_increase_C
+
+Description:
+Hausse de température mondiale moyenne par rapport à l'ère pré-industrielle, par scénario SSP (SSP1 à SSP5, baseline). Projections 2005-2100.
+
+Colonnes (4): Entity, Year, Temperature - Region: global, Temperature - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  Temperature - Region: global: min=0.91339, max=5.052, première valeur=0.91339, dernière valeur=5.052, tendance=hausse (453.1%)
+
+Valeurs aux années charnières:
+  2030: Temperature - Region: global=1.4662
+  2050: Temperature - Region: global=1.5622
+  2100: Temperature - Region: global=1.3449
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

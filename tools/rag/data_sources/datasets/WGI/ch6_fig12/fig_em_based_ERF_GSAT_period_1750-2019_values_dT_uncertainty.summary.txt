@@ -1,0 +1,26 @@
+=== DATASET SUMMARY ===
+Titre: Contribution to ERF and GSAT from component emissions (1750–2019)
+Figure(s) GIEC: Figure 6.12, Ch6 Fig. 6.12
+Section du rapport: Chapter 6 — Short-lived Climate Forcers
+Source: IPCC AR6 — CEDA Archive | Licence: CC-BY-4.0
+Fichier CSV: fig_em_based_ERF_GSAT_period_1750-2019_values_dT_uncertainty.csv
+Période couverte: 1750-2019
+Thèmes: radiative_forcing, emissions, temperature
+Scénarios: historical
+Variables: ERF_Wm2, GSAT_C, uncertainty
+
+Description:
+Contribution de chaque composant d'émission (CO2, CH4, aérosols, etc.) au forçage radiatif effectif (ERF) et au changement de température de surface mondiale (GSAT) entre 1750 et 2019.
+
+Colonnes (5): Conventions, G, BADC-CSV, 1, 
+Nombre de lignes de données: 38
+
+Statistiques par colonne:
+  G: min=0.0058931, max=0.26031, première valeur=0.19539, dernière valeur=0.0058931, tendance=baisse (-97.0%)
+  BADC-CSV: min=0.0035671, max=2021, première valeur=2021, dernière valeur=0.0035671, tendance=baisse (-100.0%)
+  1: min=0.0096942, max=0.42822, première valeur=0.32141, dernière valeur=0.0096942, tendance=baisse (-97.0%)
+  : min=0.0058678, max=0.55445, première valeur=0.55445, dernière valeur=0.0058678, tendance=baisse (-98.9%)
+
+URL source CEDA: http://data.ceda.ac.uk/badc/ar6_wg1/data/ch_06/ch6_fig12/v20220815/
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

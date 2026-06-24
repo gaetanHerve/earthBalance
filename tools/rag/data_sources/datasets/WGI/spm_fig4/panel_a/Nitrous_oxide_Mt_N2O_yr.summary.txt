@@ -1,0 +1,33 @@
+=== DATASET SUMMARY ===
+Titre: GHG emission scenarios and resulting warming ranges
+Figure(s) GIEC: Figure SPM.4, SPM.4
+Section du rapport: Summary for Policymakers
+Source: IPCC AR6 — CEDA Archive | Licence: CC-BY-4.0
+Fichier CSV: Nitrous_oxide_Mt_N2O_yr.csv
+Période couverte: 2015-2100
+Thèmes: emissions, scenarios, ghg
+Scénarios: SSP1-1.9, SSP1-2.6, SSP2-4.5, SSP3-7.0, SSP5-8.5
+Variables: CO2_GtCO2_yr, CH4_MtCO2eq_yr, N2O_MtN2O_yr, SO2_MtSO2_yr, warming_C
+
+Description:
+Émissions de CO2, CH4, N2O et SO2 par scénario SSP (SSP1-1.9 à SSP5-8.5), et fourchettes de réchauffement associées à horizon 2100.
+
+Colonnes (6): years, ssp370, ssp119, ssp126, ssp245, ssp585
+Nombre de lignes de données: 10
+
+Statistiques par colonne:
+  years: min=2015, max=2100, première valeur=2015, dernière valeur=2100, tendance=hausse (4.2%)
+  ssp370: min=10.9, max=20.654, première valeur=10.9, dernière valeur=20.654, tendance=hausse (89.5%)
+  ssp119: min=7.9416, max=10.9, première valeur=10.9, dernière valeur=8.3391, tendance=baisse (-23.5%)
+  ssp126: min=7.8247, max=10.9, première valeur=10.9, dernière valeur=8.357, tendance=baisse (-23.3%)
+  ssp245: min=8.7323, max=12.624, première valeur=10.9, dernière valeur=8.7323, tendance=baisse (-19.9%)
+  ssp585: min=10.9, max=13.488, première valeur=10.9, dernière valeur=12.725, tendance=hausse (16.7%)
+
+Valeurs aux années charnières:
+  2030: ssp370=13.292, ssp119=8.3938, ssp126=8.9112, ssp245=12.209, ssp585=12.647
+  2050: ssp370=15.635, ssp119=8.0736, ssp126=7.9412, ssp245=12.587, ssp585=13.171
+  2100: ssp370=20.654, ssp119=8.3391, ssp126=8.357, ssp245=8.7323, ssp585=12.725
+
+URL source CEDA: http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_04/v20210809/
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

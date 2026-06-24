@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Radiative forcing — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: radiative-forcing.csv
+Période couverte: 2005-2100
+Thèmes: radiative_forcing, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: radiative_forcing_Wm2
+
+Description:
+Forçage radiatif total (W/m²) par scénario SSP, projections 2005-2100. Mesure directe du déséquilibre énergétique de la Terre.
+
+Colonnes (4): Entity, Year, Radiative forcing - Region: global, Radiative forcing - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  Radiative forcing - Region: global: min=1.8709, max=8.6978, première valeur=1.8709, dernière valeur=8.6978, tendance=hausse (364.9%)
+
+Valeurs aux années charnières:
+  2030: Radiative forcing - Region: global=2.8439
+  2050: Radiative forcing - Region: global=2.6349
+  2100: Radiative forcing - Region: global=1.9052
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Global GDP per capita — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: global-gdp-per-capita.csv
+Période couverte: 2005-2100
+Thèmes: economy, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: GDP_per_capita_2005_USD
+
+Description:
+PIB mondial par habitant (dollars internationaux 2005) par scénario SSP, projections 2005-2100.
+
+Colonnes (4): Entity, Year, GDP per capita - Region: global, GDP per capita - Region: global (Annotations)
+Nombre de lignes de données: 282
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  GDP per capita - Region: global: min=8431.4, max=139800, première valeur=8790.7, dernière valeur=139800, tendance=hausse (1490.3%)
+
+Valeurs aux années charnières:
+  2030: GDP per capita - Region: global=19332
+  2050: GDP per capita - Region: global=34148
+  2100: GDP per capita - Region: global=81258
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

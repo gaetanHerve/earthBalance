@@ -105,7 +105,7 @@ Cytoscape graph uses: orange `#fb923c` (physical nodes), green `#00ff88` (ecosys
 
 ## Accessibilité (RGAA 4.1.2)
 
-L'application doit être conforme au RGAA 4.1.2. Le référentiel complet est disponible dans `data_sources/RGAA-v4.1.2.txt`.
+L'application doit être conforme au RGAA 4.1.2. Le référentiel complet est disponible dans `tools/rag/data_sources/RGAA-v4.1.2.txt`.
 
 ### Patterns déjà en place (à conserver)
 

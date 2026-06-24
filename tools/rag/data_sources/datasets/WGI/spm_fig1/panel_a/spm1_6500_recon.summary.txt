@@ -1,0 +1,26 @@
+=== DATASET SUMMARY ===
+Titre: Observed global surface temperature change (1850–2020)
+Figure(s) GIEC: Figure SPM.1, SPM.1
+Section du rapport: Summary for Policymakers
+Source: IPCC AR6 — CEDA Archive | Licence: CC-BY-4.0
+Fichier CSV: spm1_6500_recon.csv
+Période couverte: 1-2020
+Thèmes: temperature, observations
+Scénarios: historical, paleo-reconstruction
+Variables: GMST, temperature_anomaly_C, uncertainty
+
+Description:
+Reconstruction de la température de surface mondiale sur 2000 ans, observations 1850-2020, et changements du GMST observés vs modèles CMIP6.
+
+Colonnes (5): Conventions, G, BADC-CSV, 1, 
+Nombre de lignes de données: 20
+
+Statistiques par colonne:
+  Conventions: min=1, max=6500, première valeur=1, dernière valeur=6500, tendance=hausse (649900.0%)
+  G: min=0.2, max=2021, première valeur=1, dernière valeur=0.2, tendance=baisse (-80.0%)
+  BADC-CSV: min=1, max=95, première valeur=5, dernière valeur=1, tendance=baisse (-80.0%)
+  1: min=0, max=0, première valeur=0, dernière valeur=0, tendance=stable (0.0%)
+
+URL source CEDA: http://data.ceda.ac.uk/badc/ar6_wg1/data/spm/spm_01/v20221116/
+
+[Généré automatiquement par generate-dataset-summaries.mjs]

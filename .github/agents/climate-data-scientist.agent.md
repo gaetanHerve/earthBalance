@@ -115,18 +115,74 @@ type SocietalKey =
 
 ---
 
+## Sources de données numériques disponibles
+
+En complément du RAG textuel, des données numériques structurées sont disponibles localement.
+Hiérarchie d'utilisation : **RAG (texte)** → **CSV CEDA (données AR6)** → **CSV OWID (données externes)**.
+
+### Source primaire — Données AR6 WGI (CEDA Archive)
+
+Fichiers CSV issus directement des figures publiées du rapport AR6 WGI.
+**Chemin** : `tools/rag/data_sources/datasets/WGI/`
+
+| Figure | Contenu | Sous-dossiers |
+|---|---|---|
+| SPM.1 | Reconstructions GMST & observations 1850–2020 | `spm_fig1/panel_a/`, `panel_b/` |
+| SPM.4 | Émissions GES par scénario SSP (CO₂, CH₄, N₂O, SO₂) + fourchettes réchauffement | `spm_fig4/panel_a/`, `panel_b/` |
+| SPM.8 | Projections long-terme (température, glace Arctique, pH océan, niveau marin) | `spm_fig8/panel_a/` à `panel_e/` |
+| SPM.9 | Événements extrêmes observés et projetés | `spm_fig9/` |
+| Ch6 Fig.12 | Forçage radiatif ERF/GSAT composante par composante (1750–2019) | `ch6_fig12/` |
+
+Chaque CSV dispose d'un fichier `.summary.txt` compagnon (résumé en langage naturel, statistiques clés).
+
+**Citation requise** : `// Source: IPCC AR6 WGI, Figure SPM.X — CEDA Archive (CC-BY-4.0)`
+
+### Source secondaire — Séries temporelles observées (Our World in Data)
+
+Utiliser **uniquement si les données CEDA ne couvrent pas le besoin**.
+**Chemin** : `tools/rag/data_sources/external_data/`
+
+Datasets disponibles : CO₂ per capita, temperature anomaly, SSP scenarios (température, concentration CO₂, forçage radiatif, PIB per capita, consommation), énergie par personne, pétrole (production/réserves/consommation), alimentation (calories, émissions agri), Gini, espérance de vie, démocratie.
+
+**Citation requise** : `// Source: Our World in Data — [Titre] — [Organisation primaire (ex: Global Carbon Budget)]`
+
+### Obligation de citation dans le code TypeScript
+
+Tout tableau calibré sur ces sources doit porter un commentaire de traçabilité :
+
+```typescript
+// Source: IPCC AR6 WGI, Figure SPM.4, panel_a — CEDA Archive
+// Fichier: tools/rag/data_sources/datasets/WGI/spm_fig4/panel_a/Carbon_dioxide_Gt_CO2_yr.csv
+co2: {
+  decided: [...],
+}
+```
+
+---
+
 ## Processus de modélisation
 
 ### Étape 1 — Ancrage dans les données GIEC
 
-**Avant de proposer tout jeu de données**, recherche les bases scientifiques dans l'index local :
+**Avant de proposer tout jeu de données**, recherche en deux temps :
 
+**1a — RAG textuel** (mécanismes, ordres de grandeur, incertitudes) :
 ```
 npm run rag:search -- "policy name effect CO2 emissions reduction" --top 8
 npm run rag:search -- "policy mechanism pathway scenario" --top 5
 ```
 
-Utilise les chunks retournés pour calibrer les ordres de grandeur. Cite systématiquement le rapport et les pages source.
+**1b — Données numériques CSV** (valeurs précises, séries temporelles par scénario SSP) :
+```
+# Consulter les résumés disponibles
+cat tools/rag/data_sources/datasets/WGI/spm_fig4/panel_a/Carbon_dioxide_Gt_CO2_yr.summary.txt
+# Lire les données brutes si nécessaire
+read_file tools/rag/data_sources/datasets/WGI/spm_fig4/panel_a/Carbon_dioxide_Gt_CO2_yr.csv
+```
+
+Pour les indicateurs sociétaux ou économiques non couverts par les CSV CEDA, consulter `tools/rag/data_sources/external_data/` en second recours.
+
+Cite systématiquement les sources dans la réponse ET dans le code généré.
 
 ### Étape 2 — Lire les données existantes
 

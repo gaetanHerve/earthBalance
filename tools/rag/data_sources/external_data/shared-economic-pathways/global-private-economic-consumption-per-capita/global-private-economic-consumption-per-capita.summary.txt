@@ -1,0 +1,29 @@
+=== DATASET SUMMARY ===
+Titre: Global private economic consumption per capita — SSP scenarios
+Figure(s) GIEC: N/A
+Section du rapport: N/A
+Source: Our World in Data | Licence: CC-BY-4.0
+Fichier CSV: global-private-economic-consumption-per-capita.csv
+Période couverte: 2005-2100
+Thèmes: economy, scenarios, ssp
+Scénarios: SSP1-Baseline, SSP2-Baseline, SSP3-Baseline, SSP4-Baseline, SSP5-Baseline
+Variables: consumption_per_capita_2005_USD
+
+Description:
+Consommation privée par habitant (dollars 2005) par scénario SSP. Proxy du niveau de vie matériel mondial.
+
+Colonnes (4): Entity, Year, Economic consumption per capita - Region: global, Economic consumption per capita - Region: global (Annotations)
+Nombre de lignes de données: 231
+
+Statistiques par colonne:
+  Year: min=2005, max=2100, première valeur=2005, dernière valeur=2100, tendance=hausse (4.7%)
+  Economic consumption per capita - Region: global: min=4499.4, max=59647, première valeur=5287.7, dernière valeur=59647, tendance=hausse (1028.0%)
+
+Valeurs aux années charnières:
+  2030: Economic consumption per capita - Region: global=11686
+  2050: Economic consumption per capita - Region: global=21222
+  2100: Economic consumption per capita - Region: global=50603
+
+Citation: Riahi et al. (2017) — IPCC Scenarios — processed by Our World in Data
+
+[Généré automatiquement par generate-dataset-summaries.mjs]
