@@ -21,7 +21,7 @@
         <span class="text-2xl font-black text-blue-400">+{{ seaLevelCurrent }}</span>
         <span class="text-xs text-slate-500 mt-0.5">mm</span>
       </GaugeChart>
-      <div class="mt-3 text-xs text-slate-500 text-center">{{ t('dashboard.sea_level_gauge_note') }}</div>
+      <div class="mt-3 text-xs text-slate-500 text-center">{{ t('dashboard.sea_level_ref') }}</div>
     </template>
 
     <template v-else>

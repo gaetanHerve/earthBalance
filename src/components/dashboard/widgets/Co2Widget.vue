@@ -21,7 +21,7 @@
         <span class="text-2xl font-black text-red-400">{{ co2Current }}</span>
         <span class="text-xs text-slate-500 mt-0.5">GtCO₂/an</span>
       </GaugeChart>
-      <div class="mt-3 text-xs text-slate-500 text-center">Paris 2050 : ~20 Gt/an</div>
+      <div class="mt-3 text-xs text-slate-500 text-center">{{ t('dashboard.co2_ref') }}</div>
     </template>
 
     <LineChart
