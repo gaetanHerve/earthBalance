@@ -96,20 +96,99 @@ Un exemple de format IPCC est disponible dans `tools/rag/examples/ipcc_chunks.ex
 
 ## Pipeline pré-commit
 
-À chaque `git commit`, deux vérifications s'exécutent automatiquement sur le diff stagé :
+À chaque `git commit`, le hook vérifie si la validation IA est activée.
+
+**Par défaut (sans flag)**, les checks IA sont ignorés — pas de consommation de crédits :
+
+```
+🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)
+```
+
+**Pour activer la validation IA** sur un commit spécifique (modifications de données climatiques ou composants UI) :
+
+```bash
+AI_VALIDATION=1 git commit -m "..."
+```
+
+Les deux checks s'exécutent alors sur le diff stagé :
 
 | Check | Condition de déclenchement | Bloquant |
 |---|---|---|
 | **GIEC** | Diff contient des données climatiques (CO₂, température, projections…) | Oui, si `🔴 CRITICAL` |
 | **A11Y** | Diff modifie des fichiers `.vue` ou composants UI | Oui, si `🔴 CRITICAL` |
 
-Les deux checks appellent `claude -p` avec le diff + contexte RAG. Si Claude Code est indisponible ou en timeout, le commit n'est **pas bloqué**.
+Les checks appellent `claude -p` avec le diff + contexte RAG. Si Claude Code est indisponible ou en timeout, le commit n'est **pas bloqué**.
 
 ```bash
 git commit --no-verify   # contourner en cas d'urgence
 ```
 
 Voir `tools/pre-commit/` pour le code des vérifications.
+
+---
+
+## Audit GIEC AR6 à la demande
+
+Le script `tools/giec-audit.mjs` produit un rapport structuré de cohérence scientifique pour l'ensemble de l'application ou un scope précis.
+
+```bash
+npm run giec:audit                              # audit complet (scope unique)
+npm run giec:audit -- --per-scope               # audit approfondi — 11 rapports + synthèse
+npm run giec:audit -- --page simulateur         # page spécifique
+npm run giec:audit -- --chart RadarChart        # graphe spécifique
+npm run giec:audit -- --output rapport.md       # + sauvegarde fichier
+```
+
+Pages disponibles : `simulateur`, `limites`, `dashboard`, `basculement`, `bilan`, `overview`  
+Graphes disponibles : `SimProjectionCharts`, `RadarChart`, `HubNodeChart`, `EcologicalIndicators`, `SocietalIndicators`
+
+Les rapports d'un run `--per-scope` sont écrits dans `tools/giec-expert-audits/audit_{date}/` (ignoré par git — voir la politique de versionnement ci-dessous). Les fichiers transients d'un run mono-scope (`giec-audit-context.md`, `giec-audit-prompt.md`) vont directement dans `tools/giec-expert-audits/`.
+
+**Mode `--per-scope`** : lance une analyse LLM dédiée pour chacun des 11 scopes (6 pages + 5 graphes), produit un fichier Markdown par scope dans `audit_{date}/`, puis concatène l'ensemble dans `giec-audit-full-{date}.md`. Recommandé pour un audit approfondi — l'analyse ciblée par scope produit des observations plus précises qu'un unique appel global.
+
+> ⚠️ **Coût et durée d'un audit complet (`--per-scope`)**  
+> Un audit complet représente **11 appels LLM** au modèle configuré (claude-opus-4-7 ou gpt-4o par défaut).  
+> - **Agents parallèles** (workflow IDE) : 30 à 60 minutes, selon la charge des APIs.  
+> - **Séquentiel** (API directe) : 1 à 2 heures.  
+> - **Option la plus économe** : utiliser `ANTHROPIC_MODEL=claude-haiku-4-5-20251001` — modèle ~20× moins cher, légèrement moins précis sur les nuances AR6. Le mode `--context-only --per-scope` (workflow IDE) ne consomme aucun crédit API externe, uniquement les crédits Claude Code de l'IDE.
+
+### Versionnement des audits
+
+```
+tools/giec-expert-audits/
+├── example-audit_26-07-01/   ← versionné — exemple de référence pour les contributeurs
+└── audit_{date}/             ← ignoré par git (généré localement)
+```
+
+### Backends LLM
+
+| Situation | Comportement |
+|---|---|
+| `ANTHROPIC_API_KEY` définie | Appel direct à l'API Anthropic (claude-opus-4-7 par défaut) |
+| `OPENAI_API_KEY` définie | Appel direct à l'API OpenAI (gpt-4o par défaut) |
+| Aucune clé | Exporte le prompt dans `tools/giec-expert-audits/giec-audit-prompt.md` |
+
+Le modèle Anthropic se configure via `ANTHROPIC_MODEL`, OpenAI via `OPENAI_MODEL`.
+
+### Workflow IDE sans clé API
+
+Depuis l'agent IDE (Claude Code), l'audit peut se faire sans clé API externe :
+
+```bash
+# Scope unique
+npm run giec:audit -- --context-only --page simulateur
+# → exporte tools/giec-expert-audits/giec-audit-context.md
+
+# Audit approfondi — 11 contextes + fichier orchestrateur
+npm run giec:audit -- --context-only --per-scope
+# → exporte 11 × audit_{date}/giec-audit-context-{type}-{name}.md
+# → exporte audit_{date}/giec-audit-orchestrator.md
+```
+
+Pour un scope unique, demander à l'agent : *"Analyse giec-audit-context.md avec le sous-agent giec-expert."*
+
+Pour l'audit complet, demander à l'agent : *"Lis giec-audit-orchestrator.md et exécute le workflow qu'il décrit."*  
+Le fichier orchestrateur instrumente l'agent pour lancer 11 sous-agents `giec-expert` en parallèle et produire la synthèse consolidée — sans aucun crédit API externe.
 
 ---
 
@@ -427,7 +506,21 @@ Index is written to `tools/rag/index/` (git-ignored; rebuild after each clone).
 
 ## Pre-commit Pipeline
 
-At each `git commit`, two checks run automatically on the staged diff:
+At each `git commit`, the hook checks whether AI validation is enabled.
+
+**By default (no flag)**, AI checks are skipped — no credits consumed:
+
+```
+🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)
+```
+
+**To enable AI validation** on a specific commit (climate data or UI component changes):
+
+```bash
+AI_VALIDATION=1 git commit -m "..."
+```
+
+Both checks then run on the staged diff:
 
 | Check | Trigger condition | Blocking |
 |---|---|---|
@@ -441,6 +534,71 @@ git commit --no-verify   # bypass in emergencies
 ```
 
 See `tools/pre-commit/` for the check implementation.
+
+---
+
+## On-demand IPCC AR6 Audit
+
+`tools/giec-audit.mjs` produces a structured scientific consistency report for the full application or a specific scope.
+
+```bash
+npm run giec:audit                              # full audit (single scope)
+npm run giec:audit -- --per-scope               # deep audit — 11 reports + summary
+npm run giec:audit -- --page simulateur         # specific page
+npm run giec:audit -- --chart RadarChart        # specific chart
+npm run giec:audit -- --output report.md        # + save to file
+```
+
+Available pages: `simulateur`, `limites`, `dashboard`, `basculement`, `bilan`, `overview`  
+Available charts: `SimProjectionCharts`, `RadarChart`, `HubNodeChart`, `EcologicalIndicators`, `SocietalIndicators`
+
+Per-scope run reports are written to `tools/giec-expert-audits/audit_{date}/` (git-ignored — see versioning policy below). Transient single-scope files (`giec-audit-context.md`, `giec-audit-prompt.md`) go directly into `tools/giec-expert-audits/`.
+
+**`--per-scope` mode**: runs a dedicated LLM analysis for each of the 11 scopes (6 pages + 5 charts), writes one Markdown file per scope inside `audit_{date}/`, then concatenates everything into `giec-audit-full-{date}.md`. Recommended for thorough audits — focused per-scope prompts produce sharper findings than a single global call.
+
+> ⚠️ **Cost and duration of a full audit (`--per-scope`)**  
+> A full audit requires **11 LLM calls** against the configured model (claude-opus-4-7 or gpt-4o by default).  
+> - **Parallel agents** (IDE workflow): 30 to 60 minutes, depending on API load.  
+> - **Sequential** (direct API): 1 to 2 hours.  
+> - **Most cost-efficient option**: set `ANTHROPIC_MODEL=claude-haiku-4-5-20251001` — approximately 20× cheaper, with slightly reduced precision on AR6 nuances. The `--context-only --per-scope` mode (IDE workflow) consumes no external API credits — only the IDE's Claude Code credits.
+
+### Audit versioning
+
+```
+tools/giec-expert-audits/
+├── example-audit_26-07-01/   ← versioned — reference example for contributors
+└── audit_{date}/             ← git-ignored (generated locally)
+```
+
+### LLM backends
+
+| Situation | Behaviour |
+|---|---|
+| `ANTHROPIC_API_KEY` set | Direct call to the Anthropic API (claude-opus-4-7 by default) |
+| `OPENAI_API_KEY` set | Direct call to the OpenAI API (gpt-4o by default) |
+| No key configured | Exports the prompt to `tools/giec-expert-audits/giec-audit-prompt.md` |
+
+The Anthropic model can be overridden with `ANTHROPIC_MODEL`, OpenAI with `OPENAI_MODEL`.
+
+### IDE workflow without an API key
+
+From the IDE agent (Claude Code), the audit can be run without any external API key:
+
+```bash
+# Single scope
+npm run giec:audit -- --context-only --page simulateur
+# → exports tools/giec-expert-audits/giec-audit-context.md
+
+# Deep audit — 11 context files + orchestrator
+npm run giec:audit -- --context-only --per-scope
+# → exports 11 × audit_{date}/giec-audit-context-{type}-{name}.md
+# → exports audit_{date}/giec-audit-orchestrator.md
+```
+
+For a single scope, ask the agent: *"Analyse giec-audit-context.md using the giec-expert sub-agent."*
+
+For a full audit, ask the agent: *"Read giec-audit-orchestrator.md and execute the workflow it describes."*  
+The orchestrator file instructs the agent to launch 11 `giec-expert` sub-agents in parallel and produce the consolidated synthesis — without consuming any external API credits.
 
 ---
 

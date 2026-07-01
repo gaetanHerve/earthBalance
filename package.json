@@ -16,6 +16,7 @@
     "rag:search:rgaa": "node tools/rag/search.mjs --index tools/rag/index/rgaa_index.json --chunks tools/rag/index/rgaa_chunks.jsonl",
     "test": "vitest",
     "test:run": "vitest run",
+    "giec:audit": "node tools/giec-audit.mjs",
     "prepare": "node tools/install-hooks.mjs"
   },
   "dependencies": {
