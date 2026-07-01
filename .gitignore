@@ -16,7 +16,8 @@ npm-debug.log*
 
 # Éditeurs
 .vscode/
-.claude/
+.claude/*
+!.claude/agents/
 .idea/
 *.suo
 *.ntvs*
@@ -39,3 +40,10 @@ tools/rag/index/
 tools/rag/chunks/
 tools/rag/output/
 public/rag/
+
+# giec-expert-agent-graphs — sorties générées (sauf l'exemple versionné)
+tools/rag/giec-expert-agent-graphs/*.html
+!tools/rag/giec-expert-agent-graphs/europe_floods_climate_charts.html
+tools/rag/giec-expert-agent-graphs/configs/__pycache__/
+tools/rag/giec-expert-agent-graphs/configs/*.py
+!tools/rag/giec-expert-agent-graphs/configs/europe_floods.py

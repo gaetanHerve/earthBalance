@@ -12,8 +12,11 @@
     "rag:build-index": "node tools/rag/build-ipcc-index.mjs",
     "rag:build-index:example": "node tools/rag/build-ipcc-index.mjs --input tools/rag/examples/ipcc_chunks.example.jsonl",
     "rag:search": "node tools/rag/search.mjs",
+    "rag:build-index:rgaa": "node tools/rag/build-rgaa-index.mjs",
+    "rag:search:rgaa": "node tools/rag/search.mjs --index tools/rag/index/rgaa_index.json --chunks tools/rag/index/rgaa_chunks.jsonl",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "prepare": "node tools/install-hooks.mjs"
   },
   "dependencies": {
     "chart.js": "^4.4.4",
