@@ -27,6 +27,11 @@ function runCheck(scriptPath, label) {
   return result.status ?? 0
 }
 
+if (process.env.AI_VALIDATION !== '1') {
+  console.log('\n🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)\n')
+  process.exit(0)
+}
+
 const giecExit = runCheck(join(__dirname, 'giec-check.mjs'), 'GIEC')
 const a11yExit = runCheck(join(__dirname, 'a11y-check.mjs'), 'A11Y')
 

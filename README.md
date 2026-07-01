@@ -96,14 +96,28 @@ Un exemple de format IPCC est disponible dans `tools/rag/examples/ipcc_chunks.ex
 
 ## Pipeline pré-commit
 
-À chaque `git commit`, deux vérifications s'exécutent automatiquement sur le diff stagé :
+À chaque `git commit`, le hook vérifie si la validation IA est activée.
+
+**Par défaut (sans flag)**, les checks IA sont ignorés — pas de consommation de crédits :
+
+```
+🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)
+```
+
+**Pour activer la validation IA** sur un commit spécifique (modifications de données climatiques ou composants UI) :
+
+```bash
+AI_VALIDATION=1 git commit -m "..."
+```
+
+Les deux checks s'exécutent alors sur le diff stagé :
 
 | Check | Condition de déclenchement | Bloquant |
 |---|---|---|
 | **GIEC** | Diff contient des données climatiques (CO₂, température, projections…) | Oui, si `🔴 CRITICAL` |
 | **A11Y** | Diff modifie des fichiers `.vue` ou composants UI | Oui, si `🔴 CRITICAL` |
 
-Les deux checks appellent `claude -p` avec le diff + contexte RAG. Si Claude Code est indisponible ou en timeout, le commit n'est **pas bloqué**.
+Les checks appellent `claude -p` avec le diff + contexte RAG. Si Claude Code est indisponible ou en timeout, le commit n'est **pas bloqué**.
 
 ```bash
 git commit --no-verify   # contourner en cas d'urgence
@@ -427,7 +441,21 @@ Index is written to `tools/rag/index/` (git-ignored; rebuild after each clone).
 
 ## Pre-commit Pipeline
 
-At each `git commit`, two checks run automatically on the staged diff:
+At each `git commit`, the hook checks whether AI validation is enabled.
+
+**By default (no flag)**, AI checks are skipped — no credits consumed:
+
+```
+🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)
+```
+
+**To enable AI validation** on a specific commit (climate data or UI component changes):
+
+```bash
+AI_VALIDATION=1 git commit -m "..."
+```
+
+Both checks then run on the staged diff:
 
 | Check | Trigger condition | Blocking |
 |---|---|---|
