@@ -30,4 +30,10 @@ function runCheck(scriptPath, label) {
 const giecExit = runCheck(join(__dirname, 'giec-check.mjs'), 'GIEC')
 const a11yExit = runCheck(join(__dirname, 'a11y-check.mjs'), 'A11Y')
 
-process.exit(giecExit !== 0 || a11yExit !== 0 ? 1 : 0)
+const failed = giecExit !== 0 || a11yExit !== 0
+const giecIcon = giecExit !== 0 ? '❌' : '✅'
+const a11yIcon = a11yExit !== 0 ? '❌' : '✅'
+
+console.log(`\n🔒 Pré-commit — GIEC ${giecIcon}  A11Y ${a11yIcon}${failed ? '  →  commit bloqué' : ''}\n`)
+
+process.exit(failed ? 1 : 0)
