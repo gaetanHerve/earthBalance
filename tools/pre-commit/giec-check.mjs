@@ -128,12 +128,14 @@ if (!claudeBin) {
   process.exit(0)
 }
 
-const claudeResult = spawnSync(claudeBin, ['-p', prompt], {
+const claudeResult = spawnSync(claudeBin, ['-p'], {
   cwd: ROOT,
+  input: prompt,
   encoding: 'utf-8',
   timeout: 120000,
   maxBuffer: 1024 * 1024 * 5,
-  stdio: ['ignore', 'pipe', 'pipe'],
+  stdio: ['pipe', 'pipe', 'pipe'],
+  env: { ...process.env, HOME: process.env.USERPROFILE ?? process.env.HOME },
 })
 
 if (claudeResult.error || claudeResult.status === null) {

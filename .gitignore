@@ -33,7 +33,7 @@ Thumbs.db
 *.tsbuildinfo
 
 # Autres
-documents_contexte/
+*rapport*.md
 
 # RAG local (dev only)
 tools/rag/index/
@@ -47,3 +47,7 @@ tools/rag/giec-expert-agent-graphs/*.html
 tools/rag/giec-expert-agent-graphs/configs/__pycache__/
 tools/rag/giec-expert-agent-graphs/configs/*.py
 !tools/rag/giec-expert-agent-graphs/configs/europe_floods.py
+
+# Audits GIEC générés — ignorés sauf les exemples versionnés (example-audit_*)
+tools/giec-expert-audits/audit_*/
+tools/giec-expert-audits/giec-audit-*.md

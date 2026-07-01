@@ -69,7 +69,8 @@ Voir `tools/pre-commit/` pour l'implémentation.
 ### Audit GIEC à la demande
 
 ```bash
-npm run giec:audit                          # audit complet
+npm run giec:audit                          # audit complet (scope unique)
+npm run giec:audit -- --per-scope           # audit approfondi — 11 scopes + synthèse
 npm run giec:audit -- --page simulateur     # page spécifique
 npm run giec:audit -- --chart RadarChart    # graphe spécifique
 npm run giec:audit -- --output rapport.md   # + sauvegarde fichier
@@ -77,6 +78,28 @@ npm run giec:audit -- --output rapport.md   # + sauvegarde fichier
 
 Pages : `simulateur`, `limites`, `dashboard`, `basculement`, `bilan`, `overview`
 Graphes : `SimProjectionCharts`, `RadarChart`, `HubNodeChart`, `EcologicalIndicators`, `SocietalIndicators`
+
+Backends LLM : `ANTHROPIC_API_KEY` ou `OPENAI_API_KEY`. Sans clé, le prompt est exporté dans `giec-audit-prompt.md`.
+
+#### Workflow dans l'IDE (sans clé API)
+
+Depuis l'agent IDE, l'audit peut se faire sans clé API externe :
+
+```bash
+# Scope unique
+npm run giec:audit -- --context-only --page simulateur
+# → exporte giec-audit-context.md
+
+# Audit approfondi — un fichier contexte par scope + orchestrateur
+npm run giec:audit -- --context-only --per-scope
+# → exporte 11 fichiers giec-audit-context-{type}-{name}.md
+# → exporte giec-audit-orchestrator.md
+```
+
+Pour le scope unique : demander à l'agent *"Analyse giec-audit-context.md avec le sous-agent giec-expert."*
+
+Pour l'audit complet : demander à l'agent *"Lis giec-audit-orchestrator.md et exécute le workflow qu'il décrit."*
+L'orchestrateur instrumente l'agent pour lancer 11 sous-agents `giec-expert` en parallèle et produire la synthèse consolidée.
 
 ## Gamification — Feuille de route
 

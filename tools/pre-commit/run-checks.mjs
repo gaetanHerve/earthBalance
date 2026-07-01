@@ -28,7 +28,9 @@ function runCheck(scriptPath, label) {
 }
 
 if (process.env.AI_VALIDATION !== '1') {
-  console.log('\n🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)\n')
+  console.log('\n🔒 Pré-commit — validation IA désactivée  (AI_VALIDATION=1 pour activer)')
+  console.log('   💡 Modifications climatiques ou UI ? Demandez un audit à votre agent IDE,')
+  console.log('      ou relancez avec AI_VALIDATION=1 pour activer les checks GIEC + A11Y.\n')
   process.exit(0)
 }
 
