@@ -39,6 +39,19 @@ npm run rag:build-index         # construit l'index BM25 dev-only depuis tools/r
 npm run rag:build-index:example # construit l'index depuis le fichier d'exemple
 ```
 
+### Configuration initiale (une seule fois par clone)
+
+Le script `prepare` (appelé automatiquement par `npm install`) configure `git core.hooksPath` pour pointer vers `.hooks/`. Les hooks pré-commit sont actifs dès ce moment.
+
+L'index RAG RGAA est requis pour la vérification d'accessibilité automatique :
+
+```bash
+npm run rag:build-index:rgaa
+```
+
+Génère l'index BM25 à partir de `tools/rag/data_sources/RGAA-v4.1.2.txt` (fichier versionné).
+L'index est écrit dans `tools/rag/index/` (ignoré par git, à reconstruire après chaque clone).
+
 ---
 
 ## RAG local IPCC (dev-only)
@@ -49,7 +62,7 @@ Le pipeline RAG local est volontairement séparé de l'application web — aucun
 
 | Dossier | Statut git | Contenu |
 |---|---|---|
-| `tools/rag/` | Committé | Scripts (`build-ipcc-index.mjs`, `search.mjs`), exemples |
+| `tools/rag/` | Committé | Scripts (`build-ipcc-index.mjs`, `build-rgaa-index.mjs`, `search.mjs`), exemples |
 | `tools/rag/data_sources/` | Committé | Données CSV AR6 (CEDA), séries OWID, référentiel RGAA |
 | `tools/rag/chunks/` | Ignoré | Chunks IPCC privés (source du pipeline de build) |
 | `tools/rag/index/` | Ignoré | Artefacts générés (index BM25 + chunks de travail) |
@@ -62,11 +75,43 @@ Les données de `data_sources/` servent uniquement à **calibrer et vérifier le
 2. Lancer `npm run rag:build-index`.
 3. Les artefacts de recherche sont écrits dans `tools/rag/index/`.
 
+L'index RGAA se construit directement depuis le fichier source versionné :
+
+```bash
+npm run rag:build-index:rgaa   # à relancer après chaque clone
+```
+
+Pour chercher dans les deux index :
+
+```bash
+npm run rag:search -- "carbon tax emissions reduction" --top 5  # index GIEC
+npm run rag:search:rgaa -- "canvas role img aria-label" --top 3  # index RGAA
+```
+
 Pour régénérer les résumés CSV : `node scripts/generate-dataset-summaries.mjs`
 
-Un exemple de format est disponible dans `tools/rag/examples/ipcc_chunks.example.jsonl`.
+Un exemple de format IPCC est disponible dans `tools/rag/examples/ipcc_chunks.example.jsonl`.
 
-### Windows — chemins longs
+---
+
+## Pipeline pré-commit
+
+À chaque `git commit`, deux vérifications s'exécutent automatiquement sur le diff stagé :
+
+| Check | Condition de déclenchement | Bloquant |
+|---|---|---|
+| **GIEC** | Diff contient des données climatiques (CO₂, température, projections…) | Oui, si `🔴 CRITICAL` |
+| **A11Y** | Diff modifie des fichiers `.vue` ou composants UI | Oui, si `🔴 CRITICAL` |
+
+Les deux checks appellent `claude -p` avec le diff + contexte RAG. Si Claude Code est indisponible ou en timeout, le commit n'est **pas bloqué**.
+
+```bash
+git commit --no-verify   # contourner en cas d'urgence
+```
+
+Voir `tools/pre-commit/` pour le code des vérifications.
+
+---
 
 Certains noms de fichiers dans `tools/rag/data_sources/` dépassent 260 caractères (limite Windows). Avant de faire `git add`, exécuter une fois par clone :
 
@@ -364,6 +409,38 @@ npm run build      # vue-tsc + vite build
 npm run typecheck  # vue-tsc only
 npm run preview    # preview the production build
 ```
+
+### First-time setup (once per clone)
+
+`npm install` automatically runs the `prepare` script, which configures `git core.hooksPath` to point to `.hooks/`. Pre-commit hooks are active immediately.
+
+Build the RGAA accessibility index — required for automated accessibility checks:
+
+```bash
+npm run rag:build-index:rgaa
+```
+
+Generates a BM25 index from `tools/rag/data_sources/RGAA-v4.1.2.txt` (versioned file).
+Index is written to `tools/rag/index/` (git-ignored; rebuild after each clone).
+
+---
+
+## Pre-commit Pipeline
+
+At each `git commit`, two checks run automatically on the staged diff:
+
+| Check | Trigger condition | Blocking |
+|---|---|---|
+| **GIEC** | Diff contains climate data (CO₂, temperature, projections…) | Yes, if `🔴 CRITICAL` |
+| **A11Y** | Diff modifies `.vue` files or UI components | Yes, if `🔴 CRITICAL` |
+
+Both checks call `claude -p` with the diff + RAG context. If Claude Code is unavailable or times out, the commit is **not blocked**.
+
+```bash
+git commit --no-verify   # bypass in emergencies
+```
+
+See `tools/pre-commit/` for the check implementation.
 
 ---
 

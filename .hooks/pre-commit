@@ -1,0 +1,5 @@
+#!/bin/sh
+# Hook pré-commit earthBalance — versionné dans .hooks/
+# Exécute les vérifications GIEC et accessibilité sur le diff stagé.
+# Pour contourner : git commit --no-verify
+node tools/pre-commit/run-checks.mjs
