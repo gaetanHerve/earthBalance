@@ -2,18 +2,18 @@
 //
 // Référence climatique partagée : Regional Rivalry high-emissions scenario (SSP3-7.0)
 // Température validée contre IPCC AR6 WGI Figure SPM.8 — CEDA Archive, CC-BY-4.0
-// Near-term (2030) : +1.49°C | Mid-term (2050) : +2.10°C | Long-term (2100) : +3.91°C
+// Near-term (2030) : +1.49°C | Mid-term (2050) : +2.10°C | Long-term (2100) : +3.95°C
 //
 // Cette configuration est importée par :
-// - src/data/mitigationPolicies.ts — baseline pour les politiques (9 + 10e points)
-// - src/store/simulation.store.ts — baseline pour le moteur de simulation (10 points)
+// - src/store/simulation.store.ts — baseline pour le moteur de simulation (16 points)
 //
-// Temporal labels :
-//   - SIM_LABELS (10 points) : [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
-//   - PROJ_LABELS (9 points) : [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074] (obsolète, conservé pour compatibilité)
+// Grille temporelle :
+//   SIM_LABELS (16 points) : [2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100]
+//   Grille uniforme 5 ans — continue la série historique 1990–2020 du dashboard
 
-// ─── Baselines 9-point (used by mitigationPolicies.ts) ──────────────────────────
-// Extrapolation 2024→2074 en 5-year increments — projection la plus certaine (35 ans d'horizon)
+// ─── Baselines 9-point legacy (used by mitigationPolicies.ts — à migrer step 3) ─
+// Ancienne grille irrégulière [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
+// Conservées comme source de traçabilité pour les _16PT interpolées ci-dessous
 
 export const BASELINE_CO2_9PT = [65.2, 67.2, 69.3, 71.6, 74.9, 79.9, 87.2, 92.9, 100.3]
 // GtCO₂eq/an — GHG TOTAL : CO₂ (fossile+LULUCF) + CH₄×GWP27.9 + N₂O×GWP273 + Gaz F
@@ -115,72 +115,86 @@ export const BASELINE_EDUCATION_ACCESS_9PT = [61.0, 61.1, 61.1, 61.0, 60.7, 60.0
 // SSP3-7.0: stagnates then declines — forced displacement, economic instability, school closures
 // Source: UNESCO Education 2030 Framework; World Bank — ⚠️ SSP3-7.0 trajectory: connaissance générale
 
-// ─── Baselines 10-point including 2100 extrapolation ──────────────────────────
-// Interpolation strategy: asymptotic stabilization (decay ratio = 0.75)
+// ─── Baselines 16-point — grille uniforme 5 ans (SIM_LABELS) ──────────────────
 //
-// Justification:
-// 1. Most climate & policy impacts decelerate in their effects over time (saturation, limits)
-// 2. A linear decay from 2074→2100 (26 years) with ratio 0.75 = 25% attenuation
-// 3. Example: if CO₂ delta at 2074 is −5 GtCO₂/an, at 2100 it becomes 0.75 × (−5) = −3.75
-// 4. This ratio is uniform across all indicators for simplicity & traceability
-// 5. If future evidence suggests different ratios per indicator, they can be adjusted with justification
-//
-// Formula: value[2100] = baseline[2100] + 0.75 × (value[2074] − baseline[2074])
+// Méthode : interpolation linéaire depuis les séries _9PT + ancre 2100 AR6.
+// BASELINE_TEMP_16PT : valeurs directement extraites du CSV CEDA (spm_fig8/panel_a/).
+// Indicateurs sociétaux (_9PT, _16PT) : calibrés sur connaissance générale AR6 — voir ⚠️ inline.
 
-// Source 2100 values: [IPCC AR6 WGI, Figure SPM.4 & SPM.8 — CEDA Archive, CC-BY-4.0] pour temp & CO₂;
-// indicateurs sociétaux: extrapolation calibrée sur trajectoire SSP3-7.0
-export const BASELINE_CO2_10PT = [...BASELINE_CO2_9PT, 115.9]
-// Source 2100: [IPCC AR6 WGI, Figure SPM.4 — CEDA, CC-BY-4.0] + AR6 GWP100 conversions
-export const BASELINE_TEMP_10PT = [...BASELINE_TEMP_9PT, 3.91]
-export const BASELINE_FOREST_10PT = [...BASELINE_FOREST_9PT, 24.0]
-export const BASELINE_ENERGY_MIX_10PT = {
-  coal:    [...BASELINE_ENERGY_MIX_9PT.coal,    25.5],
-  oil:     [...BASELINE_ENERGY_MIX_9PT.oil,     24.0],
-  gas:     [...BASELINE_ENERGY_MIX_9PT.gas,     21.5],
-  nuclear: [...BASELINE_ENERGY_MIX_9PT.nuclear,  4.5],
-  solar:   [...BASELINE_ENERGY_MIX_9PT.solar,   11.5],
-  wind:    [...BASELINE_ENERGY_MIX_9PT.wind,     8.5],
-  hydro:   [...BASELINE_ENERGY_MIX_9PT.hydro,    3.0],
-  autres:  [...BASELINE_ENERGY_MIX_9PT.autres,   1.5],
-}
-export const BASELINE_RESOURCES_10PT = {
-  minerals:    [...BASELINE_RESOURCES_9PT.minerals,    42.5],
-  biomass:     [...BASELINE_RESOURCES_9PT.biomass,     32.5],
-  fossilFuels: [...BASELINE_RESOURCES_9PT.fossilFuels, 37.0],
-}
-export const BASELINE_FOOD_SECURITY_10PT = [...BASELINE_FOOD_SECURITY_9PT, 31.0]
-export const BASELINE_WATER_ACCESS_10PT = [...BASELINE_WATER_ACCESS_9PT, 63.0]
-export const BASELINE_WATER_TENSIONS_10PT = [...BASELINE_WATER_TENSIONS_9PT, 91.0]
-export const BASELINE_RESOURCE_CONFLICTS_10PT = [...BASELINE_RESOURCE_CONFLICTS_9PT, 96.0]
-export const BASELINE_CLIMATE_MIGRATIONS_10PT = [...BASELINE_CLIMATE_MIGRATIONS_9PT, 185.0]
-export const BASELINE_LIFE_EXPECTANCY_10PT = [...BASELINE_LIFE_EXPECTANCY_9PT, 57.5]
-export const BASELINE_RESPIRATORY_DISEASES_10PT = [...BASELINE_RESPIRATORY_DISEASES_9PT, 72.0]
-export const BASELINE_WHO_HEALTH_INDEX_10PT = [...BASELINE_WHO_HEALTH_INDEX_9PT, 43.5]
-export const BASELINE_GINI_COEFFICIENT_10PT = [...BASELINE_GINI_COEFFICIENT_9PT, 0.762]
-export const BASELINE_WEALTH_CONCENTRATION_10PT = [...BASELINE_WEALTH_CONCENTRATION_9PT, 68.0]
-export const BASELINE_EDUCATION_ACCESS_10PT = [...BASELINE_EDUCATION_ACCESS_9PT, 55.5]
+export const BASELINE_CO2_16PT = [66.2, 71.6, 75.7, 79.9, 83.6, 87.2, 90.1, 92.9, 95.5, 98.2, 100.9, 103.9, 106.9, 109.9, 112.9, 115.9]
+// GtCO₂eq/an — GHG TOTAL SSP3-7.0
+// Source: [IPCC AR6 WGI, Figure SPM.4 — CEDA Archive, CC-BY-4.0] + GWP100 conversions AR6
 
-// ─── Helper function for extrapolation ────────────────────────────────────────
-/**
- * Extrapolate a 9-point projection to 10 points (add 2100 value)
- * 
- * @param values9 - 9-point array [2024, 2026, ..., 2074]
- * @param baseline9 - 9-point baseline array
- * @param baseline2100 - baseline value at 2100
- * @param decayRatio - attenuation factor for delta (default 0.75 = 25% decay)
- * @returns value at 2100
- * 
- * Strategy: delta[2100] = decayRatio × (delta[2074]) + baseline[2100]
- * This ensures policy effects plateau asymptotically rather than diverging
- */
-export function extrapolateValueTo2100(
-  values9: number[],
-  baseline9: number[],
-  baseline2100: number,
-  decayRatio: number = 0.75
-): number {
-  const point9Index = 8 // 2074 is at index 8 (0-indexed)
-  const delta2074 = values9[point9Index] - baseline9[point9Index]
-  const delta2100 = delta2074 * decayRatio
-  return baseline2100 + delta2100
+export const BASELINE_TEMP_16PT = [1.35, 1.49, 1.63, 1.78, 1.94, 2.10, 2.27, 2.44, 2.62, 2.80, 2.99, 3.18, 3.37, 3.57, 3.76, 3.95]
+// °C warming above pre-industrial — SSP3-7.0 ensemble mean
+// Source: [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0]
+// Valeurs directement extraites du CSV CEDA (tools/rag/data_sources/datasets/WGI/spm_fig8/panel_a/)
+// 2100 extrapolé : 3.909 (2099) + Δ0.037/an → 3.95°C
+
+export const BASELINE_FOREST_16PT = [57.7, 55.5, 52.6, 49.5, 46.5, 43.5, 40.8, 38.0, 35.7, 33.4, 31.2, 29.8, 28.3, 26.9, 25.4, 24.0]
+// % remaining primary forest cover relative to pre-industrial baseline
+// Source: [AR6 WGII, Ch.2, pp.290-295 & Ch.CCP7, pp.2408-2409]
+
+export const BASELINE_ENERGY_MIX_16PT = {
+  coal:    [27.0, 27.0, 27.0, 27.0, 26.8, 26.5, 26.4, 26.2, 26.1, 26.1, 26.0, 25.9, 25.8, 25.7, 25.6, 25.5],
+  oil:     [30.9, 30.3, 29.6, 28.8, 27.9, 27.0, 26.5, 26.0, 25.6, 25.3, 25.0, 24.8, 24.6, 24.4, 24.2, 24.0],
+  gas:     [23.0, 23.5, 23.5, 23.5, 23.3, 23.0, 22.8, 22.5, 22.3, 22.1, 22.0, 21.9, 21.8, 21.7, 21.6, 21.5],
+  nuclear: [ 5.0,  5.0,  5.0,  4.8,  4.7,  4.6,  4.6,  4.5,  4.5,  4.5,  4.5,  4.5,  4.5,  4.5,  4.5,  4.5],
+  solar:   [ 5.1,  5.7,  6.4,  7.2,  8.1,  9.0,  9.5, 10.0, 10.2, 10.4, 10.5, 10.7, 10.9, 11.1, 11.3, 11.5],
+  wind:    [ 4.1,  4.3,  4.8,  5.4,  6.0,  6.5,  6.8,  7.0,  7.2,  7.4,  7.5,  7.7,  7.9,  8.1,  8.3,  8.5],
+  hydro:   [ 3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0,  3.0],
+  autres:  [ 2.0,  1.2,  0.7,  0.3,  0.4,  0.4,  0.6,  0.8,  1.1,  1.3,  1.5,  1.5,  1.5,  1.5,  1.5,  1.5],
 }
+// % primary energy mix — Source: [AR6 WGIII, Ch.3, pp.289-310] — ⚠️ per-fuel breakdown: connaissance générale calibrée
+
+export const BASELINE_RESOURCES_16PT = {
+  minerals:    [21.4, 23.8, 26.4, 28.8, 30.9, 33.0, 34.8, 36.5, 37.8, 39.0, 40.1, 40.6, 41.1, 41.5, 42.0, 42.5],
+  biomass:     [17.3, 18.4, 19.8, 21.2, 22.4, 23.5, 25.0, 26.5, 27.8, 29.0, 30.1, 30.6, 31.1, 31.5, 32.0, 32.5],
+  fossilFuels: [14.3, 16.3, 18.8, 21.5, 23.0, 24.5, 27.0, 29.5, 30.9, 32.4, 33.6, 34.3, 35.0, 35.7, 36.3, 37.0],
+}
+// Gt/an — Source: [AR6 WGIII, Ch.6, p.660]; UNEP Global Resources Outlook 2024
+
+export const BASELINE_FOOD_SECURITY_16PT = [62.8, 61.0, 57.9, 55.0, 52.5, 50.0, 47.5, 45.0, 42.5, 40.0, 37.7, 36.4, 35.0, 33.7, 32.3, 31.0]
+// FAO hunger index /100 — Source: [AR6 WGII, Ch.5, pp.557-559]; FAO SOFI 2023
+
+export const BASELINE_WATER_ACCESS_16PT = [71.1, 71.3, 70.9, 70.5, 70.0, 69.5, 68.8, 68.0, 67.3, 66.6, 65.9, 65.3, 64.7, 64.2, 63.6, 63.0]
+// % world population with access to safe drinking water — Source: [AR6 WGII, Ch.4, p.568]; WHO/UNICEF JMP
+
+export const BASELINE_WATER_TENSIONS_16PT = [61.5, 65.5, 69.8, 74.0, 77.0, 80.0, 82.8, 85.5, 86.8, 88.0, 89.1, 89.5, 89.8, 90.2, 90.6, 91.0]
+// Geopolitical tension score 0–100 — Source: [AR6 WGII, Ch.7, p.1038]; ACLED; UNHCR
+
+export const BASELINE_RESOURCE_CONFLICTS_16PT = [74.8, 79.0, 83.2, 86.5, 88.5, 90.5, 91.8, 93.0, 93.7, 94.4, 95.0, 95.2, 95.4, 95.6, 95.8, 96.0]
+// Resource conflict intensity 0–100 — Source: [AR6 WGII, Ch.7, pp.1040-1042]; ACLED
+
+export const BASELINE_CLIMATE_MIGRATIONS_16PT = [55.8, 62.0, 72.2, 83.0, 95.0, 107.0, 119.5, 132.0, 142.0, 152.0, 161.0, 165.8, 170.6, 175.4, 180.2, 185.0]
+// Climate-displaced persons (millions) — Source: [AR6 WGII, Ch.7, p.1059]; IOM World Migration Report 2022
+
+export const BASELINE_LIFE_EXPECTANCY_16PT = [73.3, 72.5, 71.3, 70.0, 68.8, 67.5, 66.0, 64.5, 63.3, 62.0, 60.9, 60.2, 59.5, 58.8, 58.2, 57.5]
+// years — global average — Source: [AR6 WGII, Ch.7, pp.1033-1036]; WHO GHO; Lancet Countdown 2022
+
+export const BASELINE_RESPIRATORY_DISEASES_16PT = [18.8, 23.0, 28.5, 33.5, 38.3, 43.0, 48.0, 53.0, 56.6, 60.1, 63.3, 65.1, 66.8, 68.5, 70.3, 72.0]
+// % increase vs 2000 — Source: [AR6 WGII, Ch.7, p.1030]; WHO Global Air Quality 2021
+
+export const BASELINE_WHO_HEALTH_INDEX_16PT = [66.7, 64.5, 62.0, 59.5, 57.5, 55.5, 53.5, 51.5, 49.9, 48.3, 46.9, 46.2, 45.5, 44.8, 44.2, 43.5]
+// /100 — Source: [AR6 WGII, Ch.7] — ⚠️ index amplitude: connaissance générale
+
+export const BASELINE_GINI_COEFFICIENT_16PT = [0.671, 0.679, 0.689, 0.698, 0.707, 0.715, 0.723, 0.730, 0.736, 0.743, 0.749, 0.751, 0.754, 0.757, 0.759, 0.762]
+// Gini index 0–1 — Source: [AR6 WGII, Ch.16, pp.2340-2345]; World Inequality Report 2022
+
+export const BASELINE_WEALTH_CONCENTRATION_16PT = [45.3, 47.2, 50.0, 52.5, 54.8, 57.0, 59.3, 61.5, 62.9, 64.4, 65.6, 66.1, 66.6, 67.0, 67.5, 68.0]
+// % of global wealth held by top 1% — Source: WID.world; World Inequality Report 2022; [AR6 WGII, Ch.16]
+
+export const BASELINE_EDUCATION_ACCESS_16PT = [61.1, 61.0, 60.6, 60.0, 59.5, 59.0, 58.5, 58.0, 57.6, 57.3, 56.9, 56.7, 56.4, 56.1, 55.8, 55.5]
+// % secondary+ education access — Source: UNESCO Education 2030; World Bank — ⚠️ trajectory: connaissance générale
+
+// ─── Séries déplacées depuis simulation.store.ts ──────────────────────────────
+
+export const BASELINE_CO2_PPM_16PT = [427, 443, 459, 476, 495, 513, 535, 557, 578, 600, 619, 629, 639, 650, 660, 670]
+// ppm CO₂ atmosphérique — SSP3-7.0
+// Source: ⚠️ connaissance générale (AR6 WGI Annex II Table AII.1.2 non indexée localement)
+// Note: ticker CO₂ ppm = CO₂ seul (atmosphérique). Axe GHG simulateur = GtCO₂eq total.
+
+export const BASELINE_ENERGY_TOTAL_TWH_16PT = [177600, 188000, 199700, 213000, 224500, 236000, 246000, 256000, 263900, 271700, 279000, 284200, 289400, 294600, 299800, 305000]
+// TWh — énergie primaire mondiale totale (hors biomasse traditionnelle) — SSP3-7.0
+// Utilisé pour convertir les parts % du mix en valeurs absolues TWh
+// Source: 2025 : données Energy Institute (réel) ; 2030-2100 : projection SSP3-7.0 demande énergétique élevée
