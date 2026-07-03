@@ -54,6 +54,7 @@ const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
 
 // Concentration atmosphérique de CO₂ (ppm) – SSP3-7.0 [Meinshausen et al. 2020 / ScenarioMIP]
 // Source: ⚠️ connaissance générale (série complète — AR6 WGI Annex II Table AII.1.2 non indexée localement)
+// Note: le ticker CO₂ ppm reste en CO₂ seul (atmosphérique). L'axe GHG du simulateur est en GtCO₂eq total.
 export const BASELINE_CO2_PPM = [424, 430, 437, 443, 456, 476, 513, 557, 617, 670]
 
 // Forêts primaires mondiales restantes (% de la couverture originelle) – SSP3-7.0
@@ -206,8 +207,9 @@ function societalDeltaArr(dec: MitigationPolicy, effectiveStart: number, key: So
   return shiftedDeltasDirect(deltas, effectiveStart)
 }
 
-// â”€â”€â”€ Helpers ppm COâ‚‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// Airborne fraction Ã— (1 ppm = 7.81 GtCOâ‚‚): 0.45 / 7.81 â‰ˆ 0.0576 ppm per GtCOâ‚‚/yr per year
+// ─── Helpers ppm CO₂ ─────────────────────────────────────────────────────────
+// BASELINE_CO2 est en GtCO₂eq (GHG total). Facteur ci-dessous = CO₂ seul (airborne fraction).
+// Simplification de jeu : delta GHG total utilisé comme proxy de l’impact atmosphérique (non physique).
 const PPM_PER_GTCO2_YR = 0.45 / 7.81
 
 // Compute atmospheric COâ‚‚ ppm from annual emissions array (same indices as SIM_LABELS).

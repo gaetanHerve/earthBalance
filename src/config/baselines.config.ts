@@ -15,11 +15,14 @@
 // ─── Baselines 9-point (used by mitigationPolicies.ts) ──────────────────────────
 // Extrapolation 2024→2074 en 5-year increments — projection la plus certaine (35 ans d'horizon)
 
-export const BASELINE_CO2_9PT = [48.0, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4]
-// GtCO₂/an — CO₂ total (fossile + LULUCF)
-// Trajectory: continuous increase under SSP3-7.0 (no net-zero policy)
-// Source: [IPCC AR6 WGI, Figure SPM.4 — CEDA Archive, CC-BY-4.0] — interpolation linéaire
-// Note: CO₂ total (fossile 38 GtCO₂ + LULUCF 6.6 GtCO₂ = 44.6 en 2019) [AR6 WGIII, Ch.2, p.241]
+export const BASELINE_CO2_9PT = [65.2, 67.2, 69.3, 71.6, 74.9, 79.9, 87.2, 92.9, 100.3]
+// GtCO₂eq/an — GHG TOTAL : CO₂ (fossile+LULUCF) + CH₄×GWP27.9 + N₂O×GWP273 + Gaz F
+// Sources :
+//   CO₂ (fossile+LULUCF) : [IPCC AR6 WGI, Figure SPM.4 — CEDA Archive, CC-BY-4.0]
+//   CH₄ : CEDA Methane_Mt_CO2_yr.csv × GWP100=27.9 (AR6) [AR6 WGI, SPM.4 — CEDA, CC-BY-4.0]
+//   N₂O : CEDA Nitrous_oxide_Mt_N2O_yr.csv × GWP100=273 (AR6) [AR6 WGI, SPM.4 — CEDA, CC-BY-4.0]
+//   Gaz F : estimation centrale SSP3-7.0, compliance Kigali partielle [AR6 WGI, p.899 ; AR6 WGIII, Ch.2, p.241]
+// 2024 ref: ~65 GtCO₂eq (vs 59 en 2019 [AR6 WGIII, Ch.2, p.241]) ✓
 
 export const BASELINE_TEMP_9PT = [1.32, 1.38, 1.43, 1.49, 1.60, 1.78, 2.10, 2.44, 2.95]
 // °C warming above pre-industrial (anomaly vs 1950-1980 baseline)
@@ -126,7 +129,8 @@ export const BASELINE_EDUCATION_ACCESS_9PT = [61.0, 61.1, 61.1, 61.0, 60.7, 60.0
 
 // Source 2100 values: [IPCC AR6 WGI, Figure SPM.4 & SPM.8 — CEDA Archive, CC-BY-4.0] pour temp & CO₂;
 // indicateurs sociétaux: extrapolation calibrée sur trajectoire SSP3-7.0
-export const BASELINE_CO2_10PT = [...BASELINE_CO2_9PT, 82.7]
+export const BASELINE_CO2_10PT = [...BASELINE_CO2_9PT, 115.9]
+// Source 2100: [IPCC AR6 WGI, Figure SPM.4 — CEDA, CC-BY-4.0] + AR6 GWP100 conversions
 export const BASELINE_TEMP_10PT = [...BASELINE_TEMP_9PT, 3.91]
 export const BASELINE_FOREST_10PT = [...BASELINE_FOREST_9PT, 24.0]
 export const BASELINE_ENERGY_MIX_10PT = {

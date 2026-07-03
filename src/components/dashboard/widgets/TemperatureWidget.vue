@@ -22,7 +22,7 @@
         <span class="text-2xl font-black text-orange-400">{{ tempCurrent }}</span>
         <span class="text-xs text-slate-500 mt-0.5">°C</span>
       </GaugeChart>
-      <div class="mt-3 text-xs text-slate-500 text-center">Seuil Paris : 1,5°C</div>
+      <div class="mt-3 text-xs text-slate-500 text-center">{{ t('dashboard.temp_paris_note') }}</div>
     </template>
 
     <LineChart
@@ -35,6 +35,7 @@
       :events="tempEvents"
       :aria-label="t('dashboard.temp_aria')"
     />
+    <div class="mt-1 text-[10px] text-slate-600 text-right">{{ t('dashboard.temp_source_ref') }}</div>
   </EbCard>
 </template>
 

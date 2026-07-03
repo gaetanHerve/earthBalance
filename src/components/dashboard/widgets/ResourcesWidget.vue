@@ -28,6 +28,7 @@
       :current-year="gameStore.currentYear"
       :aria-label="t('dashboard.resources_aria')"
     />
+    <div class="mt-1 text-[10px] text-slate-600 text-right">{{ t('dashboard.resources_source_ref') }}</div>
   </EbCard>
 </template>
 

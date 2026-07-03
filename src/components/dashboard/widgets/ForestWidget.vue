@@ -38,6 +38,7 @@
       :y-max="80"
       :aria-label="t('dashboard.forest_aria')"
     />
+    <div class="mt-1 text-[10px] text-slate-600 text-right">{{ t('dashboard.forest_source_ref') }}</div>
   </EbCard>
 </template>
 

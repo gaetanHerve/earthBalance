@@ -27,6 +27,7 @@
           <span class="text-xs text-slate-500">/100</span>
         </GaugeChart>
         <div class="mt-2 text-xs text-slate-500">{{ t('dashboard.food_note') }}</div>
+        <div class="mt-1 text-[10px] text-slate-600 text-right">{{ t('dashboard.food_source_ref') }}</div>
       </EbCard>
 
       <!-- Accès eau potable -->
@@ -47,6 +48,7 @@
           <span class="text-xs text-slate-500">%</span>
         </GaugeChart>
         <div class="mt-2 text-xs text-slate-500">{{ t('dashboard.water_note') }}</div>
+        <div class="mt-1 text-[10px] text-slate-600 text-right">{{ t('dashboard.water_source_ref') }}</div>
       </EbCard>
 
       <!-- Tensions géopolitiques -->
@@ -79,6 +81,7 @@
             </div>
           </div>
         </div>
+        <div class="mt-2 text-[10px] text-slate-600 text-right">{{ t('dashboard.conflicts_source_ref') }}</div>
       </EbCard>
 
       <!-- Santé globale -->
@@ -97,6 +100,7 @@
             <span class="font-bold text-sm" :style="{ color: stat.color }">{{ stat.value }}</span>
           </div>
         </div>
+        <div class="mt-2 text-[10px] text-slate-600 text-right">{{ t('dashboard.health_source_ref') }}</div>
       </EbCard>
 
       <!-- Inégalités (Gini) -->
@@ -115,6 +119,7 @@
             <span class="font-bold text-sm" :style="{ color: stat.color }">{{ stat.value }}</span>
           </div>
         </div>
+        <div class="mt-2 text-[10px] text-slate-600 text-right">{{ t('dashboard.inequality_source_ref') }}</div>
       </EbCard>
 
     </div>
