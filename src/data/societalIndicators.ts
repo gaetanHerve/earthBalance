@@ -87,13 +87,13 @@ export const tickerItems: TickerItem[] = [
 
 export const ecologicalCharts: EcologicalCharts = {
   co2: {
-    label: 'Émissions CO₂ mondiales',
-    unit: 'GtCO₂/an',
+    label: 'Émissions GES mondiales',
+    unit: 'GtCO₂eq/an',
     color: '#ff5050',
-    source: 'Global Carbon Project 2023 (observé 1990-2024) ; [IPCC AR6 WGI, Figure SPM.4 — CEDA Archive, CC-BY-4.0] (proj. SSP3-7.0)',
+    source: 'GHG total (CO₂+CH₄+N₂O+Gaz F) — ancres 1990/2000/2010/2019 [AR6 WGIII, Ch.2, Fig.2.2, p.20] ; 1995/2005/2015 interpolés (taux de croissance AR6) ; 2020 recul COVID est. ; 2024 ancre SSP3-7.0 [AR6 WGI, SPM.4 — CEDA, CC-BY-4.0]',
     timeSeries: {
       years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
-      values: [22.7, 23.5, 25, 28.1, 31.6, 35, 34.8, 37.4],
+      values: [38.0, 39.5, 42.0, 46.5, 53.0, 56.5, 57.4, 65.2],
     },
   },
 
