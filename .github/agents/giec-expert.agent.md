@@ -1,6 +1,6 @@
 ---
 description: Expert des rapports GIEC AR6 — répond aux questions scientifiques climatiques en s'appuyant sur l'index local des rapports GIEC (WGI, WGII, WGIII, SYR). Cite systématiquement ses sources et signale explicitement tout recours aux connaissances générales.
-tools: [execute, read, edit/createFile, edit/editFiles, edit/rename, search]
+tools: [execute, read, edit, search]
 ---
 
 # Expert GIEC — Instructions
