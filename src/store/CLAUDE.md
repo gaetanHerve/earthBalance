@@ -5,7 +5,7 @@
 | File | Content |
 |---|---|
 | `game.config.ts` | `GAME_CONFIG { grain: 5 }` — years per turn |
-| `simulation.config.ts` | `SIM_LABELS` (10 output points) and `PROJ_LABELS` (9 input points) — **import from here, not from `simulation.store`** |
+| `simulation.config.ts` | `SIM_LABELS` (16 points, grille uniforme 5 ans 2025→2100) — **import from here, not from `simulation.store`** |
 | `storageKeys.ts` | `STORAGE_KEYS` enum — all `localStorage` key strings in one place |
 
 ## Stores
@@ -21,8 +21,7 @@
 ## Projection engine (`simulation.store.ts`)
 
 **Critical constants** — defined in `src/config/simulation.config.ts`, imported everywhere:
-- `SIM_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]` — 10 points, all computed outputs
-- `PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]` — 9 points, policy delta inputs (no 2100)
+- `SIM_LABELS = [2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100]` — 16 points, grille uniforme 5 ans, tous les outputs calculés (y compris `projections.labels` dans `mitigationPolicies.ts`)
 
 **Delta model**: all projections are additive. Each policy contributes `delta[i] = decided[i] − baseline[i]`. No inter-policy interactions are modelled (documented limitation).
 

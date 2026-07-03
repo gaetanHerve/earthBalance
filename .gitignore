@@ -34,6 +34,7 @@ Thumbs.db
 
 # Autres
 *rapport*.md
+documents_annexes/
 
 # RAG local (dev only)
 tools/rag/index/

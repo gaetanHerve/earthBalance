@@ -22,83 +22,81 @@ import { STORAGE_KEYS } from '@/config/storageKeys'
 import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
 import {
-  BASELINE_CO2_10PT,
-  BASELINE_TEMP_10PT,
-  BASELINE_FOREST_10PT,
-  BASELINE_ENERGY_MIX_10PT,
-  BASELINE_RESOURCES_10PT,
-  BASELINE_FOOD_SECURITY_10PT,
-  BASELINE_WATER_ACCESS_10PT,
-  BASELINE_WATER_TENSIONS_10PT,
-  BASELINE_RESOURCE_CONFLICTS_10PT,
-  BASELINE_CLIMATE_MIGRATIONS_10PT,
-  BASELINE_LIFE_EXPECTANCY_10PT,
-  BASELINE_RESPIRATORY_DISEASES_10PT,
-  BASELINE_WHO_HEALTH_INDEX_10PT,
-  BASELINE_GINI_COEFFICIENT_10PT,
-  BASELINE_WEALTH_CONCENTRATION_10PT,
-  BASELINE_EDUCATION_ACCESS_10PT,
+  BASELINE_CO2_16PT,
+  BASELINE_TEMP_16PT,
+  BASELINE_FOREST_16PT,
+  BASELINE_ENERGY_MIX_16PT,
+  BASELINE_RESOURCES_16PT,
+  BASELINE_FOOD_SECURITY_16PT,
+  BASELINE_WATER_ACCESS_16PT,
+  BASELINE_WATER_TENSIONS_16PT,
+  BASELINE_RESOURCE_CONFLICTS_16PT,
+  BASELINE_CLIMATE_MIGRATIONS_16PT,
+  BASELINE_LIFE_EXPECTANCY_16PT,
+  BASELINE_RESPIRATORY_DISEASES_16PT,
+  BASELINE_WHO_HEALTH_INDEX_16PT,
+  BASELINE_GINI_COEFFICIENT_16PT,
+  BASELINE_WEALTH_CONCENTRATION_16PT,
+  BASELINE_EDUCATION_ACCESS_16PT,
+  BASELINE_CO2_PPM_16PT,
+  BASELINE_ENERGY_TOTAL_TWH_16PT,
 } from '@/config/baselines.config'
 
 // ─── Baseline SSP3-7.0 (Single Source of Truth) ──────────────────────────────────────────────────
 // Imported from src/config/baselines.config.ts — see that file for detailed documentation
 // Validée contre [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0]
 // Near-term (2030) : +1.49°C | Mid-term (2050) : +2.10°C | Long-term (2100) : +3.91°C
-// SIM_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
+// SIM_LABELS = [2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100]
 export { SIM_LABELS } from '@/config/simulation.config'
-export const BASELINE_CO2  = BASELINE_CO2_10PT
-export const BASELINE_TEMP = BASELINE_TEMP_10PT
+export const BASELINE_CO2  = BASELINE_CO2_16PT
+export const BASELINE_TEMP = BASELINE_TEMP_16PT
 
-// Labels des projections dans les donnÃ©es de politique (9 points, hors 2100)
-const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
 
-// Concentration atmosphérique de CO₂ (ppm) – SSP3-7.0 [Meinshausen et al. 2020 / ScenarioMIP]
-// Source: ⚠️ connaissance générale (série complète — AR6 WGI Annex II Table AII.1.2 non indexée localement)
-// Note: le ticker CO₂ ppm reste en CO₂ seul (atmosphérique). L'axe GHG du simulateur est en GtCO₂eq total.
-export const BASELINE_CO2_PPM = [424, 430, 437, 443, 456, 476, 513, 557, 617, 670]
+// Concentration atmosphérique de CO₂ (ppm) – SSP3-7.0
+// Source: voir BASELINE_CO2_PPM_16PT dans baselines.config.ts
+export const BASELINE_CO2_PPM = BASELINE_CO2_PPM_16PT
 
 // Forêts primaires mondiales restantes (% de la couverture originelle) – SSP3-7.0
-// Source : [AR6 WGII, Ch.2, pp.290-295 & Ch.CCP7, pp.2408-2409] ; limite planétaire 58 % en 2024
-export const BASELINE_FOREST = BASELINE_FOREST_10PT
+// Source : [AR6 WGII, Ch.2, pp.290-295 & Ch.CCP7, pp.2408-2409]
+export const BASELINE_FOREST = BASELINE_FOREST_16PT
 
-// Total énergie primaire mondiale (TWh, hors biomasse traditionnelle) – SSP3-7.0 tendanciel
-// Utilisé pour convertir les parts % du mix en valeurs absolues TWh
-// 2024 : données réelles Energy Institute ; 2026-2100 : projection SSP3-7.0 (demande énergétique élevée)
-const BASELINE_ENERGY_TOTAL_TWH = [175272, 180000, 184000, 188000, 197000, 213000, 236000, 256000, 278000, 305000]
+// Total énergie primaire mondiale (TWh, hors biomasse traditionnelle) – SSP3-7.0
+// Source : voir BASELINE_ENERGY_TOTAL_TWH_16PT dans baselines.config.ts
+const BASELINE_ENERGY_TOTAL_TWH = BASELINE_ENERGY_TOTAL_TWH_16PT
 
 // Mix énergétique mondial (% du total énergie primaire) – SSP3-7.0 [AR6 WGIII, Ch.3, pp.289-310]
 const ENERGY_MIX_KEYS: EnergyMixKey[] = ['coal', 'oil', 'gas', 'nuclear', 'solar', 'wind', 'hydro', 'autres']
-export const BASELINE_ENERGY_MIX: Record<EnergyMixKey, number[]> = BASELINE_ENERGY_MIX_10PT
+export const BASELINE_ENERGY_MIX: Record<EnergyMixKey, number[]> = BASELINE_ENERGY_MIX_16PT
 
-// Extraction de ressources naturelles (Gt/an) â€” UNEP Global Resources Outlook
+// Extraction de ressources naturelles (Gt/an) – UNEP Global Resources Outlook
 const RESOURCE_KEYS: ResourceKey[] = ['minerals', 'biomass', 'fossilFuels']
-export const BASELINE_RESOURCES: Record<ResourceKey, number[]> = BASELINE_RESOURCES_10PT
+export const BASELINE_RESOURCES: Record<ResourceKey, number[]> = BASELINE_RESOURCES_16PT
 
-// Sécurité alimentaire (indice FAO /100) – SSP3-7.0 : dégradation accélérée, 10-25% pertes récoltes sous 3°C
+// Sécurité alimentaire (indice FAO /100) – SSP3-7.0
 // Source : [AR6 WGII, Ch.5, pp.557-559] ; FAO SOFI 2023
-export const BASELINE_FOOD_SECURITY = BASELINE_FOOD_SECURITY_10PT
+export const BASELINE_FOOD_SECURITY = BASELINE_FOOD_SECURITY_16PT
 
-// Accès à l'eau potable (% population mondiale) – SSP3-7.0 : stagnation puis déclin
-// Source : [AR6 WGII, Ch.4, p.568 (3-4 milliards exposés @3.5-4°C)] ; WHO/UNICEF JMP
-export const BASELINE_WATER_ACCESS = BASELINE_WATER_ACCESS_10PT
+// Accès à l'eau potable (% population mondiale) – SSP3-7.0
+// Source : [AR6 WGII, Ch.4, p.568] ; WHO/UNICEF JMP
+export const BASELINE_WATER_ACCESS = BASELINE_WATER_ACCESS_16PT
 
-// Tensions géopolitiques – scores de tension (0-100, plus haut = pire) – SSP3-7.0 "Régionalisme"
+// Tensions géopolitiques – scores de tension (0-100, plus haut = pire) – SSP3-7.0
 // Source : [AR6 WGII, Ch.7, pp.1038-1042] ; ACLED ; UNHCR
-export const BASELINE_WATER_TENSIONS      = BASELINE_WATER_TENSIONS_10PT
-export const BASELINE_RESOURCE_CONFLICTS  = BASELINE_RESOURCE_CONFLICTS_10PT
-export const BASELINE_CLIMATE_MIGRATIONS  = BASELINE_CLIMATE_MIGRATIONS_10PT
+export const BASELINE_WATER_TENSIONS      = BASELINE_WATER_TENSIONS_16PT
+export const BASELINE_RESOURCE_CONFLICTS  = BASELINE_RESOURCE_CONFLICTS_16PT
+export const BASELINE_CLIMATE_MIGRATIONS  = BASELINE_CLIMATE_MIGRATIONS_16PT
 
-// Santé globale – SSP3-7.0 : déclin accéléré (chaleur, vecteurs, pollution fossile)
+// Santé globale – SSP3-7.0
 // Source : [AR6 WGII, Ch.7, pp.1033-1036] ; OMS GHO ; Lancet Countdown 2022
-export const BASELINE_LIFE_EXPECTANCY      = BASELINE_LIFE_EXPECTANCY_10PT  // annÃ©es
-export const BASELINE_RESPIRATORY_DISEASES = BASELINE_RESPIRATORY_DISEASES_10PT  // % d'augmentation vs 2000
-export const BASELINE_WHO_HEALTH_INDEX     = BASELINE_WHO_HEALTH_INDEX_10PT  // /100
+export const BASELINE_LIFE_EXPECTANCY      = BASELINE_LIFE_EXPECTANCY_16PT
+export const BASELINE_RESPIRATORY_DISEASES = BASELINE_RESPIRATORY_DISEASES_16PT
+export const BASELINE_WHO_HEALTH_INDEX     = BASELINE_WHO_HEALTH_INDEX_16PT
 
-// Inégalités – SSP3-7.0 : divergence accentuée, gouvernance fragmentée
+// Inégalités – SSP3-7.0
 // Source : [AR6 WGII, Ch.16, pp.2340-2345] ; World Inequality Report 2022 ; WID.world
-export const BASELINE_GINI_COEFFICIENT     = BASELINE_GINI_COEFFICIENT_10PT
-export const BASELINE_WEALTH_CONCENTRATION = BASELINE_WEALTH_CONCENTRATION_10PT    // % richesse du top 1%
-export const BASELINE_EDUCATION_ACCESS     = BASELINE_EDUCATION_ACCESS_10PT    // % population avec accÃ¨s Ã©ducation secondaire+
+export const BASELINE_GINI_COEFFICIENT     = BASELINE_GINI_COEFFICIENT_16PT
+export const BASELINE_WEALTH_CONCENTRATION = BASELINE_WEALTH_CONCENTRATION_16PT
+export const BASELINE_EDUCATION_ACCESS     = BASELINE_EDUCATION_ACCESS_16PT
 
 const SELECTED_KEY  = STORAGE_KEYS.SIMULATION_SELECTED
 const BASELINE_KEY  = STORAGE_KEYS.SIMULATION_BASELINE
@@ -138,7 +136,7 @@ export function policyTempReductionAt2100(policy: MitigationPolicy, adoptionYear
   const proj = policy.projections as MitigationPolicyProjections
   const effectiveStart = adoptionYear + (policy.implementationLag ?? 0)
   const deltas = shiftedDeltas(proj.labels, proj.temperature.decided, proj.temperature.baseline, effectiveStart)
-  return -deltas[9]
+  return -(deltas.at(-1) ?? 0)
 }
 
 function co2Deltas(dec: MitigationPolicy, effectiveStart: number): number[] {
@@ -166,45 +164,45 @@ function tempDeltasPessimist(dec: MitigationPolicy, effectiveStart: number): num
 }
 
 // Delta direct (valeurs dÃ©jÃ  exprimÃ©es en delta vs. baseline)
-function shiftedDeltasDirect(projDeltas: number[], effectiveStart: number): number[] {
+function shiftedDeltasDirect(projLabels: number[], projDeltas: number[], effectiveStart: number): number[] {
   return SIM_LABELS.map(year => {
     if (year < effectiveStart) return 0
     const mappedYear = 2024 + (year - effectiveStart)
-    return interpolateAtYear(mappedYear, PROJ_LABELS, projDeltas)
+    return interpolateAtYear(mappedYear, projLabels, projDeltas)
   })
 }
 
 function forestDeltas(dec: MitigationPolicy, effectiveStart: number): number[] {
   const proj = dec.projections as Partial<MitigationPolicyProjections>
   if (!Array.isArray(proj?.forest?.decided)) return SIM_LABELS.map(() => 0)
-  return shiftedDeltas(PROJ_LABELS, proj.forest!.decided, proj.forest!.baseline, effectiveStart)
+  return shiftedDeltas(proj.labels ?? SIM_LABELS, proj.forest!.decided, proj.forest!.baseline, effectiveStart)
 }
 
 function forestDeltasPessimist(dec: MitigationPolicy, effectiveStart: number): number[] {
   const proj = dec.projections as Partial<MitigationPolicyProjections>
   if (!Array.isArray(proj?.forest?.decided)) return SIM_LABELS.map(() => 0)
-  return shiftedDeltas(PROJ_LABELS, proj.forest!.pessimist, proj.forest!.baseline, effectiveStart)
+  return shiftedDeltas(proj.labels ?? SIM_LABELS, proj.forest!.pessimist, proj.forest!.baseline, effectiveStart)
 }
 
 function energyMixDeltaArr(dec: MitigationPolicy, effectiveStart: number, cat: EnergyMixKey, scenario: 'decided' | 'pessimist'): number[] {
   const proj = dec.projections as Partial<MitigationPolicyProjections>
   const deltas = proj?.energyMix?.[cat]?.[scenario]
   if (!Array.isArray(deltas)) return SIM_LABELS.map(() => 0)
-  return shiftedDeltasDirect(deltas, effectiveStart)
+  return shiftedDeltasDirect(proj.labels ?? SIM_LABELS, deltas, effectiveStart)
 }
 
 function resourceDeltaArr(dec: MitigationPolicy, effectiveStart: number, res: ResourceKey, scenario: 'decided' | 'pessimist'): number[] {
   const proj = dec.projections as Partial<MitigationPolicyProjections>
   const deltas = proj?.resources?.[res]?.[scenario]
   if (!Array.isArray(deltas)) return SIM_LABELS.map(() => 0)
-  return shiftedDeltasDirect(deltas, effectiveStart)
+  return shiftedDeltasDirect(proj.labels ?? SIM_LABELS, deltas, effectiveStart)
 }
 
 function societalDeltaArr(dec: MitigationPolicy, effectiveStart: number, key: SocietalKey, scenario: 'decided' | 'pessimist'): number[] {
   const proj = dec.projections as Partial<MitigationPolicyProjections>
   const deltas = proj?.societal?.[key]?.[scenario]
   if (!Array.isArray(deltas)) return SIM_LABELS.map(() => 0)
-  return shiftedDeltasDirect(deltas, effectiveStart)
+  return shiftedDeltasDirect(proj.labels ?? SIM_LABELS, deltas, effectiveStart)
 }
 
 // ─── Helpers ppm CO₂ ─────────────────────────────────────────────────────────
@@ -433,8 +431,8 @@ export const useSimulationStore = defineStore('simulation', () => {
   const cumulativeEnergyMix = computed<Record<EnergyMixKey, number[]>>(() => {
     const result = {} as Record<EnergyMixKey, number[]>
     for (const cat of ENERGY_MIX_KEYS) {
-      result[cat] = SIM_LABELS.map((year, i) => {
-        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_ENERGY_MIX[cat])
+      result[cat] = SIM_LABELS.map((_, i) => {
+        const base = BASELINE_ENERGY_MIX[cat][i]
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + energyMixDeltaArr(dec, effectiveStartOf(dec.id), cat, 'decided')[i], 0)
         return base + delta
@@ -446,8 +444,8 @@ export const useSimulationStore = defineStore('simulation', () => {
   const cumulativeEnergyMixPessimist = computed<Record<EnergyMixKey, number[]>>(() => {
     const result = {} as Record<EnergyMixKey, number[]>
     for (const cat of ENERGY_MIX_KEYS) {
-      result[cat] = SIM_LABELS.map((year, i) => {
-        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_ENERGY_MIX[cat])
+      result[cat] = SIM_LABELS.map((_, i) => {
+        const base = BASELINE_ENERGY_MIX[cat][i]
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + energyMixDeltaArr(dec, effectiveStartOf(dec.id), cat, 'pessimist')[i], 0)
         return base + delta
@@ -459,8 +457,8 @@ export const useSimulationStore = defineStore('simulation', () => {
   const cumulativeResources = computed<Record<ResourceKey, number[]>>(() => {
     const result = {} as Record<ResourceKey, number[]>
     for (const res of RESOURCE_KEYS) {
-      result[res] = SIM_LABELS.map((year, i) => {
-        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_RESOURCES[res])
+      result[res] = SIM_LABELS.map((_, i) => {
+        const base = BASELINE_RESOURCES[res][i]
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + resourceDeltaArr(dec, effectiveStartOf(dec.id), res, 'decided')[i], 0)
         return Math.round((base + delta) * 10) / 10
@@ -472,8 +470,8 @@ export const useSimulationStore = defineStore('simulation', () => {
   const cumulativeResourcesPessimist = computed<Record<ResourceKey, number[]>>(() => {
     const result = {} as Record<ResourceKey, number[]>
     for (const res of RESOURCE_KEYS) {
-      result[res] = SIM_LABELS.map((year, i) => {
-        const base = interpolateAtYear(year, PROJ_LABELS, BASELINE_RESOURCES[res])
+      result[res] = SIM_LABELS.map((_, i) => {
+        const base = BASELINE_RESOURCES[res][i]
         const delta = selectedMitigationPolicies.value.reduce(
           (s, dec) => s + resourceDeltaArr(dec, effectiveStartOf(dec.id), res, 'pessimist')[i], 0)
         return Math.round((base + delta) * 10) / 10
