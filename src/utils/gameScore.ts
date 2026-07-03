@@ -68,16 +68,18 @@ export interface GameScoreInput {
   cumulativeGiniCoefficientPessimist:    number[]
 }
 
-// Baseline SSP2-4.5 at 2100 — hardcoded from simulation.store constants
+// Baseline SSP3-7.0 at 2100 — from baselines.config.ts BASELINE_XX_10PT last value
+// Source: [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0] pour temp;
+// indicateurs sociétaux: [AR6 WGII] + climate-data-scientist calibration
 export const BASELINE_2100 = {
-  temp:             4.0,   // °C
-  forest:          42.0,   // %
-  foodSecurity:    46.0,   // /100
-  waterAccess:     82.0,   // %
-  whoHealthIndex:  55.0,   // /100
-  climateMigrations: 77.0, // index /100
-  giniCoefficient: 0.715,  // 0–1
-  renewables:      34.5,   // % (solar 17 + wind 14.5 + hydro 3, clamped to 2074)
+  temp:             3.91,  // °C — [AR6 WGI SPM.8 CEDA, mean]
+  forest:          24.0,   // % — [AR6 WGII, Ch.2 & CCP7]
+  foodSecurity:    31.0,   // /100 — [AR6 WGII, Ch.5, pp.557-559]
+  waterAccess:     63.0,   // % — [AR6 WGII, Ch.4, p.568]
+  whoHealthIndex:  43.5,   // /100 — [AR6 WGII, Ch.7]
+  climateMigrations: 185.0, // millions — [AR6 WGII, Ch.7, p.1059]; IOM 2022
+  giniCoefficient: 0.762,  // 0–1 — [AR6 WGII, Ch.16, pp.2340-2345]
+  renewables:      23.0,   // % (solar 11.5 + wind 8.5 + hydro 3.0 @ 2100)
 } as const
 
 export function narrativeKey(tempAt2100: number): '1' | '2' | '3' | '4' {

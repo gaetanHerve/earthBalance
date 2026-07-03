@@ -81,7 +81,7 @@ export interface PolicyInteraction {
 }
 
 // ─── Séries temporelles delta (pour le moteur runtime) ───────────────────────
-// Valeurs DELTA par rapport à la baseline SSP2-4.5.
+// Valeurs DELTA par rapport à la baseline SSP3-7.0.
 // Le moteur calcule : baseline[year] + delta[year] = courbe projetée.
 // Horizons fixes POC : [2025, 2030, 2035, 2040, 2050, 2075, 2100]
 

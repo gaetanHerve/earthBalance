@@ -68,7 +68,7 @@ export const societalIndicators: SocietalIndicators = {
   },
 }
 
-// Trajectoire SSP2-4.5 (UN WPP 2022, compatible AR6) — milliards de personnes
+// Trajectoire SSP3-7.0 (UN WPP 2022, compatible AR6) — milliards de personnes
 export const populationTimeSeries = {
   years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
   values: [ 5.3,  5.7,  6.1,  6.5,  6.9,  7.4,  7.8,  8.1,  8.5,  9.2,  9.7, 10.1, 10.4, 10.4],
@@ -125,12 +125,13 @@ export const ecologicalCharts: EcologicalCharts = {
     label: 'Élévation du niveau des mers',
     unit: 'mm (Δ 1995-2014)',
     color: '#60a5fa',
-    source: 'IPCC AR6 WGI Ch.9 — Church & White (2011) ; altimétrie satellite NASA/CNES ; projection médiane SSP2-4.5',
+    source: 'IPCC AR6 WGI Ch.9 — Church & White (2011) ; altimétrie satellite NASA/CNES ; projection médiane SSP3-7.0 [AR6 WGI, SPM.8 — CEDA Archive, CC-BY-4.0]',
     timeSeries: {
-      // Observé 1990-2024, puis projection médiane SSP2-4.5 (AR6 Table 9.9, données éducatives)
+      // Observé 1990-2024, puis projection médiane SSP3-7.0 (CEDA AR6 WGI Figure SPM.8 panel d)
       // Référence : moyenne 1995-2014 ≈ 0 mm (convention AR6 WGI Ch.9)
+      // SSP3-7.0 vs SSP2-4.5 à 2100 : +692 mm vs +415 mm (ratio CEDA SSP3-7.0/SSP2-4.5)
       years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
-      values: [ -40,  -26,  -12,    2,   20,   38,   58,   78,   98,  138,  184,  241,  338,  415],
+      values: [ -40,  -26,  -12,    2,   20,   38,   58,   78,  102,  152,  222,  292,  418,  692],
     },
   },
 
@@ -138,12 +139,12 @@ export const ecologicalCharts: EcologicalCharts = {
     label: 'Indice de fréquence des extrêmes climatiques',
     unit: 'indice (pré-industriel = 1)',
     color: '#fb923c',
-    source: 'IPCC AR6 WGI Ch.11 — données observées et projection médiane SSP2-4.5',
+    source: 'IPCC AR6 WGI Ch.11 — données observées et projection médiane SSP3-7.0 [AR6 WGI, Ch.11]',
     timeSeries: {
       // Indice composite observé 1950-2024, calibré à ×2,8 en 2024 (vagues de chaleur)
-      // puis projection médiane SSP2-4.5 (données éducatives)
+      // puis projection médiane SSP3-7.0 — extrêmes amplifiés ~1.4× vs SSP2-4.5 à 2100
       years:  [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
-      values: [1.2, 1.3, 1.42, 1.58, 1.78, 2.05, 2.35, 2.6, 2.8, 3.15, 3.9, 4.9, 6.1, 7.8, 10],
+      values: [1.2, 1.3, 1.42, 1.58, 1.78, 2.05, 2.35, 2.6, 2.8, 3.2, 4.1, 5.3, 7.1, 10.2, 14.5],
     },
   },
 

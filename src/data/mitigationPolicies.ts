@@ -1,13 +1,14 @@
 ﻿import type { MitigationPolicy, GlobalStats, BlockchainState } from '@/types/index'
 
-// ─── Baseline SSP2-4.5 (référence partagée pour toutes les projections) ────────
-// Validée contre AR6_WG1_00174 (page 80) — Near-term 1.5°C, Mid-term 2.0°C, Long-term 2.7°C
+// ─── Baseline SSP3-7.0 (référence partagée pour toutes les projections) ────────
+// Validée contre [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0]
+// Near-term (2030) : +1.49°C | Mid-term (2050) : +2.10°C | Long-term (2100) : +3.91°C
 // labels : [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
-// co2    : [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0] GtCO2/an (stabilisation post-2050)
-// temp   : [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32] °C (GIEC-aligned progression)
+// co2    : [48.0, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4] GtCO₂/an (fossile+LULUCF)
+// temp   : [1.32, 1.38, 1.43, 1.49, 1.60, 1.78, 2.10, 2.44, 2.95] °C [AR6 WGI SPM.8 CEDA]
 //
-// Les courbes "decided" et "pessimist" sont calculées en ajoutant les deltas
-// issus des modèles d'impact JSON (src/data/models/) à la baseline SSP2-4.5.
+// Les courbes "decided" et "pessimist" sont recalibrées SSP3-7.0 par delta-scaling
+// avec facteurs multiplicateurs par catégorie de politique (0.85×–1.50×)
 
 export const mitigationPolicies: MitigationPolicy[] = [
   // ─── Décision existante 42-07 ─────────────────────────────────────────────
@@ -77,20 +78,20 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 39.7, 40.8, 42.8, 45.5, 48.5, 51.0, 53.0],
-        pessimist: [37.4, 38.8, 40.0, 41.4, 44.0, 47.6, 52.1, 54.6, 56.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 50.6, 51.5, 52.5, 54, 55.1, 58.8, 63.6],
+        pessimist: [48, 49.6, 50.9, 52.3, 54.1, 56.7, 59.8, 63.5, 68.3],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.51, 1.68, 1.77, 1.85, 1.95, 1.97, 2.03],
-        pessimist: [1.35, 1.43, 1.52, 1.69, 1.8, 1.91, 2.04, 2.1, 2.2],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.42, 1.47, 1.55, 1.68, 1.93, 2.19, 2.6],
+        pessimist: [1.32, 1.38, 1.43, 1.48, 1.58, 1.74, 2.03, 2.34, 2.81],
       },
       forest: {
-        // % forêts primaires mondiales — baseline Mackey et al. 2015 ; deltas TMF rescalés ×0.6
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.6, 57.3, 56.9, 55.7, 54.0, 51.7, 48.8, 44.8],
-        pessimist: [58.0, 57.5, 57.1, 56.7, 55.4, 53.7, 51.2, 48.2, 44.1],
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.3, 56.6, 55.9, 53.7, 50.1, 44.5, 39.1, 32.2],
+        pessimist: [58, 57.3, 56.5, 55.7, 53.4, 49.8, 44, 38.5, 31.8],
       },
     },
   },
@@ -154,41 +155,18 @@ export const mitigationPolicies: MitigationPolicy[] = [
         text: 'Dans 50 ans, sans extension aux pays émergents (qui représentent 55% des émissions charbon), l\'impact de la seule décision reste limité à **-0,10°C**. La Chine et l\'Inde ont continué d\'expandre leurs capacités, compensant les fermetures occidentales. Le "carbon leakage" industriel (délocalisation vers des pays sans contrainte) a réduit les gains nets de ~30%. La décision reste positive mais insuffisante sans coopération internationale.',
       },
     },
-    // Deltas issus de POL_COAL_EXIT_2030_DEV (médian / pessimiste), appliqués sur baseline SSP2-4.5
+    // Deltas issus de POL_COAL_EXIT_2030_DEV (médian / pessimiste), recalibrés SSP3-7.0 (delta-scaling)
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 39.8, 40.7, 43.0, 47.2, 52.7, 55.2, 57.2],
-        pessimist: [37.4, 38.8, 40.1, 41.4, 44.1, 48.3, 53.8, 56.3, 58.3],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 50.9, 51.7, 52.8, 54.3, 55.4, 59.1, 63.9],
+        pessimist: [48, 49.6, 51.1, 52.4, 54.2, 56.9, 59.9, 63.6, 68.4],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.79, 1.88, 2.0, 2.04, 2.12],
-        pessimist: [1.35, 1.43, 1.52, 1.69, 1.81, 1.92, 2.06, 2.12, 2.24],
-      },
-      energyMix: {
-        coal:  { decided: [0, -0.5, -1.5, -3.5, -5.0, -5.5, -5.5, -5.5, -5.5], pessimist: [0, -0.3, -1.0, -2.5, -3.5, -4.0, -4.0, -4.0, -4.0] },
-        gas:   { decided: [0, +0.2, +0.5, +1.0, +1.5, +1.5, +1.2, +1.0, +0.8], pessimist: [0, +0.1, +0.3, +0.8, +1.2, +1.3, +1.2, +1.0, +0.8] },
-        solar: { decided: [0, +0.2, +0.5, +1.3, +2.0, +2.2, +2.3, +2.5, +2.7], pessimist: [0, +0.1, +0.4, +1.0, +1.5, +1.7, +1.8, +2.0, +2.0] },
-        wind:  { decided: [0, +0.1, +0.5, +1.2, +1.5, +1.8, +2.0, +2.0, +2.0], pessimist: [0, +0.1, +0.3, +0.7, +0.8, +1.0, +1.0, +1.0, +1.2] },
-      },
-      resources: {
-        minerals:    { decided: [0, +0.1, +0.2, +0.3, +0.5, +0.6, +0.7, +0.8, +0.8], pessimist: [0, +0.1, +0.1, +0.2, +0.3, +0.4, +0.5, +0.6, +0.6] },
-        fossilFuels: { decided: [0, -0.2, -0.5, -0.9, -1.2, -1.3, -1.4, -1.4, -1.4], pessimist: [0, -0.1, -0.3, -0.6, -0.8, -0.9, -1.0, -1.0, -1.0] },
-      },
-      // Impact sociétal — Source : POL_COAL_EXIT_2030_DEV.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5],          pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2] },
-        resourceConflicts:     { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.5, -2.0, -2.0, -2.0],  pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -1.0, -1.0, -1.0] },
-        waterTensions:         { decided: [0, -0.1, -0.2, -0.5, -0.8, -1.2, -1.5, -1.5, -1.5],  pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.5, -0.8, -0.8, -0.8] },
-        climateMigrations:     { decided: [0, -0.1, -0.4, -0.8, -1.4, -2.0, -3.0, -3.0, -3.0],  pessimist: [0, 0.0, -0.1, -0.3, -0.6, -0.9, -1.5, -1.5, -1.5] },
-        lifeExpectancy:        { decided: [0, 0.1, 0.3, 0.6, 0.9, 1.2, 1.5, 1.5, 1.5],          pessimist: [0, 0.0, 0.1, 0.2, 0.4, 0.5, 0.7, 0.7, 0.7] },
-        respiratoryDiseases:   { decided: [0, -0.5, -1.5, -3.0, -5.5, -8.0, -10.0, -10.0, -10.0], pessimist: [0, -0.2, -0.7, -1.5, -2.5, -3.5, -5.0, -5.0, -5.0] },
-        whoHealthIndex:        { decided: [0, 0.1, 0.4, 0.8, 1.5, 2.0, 3.0, 3.0, 3.0],          pessimist: [0, 0.0, 0.2, 0.4, 0.7, 1.0, 1.5, 1.5, 1.5] },
-        giniCoefficient:       { decided: [0, 0.0, -0.002, -0.004, -0.007, -0.009, -0.012, -0.012, -0.012], pessimist: [0, 0.001, 0.0, -0.001, -0.002, -0.003, -0.005, -0.005, -0.005] },
-        wealthConcentration:   { decided: [0, 0.0, -0.2, -0.4, -0.7, -1.0, -1.5, -1.5, -1.5],  pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.7, -0.7, -0.7] },
-        educationAccess:       { decided: [0, 0.0, 0.1, 0.2, 0.5, 0.7, 1.0, 1.0, 1.0],          pessimist: [0, 0.0, 0.0, 0.1, 0.2, 0.3, 0.5, 0.5, 0.5] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.56, 1.7, 1.97, 2.25, 2.68],
+        pessimist: [1.32, 1.38, 1.43, 1.48, 1.58, 1.74, 2.03, 2.34, 2.81],
       },
     },
     prerequisites: {
@@ -255,31 +233,18 @@ export const mitigationPolicies: MitigationPolicy[] = [
         text: 'Dans 50 ans, les émissions de méthane auront été réduites de seulement **18%** — résistances des lobbies pétroliers et gaziers, déficit de surveillance dans les pays émergents. La courte durée de vie du CH₄ signifie que les bénéfices de la décennie 2025-2035 se sont en partie estompés. Le bilan net reste positif (**–0,10°C**) mais la fenêtre d\'opportunité d\'action rapide sur le CH₄ a été partiellement manquée.',
       },
     },
-    // Deltas issus de POL_METHANE_REDUCTION_2030, appliqués sur baseline SSP2-4.5
+    // Deltas issus de POL_METHANE_REDUCTION_2030, recalibrés SSP3-7.0 (delta-scaling)
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 38.5, 38.3, 41.3, 45.5, 51.0, 53.5, 55.5],
-        pessimist: [37.4, 38.8, 39.5, 40.4, 43.4, 47.6, 53.1, 55.6, 57.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 48.5, 48, 50.1, 54.1, 58.9, 62.6, 67.4],
+        pessimist: [48, 49.6, 50, 51.1, 53.5, 56.7, 61.2, 64.9, 69.7],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.51, 1.68, 1.78, 1.87, 1.98, 2.01, 2.08],
-        pessimist: [1.35, 1.43, 1.52, 1.69, 1.8, 1.91, 2.05, 2.11, 2.22],
-      },
-      // Impact sociétal — Source : POL_METHANE_REDUCTION_2030.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.1, 0.3, 0.7, 1.1, 1.3, 1.5, 1.5, 1.5],        pessimist: [0, 0.0, 0.1, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5] },
-        resourceConflicts:     { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.3, -1.5, -1.5, -1.5], pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -0.8, -0.8, -0.8] },
-        waterTensions:         { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.3, -1.5, -1.5, -1.5], pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -0.8, -0.8, -0.8] },
-        climateMigrations:     { decided: [0, -0.1, -0.4, -0.8, -1.3, -1.7, -2.0, -2.0, -2.0], pessimist: [0, 0.0, -0.1, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0] },
-        lifeExpectancy:        { decided: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5],         pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3] },
-        respiratoryDiseases:   { decided: [0, -0.2, -0.7, -1.5, -2.5, -3.5, -4.0, -4.0, -4.0], pessimist: [0, -0.1, -0.3, -0.7, -1.0, -1.5, -2.0, -2.0, -2.0] },
-        whoHealthIndex:        { decided: [0, 0.1, 0.2, 0.4, 0.7, 0.9, 1.0, 1.0, 1.0],         pessimist: [0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5] },
-        giniCoefficient:       { decided: [0, 0.0, -0.001, -0.002, -0.003, -0.003, -0.004, -0.004, -0.004], pessimist: [0, 0.0, 0.0, -0.001, -0.001, -0.002, -0.002, -0.002, -0.002] },
-        wealthConcentration:   { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],  pessimist: [0, 0.0, 0.0, -0.1, -0.1, -0.2, -0.2, -0.2, -0.2] },
-        educationAccess:       { decided: [0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5],         pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.42, 1.47, 1.56, 1.7, 1.97, 2.27, 2.71],
+        pessimist: [1.32, 1.38, 1.43, 1.48, 1.58, 1.75, 2.05, 2.37, 2.86],
       },
     },
   },
@@ -343,37 +308,24 @@ export const mitigationPolicies: MitigationPolicy[] = [
         text: 'Dans 50 ans, sans réforme du système alimentaire mondial (demande en viande bovine toujours croissante dans les pays émergents), la pression sur les forêts n\'aura jamais vraiment cédé. La déforestation a été réduite de **30%** mais les méga-feux liés au changement climatique ont compensé une partie des gains. La décision, faute de s\'attaquer aux causes profondes (régimes alimentaires), n\'a permis qu\'un effet climatique limité à **–0,10°C**.',
       },
     },
-    // Deltas issus de POL_DEFORESTATION_HALT_2030, appliqués sur baseline SSP2-4.5
+    // Deltas issus de POL_DEFORESTATION_HALT_2030, recalibrés SSP3-7.0 (delta-scaling)
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 40.9, 42.2, 46.0, 51.5, 54.0, 56.0],
-        pessimist: [37.4, 38.8, 40.2, 41.5, 43.8, 47.8, 53.3, 55.8, 57.8],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 51.8, 52.5, 55.5, 59.9, 63.6, 68.4],
+        pessimist: [48, 49.6, 51.2, 52.5, 54.1, 56.9, 61.2, 64.9, 69.7],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.78, 1.86, 1.96, 1.98, 2.03],
-        pessimist: [1.35, 1.43, 1.52, 1.69, 1.8, 1.91, 2.04, 2.1, 2.2],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.55, 1.69, 1.94, 2.21, 2.62],
+        pessimist: [1.32, 1.38, 1.43, 1.48, 1.58, 1.75, 2.03, 2.35, 2.81],
       },
       forest: {
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.9, 57.7, 57.4, 56.9, 56.4, 55.6, 54.6, 53.0],
-        pessimist: [58.0, 57.6, 57.3, 56.9, 56.0, 54.6, 52.5, 50.4, 47.2],
-      },
-      // Impact sociétal — Source : POL_DEFORESTATION_HALT_2030.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.0, 0.2, 0.5, 0.9, 1.2, 1.5, 1.5, 1.5],        pessimist: [0, 0.0, 0.1, 0.2, 0.4, 0.6, 0.7, 0.7, 0.7] },
-        waterAccess:           { decided: [0, 0.0, 0.2, 0.6, 1.1, 1.6, 2.0, 2.0, 2.0],        pessimist: [0, 0.0, 0.1, 0.2, 0.5, 0.7, 1.0, 1.0, 1.0] },
-        resourceConflicts:     { decided: [0, -0.1, -0.4, -0.8, -1.5, -2.0, -3.0, -3.0, -3.0], pessimist: [0, 0.0, -0.1, -0.3, -0.6, -0.9, -1.5, -1.5, -1.5] },
-        waterTensions:         { decided: [0, -0.1, -0.4, -0.8, -1.5, -2.0, -3.0, -3.0, -3.0], pessimist: [0, 0.0, -0.1, -0.3, -0.6, -0.9, -1.5, -1.5, -1.5] },
-        climateMigrations:     { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.5, -2.0, -2.0, -2.0], pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -1.0, -1.0, -1.0] },
-        lifeExpectancy:        { decided: [0, 0.0, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3, 0.3],         pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1] },
-        respiratoryDiseases:   { decided: [0, -0.1, -0.4, -0.8, -1.5, -2.2, -3.0, -3.0, -3.0], pessimist: [0, 0.0, -0.2, -0.4, -0.7, -1.0, -1.5, -1.5, -1.5] },
-        whoHealthIndex:        { decided: [0, 0.0, 0.2, 0.3, 0.5, 0.7, 0.8, 0.8, 0.8],         pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.4, 0.4] },
-        giniCoefficient:       { decided: [0, 0.0, -0.001, -0.003, -0.005, -0.006, -0.008, -0.008, -0.008], pessimist: [0, 0.0, 0.0, -0.001, -0.002, -0.003, -0.004, -0.004, -0.004] },
-        wealthConcentration:   { decided: [0, 0.0, -0.1, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0],  pessimist: [0, 0.0, -0.1, -0.1, -0.2, -0.3, -0.5, -0.5, -0.5] },
-        educationAccess:       { decided: [0, 0.0, 0.1, 0.3, 0.5, 0.7, 1.0, 1.0, 1.0],         pessimist: [0, 0.0, 0.1, 0.1, 0.3, 0.4, 0.5, 0.5, 0.5] },
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.9, 57.7, 57.1, 56.1, 54.4, 51.3, 48.7, 46],
+        pessimist: [58, 57.5, 57, 56.1, 54.3, 51.2, 46.5, 42.3, 37.1],
       },
     },
   },
@@ -437,40 +389,24 @@ export const mitigationPolicies: MitigationPolicy[] = [
         text: 'Dans 50 ans, sans politique d\'accompagnement ambitieuse (réforme des subventions, investissements dans la R&D alimentaire, coopération Sud-Sud), le changement de régime alimentaire n\'a touché qu\'une minorité aisée des pays développés. La décision est perçue comme une ingérence culturelle dans les pays du Sud. Le bilan climatique est limité à **–0,10°C**, les co-bénéfices biodiversité et eau partiellement réalisés.',
       },
     },
-    // Deltas issus de POL_DIET_SHIFT_PLANTBASED, appliqués sur baseline SSP2-4.5
+    // Deltas issus de POL_DIET_SHIFT_PLANTBASED, recalibrés SSP3-7.0 (delta-scaling)
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.2, 47.3, 51.0, 53.5, 55.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.6, 48.3, 53.1, 55.6, 57.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 54.4, 56.6, 59.1, 62.7, 67.6],
+        pessimist: [48, 49.6, 51.2, 52.8, 54.9, 57.7, 61.4, 65.1, 69.9],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.8, 1.89, 2.0, 2.03, 2.09],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.06, 2.12, 2.23],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.58, 1.73, 2, 2.29, 2.72],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.06, 2.38, 2.86],
       },
       forest: {
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.5, 57.0, 56.7, 55.7, 54.0, 51.7, 49.2, 45.2],
-        pessimist: [58.0, 57.5, 57.0, 56.6, 55.4, 53.7, 51.2, 48.3, 44.3],
-      },
-      resources: {
-        biomass: { decided: [0, 0, -0.2, -0.5, -1.0, -1.8, -2.5, -3.0, -3.5], pessimist: [0, 0, -0.1, -0.3, -0.7, -1.2, -1.8, -2.2, -2.8] },
-      },
-      // Impact sociétal — Source : POL_DIET_SHIFT_PLANTBASED.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.1, 0.3, 0.6, 1.0, 1.3, 1.5, 1.5, 1.5],        pessimist: [0, 0.0, 0.1, 0.2, 0.4, 0.5, 0.5, 0.5, 0.5] },
-        waterAccess:           { decided: [0, 0.1, 0.3, 0.6, 1.0, 1.5, 2.0, 2.0, 2.0],        pessimist: [0, 0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 0.8, 0.8] },
-        resourceConflicts:     { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.3, -2.0, -2.0, -2.0], pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -1.0, -1.0, -1.0] },
-        waterTensions:         { decided: [0, -0.1, -0.4, -0.8, -1.3, -1.8, -2.5, -2.5, -2.5], pessimist: [0, 0.0, -0.1, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0] },
-        climateMigrations:     { decided: [0, -0.1, -0.3, -0.6, -0.9, -1.2, -1.5, -1.5, -1.5], pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.5, -0.8, -0.8, -0.8] },
-        lifeExpectancy:        { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.7, 0.8, 0.8, 0.8],         pessimist: [0, 0.0, 0.1, 0.2, 0.3, 0.3, 0.4, 0.4, 0.4] },
-        respiratoryDiseases:   { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.5, -2.0, -2.0, -2.0], pessimist: [0, 0.0, -0.1, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0] },
-        whoHealthIndex:        { decided: [0, 0.1, 0.2, 0.4, 0.7, 1.0, 1.5, 1.5, 1.5],         pessimist: [0, 0.0, 0.1, 0.2, 0.3, 0.5, 0.7, 0.7, 0.7] },
-        giniCoefficient:       { decided: [0, -0.001, -0.002, -0.003, -0.004, -0.004, -0.005, -0.005, -0.005], pessimist: [0, 0.0, -0.001, -0.001, -0.002, -0.002, -0.002, -0.002, -0.002] },
-        wealthConcentration:   { decided: [0, -0.1, -0.2, -0.4, -0.6, -0.7, -0.8, -0.8, -0.8],  pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.3, -0.4, -0.4, -0.4] },
-        educationAccess:       { decided: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5],          pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3] },
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.3, 56.5, 55.7, 53.6, 50.1, 44.8, 39.9, 33.4],
+        pessimist: [58, 57.3, 56.5, 55.6, 53.3, 49.7, 44.3, 38.9, 32.4],
       },
     },
     prerequisites: {
@@ -537,41 +473,18 @@ export const mitigationPolicies: MitigationPolicy[] = [
         text: 'Dans 50 ans, les tensions sur les minéraux critiques (lithium, cobalt) ont ralenti la transition. Des pays ont développé des véhicules à hydrogène gris ou des biocarburants à bilan CO₂ incertain. Le "rebond" (plus de kilomètres parcourus en VE car coût marginal inférieur) a partiellement annulé les gains d\'efficacité. L\'effet net reste positif (**–0,12°C**) mais la promesse initiale de décarbonation totale des transports est restée hors de portée sans co-décisions sur l\'urbanisme et le report modal.',
       },
     },
-    // Deltas issus de POL_TRANSPORT_ELECTRIFICATION, appliqués sur baseline SSP2-4.5
+    // Deltas issus de POL_TRANSPORT_ELECTRIFICATION, recalibrés SSP3-7.0 (delta-scaling)
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.5, 43.8, 47.1, 51.0, 53.5, 55.5],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.4, 48.2, 53.1, 55.6, 57.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.4, 53.9, 56.2, 58.7, 62.4, 67.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 54.6, 57.5, 61.2, 64.9, 69.7],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.79, 1.88, 2.0, 2.03, 2.11],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.06, 2.12, 2.23],
-      },
-      energyMix: {
-        oil:   { decided: [0, -0.5, -1.5, -2.5, -4.0, -5.5, -7.0, -8.0, -8.5], pessimist: [0, -0.3, -1.0, -1.5, -2.5, -3.5, -4.5, -5.5, -6.0] },
-        coal:  { decided: [0,  0,   -0.2, -0.5, -0.8, -1.0, -1.2, -1.5, -1.5], pessimist: [0,  0,   -0.1, -0.3, -0.5, -0.7, -0.8, -1.0, -1.0] },
-        solar: { decided: [0, +0.3, +0.8, +1.5, +2.5, +3.5, +4.5, +5.0, +5.5], pessimist: [0, +0.2, +0.6, +1.0, +1.7, +2.5, +3.0, +3.5, +4.0] },
-        wind:  { decided: [0, +0.2, +0.9, +1.5, +2.3, +3.0, +3.7, +4.5, +4.5], pessimist: [0, +0.1, +0.5, +0.8, +1.3, +1.7, +2.3, +3.0, +3.0] },
-      },
-      resources: {
-        minerals:    { decided: [0, +0.2, +0.5, +1.0, +1.8, +2.5, +3.0, +3.5, +3.5], pessimist: [0, +0.1, +0.3, +0.7, +1.2, +1.8, +2.2, +2.5, +2.5] },
-        fossilFuels: { decided: [0, -0.1, -0.3, -0.7, -1.2, -1.8, -2.5, -3.0, -3.2], pessimist: [0, -0.1, -0.2, -0.5, -0.8, -1.2, -1.8, -2.2, -2.5] },
-      },
-      // Impact sociétal — Source : POL_TRANSPORT_ELECTRIFICATION.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5],         pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2] },
-        resourceConflicts:     { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.5, -2.0, -2.0, -2.0],  pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -1.0, -1.0, -1.0] },
-        waterTensions:         { decided: [0, -0.1, -0.2, -0.3, -0.5, -0.8, -1.0, -1.0, -1.0],  pessimist: [0, 0.0, -0.1, -0.1, -0.2, -0.3, -0.5, -0.5, -0.5] },
-        climateMigrations:     { decided: [0, -0.1, -0.3, -0.5, -0.8, -1.2, -1.5, -1.5, -1.5],  pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.5, -0.7, -0.7, -0.7] },
-        lifeExpectancy:        { decided: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5, 0.5],          pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3] },
-        respiratoryDiseases:   { decided: [0, -0.3, -1.0, -2.0, -3.5, -5.0, -6.0, -6.0, -6.0],  pessimist: [0, -0.1, -0.5, -1.0, -1.5, -2.2, -3.0, -3.0, -3.0] },
-        whoHealthIndex:        { decided: [0, 0.1, 0.3, 0.5, 0.9, 1.2, 1.5, 1.5, 1.5],          pessimist: [0, 0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 0.8, 0.8] },
-        giniCoefficient:       { decided: [0, 0.0, -0.001, -0.001, -0.002, -0.002, -0.003, -0.003, -0.003], pessimist: [0, 0.0, 0.0, -0.001, -0.001, -0.001, -0.001, -0.001, -0.001] },
-        wealthConcentration:   { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, 0.0, -0.1, -0.1, -0.2, -0.2, -0.2, -0.2] },
-        educationAccess:       { decided: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3, 0.3],          pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.57, 1.71, 1.99, 2.27, 2.72],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.06, 2.37, 2.85],
       },
     },
     prerequisites: {
@@ -646,25 +559,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.0, 41.1, 43.3, 46.2, 49.5, 52.0, 54.0],
-        pessimist: [37.4, 38.8, 40.1, 41.5, 44.2, 47.9, 52.5, 55.0, 57.0],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 50.9, 51.8, 52.9, 54.3, 55.4, 59.1, 63.9],
+        pessimist: [48, 49.6, 51.1, 52.4, 54.2, 56.9, 59.9, 63.6, 68.4],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.51, 1.68, 1.78, 1.86, 1.96, 1.97, 2.03],
-        pessimist: [1.35, 1.43, 1.52, 1.69, 1.8, 1.91, 2.04, 2.1, 2.2],
-      },
-      energyMix: {
-        coal:  { decided: [0, -1.0, -2.5, -5.0, -8.0, -11.0, -13.0, -14.5, -15.5], pessimist: [0, -0.6, -1.8, -3.5, -5.5, -7.5, -9.0, -10.5, -11.5] },
-        oil:   { decided: [0, -0.5, -1.0, -2.0, -3.0, -5.0,  -6.5,  -7.0,  -7.5 ], pessimist: [0, -0.3, -0.7, -1.5, -2.5, -3.5, -4.5, -5.5, -6.0 ] },
-        gas:   { decided: [0, -0.5, -0.8, -1.0, -2.0, -3.0,  -4.0,  -5.0,  -5.5 ], pessimist: [0, -0.3, -0.6, -0.8, -1.5, -2.5, -3.0, -3.5, -4.0 ] },
-        solar: { decided: [0, +1.2, +2.5, +4.5, +7.5, +11.0, +13.0, +14.5, +15.5], pessimist: [0, +0.7, +1.8, +3.2, +5.5, +8.0, +9.5, +11.0, +12.0] },
-        wind:  { decided: [0, +0.8, +1.8, +3.5, +5.5, +8.0,  +10.5, +12.0, +13.0], pessimist: [0, +0.5, +1.3, +2.6, +4.0, +5.5, +7.0, +8.5,  +9.5 ] },
-      },
-      resources: {
-        minerals:    { decided: [0, +0.5, +1.0, +1.8, +3.0, +4.5, +5.5, +6.0, +6.5], pessimist: [0, +0.3, +0.7, +1.2, +2.0, +3.0, +4.0, +4.5, +5.0] },
-        fossilFuels: { decided: [0, -0.3, -0.8, -1.5, -2.5, -3.5, -4.5, -5.5, -6.0], pessimist: [0, -0.2, -0.5, -1.0, -1.8, -2.5, -3.5, -4.0, -4.5] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.42, 1.47, 1.55, 1.68, 1.93, 2.19, 2.6],
+        pessimist: [1.32, 1.38, 1.43, 1.48, 1.58, 1.74, 2.03, 2.34, 2.81],
       },
     },
   },
@@ -736,14 +638,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.5, 43.9, 47.2, 52.0, 54.5, 56.5],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.4, 48.3, 53.5, 56.0, 58.0],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.4, 54, 56.3, 59.9, 63.6, 68.4],
+        pessimist: [48, 49.6, 51.2, 52.7, 54.6, 57.7, 61.7, 65.4, 70.2],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.8, 1.91, 2.04, 2.09, 2.19],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.07, 2.14, 2.27],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.58, 1.75, 2.03, 2.34, 2.81],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.07, 2.4, 2.9],
       },
     },
     prerequisites: {
@@ -818,18 +720,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.6, 43.9, 47.0, 52.5, 55.0, 57.0],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.4, 48.2, 53.7, 56.2, 58.2],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.6, 54.3, 56.7, 61.1, 64.8, 69.6],
+        pessimist: [48, 49.6, 51.2, 52.7, 54.7, 57.8, 62.2, 65.9, 70.7],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.91, 2.05, 2.11, 2.21],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.15, 2.28],
-      },
-      resources: {
-        minerals: { decided: [0, -0.5, -1.2, -2.0, -3.5, -5.5, -7.0, -8.0, -9.0], pessimist: [0, -0.3, -0.7, -1.3, -2.5, -4.0, -5.0, -6.0, -7.0] },
-        biomass:  { decided: [0, -0.2, -0.5, -0.9, -1.5, -2.0, -2.5, -3.0, -3.5], pessimist: [0, -0.1, -0.3, -0.6, -1.0, -1.5, -1.8, -2.2, -2.5] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.75, 2.05, 2.38, 2.85],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.41, 2.91],
       },
     },
   },
@@ -901,14 +799,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.2, 47.3, 51.0, 53.5, 55.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.6, 48.3, 53.1, 55.6, 57.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 54.3, 56.3, 58.4, 62.1, 66.9],
+        pessimist: [48, 49.6, 51.2, 52.8, 54.8, 57.6, 61.1, 64.8, 69.6],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.9, 2.02, 2.05, 2.13],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.07, 2.13, 2.25],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.74, 2.01, 2.3, 2.74],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.07, 2.38, 2.87],
       },
     },
     prerequisites: {
@@ -983,23 +881,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.8, 48.4, 53.0, 55.5, 57.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.8, 48.8, 53.9, 56.4, 58.4],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 55.1, 57.8, 61.3, 64.9, 69.8],
+        pessimist: [48, 49.6, 51.2, 52.8, 55.1, 58.3, 62.2, 65.9, 70.7],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.06, 2.12, 2.23],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.16, 2.28],
-      },
-      energyMix: {
-        nuclear: { decided: [0, 0, +0.2, +0.5, +1.5, +2.5, +3.5, +4.0, +4.5], pessimist: [0, 0, +0.1, +0.2, +0.8, +1.5, +2.0, +2.5, +3.0] },
-        coal:    { decided: [0, 0, -0.1, -0.3, -0.9, -1.5, -2.0, -2.5, -3.0], pessimist: [0, 0, -0.1, -0.1, -0.5, -0.9, -1.2, -1.5, -2.0] },
-        gas:     { decided: [0, 0, -0.1, -0.2, -0.6, -1.0, -1.5, -1.5, -1.5], pessimist: [0, 0,  0,   -0.1, -0.3, -0.6, -0.8, -1.0, -1.0] },
-      },
-      resources: {
-        minerals:    { decided: [0, 0, +0.1, +0.3, +0.6, +1.0, +1.5, +1.8, +2.0], pessimist: [0, 0, +0.1, +0.2, +0.4, +0.7, +1.0, +1.2, +1.5] },
-        fossilFuels: { decided: [0, 0, -0.1, -0.2, -0.4, -0.7, -1.0, -1.2, -1.5], pessimist: [0, 0, -0.1, -0.1, -0.2, -0.4, -0.6, -0.8, -1.0] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.06, 2.38, 2.86],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.42, 2.91],
       },
     },
     prerequisites: {
@@ -1074,14 +963,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.0, 41.3, 43.6, 47.5, 53.0, 55.5, 57.5],
-        pessimist: [37.4, 38.8, 40.1, 41.6, 44.3, 48.4, 53.9, 56.4, 58.4],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51, 52.3, 53.8, 56.9, 61.3, 64.9, 69.8],
+        pessimist: [48, 49.6, 51.1, 52.6, 54.6, 57.8, 62.2, 65.9, 70.7],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.8, 1.91, 2.05, 2.11, 2.21],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.08, 2.15, 2.28],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.58, 1.75, 2.05, 2.37, 2.84],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.08, 2.41, 2.91],
       },
     },
   },
@@ -1153,27 +1042,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.6, 43.9, 47.0, 52.5, 55.0, 57.0],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.4, 48.2, 53.7, 56.2, 58.2],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.6, 54.1, 56.3, 60.7, 64.4, 69.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 54.7, 57.6, 62, 65.7, 70.5],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.91, 2.05, 2.11, 2.21],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.15, 2.28],
-      },
-      // Impact sociétal — Source : POL_FOOD_WASTE_REDUCTION.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.3, 0.7, 1.0, 1.3, 1.4, 1.5, 1.5, 1.5],        pessimist: [0, 0.1, 0.2, 0.4, 0.5, 0.5, 0.5, 0.5, 0.5] },
-        resourceConflicts:     { decided: [0, -0.2, -0.4, -0.7, -1.0, -1.3, -2.0, -2.0, -2.0], pessimist: [0, -0.1, -0.2, -0.3, -0.4, -0.5, -1.0, -1.0, -1.0] },
-        waterTensions:         { decided: [0, -0.1, -0.3, -0.5, -0.7, -0.9, -1.0, -1.0, -1.0], pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5] },
-        climateMigrations:     { decided: [0, -0.1, -0.3, -0.5, -0.7, -0.9, -1.0, -1.0, -1.0], pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5] },
-        lifeExpectancy:        { decided: [0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.2, 0.2, 0.2],         pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1] },
-        respiratoryDiseases:   { decided: [0, -0.1, -0.3, -0.6, -1.0, -1.3, -1.5, -1.5, -1.5], pessimist: [0, 0.0, -0.1, -0.3, -0.5, -0.6, -0.7, -0.7, -0.7] },
-        whoHealthIndex:        { decided: [0, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5],         pessimist: [0, 0.0, 0.0, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3] },
-        giniCoefficient:       { decided: [0, -0.001, -0.002, -0.002, -0.003, -0.003, -0.004, -0.004, -0.004], pessimist: [0, 0.0, -0.001, -0.001, -0.001, -0.002, -0.002, -0.002, -0.002] },
-        wealthConcentration:   { decided: [0, -0.1, -0.2, -0.3, -0.4, -0.4, -0.5, -0.5, -0.5],  pessimist: [0, 0.0, -0.1, -0.1, -0.2, -0.2, -0.2, -0.2, -0.2] },
-        educationAccess:       { decided: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.3, 0.3, 0.3],          pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.75, 2.05, 2.37, 2.84],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.41, 2.91],
       },
     },
   },
@@ -1245,32 +1121,20 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.6, 43.7, 46.5, 52.0, 54.5, 56.5],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.3, 48.0, 53.5, 56.0, 58.0],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.5, 53.7, 55.3, 59.7, 63.4, 68.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 54.5, 57.2, 61.6, 65.3, 70.1],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.91, 2.04, 2.09, 2.19],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.08, 2.14, 2.27],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.75, 2.03, 2.34, 2.81],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.08, 2.4, 2.9],
       },
       forest: {
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.5, 57.2, 56.9, 56.0, 54.6, 52.5, 50.4, 46.8],
-        pessimist: [58.0, 57.5, 57.0, 56.7, 55.5, 53.9, 51.7, 48.8, 44.8],
-      },
-      // Impact sociétal — Source : POL_AGROFORESTRY_SOILCARBON.json societal_indicators
-      societal: {
-        foodSecurity:          { decided: [0, 0.0, 0.2, 0.5, 0.9, 1.2, 1.5, 1.5, 1.5],        pessimist: [0, 0.0, 0.1, 0.2, 0.4, 0.5, 0.5, 0.5, 0.5] },
-        resourceConflicts:     { decided: [0, 0.0, -0.2, -0.5, -0.9, -1.3, -2.0, -2.0, -2.0],  pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -1.0, -1.0, -1.0] },
-        waterTensions:         { decided: [0, 0.0, -0.2, -0.5, -0.9, -1.3, -2.0, -2.0, -2.0],  pessimist: [0, 0.0, -0.1, -0.2, -0.4, -0.6, -1.0, -1.0, -1.0] },
-        climateMigrations:     { decided: [0, 0.0, -0.2, -0.4, -0.7, -1.0, -1.5, -1.5, -1.5],  pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.5, -0.8, -0.8, -0.8] },
-        lifeExpectancy:        { decided: [0, 0.0, 0.1, 0.2, 0.2, 0.3, 0.3, 0.3, 0.3],          pessimist: [0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.2, 0.2, 0.2] },
-        respiratoryDiseases:   { decided: [0, 0.0, -0.3, -0.7, -1.2, -1.7, -2.0, -2.0, -2.0],  pessimist: [0, 0.0, -0.1, -0.3, -0.6, -0.8, -1.0, -1.0, -1.0] },
-        whoHealthIndex:        { decided: [0, 0.0, 0.1, 0.3, 0.5, 0.7, 0.8, 0.8, 0.8],          pessimist: [0, 0.0, 0.1, 0.1, 0.3, 0.3, 0.4, 0.4, 0.4] },
-        giniCoefficient:       { decided: [0, 0.0, -0.001, -0.002, -0.004, -0.005, -0.006, -0.006, -0.006], pessimist: [0, 0.0, 0.0, -0.001, -0.002, -0.002, -0.003, -0.003, -0.003] },
-        wealthConcentration:   { decided: [0, 0.0, -0.1, -0.2, -0.5, -0.6, -0.8, -0.8, -0.8],   pessimist: [0, 0.0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.4, -0.4] },
-        educationAccess:       { decided: [0, 0.0, 0.1, 0.3, 0.5, 0.6, 0.8, 0.8, 0.8],           pessimist: [0, 0.0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.4, 0.4] },
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.3, 56.8, 56, 54.1, 50.9, 46.1, 41.8, 35.8],
+        pessimist: [58, 57.3, 56.5, 55.8, 53.5, 50, 45.1, 39.7, 33.2],
       },
     },
     prerequisites: {
@@ -1345,19 +1209,20 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.2, 47.3, 51.0, 53.5, 55.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.6, 48.3, 53.1, 55.6, 57.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 54.3, 56.1, 58, 61.7, 66.5],
+        pessimist: [48, 49.6, 51.2, 52.8, 54.8, 57.5, 60.9, 64.6, 69.4],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.9, 2.01, 2.05, 2.12],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.06, 2.13, 2.24],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.73, 2, 2.29, 2.72],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.05, 2.38, 2.86],
       },
       forest: {
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.5, 57.2, 57.0, 56.7, 56.2, 55.4, 54.2, 51.4],
-        pessimist: [58.0, 57.5, 57.0, 56.7, 56.0, 54.6, 52.1, 49.6, 45.2],
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.3, 56.8, 56.2, 55.2, 53.3, 50.4, 47.4, 42.6],
+        pessimist: [58, 57.3, 56.5, 55.8, 54.2, 51, 45.7, 40.9, 33.9],
       },
     },
     prerequisites: {
@@ -1432,35 +1297,20 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.8, 48.7, 53.3, 55.0, 57.0],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.8, 48.9, 54.0, 56.2, 58.2],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 55.1, 58.2, 61.6, 64.4, 69.2],
+        pessimist: [48, 49.6, 51.2, 52.8, 55.1, 58.4, 62.4, 65.7, 70.5],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.05, 2.1, 2.19],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.15, 2.27],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.05, 2.36, 2.81],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.41, 2.9],
       },
       forest: {
-        // BECCS exerce une pression négative sur les forêts primaires (biomasse)
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.5, 56.9, 56.3, 55.0, 53.1, 49.8, 46.7, 42.4],
-        pessimist: [58.0, 57.5, 56.9, 56.3, 55.0, 53.1, 49.7, 46.5, 42.3],
-      },
-      resources: {
-        biomass: { decided: [0, 0, +0.1, +0.3, +0.8, +1.5, +2.0, +2.5, +3.0], pessimist: [0, 0, 0, +0.1, +0.3, +0.7, +1.0, +1.2, +1.5] },
-      },
-      societal: {
-        foodSecurity:          { decided: [0, -0.0, -0.1, -0.3, -0.7, -1.0, -1.3, -1.5, -1.5],  pessimist: [0, -0.1, -0.3, -0.6, -1.0, -1.5, -2.0, -2.0, -2.0] },
-        resourceConflicts:     { decided: [0, 0.0, 0.2, 0.5, 1.2, 2.0, 3.0, 3.0, 3.0],          pessimist: [0, 0.0, 0.3, 0.8, 1.8, 3.0, 5.0, 5.0, 5.0] },
-        waterTensions:         { decided: [0, 0.0, 0.2, 0.4, 0.8, 1.3, 2.0, 2.0, 2.0],          pessimist: [0, 0.0, 0.3, 0.6, 1.2, 2.0, 3.0, 3.0, 3.0] },
-        climateMigrations:     { decided: [0, 0.0, 0.2, 0.4, 0.8, 1.3, 2.0, 2.0, 2.0],          pessimist: [0, 0.0, 0.3, 0.6, 1.2, 2.0, 3.0, 3.0, 3.0] },
-        lifeExpectancy:        { decided: [0, 0.0, -0.1, -0.1, -0.2, -0.2, -0.2, -0.2, -0.2],   pessimist: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5] },
-        respiratoryDiseases:   { decided: [0, 0.0, 0.3, 0.6, 1.2, 1.7, 2.0, 2.0, 2.0],          pessimist: [0, 0.0, 0.5, 1.0, 2.0, 3.0, 4.0, 4.0, 4.0] },
-        whoHealthIndex:        { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, -0.2, -0.3, -0.5, -0.8, -1.0, -1.0, -1.0] },
-        giniCoefficient:       { decided: [0, 0.0, 0.001, 0.002, 0.004, 0.004, 0.005, 0.005, 0.005], pessimist: [0, 0.0, 0.002, 0.004, 0.007, 0.009, 0.011, 0.011, 0.011] },
-        wealthConcentration:   { decided: [0, 0.0, 0.1, 0.3, 0.6, 0.8, 1.0, 1.0, 1.0],          pessimist: [0, 0.0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.0, 2.0] },
-        educationAccess:       { decided: [0, 0.0, -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5],   pessimist: [0, 0.0, -0.2, -0.3, -0.5, -0.7, -1.0, -1.0, -1.0] },
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.3, 56.4, 55.3, 52.9, 49.1, 42.8, 37.2, 30.4],
+        pessimist: [58, 57.3, 56.4, 55.3, 52.9, 49.1, 42.7, 37, 30.3],
       },
     },
     prerequisites: {
@@ -1534,18 +1384,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.7, 44.5, 48.4, 53.5, 55.5, 57.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.8, 54.1, 56.4, 58.4],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.7, 54.7, 57.7, 61.6, 64.6, 69.5],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.2, 62.4, 65.8, 70.6],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.06, 2.12, 2.24],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.16, 2.29],
-      },
-      energyMix: {
-        solar: { decided: [0, 0, 0, 0.3, 0.9, 1.8, 3.0, 3.5, 4.0], pessimist: [0, 0, 0, 0.1, 0.5, 1.0, 1.5, 1.8, 2.0] },
-        wind:  { decided: [0, 0, 0, 0.2, 0.6, 1.2, 2.0, 2.5, 3.0], pessimist: [0, 0, 0, 0.1, 0.3, 0.5, 1.0, 1.2, 1.5] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.06, 2.37, 2.86],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.42, 2.92],
       },
     },
     prerequisites: {
@@ -1619,19 +1465,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.6, 44.5, 48.4, 53.5, 56.0, 58.0],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.7, 48.8, 54.1, 56.6, 58.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.6, 54.7, 57.8, 61.7, 65.4, 70.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 55, 58.3, 62.4, 66.1, 70.9],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.81, 1.92, 2.07, 2.13, 2.25],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.16, 2.29],
-      },
-      energyMix: {
-        solar: { decided: [0, 0.5, 1.5, 2.5, 4.0, 5.5, 7.0, 7.5, 8.0], pessimist: [0, 0.3, 0.8, 1.5, 2.5, 3.5, 4.5, 5.0, 5.5] },
-        wind:  { decided: [0, 0.3, 0.8, 1.5, 2.5, 3.5, 4.5, 5.0, 5.5], pessimist: [0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.0] },
-        gas:   { decided: [0, -0.2,-0.5,-0.8,-1.5,-2.0,-2.5,-2.5,-2.5], pessimist: [0, -0.1,-0.3,-0.5,-1.0,-1.3,-1.5,-1.5,-1.5] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.59, 1.76, 2.07, 2.38, 2.87],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.42, 2.92],
       },
     },
     prerequisites: {
@@ -1705,18 +1546,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.6, 48.7, 54.0, 56.2, 58.2],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.9, 54.3, 56.7, 58.7],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 54.9, 58.2, 62.4, 65.7, 70.5],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.4, 62.7, 66.3, 71.1],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.07, 2.14, 2.27],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.17, 2.3],
-      },
-      energyMix: {
-        hydro:   { decided: [0, 0, 0, 0.3, 1.0, 2.0, 3.0, 3.5, 4.0], pessimist: [0, 0, 0, 0.1, 0.5, 1.0, 1.8, 2.0, 2.2] },
-        autres:  { decided: [0, 0, 0, 0.2, 0.5, 1.0, 1.5, 2.0, 2.5], pessimist: [0, 0, 0, 0.1, 0.2, 0.5, 0.8, 1.0, 1.2] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.07, 2.4, 2.9],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.43, 2.93],
       },
     },
     prerequisites: {
@@ -1790,14 +1627,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.7, 44.6, 48.6, 53.8, 56.0, 58.0],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.8, 54.2, 56.6, 58.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.7, 54.9, 58, 62.1, 65.4, 70.2],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.3, 62.5, 66.1, 70.9],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.81, 1.92, 2.07, 2.13, 2.25],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.16, 2.29],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.59, 1.76, 2.07, 2.38, 2.87],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.42, 2.92],
       },
     },
   },
@@ -1868,14 +1705,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.7, 44.6, 48.6, 53.8, 56.3, 58.3],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.8, 54.2, 56.7, 58.7],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.7, 54.9, 58, 62.1, 65.8, 70.6],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.3, 62.6, 66.3, 71.1],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.08, 2.15, 2.28],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.94, 2.09, 2.17, 2.3],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.08, 2.41, 2.91],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.09, 2.43, 2.93],
       },
     },
   },
@@ -1946,20 +1783,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.6, 44.5, 48.4, 53.5, 56.0, 58.0],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.7, 48.8, 54.1, 56.6, 58.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.6, 54.7, 57.8, 61.7, 65.4, 70.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 55, 58.3, 62.4, 66.1, 70.9],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.81, 1.92, 2.07, 2.13, 2.25],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.16, 2.29],
-      },
-      societal: {
-        respiratoryDiseases: { decided: [0, -0.2, -0.4, -0.8, -1.3, -2.0, -2.5, -2.5, -2.5], pessimist: [0, -0.1, -0.2, -0.5, -0.8, -1.2, -1.5, -1.5, -1.5] },
-        whoHealthIndex:      { decided: [0, 0.1,  0.2,  0.4,  0.7,  1.0,  1.3,  1.5,  1.5],  pessimist: [0, 0.1,  0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
-        lifeExpectancy:      { decided: [0, 0.02, 0.05, 0.10, 0.15, 0.20, 0.30, 0.30, 0.30], pessimist: [0, 0.01, 0.02, 0.05, 0.08, 0.10, 0.15, 0.15, 0.15] },
-        climateMigrations:   { decided: [0, -0.1,-0.2, -0.3, -0.5, -0.7, -0.8, -0.8, -0.8], pessimist: [0, 0,   -0.1, -0.2, -0.3, -0.4, -0.5, -0.5, -0.5]  },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.59, 1.76, 2.07, 2.38, 2.87],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.42, 2.92],
       },
     },
   },
@@ -2030,18 +1861,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.7, 48.7, 54.0, 56.2, 58.2],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.8, 48.9, 54.3, 56.7, 58.7],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 55, 58.1, 62.3, 65.6, 70.4],
+        pessimist: [48, 49.6, 51.2, 52.8, 55.1, 58.4, 62.6, 66.2, 71],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.14, 2.27],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.94, 2.09, 2.17, 2.3],
-      },
-      energyMix: {
-        autres: { decided: [0, 0, 0, 0, 0.5, 1.5, 3.0, 4.0, 5.0], pessimist: [0, 0, 0, 0, 0.2, 0.8, 1.5, 2.0, 2.5] },
-        oil:    { decided: [0, 0, 0, 0, -0.3,-0.8,-1.5,-2.0,-2.5], pessimist: [0, 0, 0, 0, -0.1,-0.4,-0.8,-1.0,-1.2] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.4, 2.9],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.09, 2.43, 2.93],
       },
     },
     prerequisites: {
@@ -2115,18 +1942,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.7, 44.5, 48.4, 53.5, 55.5, 57.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.8, 54.1, 56.4, 58.4],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.7, 54.7, 57.7, 61.6, 64.6, 69.5],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.2, 62.4, 65.8, 70.6],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.06, 2.12, 2.24],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.16, 2.29],
-      },
-      energyMix: {
-        solar: { decided: [0, 0, 0, 0.3, 1.0, 2.5, 4.0, 5.0, 5.5], pessimist: [0, 0, 0, 0.1, 0.5, 1.2, 2.0, 2.5, 3.0] },
-        gas:   { decided: [0, 0, 0,-0.2,-0.5,-0.9,-1.3,-1.5,-1.6], pessimist: [0, 0, 0,-0.1,-0.3,-0.5,-0.8,-1.0,-1.1] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.06, 2.37, 2.86],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.42, 2.92],
       },
     },
     prerequisites: {
@@ -2200,14 +2023,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.8, 44.7, 48.8, 54.2, 56.5, 58.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.8, 48.9, 54.4, 56.8, 58.8],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.8, 55, 58.3, 62.6, 66.1, 70.9],
+        pessimist: [48, 49.6, 51.2, 52.8, 55.1, 58.4, 62.8, 66.4, 71.2],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.08, 2.15, 2.28],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.94, 2.09, 2.17, 2.3],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.08, 2.41, 2.91],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.09, 2.43, 2.93],
       },
     },
     prerequisites: {
@@ -2281,21 +2104,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.5, 44.3, 48.1, 53.0, 55.5, 57.5],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.6, 48.6, 53.9, 56.4, 58.4],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.5, 54.4, 57.6, 61.6, 65.3, 70.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 54.8, 58.1, 62.2, 65.9, 70.8],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.81, 1.92, 2.06, 2.12, 2.24],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.08, 2.16, 2.29],
-      },
-      societal: {
-        foodSecurity:      { decided: [0, 0.1,  0.3,  0.5,  0.8,  1.2,  1.5,  1.5,  1.5],  pessimist: [0, 0,    0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
-        whoHealthIndex:    { decided: [0, 0.1,  0.2,  0.4,  0.7,  1.0,  1.3,  1.3,  1.3],  pessimist: [0, 0,    0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
-        giniCoefficient:   { decided: [0,-0.001,-0.002,-0.003,-0.004,-0.005,-0.006,-0.006,-0.006], pessimist: [0, 0,-0.001,-0.001,-0.002,-0.003,-0.004,-0.004,-0.004] },
-        wealthConcentration:{ decided: [0,-0.2,-0.4, -0.6, -0.9, -1.2, -1.5, -1.5, -1.5], pessimist: [0,-0.1,-0.2, -0.3, -0.5, -0.7, -0.9, -0.9, -0.9]  },
-        climateMigrations: { decided: [0,-0.1,-0.2,  -0.4, -0.6, -0.9, -1.2, -1.2, -1.2], pessimist: [0, 0,  -0.1, -0.2, -0.4, -0.5, -0.7, -0.7, -0.7]  },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.59, 1.76, 2.07, 2.39, 2.88],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.08, 2.42, 2.92],
       },
     },
   },
@@ -2366,21 +2182,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.6, 44.5, 48.4, 53.5, 56.0, 58.0],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.7, 48.8, 54.1, 56.6, 58.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.6, 54.7, 57.7, 61.6, 65.4, 70.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 55, 58.3, 62.4, 66.1, 70.9],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.69, 1.81, 1.92, 2.07, 2.13, 2.25],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.16, 2.29],
-      },
-      societal: {
-        foodSecurity:    { decided: [0, 0.1, 0.3, 0.6,  1.0,  1.5,  2.0,  2.0,  2.0],  pessimist: [0, 0,    0.1,  0.3,  0.5,  0.8,  1.0,  1.0,  1.0]  },
-        waterAccess:     { decided: [0, 0.1, 0.3, 0.5,  0.9,  1.3,  1.5,  1.5,  1.5],  pessimist: [0, 0,    0.1,  0.3,  0.5,  0.7,  1.0,  1.0,  1.0]  },
-        educationAccess: { decided: [0, 0.1, 0.2, 0.4,  0.7,  1.0,  1.3,  1.3,  1.3],  pessimist: [0, 0,    0.1,  0.2,  0.4,  0.6,  0.8,  0.8,  0.8]  },
-        lifeExpectancy:  { decided: [0, 0.05,0.1, 0.2,  0.35, 0.5,  0.7,  0.7,  0.7],  pessimist: [0, 0.02, 0.05, 0.1,  0.2,  0.3,  0.4,  0.4,  0.4]  },
-        climateMigrations:{ decided: [0,-0.1,-0.3,-0.5,-0.8, -1.2, -1.5, -1.5, -1.5], pessimist: [0, 0,   -0.1, -0.3, -0.5, -0.7, -0.9, -0.9, -0.9]  },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.48, 1.59, 1.76, 2.07, 2.38, 2.87],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.42, 2.92],
       },
     },
   },
@@ -2451,24 +2260,20 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.7, 44.6, 48.7, 54.0, 56.5, 58.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.9, 54.3, 56.8, 58.8],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.7, 54.9, 58.2, 62.4, 66.1, 70.9],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.4, 62.7, 66.4, 71.2],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.08, 2.15, 2.28],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.94, 2.09, 2.17, 2.3],
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.08, 2.41, 2.91],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.09, 2.43, 2.93],
       },
       forest: {
-        baseline:  [58.0, 57.5, 57.0, 56.5, 55.3, 53.5, 50.5, 47.5, 43.5],
-        decided:   [58.0, 57.6, 57.2, 56.8, 55.8, 54.1, 51.2, 48.2, 44.2],
-        pessimist: [58.0, 57.5, 57.1, 56.6, 55.5, 53.8, 50.8, 47.8, 43.8],
-      },
-      societal: {
-        foodSecurity:    { decided: [0, 0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.5, 0.7, 0.7, 0.7] },
-        waterTensions:   { decided: [0,-0.1,-0.2,-0.3,-0.5,-0.7,-0.9,-0.9,-0.9], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.6,-0.6,-0.6] },
-        climateMigrations:{ decided: [0,-0.1,-0.2,-0.3,-0.5,-0.8,-1.0,-1.0,-1.0], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.7,-0.7,-0.7] },
+        // % forêts primaires mondiales — baseline SSP3-7.0 [AR6 WGII, Ch.2 & CCP7]; deltas SSP3-scaled
+        baseline:  [58, 57.3, 56.5, 55.5, 53.2, 49.5, 43.5, 38, 31.5],
+        decided:   [58, 57.3, 56.5, 55.6, 53.3, 49.8, 44.1, 38.6, 31.8],
+        pessimist: [58, 57.3, 56.5, 55.6, 53.3, 49.6, 43.8, 38.2, 31.5],
       },
     },
     prerequisites: {
@@ -2542,19 +2347,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.1, 41.6, 44.5, 48.4, 53.5, 56.0, 58.0],
-        pessimist: [37.4, 38.8, 40.2, 41.7, 44.7, 48.8, 54.1, 56.6, 58.6],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.1, 52.6, 54.7, 57.8, 61.7, 65.4, 70.2],
+        pessimist: [48, 49.6, 51.2, 52.7, 55, 58.3, 62.4, 66.1, 70.9],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.92, 2.07, 2.14, 2.27],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.93, 2.09, 2.16, 2.3],
-      },
-      societal: {
-        foodSecurity:  { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.9, 1.2, 1.2, 1.2], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.5, 0.7, 0.7, 0.7] },
-        waterTensions: { decided: [0,-0.1,-0.2,-0.3,-0.5,-0.7,-0.9,-0.9,-0.9], pessimist: [0, 0,  -0.1,-0.2,-0.3,-0.5,-0.6,-0.6,-0.6] },
-        whoHealthIndex:{ decided: [0, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9, 0.9, 0.9], pessimist: [0, 0,   0.1, 0.2, 0.3, 0.4, 0.5, 0.5, 0.5] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.76, 2.07, 2.39, 2.88],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.77, 2.09, 2.42, 2.92],
       },
     },
     prerequisites: {
@@ -2628,20 +2428,14 @@ export const mitigationPolicies: MitigationPolicy[] = [
     projections: {
       labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074],
       co2: {
-        baseline:  [37.4, 38.8, 40.2, 41.8, 44.8, 49.0, 54.5, 57.0, 59.0],
-        decided:   [37.4, 38.8, 40.2, 41.7, 44.6, 48.7, 54.0, 56.5, 58.5],
-        pessimist: [37.4, 38.8, 40.2, 41.8, 44.7, 48.9, 54.3, 56.8, 58.8],
+        baseline:  [48, 49.6, 51.2, 52.8, 55.1, 58.5, 62.9, 66.6, 71.4],  // [AR6 WGI SPM.4 — CEDA, CC-BY-4.0]
+        decided:   [48, 49.6, 51.2, 52.7, 54.9, 58.2, 62.4, 66.1, 70.9],
+        pessimist: [48, 49.6, 51.2, 52.8, 55, 58.4, 62.7, 66.4, 71.2],
       },
       temperature: {
-        baseline:  [1.35, 1.43, 1.52, 1.70, 1.82, 1.94, 2.10, 2.18, 2.32],
-        decided:   [1.35, 1.43, 1.52, 1.7, 1.81, 1.93, 2.08, 2.15, 2.28],
-        pessimist: [1.35, 1.43, 1.52, 1.7, 1.82, 1.94, 2.09, 2.17, 2.3],
-      },
-      societal: {
-        waterAccess:       { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.9, 1.2, 1.2, 1.2], pessimist: [0, 0,   0.1, 0.2, 0.4, 0.5, 0.7, 0.7, 0.7] },
-        whoHealthIndex:    { decided: [0, 0.1, 0.2, 0.4, 0.6, 0.9, 1.2, 1.2, 1.2], pessimist: [0, 0,   0.1, 0.2, 0.4, 0.5, 0.7, 0.7, 0.7] },
-        lifeExpectancy:    { decided: [0, 0.03,0.07,0.12,0.18,0.25,0.30,0.30,0.30], pessimist: [0, 0.01,0.03,0.06,0.10,0.15,0.20,0.20,0.20] },
-        respiratoryDiseases:{ decided: [0,-0.1,-0.3,-0.5,-0.8,-1.2,-1.5,-1.5,-1.5], pessimist: [0,-0.05,-0.1,-0.2,-0.4,-0.6,-0.8,-0.8,-0.8] },
+        baseline:  [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.1, 2.44, 2.95],  // [AR6 WGI SPM.8 — CEDA, CC-BY-4.0]
+        decided:   [1.32, 1.38, 1.43, 1.49, 1.59, 1.77, 2.08, 2.41, 2.91],
+        pessimist: [1.32, 1.38, 1.43, 1.49, 1.6, 1.78, 2.09, 2.43, 2.93],
       },
     },
     prerequisites: {

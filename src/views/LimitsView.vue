@@ -225,9 +225,9 @@ const aerosolsPessimist = computed<number[]>(() =>
 // La demande en eau est pilotée par deux composantes distinctes :
 //
 //   1. Tendance structurelle (démographie + agriculture) — indépendante de la simulation
-//      Extrapolée depuis FAO AQUASTAT / AR6 WGII Ch.4 pour SSP2-4.5 :
-//      croissance soutenue jusqu'en ~2050 (transition démographique en cours),
-//      puis ralentissement progressif grâce aux gains d'efficacité d'irrigation.
+//      Extrapolée depuis FAO AQUASTAT / AR6 WGII Ch.4 pour SSP3-7.0 :
+//      croissance soutenue jusqu'en ~2050 (pression démographique + agriculture extensive),
+//      puis ralentissement plus lent que SSP2 (moindre gains d'efficacité sous rivalité régionale).
 //      Cette composante est identique pour les scénarios décidé et pessimiste —
 //      elle ne répond pas aux politiques climatiques du jeu.
 //
@@ -251,7 +251,7 @@ const aerosolsPessimist = computed<number[]>(() =>
 //   Écart décidé/baseline à 2100 : ~156 km³/an (< seuil de 4 000 km³/an dans les deux cas)
 
 // Tendance structurelle sur SIM_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
-// Source : FAO AQUASTAT ; AR6 WGII Ch.4 table 4.2 ; hypothèses SSP2 avec gains d'efficacité modérés
+// Source : FAO AQUASTAT ; AR6 WGII Ch.4, p.568 ; hypothèses SSP3 (agriculture extensive, faibles gains d'efficacité)
 const STRUCTURAL_WATER_TREND = [2600, 2660, 2720, 2775, 2875, 3000, 3100, 3175, 3250, 3300]
 
 const W_2024  = 2600   // prélèvements 2024 en km³/an — base de l'amplification climatique
