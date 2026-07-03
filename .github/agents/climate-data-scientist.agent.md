@@ -22,13 +22,17 @@ PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]         // 
 
 Toutes les projections des politiques sont définies sur **9 points** (`PROJ_LABELS`). Le point 2100 est extrapolé par le moteur.
 
-### Baseline de référence : SSP2-4.5
+### Baseline de référence : SSP3-7.0
 
 ```
 Années : [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
-CO₂    : [37.4, 39.0, 40.5, 42.0, 45.1, 49.2, 54.0, 58.0, 63.0]  GtCO₂/an
-Temp   : [1.40, 1.50, 1.60, 1.72, 1.95, 2.20, 2.60, 3.00, 3.50]  °C anomalie vs pré-industriel
+GHG    : [65.2, 67.2, 69.3, 71.6, 74.9, 79.9, 87.2, 92.9, 100.3]  GtCO₂eq/an (GHG TOTAL : CO₂+CH₄+N₂O+Gaz F)
+Temp   : [1.32, 1.38, 1.43, 1.49, 1.60, 1.78, 2.10, 2.44, 2.95]  °C anomalie vs pré-industriel
 ```
+Sources :
+- GHG total : CO₂ [AR6 WGI, SPM.4 — CEDA, CC-BY-4.0] + CH₄×GWP27,9 + N₂O×GWP273 (CEDA) + Gaz F est. [AR6 WGI, p.899]
+- Temp : `[IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0]`
+- Réf. 2024 : ~65 GtCO₂eq (vs 59 en 2019 [AR6 WGIII, Ch.2, p.241]) ✓
 
 ### Modèle additif de deltas
 
@@ -55,13 +59,13 @@ projections: {
   labels: [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074], // PROJ_LABELS — toujours 9 valeurs
 
   co2: {
-    baseline:  number[],  // Copie exacte de la baseline SSP2-4.5 (identique pour toutes les politiques)
+    baseline:  number[],  // Copie exacte de la baseline SSP3-7.0 (identique pour toutes les politiques)
     decided:   number[],  // Courbe si politique adoptée — scenario optimiste
     pessimist: number[],  // Courbe si adoption partielle ou tardive
   },
 
   temperature: {
-    baseline:  number[],  // Copie exacte de la baseline temp SSP2-4.5
+    baseline:  number[],  // Copie exacte de la baseline temp SSP3-7.0
     decided:   number[],
     pessimist: number[],
   },
@@ -192,17 +196,17 @@ Vérifie les valeurs existantes pour maintenir la cohérence interne.
 
 Toute courbe proposée doit s'inscrire dans l'enveloppe des scénarios AR6 :
 
-| Scénario | Ambition | Temp 2100 | CO₂ 2074 (approx.) |
+| Scénario | Ambition | Temp 2100 | GHG 2074 (approx.) |
 |---|---|---|---|
-| **SSP1-2.6** | Très ambitieux | ~1.7°C | ~35 GtCO₂/an |
-| **SSP2-4.5** | Modéré (= baseline) | ~2.7°C | ~63 GtCO₂/an |
-| **SSP3-7.0** | Insuffisant | ~3.6°C | ~80 GtCO₂/an |
-| **SSP5-8.5** | Statu quo fossile | ~4.4°C | ~95 GtCO₂/an |
+| **SSP1-2.6** | Très ambitieux | ~1.7°C | ~50 GtCO₂eq/an |
+| **SSP2-4.5** | Modéré — objectif ambitieux vs baseline | ~2.7°C | ~73 GtCO₂eq/an |
+| **SSP3-7.0** | Insuffisant **(= baseline)** | ~3.6°C | ~100 GtCO₂eq/an |
+| **SSP5-8.5** | Statu quo fossile extrême | ~4.4°C | ~130 GtCO₂eq/an |
 
 Règles de cohérence :
 - `decided` ≤ baseline ≤ `pessimist` (pour CO₂ et température — plus bas = meilleur)
 - `decided` ne peut pas descendre sous SSP1-2.6 pour une politique isolée
-- `pessimist` reste entre baseline et SSP3-7.0 sauf cas exceptionnel justifié
+- `pessimist` reste entre baseline (SSP3-7.0) et SSP5-8.5 sauf cas exceptionnel justifié
 - Les effets sont progressifs : pas de saut brutal entre deux années consécutives
 
 ### Étape 4 — Validation avant écriture
@@ -222,10 +226,11 @@ Tu peux **proposer et implémenter directement** dans `src/data/mitigationPolici
 
 Exemple de code que tu peux écrire :
 ```typescript
+// Source: GHG total SSP3-7.0 — CO₂ [AR6 WGI SPM.4 CEDA] + CH₄×GWP27.9 + N₂O×GWP273 + Gaz F
 co2: {
-  baseline:  [37.4, 39.0, 40.5, 42.0, 45.1, 49.2, 54.0, 58.0, 63.0],
-  decided:   [37.4, 38.5, 39.0, 39.0, 40.6, 43.7, 48.0, 52.0, 57.0],
-  pessimist: [37.4, 38.8, 39.8, 40.5, 43.0, 47.0, 51.5, 55.5, 61.0],
+  baseline:  [65.2, 67.2, 69.3, 71.6, 74.9, 79.9, 87.2, 92.9, 100.3],
+  decided:   [65.2, 67.2, 68.7, 70.3, 72.3, 75.4, 79.4, 85.1, 92.5],
+  pessimist: [65.2, 67.2, 69.0, 71.1, 73.9, 78.1, 84.1, 89.8, 97.2],
 },
 ```
 

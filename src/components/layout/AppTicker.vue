@@ -62,10 +62,12 @@ const {
 
 const paused = ref(false)
 
-// Concentration CO₂ atm. SSP2-4.5 (IPCC AR6 WGI Annexe II) — ne reflète pas les politiques votées
+// Concentration CO₂ atm. SSP3-7.0 — ne reflète pas les politiques votées
+// Source 2020→2100: ⚠️ Meinshausen et al. 2020 / ScenarioMIP (AR6 WGI Annex II Table AII.1.2)
+// Source pré-2024: historique observé (identique tous scénarios)
 const co2PpmSeries = {
   years:  [1990, 2000, 2010, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
-  values: [ 354,  369,  389,  413,  421,  434,  454,  471,  486,  503,  538],
+  values: [ 354,  370,  390,  416,  424,  443,  476,  513,  557,  617,  670],
 }
 
 

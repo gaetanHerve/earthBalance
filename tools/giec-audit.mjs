@@ -30,7 +30,7 @@ const PAGE_SCOPES = {
       'src/store/simulation.store.ts',
       'src/data/mitigationPolicies.ts',
     ],
-    ragQueries: ['CO2 emissions projection SSP2-4.5 baseline temperature warming mitigation'],
+    ragQueries: ['CO2 emissions projection SSP3-7.0 baseline temperature warming mitigation high emissions'],
   },
   limites: {
     label: 'Limites planétaires',
@@ -55,7 +55,7 @@ const PAGE_SCOPES = {
   overview: {
     label: "Vue d'ensemble",
     files: ['src/store/simulation.store.ts', 'src/data/mitigationPolicies.ts'],
-    ragQueries: ['CO2 emissions projection SSP2-4.5 baseline temperature warming mitigation'],
+    ragQueries: ['CO2 emissions projection SSP3-7.0 baseline temperature warming mitigation high emissions'],
   },
 }
 
@@ -133,7 +133,7 @@ function resolveScope(args) {
     label: 'Application complète — toutes les pages et graphes',
     files: allFiles,
     ragQueries: [
-      'CO2 emissions projection SSP2-4.5 baseline temperature warming mitigation',
+      'CO2 emissions projection SSP3-7.0 baseline temperature warming mitigation high emissions',
       'planetary boundaries tipping points thresholds permafrost ice sheet',
       'food security water access health inequality climate impacts 2100',
     ],

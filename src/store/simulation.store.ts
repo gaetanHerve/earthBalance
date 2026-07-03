@@ -40,9 +40,10 @@ import {
   BASELINE_EDUCATION_ACCESS_10PT,
 } from '@/config/baselines.config'
 
-// â”€â”€â”€ Baseline SSP2-4.5 (Single Source of Truth) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// Imported from src/config/baselines.config.ts â€” see that file for detailed documentation
-// ValidÃ©e contre AR6_WG1_00174 (page 80) â€” Near-term 1.5Â°C, Mid-term 2.0Â°C, Long-term 2.7Â°C
+// ─── Baseline SSP3-7.0 (Single Source of Truth) ──────────────────────────────────────────────────
+// Imported from src/config/baselines.config.ts — see that file for detailed documentation
+// Validée contre [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0]
+// Near-term (2030) : +1.49°C | Mid-term (2050) : +2.10°C | Long-term (2100) : +3.91°C
 // SIM_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074, 2100]
 export { SIM_LABELS } from '@/config/simulation.config'
 export const BASELINE_CO2  = BASELINE_CO2_10PT
@@ -51,19 +52,21 @@ export const BASELINE_TEMP = BASELINE_TEMP_10PT
 // Labels des projections dans les donnÃ©es de politique (9 points, hors 2100)
 const PROJ_LABELS = [2024, 2026, 2028, 2030, 2034, 2040, 2050, 2060, 2074]
 
-// Concentration atmosphÃ©rique de COâ‚‚ (ppm) â€” SSP2-4.5 (source : CMIP6 / Meinshausen et al.)
-export const BASELINE_CO2_PPM = [421, 425, 429, 433, 443, 460, 487, 510, 527, 549]
+// Concentration atmosphérique de CO₂ (ppm) – SSP3-7.0 [Meinshausen et al. 2020 / ScenarioMIP]
+// Source: ⚠️ connaissance générale (série complète — AR6 WGI Annex II Table AII.1.2 non indexée localement)
+// Note: le ticker CO₂ ppm reste en CO₂ seul (atmosphérique). L'axe GHG du simulateur est en GtCO₂eq total.
+export const BASELINE_CO2_PPM = [424, 430, 437, 443, 456, 476, 513, 557, 617, 670]
 
-// ForÃªts primaires mondiales restantes (% de la couverture originelle) â€” SSP2-4.5
-// Source : Mackey et al. 2015 / Steffen et al. 2015 (limite planÃ©taire usage des terres) : 58 % en 2024
+// Forêts primaires mondiales restantes (% de la couverture originelle) – SSP3-7.0
+// Source : [AR6 WGII, Ch.2, pp.290-295 & Ch.CCP7, pp.2408-2409] ; limite planétaire 58 % en 2024
 export const BASELINE_FOREST = BASELINE_FOREST_10PT
 
-// Total Ã©nergie primaire mondiale (TWh, hors biomasse traditionnelle) â€” IEA STEPS / SSP2-4.5
-// UtilisÃ© pour convertir les parts % du mix en valeurs absolues TWh
-// 2024 : donnÃ©es rÃ©elles Energy Institute ; 2026-2100 : projection tendancielle
+// Total énergie primaire mondiale (TWh, hors biomasse traditionnelle) – SSP3-7.0 tendanciel
+// Utilisé pour convertir les parts % du mix en valeurs absolues TWh
+// 2024 : données réelles Energy Institute ; 2026-2100 : projection SSP3-7.0 (demande énergétique élevée)
 const BASELINE_ENERGY_TOTAL_TWH = [175272, 180000, 184000, 188000, 197000, 213000, 236000, 256000, 278000, 305000]
 
-// Mix Ã©nergÃ©tique mondial (% du total Ã©nergie primaire) â€” IEA STEPS
+// Mix énergétique mondial (% du total énergie primaire) – SSP3-7.0 [AR6 WGIII, Ch.3, pp.289-310]
 const ENERGY_MIX_KEYS: EnergyMixKey[] = ['coal', 'oil', 'gas', 'nuclear', 'solar', 'wind', 'hydro', 'autres']
 export const BASELINE_ENERGY_MIX: Record<EnergyMixKey, number[]> = BASELINE_ENERGY_MIX_10PT
 
@@ -71,28 +74,28 @@ export const BASELINE_ENERGY_MIX: Record<EnergyMixKey, number[]> = BASELINE_ENER
 const RESOURCE_KEYS: ResourceKey[] = ['minerals', 'biomass', 'fossilFuels']
 export const BASELINE_RESOURCES: Record<ResourceKey, number[]> = BASELINE_RESOURCES_10PT
 
-// SÃ©curitÃ© alimentaire (indice FAO /100) â€” SSP2-4.5 : dÃ©gradation aprÃ¨s 2030 sous pression climatique
-// Source : AR6 WGII Ch.5 (agricultural systems) ; FAO SOFI 2023
+// Sécurité alimentaire (indice FAO /100) – SSP3-7.0 : dégradation accélérée, 10-25% pertes récoltes sous 3°C
+// Source : [AR6 WGII, Ch.5, pp.557-559] ; FAO SOFI 2023
 export const BASELINE_FOOD_SECURITY = BASELINE_FOOD_SECURITY_10PT
 
-// AccÃ¨s Ã  l'eau potable (% population mondiale) â€” SSP2-4.5 : progression continue mais ralentissante
-// Source : WHO/UNICEF JMP ; AR6 WGII Ch.4 (water resources)
+// Accès à l'eau potable (% population mondiale) – SSP3-7.0 : stagnation puis déclin
+// Source : [AR6 WGII, Ch.4, p.568 (3-4 milliards exposés @3.5-4°C)] ; WHO/UNICEF JMP
 export const BASELINE_WATER_ACCESS = BASELINE_WATER_ACCESS_10PT
 
-// Tensions gÃ©opolitiques â€” scores de tension (0-100, plus haut = pire) â€” SSP2-4.5 sans action
-// Source : AR6 WGII Ch.7 (conflits, migrations) ; ACLED ; UNHCR
+// Tensions géopolitiques – scores de tension (0-100, plus haut = pire) – SSP3-7.0 "Régionalisme"
+// Source : [AR6 WGII, Ch.7, pp.1038-1042] ; ACLED ; UNHCR
 export const BASELINE_WATER_TENSIONS      = BASELINE_WATER_TENSIONS_10PT
 export const BASELINE_RESOURCE_CONFLICTS  = BASELINE_RESOURCE_CONFLICTS_10PT
 export const BASELINE_CLIMATE_MIGRATIONS  = BASELINE_CLIMATE_MIGRATIONS_10PT
 
-// SantÃ© globale â€” SSP2-4.5 sans action
-// Source : AR6 WGII Ch.7 (santÃ©) ; OMS GHO ; Lancet Countdown on Health & Climate Change
+// Santé globale – SSP3-7.0 : déclin accéléré (chaleur, vecteurs, pollution fossile)
+// Source : [AR6 WGII, Ch.7, pp.1033-1036] ; OMS GHO ; Lancet Countdown 2022
 export const BASELINE_LIFE_EXPECTANCY      = BASELINE_LIFE_EXPECTANCY_10PT  // annÃ©es
 export const BASELINE_RESPIRATORY_DISEASES = BASELINE_RESPIRATORY_DISEASES_10PT  // % d'augmentation vs 2000
 export const BASELINE_WHO_HEALTH_INDEX     = BASELINE_WHO_HEALTH_INDEX_10PT  // /100
 
-// InÃ©galitÃ©s â€” SSP2-4.5 sans action : les impacts climatiques creusent les inÃ©galitÃ©s
-// Source : AR6 WGII Ch.16 (pauvretÃ© & inÃ©galitÃ©) ; World Inequality Report 2022 ; WID.world
+// Inégalités – SSP3-7.0 : divergence accentuée, gouvernance fragmentée
+// Source : [AR6 WGII, Ch.16, pp.2340-2345] ; World Inequality Report 2022 ; WID.world
 export const BASELINE_GINI_COEFFICIENT     = BASELINE_GINI_COEFFICIENT_10PT
 export const BASELINE_WEALTH_CONCENTRATION = BASELINE_WEALTH_CONCENTRATION_10PT    // % richesse du top 1%
 export const BASELINE_EDUCATION_ACCESS     = BASELINE_EDUCATION_ACCESS_10PT    // % population avec accÃ¨s Ã©ducation secondaire+
@@ -204,8 +207,9 @@ function societalDeltaArr(dec: MitigationPolicy, effectiveStart: number, key: So
   return shiftedDeltasDirect(deltas, effectiveStart)
 }
 
-// â”€â”€â”€ Helpers ppm COâ‚‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// Airborne fraction Ã— (1 ppm = 7.81 GtCOâ‚‚): 0.45 / 7.81 â‰ˆ 0.0576 ppm per GtCOâ‚‚/yr per year
+// ─── Helpers ppm CO₂ ─────────────────────────────────────────────────────────
+// BASELINE_CO2 est en GtCO₂eq (GHG total). Facteur ci-dessous = CO₂ seul (airborne fraction).
+// Simplification de jeu : delta GHG total utilisé comme proxy de l’impact atmosphérique (non physique).
 const PPM_PER_GTCO2_YR = 0.45 / 7.81
 
 // Compute atmospheric COâ‚‚ ppm from annual emissions array (same indices as SIM_LABELS).

@@ -1,6 +1,6 @@
 ---
 description: Expert des rapports GIEC AR6 — répond aux questions scientifiques climatiques en s'appuyant sur l'index local des rapports GIEC (WGI, WGII, WGIII, SYR). Cite systématiquement ses sources et signale explicitement tout recours aux connaissances générales.
-tools: [execute, read, edit/createFile, edit/editFiles, edit/rename, search]
+tools: [execute, read, edit, search]
 ---
 
 # Expert GIEC — Instructions
@@ -79,7 +79,7 @@ N'utiliser les sources 2 et 3 **qu'en second recours**, quand le RAG ne fournit 
 
 Consulter les `.summary.txt` compagnons pour un aperçu rapide avant de lire le CSV brut :
 ```bash
-cat tools/rag/data_sources/datasets/WGI/spm_fig8/panel_a/tas_global_SSP2_4_5.summary.txt
+cat tools/rag/data_sources/datasets/WGI/spm_fig8/panel_a/tas_global_SSP3_7_0.summary.txt
 ```
 
 ### Données OWID disponibles (second recours)

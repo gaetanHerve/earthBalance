@@ -4,22 +4,22 @@
       <div class="text-sm font-bold text-slate-200">
         <i class="fa fa-smog text-red-400 mr-2" aria-hidden="true"></i>{{ t('dashboard.co2_title') }}
       </div>
-      <span v-if="!summaryMode" class="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full">GtCO₂/an</span>
+      <span v-if="!summaryMode" class="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full">GtCO₂eq/an</span>
     </div>
 
     <template v-if="summaryMode">
       <GaugeChart
         canvas-id="co2Gauge"
         :value="co2Current"
-        :max="70"
+        :max="130"
         track-color="#ff5050"
         :size="140"
         :font-size="22"
-        unit="Gt/an"
-        :aria-label="`${t('dashboard.co2_title')} : ${co2Current} GtCO₂/an`"
+        unit="GtCO₂eq/an"
+        :aria-label="`${t('dashboard.co2_title')} : ${co2Current} GtCO₂eq/an`"
       >
         <span class="text-2xl font-black text-red-400">{{ co2Current }}</span>
-        <span class="text-xs text-slate-500 mt-0.5">GtCO₂/an</span>
+        <span class="text-xs text-slate-500 mt-0.5">GtCO₂eq/an</span>
       </GaugeChart>
       <div class="mt-3 text-xs text-slate-500 text-center">{{ t('dashboard.co2_ref') }}</div>
     </template>
@@ -33,6 +33,7 @@
       :current-year="gameStore.currentYear"
       :aria-label="t('dashboard.co2_aria')"
     />
+    <div class="mt-1 text-[10px] text-slate-600 text-right">{{ t('dashboard.co2_source_ref') }}</div>
   </EbCard>
 </template>
 
