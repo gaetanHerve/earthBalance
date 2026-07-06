@@ -7,7 +7,7 @@ import { useSimulationStore } from '@/store/simulation.store'
 import { interpolateAtYear } from '@/utils/timeSeries'
 
 type TriggerRecord = Record<string, { year: number }>
-type OffsetKey = 'deltaTemp' | 'deltaCo2Ppm' | 'deltaForest' | 'deltaBiodiversityRatio' | 'deltaAcidificationRatio' | 'deltaWaterRatio'
+type OffsetKey = 'deltaTemp' | 'deltaCo2Ppm' | 'deltaForest' | 'deltaBiodiversityRatio' | 'deltaAcidificationRatio' | 'deltaWaterRatio' | 'deltaExtremes'
 
 function resolveVariable(variable: string, currentYear: number, simStore: ReturnType<typeof useSimulationStore>): number {
   if (variable === 'forest') return interpolateAtYear(currentYear, SIM_LABELS, simStore.cumulativeForest)
@@ -58,6 +58,7 @@ export const useTippingPointsStore = defineStore('tippingPoints', () => {
   const biodiversityRatioOffset   = computed<number[]>(() => buildOffset('deltaBiodiversityRatio'))
   const acidificationRatioOffset  = computed<number[]>(() => buildOffset('deltaAcidificationRatio'))
   const waterRatioOffset          = computed<number[]>(() => buildOffset('deltaWaterRatio'))
+  const extremesOffset            = computed<number[]>(() => buildOffset('deltaExtremes'))
 
   // ── Déclenchement + cascade ─────────────────────────────────────────────────
 
@@ -75,14 +76,21 @@ export const useTippingPointsStore = defineStore('tippingPoints', () => {
       for (const tp of TIPPING_POINTS) {
         if (triggered.value[tp.id]) continue
         const value = resolveVariable(tp.trigger.variable, currentYear, simStore)
-        const fires = tp.trigger.comparison === '>' ? value > tp.trigger.threshold : value < tp.trigger.threshold
-        if (fires) {
-          triggered.value = { ...triggered.value, [tp.id]: { year: currentYear } }
-          newlyTriggered.push(tp.id)
-          pendingModalIds.value = [...pendingModalIds.value, tp.id]
-          changed = true
-          break
+        const thresholdCrossed = tp.trigger.comparison === '>' ? value > tp.trigger.threshold : value < tp.trigger.threshold
+        if (!thresholdCrossed) continue
+
+        if (tp.probabilistic && tp.collapseProb) {
+          // Déclenchement probabiliste : évaluer la probabilité à la température courante
+          const currentTemp = resolveVariable('temp', currentYear, simStore)
+          const prob = tp.collapseProb(currentTemp)
+          if (Math.random() >= prob) continue
         }
+
+        triggered.value = { ...triggered.value, [tp.id]: { year: currentYear } }
+        newlyTriggered.push(tp.id)
+        pendingModalIds.value = [...pendingModalIds.value, tp.id]
+        changed = true
+        break
       }
     }
 
@@ -127,6 +135,7 @@ export const useTippingPointsStore = defineStore('tippingPoints', () => {
     biodiversityRatioOffset,
     acidificationRatioOffset,
     waterRatioOffset,
+    extremesOffset,
     triggeredList,
     hasAny,
     checkAndTrigger,

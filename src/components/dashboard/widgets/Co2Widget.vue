@@ -87,7 +87,7 @@ const co2Datasets = computed<ChartDataset[]>(() => {
     },
     {
       label:           t('dashboard.baseline_label'),
-      data:            [...new Array(hist.length - 1).fill(null), hist.at(-1)!, ...BASELINE_CO2.slice(1)],
+      data:            [...new Array(hist.length - 1).fill(null), hist.at(-1)!, ...BASELINE_CO2],
       borderColor:     'rgba(148,163,184,0.55)',
       backgroundColor: 'transparent',
       borderDash:      [6, 4],
