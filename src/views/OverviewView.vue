@@ -784,6 +784,7 @@ const HUB_TO_SYSTEMIC: Record<string, string> = {
   co2:          'ghg',
   temp:         'temperature',
   'sea-level':  'sea_level',
+  extremes:     'extreme_events',
   forest:       'forest',
   biodiversity: 'biodiversity',
   'energy-mix': 'renewable',
@@ -1228,6 +1229,10 @@ function isTippingTriggered(id: string): boolean {
 
 const PANEL_CHARTS: Partial<Record<string, HubChartType[]>> = {
   'energy-mix': ['renewables', 'energyMixBreakdown'],
+  'sea-level':  ['sea-level'],
+  health:       ['life-expectancy', 'respiratory-diseases', 'who-health-index'],
+  inequality:   ['gini-coefficient', 'wealth-concentration', 'education-access'],
+  conflicts:    ['resource-conflicts', 'water-tensions', 'climate-migrations'],
 }
 
 const panelCharts = computed<HubChartType[]>(() => {

@@ -1,10 +1,6 @@
 ---
 name: data-viz
-description: Expert en visualisation de données et design d'information pour
-EarthBalance. Invoquer pour concevoir ou implémenter des représentations
-graphiques de systèmes complexes : graphes de force, dashboards interactifs,
-cartes systémiques navigables, choix de palette accessible, encodages visuels.
-Connaît le stack du projet (Vue 3, Cytoscape.js, Chart.js, Tailwind).
+description: "Expert en visualisation de données et design d'information pour EarthBalance. Invoquer pour concevoir ou implémenter des représentations graphiques de systèmes complexes : graphes de force, dashboards interactifs, cartes systémiques navigables, choix de palette accessible, encodages visuels. Connaît le stack du projet (Vue 3, Cytoscape.js, Chart.js, Tailwind)."
 ---
 
 # Rôle et identité

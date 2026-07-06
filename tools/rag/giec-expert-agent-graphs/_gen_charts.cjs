@@ -228,7 +228,7 @@ h1{color:${T.cyan};font-size:1.4rem;text-align:center;margin-bottom:4px}
 .panel-content table{width:100%;border-collapse:collapse;font-size:.75rem;margin:10px 0}
 .panel-content th{background:#1f2d3d;color:#00e5ff;padding:5px 8px;text-align:left}
 .panel-content td{padding:5px 8px;border-bottom:1px solid #1f2d3d;color:#cbd5e1}
-.panel-content .warn{background:#ff505011;border:1px solid #ff505044;border-radius:6px;padding:8px 10px;color:#fca5a5;font-size:.78rem;margin:0 0 10px}
+.panel-content .warn{background:#ff500011;border:1px solid #ff500044;border-radius:6px;padding:8px 10px;color:#fca5a5;font-size:.78rem;margin:0 0 10px}
 </style>
 </head>
 <body>
@@ -265,119 +265,56 @@ ${commentary ? `document.addEventListener('keydown',(e)=>{if(e.key==='Escape')do
 }
 
 // ── Graphiques a produire ─────────────────────────────────────────────────────
-// L'agent peuple ce tableau, puis execute le script.
+// Peuple ce tableau, puis execute : node tools/rag/giec-expert-agent-graphs/_gen_charts.cjs
 // Il est automatiquement vide apres generation du HTML.
 
 // ──BEGIN-CHARTS──
-const charts = [
-  {
-    title: 'Intensité carbone par source d’électricité — médianes IPCC',
-    source: '[AR6 WGIII, p.1158–1159 — soumissions au data call AR6]',
-    note: 'Médianes IPCC (soumissions au data call AR6, toutes technologies confondues). Ces valeurs incluent les émissions amont (extraction, transport, fuites). Éolien : 9,3 — Gaz : 537 — Charbon : 965 gCO₂-eq/kWh. [AR6 WGIII, p.1158–1159]',
-    chartConfig: {
-      type: 'bar',
-      data: {
-        labels: ['Éolien', 'Gaz naturel (cycle combiné)', 'Charbon (toutes technologies)'],
-        datasets: [{
-          label: 'Intensité carbone (gCO₂-eq/kWh)',
-          data: [9.3, 537, 965],
-          backgroundColor: ['#00ff8899','#fb923c99','#ff505099'],
-          borderColor:     ['#00ff88',  '#fb923c',  '#ff5050'],
-          borderWidth: 1.5,
-        }],
-      },
-      options: {
-        indexAxis: 'y', responsive: true,
-        plugins: { legend: { display: false },
-          tooltip: { callbacks: { label: (c) => c.parsed.x + ' gCO₂-eq/kWh' } } },
-        scales: {
-          x: { min: 0, max: 1100, grid: { color: '#1f2d3d' },
-            title: { display: true, text: 'gCO₂-eq/kWh (médiane, cycle de vie)', color: '#64748b' },
-            ticks: { color: '#94a3b8' } },
-          y: { ticks: { color: '#94a3b8', font: { size: 11 } }, grid: { color: '#1f2d3d' } },
-        },
-      },
-    },
-  },
-  {
-    title: 'Impact des fuites de méthane — seuil d’équivalence gaz/charbon',
-    source: '[AR6 WGIII, p.1195 — Alvarez et al. 2012 & 2018, cités dans AR6]',
-    note: 'Modèle illustratif calibré sur l’AR6 : combustion seule ≈ 450 gCO₂-eq/kWh, crossover charbon = seuil 2,7 % (Alvarez et al. 2012, cité dans AR6). Points jaunes = mesures US 2018 (2,3 %). Points rouges = zone équivalent charbon. [AR6 WGIII, p.1195]',
-    chartConfig: {
-      type: 'line',
-      data: {
-        labels: ['0 %', '1 %', '2 %', '2,3 % (USA 2018)', '2,7 % (seuil AR6)', '4 %'],
-        datasets: [
-          { label: 'Gaz naturel (intensité effective avec fuites)',
-            data: [450, 641, 832, 889, 965, 1213],
-            borderColor: '#fb923c', backgroundColor: '#fb923c22',
-            tension: 0.2, fill: false,
-            pointBackgroundColor: ['#fb923c','#fb923c','#fb923c','#facc15','#ff5050','#ff5050'],
-            pointBorderColor:     ['#fb923c','#fb923c','#fb923c','#facc15','#ff5050','#ff5050'],
-            pointRadius: [4,4,4,8,8,4],
-          },
-          { label: 'Charbon — référence (965 gCO₂-eq/kWh)',
-            data: [965, 965, 965, 965, 965, 965],
-            borderColor: '#ff5050', borderWidth: 2,
-            borderDash: [8, 4], pointRadius: 0, fill: false,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } },
-          tooltip: { mode: 'index', intersect: false,
-            callbacks: { label: (c) => c.dataset.label + ' : ' + c.parsed.y + ' gCO₂-eq/kWh' } },
-        },
-        scales: {
-          x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1f2d3d' } },
-          y: { min: 300, max: 1350, grid: { color: '#1f2d3d' },
-            title: { display: true, text: 'gCO₂-eq/kWh', color: '#64748b' },
-            ticks: { color: '#94a3b8' } },
-        },
-      },
-    },
-  },
-  {
-    title: 'CH₄ fugitif dans les émissions du secteur énergétique (2019)',
-    source: '[AR6 WGIII, p.41 — 50 à 80 % réductibles à <50 USD/tCO₂-eq, medium confidence]',
-    note: '50 à 80 % des fuites de méthane fossile pourraient être évitées à <50 USD/tCO₂-eq avec les technologies actuelles (medium confidence, AR6). Midpoint utilisé : 65 %. Total énergie 2019 : 20 GtCO₂-eq/an. [AR6 WGIII, p.41]',
-    chartConfig: {
-      type: 'doughnut',
-      data: {
-        labels: ['CH₄ fugitif réductible (<50 USD/tCO₂-eq)',
-                 'CH₄ fugitif résiduel',
-                 'Autres GES énergie (CO₂, N₂O…)'],
-        datasets: [{
-          data: [2.3, 1.3, 16.4],
-          backgroundColor: ['#00ff8877','#fb923c77','#33415566'],
-          borderColor:     ['#00ff88',  '#fb923c',  '#475569'],
-          borderWidth: 2, hoverOffset: 8,
-        }],
-      },
-      options: {
-        responsive: true, cutout: '55%',
-        plugins: {
-          legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 } } },
-          tooltip: { callbacks: { label: (c) =>
-            c.label + ' — ' + c.raw + ' GtCO₂-eq/an (' + (c.raw/20*100).toFixed(1) + ' %)' } },
-        },
-      },
-    },
-  },
-];
+const charts = [];
 // ──END-CHARTS──
 
-// ── Point d'entree ────────────────────────────────────────────────────────────
-
-// ── Contenu du panneau lateral ─────────────────────────────────────────────
-const COMMENTARY = '<h2>Gaz de schiste — AR6 du GIEC</h2><p class="warn"><strong>Graphique 2 : modèle illustratif</strong> — Le seuil 2,7\u202f% est une donnée AR6 (Alvarez et al. 2012). Les valeurs intermédiaires suivent un modèle linéaire simplifié calibré sur ce seuil (combustion seule ≈\u202f450 gCO₂-eq/kWh à 0\u202f% de fuite).</p><h3>1. Combustion directe</h3><p>Le gaz naturel émet environ <strong>deux fois moins de CO₂</strong> que le charbon à la combustion. Médianes IPCC (data call AR6)\u202f: éolien\u202f: 9,3 — gaz\u202f: 537 — charbon\u202f: 965\u202fgCO₂-eq/kWh. <span class="cite">[AR6 WGIII, p.1158–1159]</span></p><h3>2. Le rôle décisif des fuites de méthane</h3><p>Le méthane (CH₄) a un potentiel de réchauffement <strong>∼\u202f82× celui du CO₂</strong> sur 20\u202fans (AR6 WGI révisé). Chaque pourcent de fuite annule une fraction du bénéfice climatique du gaz.</p><blockquote>« It would take a leakage rate of about 2.7\u202f% from natural gas production to undo the direct fuel switching from coal mitigation effect. »</blockquote><p><strong>Seuil d’équivalence\u202f: 2,7\u202f%</strong> <span class="cite">[AR6 WGIII, p.1195 — Alvarez et al. 2012]</span><br> USA mesuré (2018)\u202f: <strong>2,3\u202f%</strong> — 60\u202f% au-dessus des estimations précédentes. Données canadiennes encore plus élevées. <span class="cite">[AR6 WGIII, p.1195 — Alvarez et al. 2018]</span></p><h3>3. Potentiel de réduction massif</h3><p>Émissions fugitives énergétiques 2019\u202f: 18\u202f% des GES énergie — 32\u202f% du CH₄ mondial — <strong>6\u202f% des GES totaux</strong>. <span class="cite">[AR6 WGIII, p.41]</span></p><p><strong>50 à 80\u202f%</strong> de ces fuites pourraient être évitées avec les technologies actuelles, à moins de <strong>50\u202fUSD/tCO₂-eq</strong> (medium confidence). <span class="cite">[AR6 WGIII, p.41]</span></p><h3>4. Budget carbone</h3><p>Dans les scénarios compatibles avec +2°C, environ <strong>50\u202f% des réserves mondiales de gaz</strong> doivent rester inexploitées — large part des gaz non conventionnels (schíte, offshore profond). <span class="cite">[AR6 WGIII, p.660 — McGlade &amp; Ekins 2015]</span></p><h3>Synthèse</h3><table><tr><th>Dimension</th><th>Valeur / Verdict AR6</th></tr><tr><td>Intensité carbone gaz vs charbon</td><td>−44\u202f% (537 vs 965)</td></tr><tr><td>Seuil de fuite = équivalent charbon</td><td>2,7\u202f% — high confidence</td></tr><tr><td>Fuite mesurée USA (2018)</td><td>2,3\u202f% — near threshold</td></tr><tr><td>CH₄ fugitif / GES mondiaux (2019)</td><td>6\u202f% — high confidence</td></tr><tr><td>Potentiel réduction fuites (≤ 50 USD)</td><td>50–80\u202f% — medium confidence</td></tr><tr><td>Réserves gaz compatibles 2°C</td><td>≤50\u202f% des réserves actuelles</td></tr></table>';
+// ── Panneau lateral — analyse AR6 ────────────────────────────────────────────
+const COMMENTARY = '<h2>Géopolitique, ressources critiques &amp; ENR — AR6 GIEC</h2>'
+  + '<div class="warn"><strong>Note méthodologique (graphiques 1 &amp; 2)</strong> — Les pourcentages de concentration (graphique 1) et les trajectoires de demande (graphique 2) sont des données indicatives (USGS 2022 / IEA WEO 2021). Le concept et les ordres de grandeur sont validés high confidence par AR6 WGIII Ch.10, mais les valeurs numériques exactes ne figurent pas dans les chunks AR6 indexés. Le graphique 3 (budget carbone) s’appuie directement sur les chunks AR6_WG3_02014 et AR6_WG3_06292.</div>'
+  + '<h3>1. Dépendances minérales documentées par l’AR6</h3>'
+  + '<blockquote>"A low-carbon energy system transition will increase the demand for these minerals to be used in technologies like wind turbines, PV cells, and batteries [...] Reliance on these minerals has raised questions about possible constraints to a low-carbon energy system transition, including supply chain disruptions."</blockquote>'
+  + '<p class="cite">[AR6 WGIII, p.650–651 — chunk AR6_WG3_02072]</p>'
+  + '<p>Minéraux identifiés explicitement dans AR6 WGIII Ch.10 :</p>'
+  + '<table><tr><th>Technologie</th><th>Minéraux critiques</th></tr>'
+  + '<tr><td>Turbines éoliennes</td><td>Neodymium, dysprosium (aimants permanents)</td></tr>'
+  + '<tr><td>Batteries (VE, stockage)</td><td>Lithium, cobalt, nickel, manganèse</td></tr>'
+  + '<tr><td>Solaire PV</td><td>Cadmium, tellure, sélénium, gallium, indium</td></tr>'
+  + '</table>'
+  + '<p class="cite">[AR6 WGIII, p.1129 — chunk AR6_WG3_03783]</p>'
+  + '<h3>2. Quasi-monopole de la Chine sur les terres rares</h3>'
+  + '<blockquote>"China has a near-monopoly on REE processing, though other mines and manufacturing facilities are now responding to these constrained markets [...] China, on the other hand, is reliant on other nations for the supply of other critical metals, particularly cobalt and lithium for batteries."</blockquote>'
+  + '<p class="cite">[AR6 WGIII, p.1130–1131 — chunk AR6_WG3_03787]</p>'
+  + '<p>L’AR6 documente une <strong>interdépendance asymétrique</strong> : la Chine contrôle le raffinage des REE lourdes (essentielles aux éoliennes), mais dépend de la RDC et de l’Amérique du Sud pour le cobalt et le lithium. Cette structure crée des points de friction géopolitique multiples dans la chaîne de valeur ENR.</p>'
+  + '<h3>3. Réserves insuffisantes pour le scénario de transition</h3>'
+  + '<blockquote>"Used battery technologies and the known reserves currently being exploited are not compatible with the transition scenario due to insufficient cobalt and lithium reserves (Månberger &amp; Stenqvist 2018)."</blockquote>'
+  + '<p class="cite">[AR6 WGIII, p.1757 — chunk AR6_WG3_06182]</p>'
+  + '<p>L’AR6 identifie une voie de sortie : le recyclage en circuit fermé des batteries Li-ion. <em>"Given the high degree of potential recyclability of LIBs, a near closed-loop system in the future would be a feasible opportunity to minimise critical mineral issues."</em> <span class="cite">[AR6 WGIII, p.1129 — chunk AR6_WG3_03782]</span></p>'
+  + '<h3>4. Verrou fossile et actifs échoués — résistance géopolitique</h3>'
+  + '<blockquote>"Limiting warming to well below 2°C will strand fossil-related assets, including fossil infrastructure and unburned fossil fuel resources. The economic impact of [...] carbon lock-in can have a long-lasting effect on future emissions trajectories after 2030."</blockquote>'
+  + '<p class="cite">[AR6 WGIII, p.628–629 — chunk AR6_WG3_02014]</p>'
+  + '<blockquote>"Countries dependent on fossil fuel income will need to forego these revenues to keep well within the Paris Agreement requirements [...] Energy and other forms of structural inequities are likely to make the transition planning more challenging, especially given stranded assets."</blockquote>'
+  + '<p class="cite">[AR6 WGIII, p.1784 — chunk AR6_WG3_06292]</p>'
+  + '<p>L’AR6 nuance : certains pays en développement financent leur protection sociale via les rentes fossiles (ex. Ghana — éducation via revenus pétroliers), ce qui rend la résistance à la transition non seulement stratégique mais aussi sociale. <span class="cite">[AR6 WGIII, p.1759 — chunk AR6_WG3_06192]</span></p>'
+  + '<h3>5. Transferts technologiques — opportunité inégalement distribuée</h3>'
+  + '<blockquote>"Such globalisation of production and supply chains opens up economic development opportunities for developing countries."</blockquote>'
+  + '<p class="cite">[AR6 WGIII, p.1697 — chunk AR6_WG3_05943]</p>'
+  + '<p>L’AR6 identifie des barrières persistantes : financement, droits de propriété intellectuelle, capacités humaines. <em>"International cooperation on technology development and transfer can enable developing countries to achieve their climate goals more effectively."</em> <span class="cite">[AR6 WGIII, p.1697 — chunk AR6_WG3_05944]</span></p>'
+  + '<h3>Synthèse — la chaîne causale AR6</h3>'
+  + '<table><tr><th>Tension</th><th>Mécanisme</th><th>Confiance AR6</th></tr>'
+  + '<tr><td>Concentration REE</td><td>Quasi-monopole raffinage → risque rupture turbines</td><td>High</td></tr>'
+  + '<tr><td>Cobalt / Lithium</td><td>Réserves insuffisantes pour scénario 1,5°C</td><td>High</td></tr>'
+  + '<tr><td>Actifs fossiles échoués</td><td>États rentiers résistent structurellement</td><td>High</td></tr>'
+  + '<tr><td>Transferts techno.</td><td>Déploiement ENR inégal Nord/Sud</td><td>High</td></tr>'
+  + '</table>';
 
 render(
-  'shale_gas_emissions_charts.html',
-  'Gaz de schiste — Émissions et impact climatique (AR6 du GIEC)',
-  'Sources\u202f: IPCC AR6 WGIII (2022) — Ch.\u20046 &amp; Ch.\u200411 [AR6_WG3_03912, AR6_WG3_04008, AR6_WG3_00084, AR6_WG3_02103]',
+  'geopolitics_resources_renewables.html',
+  'Géopolitique, Ressources Critiques & Développement des ENR',
+  'Sources : AR6 WGIII Ch.6 & Ch.10 (p.628–631, p.1129–1131, p.1757, p.1784) — chunks AR6_WG3_02014/03782/03783/03787/06182/06292',
   charts,
   COMMENTARY
 );

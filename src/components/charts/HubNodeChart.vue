@@ -19,7 +19,14 @@ import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import LineChart from './LineChart.vue'
 import { useGameStore } from '@/store/game.store'
-import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP, BASELINE_FOREST, BASELINE_ENERGY_MIX, BASELINE_FOOD_SECURITY, BASELINE_WATER_ACCESS, } from '@/store/simulation.store'
+import {
+  useSimulationStore, SIM_LABELS,
+  BASELINE_CO2, BASELINE_TEMP, BASELINE_FOREST, BASELINE_ENERGY_MIX,
+  BASELINE_FOOD_SECURITY, BASELINE_WATER_ACCESS,
+  BASELINE_LIFE_EXPECTANCY, BASELINE_RESPIRATORY_DISEASES, BASELINE_WHO_HEALTH_INDEX,
+  BASELINE_RESOURCE_CONFLICTS, BASELINE_WATER_TENSIONS, BASELINE_CLIMATE_MIGRATIONS,
+  BASELINE_GINI_COEFFICIENT, BASELINE_WEALTH_CONCENTRATION, BASELINE_EDUCATION_ACCESS,
+} from '@/store/simulation.store'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import { useDashboardStore } from '@/store/dashboard.store'
 import { interpolateAtYear } from '@/utils/timeSeries'
@@ -38,12 +45,21 @@ const tpStore   = useTippingPointsStore()
 const dashStore = useDashboardStore()
 
 const {
-  simCumulativeCo2,       simCumulativeCo2Pessimist,
-  simCumulativeTemp,      simCumulativeTempPessimist,
-  cumulativeForest,       cumulativeForestPessimist,
-  cumulativeEnergyMix,    cumulativeEnergyMixPessimist,
-  cumulativeFoodSecurity, cumulativeFoodSecurityPessimist,
-  cumulativeWaterAccess,  cumulativeWaterAccessPessimist,
+  simCumulativeCo2,
+  simCumulativeTemp,
+  cumulativeForest,
+  cumulativeEnergyMix,
+  cumulativeFoodSecurity,
+  cumulativeWaterAccess,
+  cumulativeLifeExpectancy,
+  cumulativeRespiratoryDiseases,
+  cumulativeWhoHealthIndex,
+  cumulativeResourceConflicts,
+  cumulativeWaterTensions,
+  cumulativeClimateMigrations,
+  cumulativeGiniCoefficient,
+  cumulativeWealthConcentration,
+  cumulativeEducationAccess,
 } = storeToRefs(simStore)
 
 const { triggeredList, extremesOffset } = storeToRefs(tpStore)
@@ -65,12 +81,12 @@ function sumRenewables(mix: Record<EnergyMixKey, number[]>): (number | null)[] {
 
 const baselineRenewables = sumRenewables(BASELINE_ENERGY_MIX)
 
-// ─── Datasets baseline / décidé / pessimiste ──────────────────────────────────
+// ─── Datasets baseline / décidé ───────────────────────────────────────────────
 
 function makeDatasets(
-  baseline:  (number | null)[],
-  decided:   (number | null)[],
-  pessimist: (number | null)[],
+  baseline:     (number | null)[],
+  decided:      (number | null)[],
+  decidedLabel: string,
 ): ChartDataset[] {
   return [
     {
@@ -84,22 +100,13 @@ function makeDatasets(
       borderDash:      [4, 3],
     },
     {
-      label:           t('simulator.legend_decided'),
+      label:           decidedLabel,
       data:            decided,
       borderColor:     '#00ff88',
       backgroundColor: 'rgba(0,255,136,0.08)',
       fill:            false,
       tension:         0.4,
       pointRadius:     2,
-    },
-    {
-      label:           t('simulator.legend_pessimist'),
-      data:            pessimist,
-      borderColor:     '#f87171',
-      backgroundColor: 'transparent',
-      fill:            false,
-      tension:         0.4,
-      pointRadius:     1,
     },
   ]
 }
@@ -136,23 +143,23 @@ function energyMixDatasets(): ChartDataset[] {
 const datasets = computed<ChartDataset[]>(() => {
   switch (props.chartType) {
     case 'co2':
-      return makeDatasets(BASELINE_CO2, simCumulativeCo2.value, simCumulativeCo2Pessimist.value)
+      return makeDatasets(BASELINE_CO2, simCumulativeCo2.value, t('hub.nodes.co2.label'))
     case 'temp':
-      return makeDatasets(BASELINE_TEMP, simCumulativeTemp.value, simCumulativeTempPessimist.value)
+      return makeDatasets(BASELINE_TEMP, simCumulativeTemp.value, t('hub.nodes.temp.label'))
     case 'forest':
-      return makeDatasets(BASELINE_FOREST, cumulativeForest.value, cumulativeForestPessimist.value)
+      return makeDatasets(BASELINE_FOREST, cumulativeForest.value, t('hub.nodes.forest.label'))
     case 'renewables':
       return makeDatasets(
         baselineRenewables,
         sumRenewables(cumulativeEnergyMix.value),
-        sumRenewables(cumulativeEnergyMixPessimist.value),
+        t('hub.nodes.energy-mix.unit'),
       )
     case 'energyMixBreakdown':
       return energyMixDatasets()
     case 'food':
-      return makeDatasets(BASELINE_FOOD_SECURITY, cumulativeFoodSecurity.value, cumulativeFoodSecurityPessimist.value)
+      return makeDatasets(BASELINE_FOOD_SECURITY, cumulativeFoodSecurity.value, t('hub.nodes.food.label'))
     case 'water':
-      return makeDatasets(BASELINE_WATER_ACCESS, cumulativeWaterAccess.value, cumulativeWaterAccessPessimist.value)
+      return makeDatasets(BASELINE_WATER_ACCESS, cumulativeWaterAccess.value, t('hub.nodes.water.label'))
     case 'extremes': {
       const ts = dashStore.ecologicalCharts?.extremes.timeSeries
       if (!ts) return []
@@ -170,6 +177,38 @@ const datasets = computed<ChartDataset[]>(() => {
         pointRadius:     1,
       }]
     }
+    case 'sea-level': {
+      const ts = dashStore.ecologicalCharts?.seaLevel.timeSeries
+      if (!ts) return []
+      const data = SIM_LABELS.map(y => Math.round(interpolateAtYear(y, ts.years, ts.values)))
+      return [{
+        label:           t('hub.charts.sea-level.label'),
+        data,
+        borderColor:     '#00e5ff',
+        backgroundColor: 'rgba(0,229,255,0.08)',
+        fill:            true,
+        tension:         0.4,
+        pointRadius:     1,
+      }]
+    }
+    case 'life-expectancy':
+      return makeDatasets(BASELINE_LIFE_EXPECTANCY, cumulativeLifeExpectancy.value, t('hub.charts.life-expectancy.label'))
+    case 'respiratory-diseases':
+      return makeDatasets(BASELINE_RESPIRATORY_DISEASES, cumulativeRespiratoryDiseases.value, t('hub.charts.respiratory-diseases.label'))
+    case 'who-health-index':
+      return makeDatasets(BASELINE_WHO_HEALTH_INDEX, cumulativeWhoHealthIndex.value, t('hub.charts.who-health-index.label'))
+    case 'resource-conflicts':
+      return makeDatasets(BASELINE_RESOURCE_CONFLICTS, cumulativeResourceConflicts.value, t('hub.charts.resource-conflicts.label'))
+    case 'water-tensions':
+      return makeDatasets(BASELINE_WATER_TENSIONS, cumulativeWaterTensions.value, t('hub.charts.water-tensions.label'))
+    case 'climate-migrations':
+      return makeDatasets(BASELINE_CLIMATE_MIGRATIONS, cumulativeClimateMigrations.value, t('hub.charts.climate-migrations.label'))
+    case 'gini-coefficient':
+      return makeDatasets(BASELINE_GINI_COEFFICIENT, cumulativeGiniCoefficient.value, t('hub.charts.gini-coefficient.label'))
+    case 'wealth-concentration':
+      return makeDatasets(BASELINE_WEALTH_CONCENTRATION, cumulativeWealthConcentration.value, t('hub.charts.wealth-concentration.label'))
+    case 'education-access':
+      return makeDatasets(BASELINE_EDUCATION_ACCESS, cumulativeEducationAccess.value, t('hub.charts.education-access.label'))
     default:
       return []
   }
@@ -181,16 +220,16 @@ const tpEvents = computed<{ year: number; color: string }[]>(() => {
   if (props.chartType === 'temp') {
     return (['tp-permafrost', 'tp-coral', 'tp-amoc'] as const).flatMap(id => {
       const year = triggeredMap.value.get(id)
-      return year !== undefined ? [{ year, color: '#ff5050' }] : []
+      return year === undefined ? [] : [{ year, color: '#ff5050' }]
     })
   }
   if (props.chartType === 'extremes') {
     const year = triggeredMap.value.get('tp-amoc')
-    return year !== undefined ? [{ year, color: '#ff5050' }] : []
+    return year === undefined ? [] : [{ year, color: '#ff5050' }]
   }
   if (props.chartType === 'forest') {
     const year = triggeredMap.value.get('tp-amazon')
-    return year !== undefined ? [{ year, color: '#ff5050' }] : []
+    return year === undefined ? [] : [{ year, color: '#ff5050' }]
   }
   return []
 })
@@ -199,15 +238,25 @@ const tpEvents = computed<{ year: number; color: string }[]>(() => {
 
 const chartMeta = computed<{ yMin?: number; yMax?: number }>(() => {
   switch (props.chartType) {
-    case 'co2':               return { yMin: 15,  yMax: 75  }
-    case 'temp':              return { yMin: 1.0, yMax: 4.5 }
+    case 'co2':               return { yMin: 15,  yMax: 125 }
+    case 'temp':              return { yMin: 1,   yMax: 4.5 }
     case 'forest':            return { yMin: 20,  yMax: 80  }
     case 'renewables':        return { yMin: 0,   yMax: 100 }
     case 'energyMixBreakdown':return { yMin: 0,   yMax: 45  }
-    case 'food':              return { yMin: 40,  yMax: 70  }
+    case 'food':              return { yMin: 25,  yMax: 75  }
     case 'water':             return { yMin: 60,  yMax: 90  }
-    case 'extremes':          return { yMin: 0,   yMax: 18  }
-    default:                  return {}
+    case 'extremes':           return { yMin: 0,    yMax: 18   }
+    case 'sea-level':          return { yMin: 0,    yMax: 750  }
+    case 'life-expectancy':    return { yMin: 55,   yMax: 80   }
+    case 'respiratory-diseases':return { yMin: 0,   yMax: 80   }
+    case 'who-health-index':   return { yMin: 35,   yMax: 75   }
+    case 'resource-conflicts': return { yMin: 60,   yMax: 100  }
+    case 'water-tensions':     return { yMin: 50,   yMax: 100  }
+    case 'climate-migrations': return { yMin: 0,    yMax: 200  }
+    case 'gini-coefficient':   return { yMin: 0.55, yMax: 0.8  }
+    case 'wealth-concentration':return { yMin: 35,  yMax: 75   }
+    case 'education-access':   return { yMin: 50,   yMax: 70   }
+    default:                   return {}
   }
 })
 </script>

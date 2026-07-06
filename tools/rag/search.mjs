@@ -11,6 +11,12 @@
  */
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// Resolve index paths relative to this script so the CLI works regardless of CWD.
+// The script lives at tools/rag/search.mjs, so two levels up is the project root.
+const PROJECT_ROOT = path.resolve(__dirname, '../..')
 
 const DEFAULT_INDEX = 'tools/rag/index/ipcc_index.json'
 const DEFAULT_CHUNKS = 'tools/rag/index/ipcc_chunks.jsonl'
@@ -130,7 +136,7 @@ async function main() {
     return
   }
 
-  const root = process.cwd()
+  const root = PROJECT_ROOT
 
   // ── Load index ──────────────────────────────────────────────────────────────
   let index

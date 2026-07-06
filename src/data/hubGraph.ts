@@ -1,5 +1,17 @@
 export type HubNodeType = 'hub' | 'category' | 'indicator' | 'tipping' | 'feedback'
-export type HubChartType = NonNullable<HubNodeData['liveKey']> | 'energyMixBreakdown'
+export type HubChartType =
+  | NonNullable<HubNodeData['liveKey']>
+  | 'energyMixBreakdown'
+  | 'sea-level'
+  | 'life-expectancy'
+  | 'respiratory-diseases'
+  | 'who-health-index'
+  | 'resource-conflicts'
+  | 'water-tensions'
+  | 'climate-migrations'
+  | 'gini-coefficient'
+  | 'wealth-concentration'
+  | 'education-access'
 export type HubCategory = 'climat' | 'ecosystemes' | 'energie' | 'societal' | 'politiques'
 export type HubEdgeType = 'hub-cat' | 'hierarchy' | 'tipping-link' | 'causal' | 'tipping-impact'
 
@@ -152,6 +164,20 @@ export const HUB_EDGES: HubEdgeData[] = [
   { id: 'i-tp-amazon-for',  source: 'tp-amazon',     target: 'forest',      edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
   { id: 'i-tp-amoc-water',  source: 'tp-amoc',       target: 'water',       edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
   { id: 'i-tp-amoc-extr',   source: 'tp-amoc',       target: 'extremes',    edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+
+  // ─── Arêtes causales — Extrêmes climatiques ──────────────────────────────────
+  // Entrantes
+  { id: 'c-co2-ext',   source: 'co2',      target: 'extremes',    edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-temp-ext',  source: 'temp',     target: 'extremes',    edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-sea-ext',   source: 'sea-level',target: 'extremes',    edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  // Sortantes
+  { id: 'c-ext-food',  source: 'extremes', target: 'food',        edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-ext-water', source: 'extremes', target: 'water',       edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-ext-health',source: 'extremes', target: 'health',      edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-ext-forest',source: 'extremes', target: 'forest',      edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-ext-bio',   source: 'extremes', target: 'biodiversity',edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-ext-ineq',  source: 'extremes', target: 'inequality',  edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
+  { id: 'c-ext-conf',  source: 'extremes', target: 'conflicts',   edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
   { id: 'i-tp-amoc-temp',   source: 'tp-amoc',       target: 'temp',        edgeType: 'tipping-impact', causalType: 'negative', color: '#00ff88' },
   { id: 'i-tp-arctic-temp', source: 'tp-arctic',     target: 'temp',        edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
 ]
