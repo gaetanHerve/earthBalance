@@ -90,10 +90,10 @@ export const ecologicalCharts: EcologicalCharts = {
     label: 'Émissions GES mondiales',
     unit: 'GtCO₂eq/an',
     color: '#ff5050',
-    source: 'GHG total (CO₂+CH₄+N₂O+Gaz F) — ancres 1990/2000/2010/2019 [AR6 WGIII, Ch.2, Fig.2.2, p.20] ; 1995/2005/2015 interpolés (taux de croissance AR6) ; 2020 recul COVID est. ; 2024 ancre SSP3-7.0 [AR6 WGI, SPM.4 — CEDA, CC-BY-4.0]',
+    source: 'GHG total (CO₂+CH₄+N₂O+Gaz F) — ancres 1990/2000/2010/2019 [AR6 WGIII, Ch.2, Fig.2.2, p.20] ; 1995/2005/2015 interpolés (taux de croissance AR6) ; 2020 recul COVID est.',
     timeSeries: {
-      years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
-      values: [38.0, 39.5, 42.0, 46.5, 53.0, 56.5, 57.4, 65.2],
+      years: [1990, 1995, 2000, 2005, 2010, 2015, 2020],
+      values: [38.0, 39.5, 42.0, 46.5, 53.0, 56.5, 57.4],
     },
   },
 
@@ -101,10 +101,10 @@ export const ecologicalCharts: EcologicalCharts = {
     label: 'Anomalie de température globale',
     unit: '°C vs. pré-industriel',
     color: '#fb923c',
-    source: 'NASA GISS GISTEMP v4 (observé 1990-2024) ; [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0] (proj. SSP3-7.0)',
+    source: 'NASA GISS GISTEMP v4 (observé 1990-2020) ; [IPCC AR6 WGI, Figure SPM.8 — CEDA Archive, CC-BY-4.0] (proj. SSP3-7.0)',
     timeSeries: {
-      years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
-      values: [0.45, 0.52, 0.62, 0.72, 0.82, 0.95, 1.1, 1.4],
+      years: [1990, 1995, 2000, 2005, 2010, 2015, 2020],
+      values: [0.45, 0.52, 0.62, 0.72, 0.82, 0.95, 1.1],
     },
   },
 
@@ -116,8 +116,8 @@ export const ecologicalCharts: EcologicalCharts = {
     current: 58,
     source: 'Mackey et al. (2015) — Intact Forest Landscapes ; Steffen et al. (2015) — Planetary Boundaries ; Curtis et al. (2018), Science',
     timeSeries: {
-      years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
-      values: [  71,   68,   66,   64,   62,   60,   59,   58],
+      years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020],
+      values: [  71,   68,   66,   64,   62,   60,   59],
     },
   },
 
@@ -130,8 +130,9 @@ export const ecologicalCharts: EcologicalCharts = {
       // Observé 1990-2024, puis projection médiane SSP3-7.0 (CEDA AR6 WGI Figure SPM.8 panel d)
       // Référence : moyenne 1995-2014 ≈ 0 mm (convention AR6 WGI Ch.9)
       // SSP3-7.0 vs SSP2-4.5 à 2100 : +692 mm vs +415 mm (ratio CEDA SSP3-7.0/SSP2-4.5)
-      years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
-      values: [ -40,  -26,  -12,    2,   20,   38,   58,   78,  102,  152,  222,  292,  418,  692],
+      // Projection : grille uniforme 5 ans 2025→2100 (16 points), ancres SSP3-7.0 conservées
+      years:  [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100],
+      values: [  -40,  -26,  -12,    2,   20,   38,   58,   82,  102,  127,  152,  187,  222,  257,  292,  337,  382,  429,  481,  534,  587,  639,  692],
     },
   },
 
@@ -143,8 +144,9 @@ export const ecologicalCharts: EcologicalCharts = {
     timeSeries: {
       // Indice composite observé 1950-2024, calibré à ×2,8 en 2024 (vagues de chaleur)
       // puis projection médiane SSP3-7.0 — extrêmes amplifiés ~1.4× vs SSP2-4.5 à 2100
-      years:  [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2024, 2030, 2040, 2050, 2060, 2074, 2100],
-      values: [1.2, 1.3, 1.42, 1.58, 1.78, 2.05, 2.35, 2.6, 2.8, 3.2, 4.1, 5.3, 7.1, 10.2, 14.5],
+      // Projection : grille uniforme 5 ans 2025→2100 (16 points), ancres SSP3-7.0 conservées
+      years:  [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070, 2075, 2080, 2085, 2090, 2095, 2100],
+      values: [ 1.2,  1.3, 1.42, 1.58, 1.78, 2.05, 2.35,  2.6,  2.9,  3.2,  3.7,  4.1,  4.7,  5.3,  6.2,  7.1,  8.2,  9.3, 10.4, 11.2,   12, 12.8, 13.7, 14.5],
     },
   },
 
@@ -163,16 +165,16 @@ export const ecologicalCharts: EcologicalCharts = {
       { label: 'Autres',    value:  3843, color: '#475569' },
     ],
     timeSeries: {
-      years: [1990,  1995,  2000,  2005,  2010,  2015,  2020,  2024],
+      years: [1990,  1995,  2000,  2005,  2010,  2015,  2020],
       byCategory: {
-        coal:    [25929, 25999, 27456, 36201, 42016, 43695, 42316, 45851],
-        oil:     [37907, 39666, 43017, 47017, 48193, 51294, 49101, 55292],
-        gas:     [19481, 21104, 23994, 27439, 31593, 34780, 38704, 41278],
-        nuclear: [ 5557,  6451,  7169,  7442,  7209,  6520,  6640,  6872],
-        solar:   [    1,     2,     3,    11,    88,   649,  2117,  5151],
-        wind:    [   10,    23,    87,   281,   902,  2106,  3940,  6124],
-        hydro:   [ 5996,  6898,  7352,  7826,  8933,  9821, 10763, 10861],
-        autres:  [  473,   589,   710,  1033,  1861,  2568,  3221,  3843],
+        coal:    [25929, 25999, 27456, 36201, 42016, 43695, 42316],
+        oil:     [37907, 39666, 43017, 47017, 48193, 51294, 49101],
+        gas:     [19481, 21104, 23994, 27439, 31593, 34780, 38704],
+        nuclear: [ 5557,  6451,  7169,  7442,  7209,  6520,  6640],
+        solar:   [    1,     2,     3,    11,    88,   649,  2117],
+        wind:    [   10,    23,    87,   281,   902,  2106,  3940],
+        hydro:   [ 5996,  6898,  7352,  7826,  8933,  9821, 10763],
+        autres:  [  473,   589,   710,  1033,  1861,  2568,  3221],
       },
     },
   },
@@ -186,21 +188,21 @@ export const ecologicalCharts: EcologicalCharts = {
         label: 'Minéraux',
         color: '#c084fc',
         bgColor: 'rgba(192,132,252,0.1)',
-        values: [8.2, 9.1, 10.5, 12.3, 14.8, 17.2, 19.1, 21],
+        values: [8.2, 9.1, 10.5, 12.3, 14.8, 17.2, 19.1],
       },
       {
         label: 'Biomasse',
         color: '#00ff88',
         bgColor: 'rgba(0,255,136,0.08)',
-        values: [12.1, 12.8, 13.5, 14.2, 15, 15.8, 16.4, 17.1],
+        values: [12.1, 12.8, 13.5, 14.2, 15, 15.8, 16.4],
       },
       {
         label: 'Combustibles fossiles',
         color: '#fb923c',
         bgColor: 'rgba(251,146,60,0.08)',
-        values: [7.5, 8.2, 9, 10.1, 11.5, 12.8, 13.2, 13.9],
+        values: [7.5, 8.2, 9, 10.1, 11.5, 12.8, 13.2],
       },
     ],
-    years: [1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024],
+    years: [1990, 1995, 2000, 2005, 2010, 2015, 2020],
   },
 }

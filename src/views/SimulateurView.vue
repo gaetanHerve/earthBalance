@@ -304,7 +304,7 @@ const co2CumulativeSaved = computed<number>(() => {
 
 interface Horizon { value: number; label: string }
 const horizons = computed<Horizon[]>(() => [
-  { value: 2024, label: t('simulator.horizon_2024') },
+  { value: 2025, label: t('simulator.horizon_2025') },
   { value: 2040, label: t('simulator.horizon_2040') },
   { value: 2050, label: t('simulator.horizon_2050') },
   { value: 2100, label: t('simulator.horizon_2100') },

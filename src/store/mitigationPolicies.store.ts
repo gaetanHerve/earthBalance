@@ -42,7 +42,7 @@ function loadPersistedState(): PersistedPoliciesState | null {
     // Rétrocompatibilité : ancien format stockait validatedPolicyIds (string[])
     if (Array.isArray(parsed.validatedPolicyIds) && !parsed.validatedPolicyMeta) {
       return {
-        validatedPolicyMeta: (parsed.validatedPolicyIds as string[]).map(id => ({ id, year: 2024 })),
+        validatedPolicyMeta: (parsed.validatedPolicyIds as string[]).map(id => ({ id, year: 2025 })),
         ballots: parsed.ballots ?? [],
       }
     }

@@ -253,7 +253,7 @@ export default {
     baseline_label:     'Baseline {year} (SSP3-7.0)',
     baseline_note:      'without action',
     decided_label:      'Decided scenario {year}',
-    co2_saved_label:    'CO₂eq saved 2024→{year}',
+    co2_saved_label:    'CO₂eq saved 2025→{year}',
     co2_saved_note:     'cumulative GtCO₂eq vs. baseline',
     reduction_label:    'Annual reduction in {year}',
     reduction_note:     'GtCO₂eq/yr vs. baseline',
@@ -302,7 +302,7 @@ export default {
     aria_temp:          'Cumulative global temperature projections',
     horizon_label:      'Horizon',
     horizon_selector:   'Time horizon selector',
-    horizon_2024:       '2024',
+    horizon_2025:       '2025',
     horizon_2040:       '2040',
     horizon_2050:       '2050',
     horizon_2100:       '2100',
@@ -543,7 +543,7 @@ export default {
     nav_desc:     'Understand the game mechanics and objectives',
 
     objective_title: 'Objective',
-    objective_body:  'EarthBalance simulates global climate governance from 2024 to 2100. Players deliberate collectively and vote on climate mitigation policies. The goal is not to "win" or "lose": at the end of the game, a multidimensional report paints a portrait of the world in 2100 based on the decisions made.',
+    objective_body:  'EarthBalance simulates global climate governance from 2025 to 2100. Players deliberate collectively and vote on climate mitigation policies. The goal is not to "win" or "lose": at the end of the game, a multidimensional report paints a portrait of the world in 2100 based on the decisions made.',
 
     turns_title:   'Turn structure',
     turns_body:    'Each turn represents a 5-year period and proceeds through three successive phases:',

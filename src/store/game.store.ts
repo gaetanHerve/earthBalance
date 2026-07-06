@@ -17,7 +17,7 @@ function loadPhase(): TurnPhase {
 export const useGameStore = defineStore('game', () => {
   const stored = localStorage.getItem(STORAGE_KEYS.GAME_YEAR)
   const parsedYear = stored === null ? Number.NaN : Number.parseInt(stored, 10)
-  const currentYear   = ref<number>(Number.isFinite(parsedYear) && parsedYear >= 2024 ? parsedYear : 2024)
+  const currentYear   = ref<number>(Number.isFinite(parsedYear) && parsedYear >= 2025 ? parsedYear : 2025)
   const sessionNumber = ref<number>(1)
   const gameOver      = ref<boolean>(currentYear.value >= 2100)
   const introVisible  = ref<boolean>(!localStorage.getItem(STORAGE_KEYS.INTRO_SEEN))
@@ -77,7 +77,7 @@ export const useGameStore = defineStore('game', () => {
     localStorage.removeItem(STORAGE_KEYS.INTRO_SEEN)
     localStorage.removeItem(STORAGE_KEYS.GAME_PHASE)
     localStorage.removeItem(STORAGE_KEYS.BALLOT_PROPOSALS)
-    currentYear.value  = 2024
+    currentYear.value  = 2025
     sessionNumber.value = 1
     gameOver.value     = false
     introVisible.value = true

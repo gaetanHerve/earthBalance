@@ -100,7 +100,7 @@ export const BASELINE_EDUCATION_ACCESS     = BASELINE_EDUCATION_ACCESS_16PT
 
 const SELECTED_KEY  = STORAGE_KEYS.SIMULATION_SELECTED
 const BASELINE_KEY  = STORAGE_KEYS.SIMULATION_BASELINE
-const SIM_BASE_YEAR = 2024
+const SIM_BASE_YEAR = 2025
 
 // â”€â”€â”€ Helpers projection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -125,7 +125,7 @@ function shiftedDeltas(
 ): number[] {
   return SIM_LABELS.map(year => {
     if (year < effectiveStart) return 0
-    const mappedYear = 2024 + (year - effectiveStart)
+    const mappedYear = SIM_BASE_YEAR + (year - effectiveStart)
     return interpolateAtYear(mappedYear, projLabels, projValues) - interpolateAtYear(mappedYear, projLabels, projBaseline)
   })
 }
@@ -167,7 +167,7 @@ function tempDeltasPessimist(dec: MitigationPolicy, effectiveStart: number): num
 function shiftedDeltasDirect(projLabels: number[], projDeltas: number[], effectiveStart: number): number[] {
   return SIM_LABELS.map(year => {
     if (year < effectiveStart) return 0
-    const mappedYear = 2024 + (year - effectiveStart)
+    const mappedYear = SIM_BASE_YEAR + (year - effectiveStart)
     return interpolateAtYear(mappedYear, projLabels, projDeltas)
   })
 }
@@ -366,7 +366,7 @@ export const useSimulationStore = defineStore('simulation', () => {
 
   function effectiveStartOf(decId: string): number {
     const meta = policiesStore.validatedPolicyMeta.find(m => m.id === decId)
-    const startYear = meta?.year ?? 2024
+    const startYear = meta?.year ?? 2025
     const lag = policiesStore.getMitigationPolicy(decId)?.implementationLag ?? 0
     return startYear + lag
   }
