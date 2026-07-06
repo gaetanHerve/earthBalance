@@ -19,17 +19,10 @@ import { storeToRefs } from 'pinia'
 import { useI18n } from 'vue-i18n'
 import LineChart from './LineChart.vue'
 import { useGameStore } from '@/store/game.store'
-import {
-  useSimulationStore,
-  SIM_LABELS,
-  BASELINE_CO2,
-  BASELINE_TEMP,
-  BASELINE_FOREST,
-  BASELINE_ENERGY_MIX,
-  BASELINE_FOOD_SECURITY,
-  BASELINE_WATER_ACCESS,
-} from '@/store/simulation.store'
+import { useSimulationStore, SIM_LABELS, BASELINE_CO2, BASELINE_TEMP, BASELINE_FOREST, BASELINE_ENERGY_MIX, BASELINE_FOOD_SECURITY, BASELINE_WATER_ACCESS, } from '@/store/simulation.store'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
+import { useDashboardStore } from '@/store/dashboard.store'
+import { interpolateAtYear } from '@/utils/timeSeries'
 import type { HubChartType } from '@/data/hubGraph'
 import type { ChartDataset, EnergyMixKey } from '@/types/index'
 
@@ -42,6 +35,7 @@ const { t }     = useI18n()
 const gameStore = useGameStore()
 const simStore  = useSimulationStore()
 const tpStore   = useTippingPointsStore()
+const dashStore = useDashboardStore()
 
 const {
   simCumulativeCo2,       simCumulativeCo2Pessimist,
@@ -52,7 +46,7 @@ const {
   cumulativeWaterAccess,  cumulativeWaterAccessPessimist,
 } = storeToRefs(simStore)
 
-const { triggeredList } = storeToRefs(tpStore)
+const { triggeredList, extremesOffset } = storeToRefs(tpStore)
 
 const triggeredMap = computed(() =>
   new Map(triggeredList.value.map(tp => [tp.id, tp.year]))
@@ -159,6 +153,23 @@ const datasets = computed<ChartDataset[]>(() => {
       return makeDatasets(BASELINE_FOOD_SECURITY, cumulativeFoodSecurity.value, cumulativeFoodSecurityPessimist.value)
     case 'water':
       return makeDatasets(BASELINE_WATER_ACCESS, cumulativeWaterAccess.value, cumulativeWaterAccessPessimist.value)
+    case 'extremes': {
+      const ts = dashStore.ecologicalCharts?.extremes.timeSeries
+      if (!ts) return []
+      const data = SIM_LABELS.map((y, i) => {
+        const base = interpolateAtYear(y, ts.years, ts.values)
+        return Math.round((base + (extremesOffset.value[i] ?? 0)) * 10) / 10
+      })
+      return [{
+        label:           t('dashboard.extremes_section'),
+        data,
+        borderColor:     '#fb923c',
+        backgroundColor: 'rgba(251,146,60,0.08)',
+        fill:            true,
+        tension:         0.4,
+        pointRadius:     1,
+      }]
+    }
     default:
       return []
   }
@@ -168,10 +179,14 @@ const datasets = computed<ChartDataset[]>(() => {
 
 const tpEvents = computed<{ year: number; color: string }[]>(() => {
   if (props.chartType === 'temp') {
-    return (['tp-permafrost', 'tp-coral', 'tp-arctic', 'tp-amoc'] as const).flatMap(id => {
+    return (['tp-permafrost', 'tp-coral', 'tp-amoc'] as const).flatMap(id => {
       const year = triggeredMap.value.get(id)
       return year !== undefined ? [{ year, color: '#ff5050' }] : []
     })
+  }
+  if (props.chartType === 'extremes') {
+    const year = triggeredMap.value.get('tp-amoc')
+    return year !== undefined ? [{ year, color: '#ff5050' }] : []
   }
   if (props.chartType === 'forest') {
     const year = triggeredMap.value.get('tp-amazon')
@@ -191,6 +206,7 @@ const chartMeta = computed<{ yMin?: number; yMax?: number }>(() => {
     case 'energyMixBreakdown':return { yMin: 0,   yMax: 45  }
     case 'food':              return { yMin: 40,  yMax: 70  }
     case 'water':             return { yMin: 60,  yMax: 90  }
+    case 'extremes':          return { yMin: 0,   yMax: 18  }
     default:                  return {}
   }
 })

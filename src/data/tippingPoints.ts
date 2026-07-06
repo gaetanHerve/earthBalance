@@ -41,22 +41,26 @@ export const TIPPING_POINTS: TippingPointDef[] = [
     deltaBiodiversityRatio: 0.2,
   },
   {
-    // AR6 WGI p.1878 : pas de tipping point irréversible pour la glace arctique estivale (high confidence).
-    // Modélisé comme une rétroaction albédo graduelle, non un basculement.
-    id:      'tp-arctic',
-    trigger: { variable: 'temp', threshold: 1.5, comparison: '>' },
-    deltaTemp: 0.1,
-  },
-  {
     // AR6 WGI p.303-304 : effondrement "very unlikely" avant 2100 sous SSP2-4.5, probabilité croissante
     // avec le réchauffement. Impacts : refroidissement régional Atlantique Nord (-deltaTemp),
     // perturbation ITCZ (deltaWaterRatio négatif), amplification extrêmes Europe (deltaExtremes).
     id:      'tp-amoc',
-    trigger:       { variable: 'temp', threshold: 3.0, comparison: '>' },
+    trigger:       { variable: 'temp', threshold: 1.5, comparison: '>' },
     probabilistic: true,
     collapseProb:  (T: number) => Math.min(Math.max((T - 1.5) * 0.08, 0), 0.5),
     deltaTemp:      -0.2,
     deltaWaterRatio: -0.08,
     deltaExtremes:   0.4,
   },
+]
+
+export type FeedbackLoopDef = {
+  id:        string
+  permanent: boolean   // toujours actif, indépendant du jeu
+}
+
+// AR6 WGI p.1878 : pas de tipping point irréversible pour la glace arctique estivale (high confidence).
+// La fonte accélère le réchauffement via l'effet albédo — boucle de rétroaction graduelle, permanente.
+export const FEEDBACK_LOOPS: FeedbackLoopDef[] = [
+  { id: 'feedback-arctic-albedo', permanent: true },
 ]

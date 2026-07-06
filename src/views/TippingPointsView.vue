@@ -17,6 +17,9 @@
       <p class="text-sm text-amber-300">{{ t('tipping.disabled_notice') }}</p>
     </div>
 
+    <!-- Section titre "Points de bascule" -->
+    <h2 class="text-base font-semibold text-slate-300">{{ t('tipping.section_tipping') }}</h2>
+
     <!-- Catalogue de tous les points de bascule -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <EbCard
@@ -48,9 +51,9 @@
 
             <!-- Nom + badge état -->
             <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h2 class="text-base font-bold" :class="isTriggered(tp.id) ? 'text-red-200' : 'text-slate-200'">
+              <h3 class="text-base font-bold" :class="isTriggered(tp.id) ? 'text-red-200' : 'text-slate-200'">
                 {{ t(`tipping.${tp.id}.name`) }}
-              </h2>
+              </h3>
               <span
                 class="text-[11px] font-semibold px-2 py-0.5 rounded-full border"
                 :class="isTriggered(tp.id)
@@ -65,6 +68,10 @@
                 {{ isTriggered(tp.id)
                   ? t('tipping.triggered_on', { year: triggeredYear(tp.id) })
                   : t('tipping.trigger_not_reached') }}
+              </span>
+              <span v-if="tp.probabilistic" class="text-[11px] font-semibold px-2 py-0.5 rounded-full border bg-amber-900/30 border-amber-700/50 text-amber-400">
+                <i class="fas fa-dice mr-1 text-[9px]" aria-hidden="true"></i>
+                {{ t('tipping.probabilistic_label') }}
               </span>
             </div>
 
@@ -114,13 +121,74 @@
       </EbCard>
     </div>
 
+    <!-- Section "Boucles de rétroaction" -->
+    <div>
+      <h2 class="text-base font-semibold text-slate-300 mb-4">{{ t('tipping.section_feedbacks') }}</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <EbCard
+          v-for="fb in FEEDBACK_LOOPS"
+          :key="fb.id"
+          class="border-eb-border"
+        >
+          <div class="flex items-start gap-4">
+
+            <!-- Icône -->
+            <div
+              class="shrink-0 w-10 h-10 rounded-full border bg-eb-dark border-eb-border flex items-center justify-center mt-0.5"
+              aria-hidden="true"
+            >
+              <i class="fas fa-rotate text-cyan-500/70"></i>
+            </div>
+
+            <div class="flex-1 min-w-0 space-y-3">
+
+              <!-- Nom + badge Permanent -->
+              <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <h3 class="text-base font-bold text-slate-200">
+                  {{ t(`tipping.${fb.id}.name`) }}
+                </h3>
+                <span
+                  v-if="fb.permanent"
+                  class="text-[11px] font-semibold px-2 py-0.5 rounded-full border bg-cyan-900/30 border-cyan-700/50 text-cyan-400"
+                >
+                  <i class="fas fa-infinity mr-1 text-[9px]" aria-hidden="true"></i>
+                  {{ t('tipping.permanent_label') }}
+                </span>
+              </div>
+
+              <!-- Description -->
+              <p class="text-sm leading-relaxed text-slate-400">
+                {{ t(`tipping.${fb.id}.description`) }}
+              </p>
+
+              <!-- Effets -->
+              <div class="rounded-lg px-3 py-2 border bg-eb-dark/60 border-eb-border/60">
+                <p class="text-xs font-semibold mb-0.5 text-slate-500">
+                  {{ t('tipping.effects_label') }}
+                </p>
+                <p class="text-sm text-slate-400">
+                  {{ t(`tipping.${fb.id}.effects`) }}
+                </p>
+              </div>
+
+              <!-- Citation GIEC -->
+              <blockquote class="border-l-2 border-slate-700 pl-3 text-xs text-slate-500 italic leading-relaxed">
+                {{ t(`tipping.${fb.id}.quote`) }}
+              </blockquote>
+
+            </div>
+          </div>
+        </EbCard>
+      </div>
+    </div>
+
   </main>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { TIPPING_POINTS, type TippingPointDef } from '@/data/tippingPoints'
+import { TIPPING_POINTS, FEEDBACK_LOOPS, type TippingPointDef } from '@/data/tippingPoints'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
 import EbCard from '@/components/layout/EbCard.vue'
 
@@ -137,6 +205,10 @@ function triggeredYear(id: string): number {
 
 function thresholdLabel(tp: TippingPointDef): string {
   const { variable, threshold, comparison } = tp.trigger
+  if (tp.probabilistic) {
+    if (variable === 'temp') return `${t('tipping.trigger_from_probabilistic')} +${threshold}°C ${t('tipping.trigger_unit_temp')}`
+    return `${t('tipping.trigger_from_probabilistic')} ${threshold} % ${t('tipping.trigger_unit_forest')}`
+  }
   if (variable === 'temp') {
     const op = comparison === '>' ? '>' : '<'
     return `${op} +${threshold}°C ${t('tipping.trigger_unit_temp')}`

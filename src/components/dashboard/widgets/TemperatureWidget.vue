@@ -80,7 +80,7 @@ const tempLabels = computed<number[]>(() => [
 
 // Années de déclenchement des TPs liés à la température (pour traits verticaux)
 const tempEvents = computed(() =>
-  (['tp-permafrost', 'tp-coral', 'tp-arctic', 'tp-amoc'] as const)
+  (['tp-permafrost', 'tp-coral', 'tp-amoc'] as const)
     .flatMap(id => {
       const year = triggeredMap.value.get(id)
       return year !== undefined ? [{ year, color: '#ff5050' }] : []
@@ -115,7 +115,7 @@ const tempDatasets = computed<ChartDataset[]>(() => {
     {
       label:       t('tipping.tp_group_1_5c'),
       data:        allLabels.map(() => 1.5),
-      borderColor: triggeredMap.value.has('tp-arctic') ? '#ff5050' : '#a78bfa',
+      borderColor: triggeredMap.value.has('tp-permafrost') || triggeredMap.value.has('tp-coral') ? '#ff5050' : '#a78bfa',
       backgroundColor: 'transparent',
       borderDash:  [3, 4],
       fill:        false,

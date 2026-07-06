@@ -100,7 +100,7 @@ const triggeredMap = computed(() =>
 )
 
 const tempEvents = computed(() =>
-  (['tp-permafrost', 'tp-coral', 'tp-arctic', 'tp-amoc'] as const).flatMap(id => {
+  (['tp-permafrost', 'tp-coral', 'tp-amoc'] as const).flatMap(id => {
     const year = triggeredMap.value.get(id)
     return year !== undefined ? [{ year, color: '#ff5050' }] : []
   })
@@ -222,7 +222,7 @@ function datasetsFor(id: string): ChartDataset[] {
     return makeDatasets(BASELINE_CO2, simCumulativeCo2.value, simCumulativeCo2Pessimist.value)
   if (id === 'temperature')
     return makeDatasets(BASELINE_TEMP, simCumulativeTemp.value, simCumulativeTempPessimist.value, [
-      tpLine(t('tipping.tp_group_1_5c'), 1.5, triggeredMap.value.has('tp-arctic')),
+      tpLine(t('tipping.tp_group_1_5c'), 1.5, triggeredMap.value.has('tp-permafrost') || triggeredMap.value.has('tp-coral')),
       tpLine(`${t('tipping.tp-amoc.name')} (3°C)`,   3,   triggeredMap.value.has('tp-amoc')),
     ])
   if (id === 'forest')

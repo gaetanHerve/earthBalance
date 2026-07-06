@@ -255,8 +255,8 @@
             />
           </div>
 
-          <!-- Description systémique -->
-          <template v-if="selectedNode.type === 'indicator' || selectedNode.type === 'tipping'">
+          <!-- Pour les indicateurs : description systémique + boucles + relations -->
+          <template v-if="selectedNode.type === 'indicator'">
             <div
               v-if="systemicNodeForHub(selectedNode.id)"
               class="rounded-lg border border-eb-border bg-eb-mid p-3"
@@ -334,6 +334,90 @@
             </div>
           </template>
 
+          <!-- Pour les points de bascule / boucles de rétroaction : contenu i18n -->
+          <template v-if="selectedNode.type === 'tipping' || selectedNode.type === 'feedback'">
+
+            <!-- Description + effets + citation -->
+            <div class="rounded-lg border border-eb-border bg-eb-mid p-3 space-y-2">
+              <p class="text-xs text-slate-400 leading-relaxed">
+                {{ t('tipping.' + tippingI18nKey(selectedNode.id) + '.description') }}
+              </p>
+              <div>
+                <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">
+                  <i class="fa fa-bolt mr-1" style="color: #fb923c" aria-hidden="true" />
+                  {{ t('tipping.effects_label') }}
+                </p>
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                  {{ t('tipping.' + tippingI18nKey(selectedNode.id) + '.effects') }}
+                </p>
+              </div>
+              <p class="font-mono text-[10px] text-slate-600 leading-snug italic">
+                {{ t('tipping.' + tippingI18nKey(selectedNode.id) + '.quote') }}
+              </p>
+            </div>
+
+            <!-- Seuil de déclenchement (points de bascule uniquement) -->
+            <div
+              v-if="selectedNode.type === 'tipping'"
+              class="rounded-lg border border-eb-border bg-eb-mid p-3"
+            >
+              <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">{{ t('tipping.trigger_label') }}</p>
+              <p class="text-xs text-slate-300">{{ tippingThresholdLabel(selectedNode.id) }}</p>
+            </div>
+
+            <!-- Impacts modélisés sur les indicateurs -->
+            <div
+              v-if="tippingImpactsForNode(selectedNode.id).length"
+              class="rounded-lg border border-eb-border bg-eb-mid p-3"
+            >
+              <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">{{ t('overview.tp_impacts') }}</p>
+              <div class="space-y-1.5">
+                <div
+                  v-for="impact in tippingImpactsForNode(selectedNode.id)"
+                  :key="impact.id"
+                  class="flex items-center gap-2 text-xs"
+                >
+                  <span class="font-mono text-slate-500 shrink-0">→</span>
+                  <span
+                    class="shrink-0 font-bold w-3 text-center"
+                    :class="impact.causalType === 'positive' ? 'text-red-400' : 'text-green-400'"
+                  >{{ impact.causalType === 'positive' ? '↑' : '↓' }}</span>
+                  <span class="text-slate-300">{{ t('hub.nodes.' + impact.targetId + '.label') }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Boucles de rétroaction systémiques associées -->
+            <div
+              v-if="systemicLoopsForHub(selectedNode.id).length"
+              class="rounded-lg border border-eb-border bg-eb-mid p-3"
+            >
+              <p class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">
+                <i class="fa fa-rotate mr-1" aria-hidden="true" />
+                {{ t('overview.feedback_loops_label') }}
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <button
+                  v-for="loop in systemicLoopsForHub(selectedNode.id)"
+                  :key="loop.id"
+                  class="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold border transition-all focus-visible:ring-2 focus-visible:ring-eb-cyan outline-none"
+                  :style="{
+                    borderColor: loop.color,
+                    color: activeLoopId === loop.id ? loop.color : '#64748b',
+                    backgroundColor: activeLoopId === loop.id ? loop.color + '18' : 'transparent',
+                    boxShadow: activeLoopId === loop.id ? `0 0 8px ${loop.color}40` : 'none',
+                  }"
+                  :aria-pressed="activeLoopId === loop.id"
+                  @click="toggleLoop(loop.id)"
+                >
+                  <i class="fa fa-rotate text-[9px]" aria-hidden="true" />
+                  {{ locale === 'fr' ? loop.label : loop.labelEn }}
+                </button>
+              </div>
+            </div>
+
+          </template>
+
           <!-- Statut point de bascule -->
           <div v-if="selectedNode.type === 'tipping'" class="rounded-lg border p-3"
             :class="isTippingTriggered(selectedNode.id)
@@ -386,9 +470,11 @@ import { useSimulationStore } from '@/store/simulation.store'
 import { STORAGE_KEYS } from '@/config/storageKeys'
 import DashboardView from '@/views/DashboardView.vue'
 import { useTippingPointsStore } from '@/store/tippingPoints.store'
+import { useDashboardStore } from '@/store/dashboard.store'
 import { SIM_LABELS } from '@/config/simulation.config'
 import { interpolateAtYear } from '@/utils/timeSeries'
 import { HUB_NODES, HUB_EDGES, type HubNodeData, type HubCategory, type HubChartType } from '@/data/hubGraph'
+import { TIPPING_POINTS } from '@/data/tippingPoints'
 import { mitigationPolicies as ALL_POLICIES } from '@/data/mitigationPolicies'
 import { useMitigationPoliciesStore } from '@/store/mitigationPolicies.store'
 import { feedbackLoops, systemicNodes, systemicEdges, type FeedbackLoop } from '@/data/systemicGraph'
@@ -400,6 +486,7 @@ const { t, locale } = useI18n()
 const gameStore      = useGameStore()
 const simStore       = useSimulationStore()
 const tpStore        = useTippingPointsStore()
+const dashboardStore = useDashboardStore()
 const policiesStore  = useMitigationPoliciesStore()
 
 const showPolicies = ref(false)
@@ -448,7 +535,7 @@ function buildSortedNodes(): void {
   if (!cy) return
   const nodes = cy.nodes().filter((n: cytoscape.NodeSingular) => {
     const type = n.data('type') as string
-    return type === 'hub' || type === 'category' || type === 'indicator' || type === 'tipping'
+    return type === 'hub' || type === 'category' || type === 'indicator' || type === 'tipping' || type === 'feedback'
   })
   sortedAccessibleNodes.value = (nodes as cytoscape.NodeCollection)
     .map((n: cytoscape.NodeSingular) => ({ id: n.id(), label: n.data('label') as string, pos: n.position() }))
@@ -765,6 +852,43 @@ function systemicEdgesForHub(hubId: string): SysEdgeItem[] {
   return items
 }
 
+// ─── Helpers pour les points de bascule / boucles de rétroaction ─────────────
+
+function tippingI18nKey(hubId: string): string {
+  if (hubId === 'tp-arctic') return 'feedback-arctic-albedo'
+  return hubId
+}
+
+interface TippingImpactItem {
+  id:         string
+  targetId:   string
+  causalType: 'positive' | 'negative'
+  color:      string
+}
+
+function tippingImpactsForNode(nodeId: string): TippingImpactItem[] {
+  return HUB_EDGES
+    .filter(e => e.edgeType === 'tipping-impact' && e.source === nodeId)
+    .map(e => ({
+      id:         e.id,
+      targetId:   e.target,
+      causalType: (e.causalType ?? 'positive') as 'positive' | 'negative',
+      color:      e.color ?? '#ff5050',
+    }))
+}
+
+function tippingThresholdLabel(hubId: string): string {
+  const tp = TIPPING_POINTS.find(p => p.id === hubId)
+  if (!tp) return ''
+  const { variable, threshold, comparison } = tp.trigger
+  if (tp.probabilistic) {
+    if (variable === 'temp') return `${t('tipping.trigger_from_probabilistic')} +${threshold}°C ${t('tipping.trigger_unit_temp')}`
+    return `${t('tipping.trigger_from_probabilistic')} ${threshold}% ${t('tipping.trigger_unit_forest')}`
+  }
+  if (variable === 'temp') return `${comparison} +${threshold}°C ${t('tipping.trigger_unit_temp')}`
+  return `${comparison} ${threshold}% ${t('tipping.trigger_unit_forest')}`
+}
+
 const SYSTEMIC_TO_HUB_NODE: Record<string, string> = {
   ghg: 'co2',
   temperature: 'temp',
@@ -1022,6 +1146,13 @@ function rawLiveValue(key: NonNullable<HubNodeData['liveKey']>): number {
     }
     case 'food':  return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeFoodSecurity)
     case 'water': return interpolateAtYear(year, SIM_LABELS, simStore.cumulativeWaterAccess)
+    case 'extremes': {
+      const ts = dashboardStore.ecologicalCharts?.extremes.timeSeries
+      if (!ts) return 0
+      const base   = interpolateAtYear(year, ts.years, ts.values)
+      const offset = interpolateAtYear(year, SIM_LABELS, tpStore.extremesOffset)
+      return base + offset
+    }
   }
 }
 
@@ -1042,6 +1173,7 @@ const SCORE_THRESHOLDS: Record<NonNullable<HubNodeData['liveKey']>, {
   renewables: { safe: 55,  critical: 15,  direction: 'down-bad' },
   food:       { safe: 62,  critical: 48,  direction: 'down-bad' },
   water:      { safe: 80,  critical: 62,  direction: 'down-bad' },
+  extremes:   { safe: 3,   critical: 7,   direction: 'up-bad'   },
 }
 
 function nodeScore(key: NonNullable<HubNodeData['liveKey']>): number {
@@ -1195,6 +1327,27 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
     },
   },
   {
+    selector: 'node[type="feedback"]',
+    style: {
+      'shape': 'ellipse',
+      'width': 18, 'height': 18,
+      'z-index': 10,
+      'background-color': '#ff5050',
+      'background-opacity': 0.0,
+      'border-width': 1, 'border-color': '#ff5050',
+      'border-style': 'dashed',
+      'label': 'data(label)',
+      'color': '#ff5050',
+      'font-size': 7,
+      'text-valign': 'bottom', 'text-margin-y': 4,
+      'text-halign': 'center',
+      'text-wrap': 'wrap', 'text-max-width': '64px',
+      'text-background-color': '#070c16',
+      'text-background-opacity': 0.8,
+      'text-background-padding': '2px',
+    } as unknown as cytoscape.Css.Node,
+  },
+  {
     selector: 'edge[edgeType="hub-cat"]',
     style: {
       'width': 2.5,
@@ -1224,6 +1377,19 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
       'curve-style': 'bezier',
       'target-arrow-shape': 'triangle',
       'target-arrow-color': 'rgba(255,80,80,0.25)',
+      'arrow-scale': 0.6,
+    },
+  },
+  {
+    selector: 'edge[edgeType="tipping-impact"]',
+    style: {
+      'width': 1,
+      'line-color': 'data(color)',
+      'line-style': 'solid',
+      'opacity': 0.22,
+      'curve-style': 'bezier',
+      'target-arrow-shape': 'triangle',
+      'target-arrow-color': 'data(color)',
       'arrow-scale': 0.6,
     },
   },
@@ -1330,7 +1496,7 @@ const CY_STYLE: cytoscape.StylesheetStyle[] = [
 // dispersés angulairement par le code post-layout.
 
 const CAT_INDICATORS: Record<string, string[]> = {
-  'cat-climat':      ['co2', 'temp', 'sea-level'],
+  'cat-climat':      ['co2', 'temp', 'sea-level', 'extremes'],
   'cat-ecosystemes': ['forest', 'biodiversity'],
   'cat-energie':     ['energy-mix', 'resources'],
   'cat-societal':    ['food', 'water', 'health', 'inequality', 'conflicts'],
@@ -1344,7 +1510,7 @@ const CAT_ANGLES: Record<string, number> = {
 }
 
 const TIPPING_TRIGGER: Record<string, string> = {
-  'tp-permafrost': 'temp', 'tp-coral': 'temp', 'tp-arctic': 'temp',
+  'tp-permafrost': 'temp', 'tp-coral': 'temp',
   'tp-amazon':     'forest', 'tp-amoc': 'temp',
 }
 
@@ -1455,6 +1621,7 @@ function initCy(): void {
     if (show !== tippingVisible.value) {
       tippingVisible.value = show
       cy!.edges('[edgeType="tipping-link"]').style('opacity', show ? 0.55 : 0.18)
+      cy!.edges('[edgeType="tipping-impact"]').style('opacity', show ? 0.5 : 0.22)
     }
   })
 

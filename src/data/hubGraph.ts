@@ -1,7 +1,7 @@
-export type HubNodeType = 'hub' | 'category' | 'indicator' | 'tipping'
+export type HubNodeType = 'hub' | 'category' | 'indicator' | 'tipping' | 'feedback'
 export type HubChartType = NonNullable<HubNodeData['liveKey']> | 'energyMixBreakdown'
 export type HubCategory = 'climat' | 'ecosystemes' | 'energie' | 'societal' | 'politiques'
-export type HubEdgeType = 'hub-cat' | 'hierarchy' | 'tipping-link' | 'causal'
+export type HubEdgeType = 'hub-cat' | 'hierarchy' | 'tipping-link' | 'causal' | 'tipping-impact'
 
 export interface HubNodeData {
   id:       string
@@ -9,7 +9,7 @@ export interface HubNodeData {
   category: HubCategory | null
   color:    string
   route:    string
-  liveKey?: 'co2' | 'temp' | 'forest' | 'renewables' | 'food' | 'water'
+  liveKey?: 'co2' | 'temp' | 'forest' | 'renewables' | 'food' | 'water' | 'extremes'
   label?:   string
 }
 
@@ -47,6 +47,7 @@ export const HUB_NODES: HubNodeData[] = [
   { id: 'co2',       type: 'indicator', category: 'climat',      color: '#00e5ff', route: '/dashboard', liveKey: 'co2' },
   { id: 'temp',      type: 'indicator', category: 'climat',      color: '#00e5ff', route: '/dashboard', liveKey: 'temp' },
   { id: 'sea-level', type: 'indicator', category: 'climat',      color: '#00e5ff', route: '/dashboard' },
+  { id: 'extremes',  type: 'indicator', category: 'climat',      color: '#00e5ff', route: '/dashboard', liveKey: 'extremes' },
 
   // ── Indicateurs Écosystèmes ──
   { id: 'forest',      type: 'indicator', category: 'ecosystemes', color: '#00ff88', route: '/dashboard',          liveKey: 'forest' },
@@ -66,7 +67,7 @@ export const HUB_NODES: HubNodeData[] = [
   // ── Points de bascule (niveau 3) ──
   { id: 'tp-permafrost', type: 'tipping', category: 'climat',      color: '#ff5050', route: '/bascules' },
   { id: 'tp-coral',      type: 'tipping', category: 'climat',      color: '#ff5050', route: '/bascules' },
-  { id: 'tp-arctic',     type: 'tipping', category: 'climat',      color: '#ff5050', route: '/bascules' },
+  { id: 'tp-arctic',     type: 'feedback', category: 'climat',      color: '#00e5ff', route: '/bascules' },
   { id: 'tp-amazon',     type: 'tipping', category: 'ecosystemes', color: '#ff5050', route: '/bascules' },
   { id: 'tp-amoc',       type: 'tipping', category: 'climat',      color: '#ff5050', route: '/bascules' },
 ]
@@ -81,9 +82,10 @@ export const HUB_EDGES: HubEdgeData[] = [
   { id: 'e-hub-societal', source: 'hub', target: 'cat-societal',    edgeType: 'hub-cat', color: '#a78bfa' },
 
   // Catégorie → Indicateurs Climat
-  { id: 'e-cl-co2',  source: 'cat-climat', target: 'co2',       edgeType: 'hierarchy', color: '#00e5ff' },
-  { id: 'e-cl-temp', source: 'cat-climat', target: 'temp',      edgeType: 'hierarchy', color: '#00e5ff' },
-  { id: 'e-cl-sea',  source: 'cat-climat', target: 'sea-level', edgeType: 'hierarchy', color: '#00e5ff' },
+  { id: 'e-cl-co2',      source: 'cat-climat', target: 'co2',       edgeType: 'hierarchy', color: '#00e5ff' },
+  { id: 'e-cl-temp',     source: 'cat-climat', target: 'temp',      edgeType: 'hierarchy', color: '#00e5ff' },
+  { id: 'e-cl-sea',      source: 'cat-climat', target: 'sea-level', edgeType: 'hierarchy', color: '#00e5ff' },
+  { id: 'e-cl-extremes', source: 'cat-climat', target: 'extremes',  edgeType: 'hierarchy', color: '#00e5ff' },
 
   // Catégorie → Indicateurs Écosystèmes
   { id: 'e-eco-forest', source: 'cat-ecosystemes', target: 'forest',       edgeType: 'hierarchy', color: '#00ff88' },
@@ -138,4 +140,18 @@ export const HUB_EDGES: HubEdgeData[] = [
   { id: 'c-ineq-conf',    source: 'inequality',  target: 'conflicts',   edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
   { id: 'c-ineq-ren',     source: 'inequality',  target: 'energy-mix',  edgeType: 'causal', causalType: 'positive', color: '#ff5050' },
   { id: 'c-health-ineq',  source: 'health',      target: 'inequality',  edgeType: 'causal', causalType: 'negative', color: '#00ff88' },
+
+  // ─── Impacts des tipping points / feedbacks → indicateurs ────────────────────
+  // positive (aggravant) → #ff5050 · negative (bénéfique) → #00ff88
+  { id: 'i-tp-perm-temp',   source: 'tp-permafrost', target: 'temp',        edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-perm-co2',    source: 'tp-permafrost', target: 'co2',         edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-perm-bio',    source: 'tp-permafrost', target: 'biodiversity',edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-coral-bio',   source: 'tp-coral',      target: 'biodiversity',edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-amazon-temp', source: 'tp-amazon',     target: 'temp',        edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-amazon-bio',  source: 'tp-amazon',     target: 'biodiversity',edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-amazon-for',  source: 'tp-amazon',     target: 'forest',      edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-amoc-water',  source: 'tp-amoc',       target: 'water',       edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-amoc-extr',   source: 'tp-amoc',       target: 'extremes',    edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
+  { id: 'i-tp-amoc-temp',   source: 'tp-amoc',       target: 'temp',        edgeType: 'tipping-impact', causalType: 'negative', color: '#00ff88' },
+  { id: 'i-tp-arctic-temp', source: 'tp-arctic',     target: 'temp',        edgeType: 'tipping-impact', causalType: 'positive', color: '#ff5050' },
 ]

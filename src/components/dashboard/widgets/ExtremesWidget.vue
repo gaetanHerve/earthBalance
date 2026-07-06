@@ -49,9 +49,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 import EbCard from '@/components/layout/EbCard.vue'
 import LineChart from '@/components/charts/LineChart.vue'
 import { useGameStore } from '@/store/game.store'
+import { useTippingPointsStore } from '@/store/tippingPoints.store'
+import { SIM_LABELS } from '@/store/simulation.store'
 import type { ChartSeries, ChartDataset } from '@/types/index'
 
 const { t } = useI18n()
@@ -62,6 +65,8 @@ const props = defineProps<{
 }>()
 
 const gameStore = useGameStore()
+const tippingStore = useTippingPointsStore()
+const { extremesOffset } = storeToRefs(tippingStore)
 
 const extremesMetrics = [
   { valueKey: 'dashboard.extremes_m1_value', shortKey: 'dashboard.extremes_m1_short', labelKey: 'dashboard.extremes_m1_label' },
@@ -69,9 +74,18 @@ const extremesMetrics = [
   { valueKey: 'dashboard.extremes_m3_value', shortKey: 'dashboard.extremes_m3_short', labelKey: 'dashboard.extremes_m3_label' },
 ]
 
+// Applique l'offset AMOC (amplification des extrêmes) aux années de projection 2025→2100
+const dynamicValues = computed<number[]>(() =>
+  props.series.timeSeries.years.map((year, i) => {
+    const simIdx = SIM_LABELS.indexOf(year)
+    if (simIdx === -1) return props.series.timeSeries.values[i]
+    return props.series.timeSeries.values[i] + extremesOffset.value[simIdx]
+  })
+)
+
 const extremesDatasets = computed<ChartDataset[]>(() => [{
   label:           t('dashboard.extremes_section'),
-  data:            props.series.timeSeries.values,
+  data:            dynamicValues.value,
   borderColor:     '#fb923c',
   backgroundColor: 'rgba(251,146,60,0.08)',
   fill:            true,
